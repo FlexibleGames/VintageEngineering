@@ -1,0 +1,28 @@
+{
+	"editor": {
+		"allAngles": false,
+		"entityTextureMode": false
+	},
+	"textureWidth": 16,
+	"textureHeight": 16,
+	"textureSizes": {
+	},
+	"textures": {
+		"wire": "game:block/metal/ingot/lead"
+	},
+	"elements": [
+		{
+			"name": "Cube1",
+			"from": [ 0.0, 0.0, 6.0 ],
+			"to": [ 16.0, 2.0, 8.0 ],
+			"rotationOrigin": [ 8.0, 0.0, 8.0 ],
+			"faces": {
+				"north": { "texture": "#wire", "uv": [ 0.0, 0.0, 16.0, 2.0 ], "autoUv": false },
+				"east": { "texture": "#wire", "uv": [ 0.0, 0.0, 2.0, 2.0 ] },
+				"south": { "texture": "#wire", "uv": [ 0.0, 0.0, 16.0, 2.0 ] },
+				"west": { "texture": "#wire", "uv": [ 0.0, 0.0, 2.0, 2.0 ] },
+				"up": { "texture": "#wire", "uv": [ 0.0, 0.0, 16.0, 2.0 ] },
+				"down": { "texture": "#wire", "uv": [ 0.0, 0.0, 16.0, 2.0 ] }
+			}
+		}
+	]}

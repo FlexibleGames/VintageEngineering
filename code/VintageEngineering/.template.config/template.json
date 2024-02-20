@@ -1,0 +1,121 @@
+{
+    "$schema": "http://json.schemastore.org/template",
+    "identity": "VSModTemplate.DLL",
+    "author": "Anego Studios",
+    "classifications": [
+        "Games",
+        "Vintage Story"
+    ],
+    "name": "Vintage Story Mod (.dll only)",
+    "shortName": "vsmoddll",
+    "sourceName": "VintageEngineering",
+    "description": "Includes only a basic project and a Sample ModSystem to start modding. Will only output a .dll",
+    "tags": {
+        "language": "C#",
+        "type": "project"
+    },
+    "symbols": {
+        "SuppressWindowsConsoleWindow": {
+            "type": "parameter",
+            "datatype": "bool",
+            "description": "Suppresses the external console window on Windows (You may only use this on Windows OS)",
+            "defaultValue": "false"
+        },
+        "vsInstall": {
+            "type": "parameter",
+            "datatype": "string",
+            "description": "The directory of the Vintage Story installation to use for references and Client/Server launcher.",
+            "defaultValue": "$(VINTAGE_STORY)",
+            "replaces": "$(VINTAGE_STORY)"
+        },
+        "AddSampleCode": {
+            "type": "parameter",
+            "datatype": "bool",
+            "description": "Adds sample code to the template mod",
+            "defaultValue": "false"
+        },
+        "AddSolutionFile": {
+            "type": "parameter",
+            "datatype": "bool",
+            "description": "Adds .sln file for the mod (Visual Studio and Rider will automatically do that)",
+            "defaultValue": "false"
+        },
+        "IncludeVSSurvivalMod": {
+            "type": "parameter",
+            "datatype": "bool",
+            "description": "Adds VSSurvivalMod as reference to the project",
+            "defaultValue": "false"
+        },
+        "IncludeVSEssentials": {
+            "type": "parameter",
+            "datatype": "bool",
+            "description": "Adds VSEssentials as reference to the project",
+            "defaultValue": "false"
+        },
+        "IncludeVSCreativeMod": {
+            "type": "parameter",
+            "datatype": "bool",
+            "description": "Adds VSCreativeMod as reference to the project",
+            "defaultValue": "false"
+        },
+        "IncludeNewtonsoft": {
+            "type": "parameter",
+            "datatype": "bool",
+            "description": "Adds Newtonsoft.Json as reference to the project",
+            "defaultValue": "false"
+        },
+        "IncludeHarmony": {
+            "type": "parameter",
+            "datatype": "bool",
+            "description": "Adds Harmony as reference to the project",
+            "defaultValue": "false"
+        },
+        "IncludeVintagestoryLib": {
+            "type": "parameter",
+            "datatype": "bool",
+            "description": "Adds VintagestoryLib as reference to the project",
+            "defaultValue": "false"
+        },
+        "IncludeProtobuf": {
+            "type": "parameter",
+            "datatype": "bool",
+            "description": "Adds Protobuf-net as reference to the project",
+            "defaultValue": "false"
+        },
+        "IncludeCairoSharp": {
+            "type": "parameter",
+            "datatype": "bool",
+            "description": "Adds cairo-sharp as reference to the project",
+            "defaultValue": "false"
+        },
+        "IncludeSQLite": {
+            "type": "parameter",
+            "datatype": "bool",
+            "description": "Adds System.Data.SQLite as reference to the project",
+            "defaultValue": "false"
+        },
+        "IncludeVSCode": {
+            "type": "parameter",
+            "datatype": "bool",
+            "description": "Include VSCode tasks.json and launch.json",
+            "defaultValue": "false"
+        }
+    },
+    "sources": [
+        {
+            "source": "./",
+            "target": "./"
+        },
+        {
+            "exclude": "IncludeVSCode == false",
+            "source": ".vscode/",
+            "target": ".vscode/"
+        },
+        {
+            "condition": "(!AddSolutionFile)",
+            "exclude": [
+                "VintageEngineering.sln"
+            ]
+        }
+    ]
+}

@@ -1,0 +1,57 @@
+{
+	"block-catenery-lvpower": "Electrical Wire (LV)",
+	"blockdesc-catenery-lvpower": "Wire for Low Voltage Electrical Networks.",	
+	"block-catenery-mvpower": "Electrical Wire (MV)",
+	"blockdesc-catenery-mvpower": "Wire for Medium Voltage Electrical Networks.",	
+	"block-catenery-hvpower": "Electrical Wire (HV)",
+	"blockdesc-catenery-hvpower": "Wire for High Voltage Electrical Networks.",		
+	"block-catenery-evpower": "Electrical Wire (EV)",
+	"blockdesc-catenery-evpower": "Wire for Extreme Voltage Electrical Networks.",	
+	"block-catenery-allpower": "Electrical Wire (All)",
+	"blockdesc-catenery-allpower": "Wire for Any Voltage Electrical Networks.",	
+	"block-catenery-signalred": "Signal Wire (Red)",
+	"blockdesc-catenery-signalred": "Red wire for Signal Networks.",	
+	"block-catenery-signalgreen": "Signal Wire (Green)",
+	"blockdesc-catenery-signalgreen": "Green wire for Signal Networks.",		
+	"block-catenery-communication": "Communication Wire",
+	"blockdesc-catenery-communication": "Generic Communication Wire.",	
+
+	"item-wiretool-iron": "Wire Tool (Iron)",
+	"itemdesc-wiretool-iron": "Tool for cutting wire connections.",
+	"item-wiretool-meteoriciron": "Wire Tool (Meteoric Iron)",
+	"itemdesc-wiretool-meteoriciron": "Tool for cutting wire connections.",
+	"item-wiretool-steel": "Wire Tool (Steel)",
+	"itemdesc-wiretool-steel": "Tool for cutting wire connections.",	
+
+	"item-wiretoolarm-iron": "Wire Tool Arm (Iron)",
+	"itemdesc-wiretoolarm-iron": "Component for wire cutting tool.",
+	"item-wiretoolarm-meteoriciron": "Wire Tool Arm (Meteoric Iron)",
+	"itemdesc-wiretoolarm-meteoriciron": "Component for wire cutting tool",
+	"item-wiretoolarm-steel": "Wire Tool Arm (Steel)",
+	"itemdesc-wiretoolarm-steel": "Component for wire cutting tool",	
+	
+	"block-wirerelay-lvpower-*": "Wire Relay (LV)",
+	"blockdesc-wirerelay-lvpower-*": "A simple wire relay for connecting LV wires. Holds no power. Use to run wires around your base.",
+
+	"block-wirerelay-mvpower-*": "Wire Relay (MV)",
+	"blockdesc-wirerelay-mvpower-*": "A simple wire relay for connecting MV wires. Holds no power. Use to run wires around your base.",
+
+	"block-wirerelay-hvpower-*": "Wire Relay (HV)",
+	"blockdesc-wirerelay-hvpower-*": "A simple wire relay for connecting HV wires. Holds no power. Use to run wires long distances.",
+
+	"block-wirerelay-evpower-*": "Wire Relay (EV)",
+	"blockdesc-wirerelay-evpower-*": "A simple wire relay for connecting EV wires. Holds no power. Use to run wires long distances.",
+
+	"block-wirerelay-allpower-*": "Wire Relay (All Power)",
+	"blockdesc-wirerelay-allpower-*": "Currently not used. Holds no power. For those who want to create an electric network more like RF Power.",
+
+	"block-wirerelay-signalred-*": "Wire Relay (Red Signal Wire)",
+	"blockdesc-wirerelay-signalred-*": "A relay for running Red Signal wire.",
+
+	"block-wirerelay-signalgreen-*": "Wire Relay (Green Signal Wire)",
+	"blockdesc-wirerelay-signalgreen-*": "A relay for running Green Signal wire.",
+
+	"block-wirerelay-communication-*": "Wire Relay (Communication)",
+	"blockdesc-wirerelay-communication-*": "A relay for running Communication lines."
+	
+}

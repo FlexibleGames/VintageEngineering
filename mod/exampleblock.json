@@ -1,0 +1,85 @@
+{
+    "entityclass": "ElectricalBlockEntity",  // MUST be a BE that inherits from ElectricalBlockEntity
+
+	"entityBehaviors": [	
+		{"name": "VEBEBehaviorWire"} // behavior defines a wire-connectable block and saves Catenery (wire) connections and data.
+	],	
+    
+    "attributes": {
+		"entitytype": "Producer", // valid types: Producer, Consumer, Storage, Transformer, Toggle, Relay, Other
+		"priority": 5,			  // set order to receive or give power, in-game UI should be able to set this
+		"maxpower": 1024,		  // What is the max power this block can store? 
+		"maxpps": 128,			  // What is the max power per second this block can move?
+		
+        "wireNodes": [ // All nodes, regardless of PURPOSE. Can have custom tags for more specific definitions read by other mods.
+            {
+                "index": 0,
+                "wirefunction": "Power", // from EnumWireFunction: Signal, Power, Communication, Other, All				
+				"maxconnections": 1, // max connections (incoming + outgoing) of this node
+				"powertier": "LV", // the power tier of this specfic node
+                "networkid": 0,   // node-specific network ID saved and used by Electric Network (or other network types)
+                "x1": 0.36,
+                "y1": 0.1,
+                "z1": 0.36, // these define a cube that is the selection box of the wire node, the wire connects to the CENTER of this cube
+                "x2": 0.64,
+                "y2": 0.4,
+                "z2": 0.64,
+                "rotateXbytype": {
+					"*-north": 0,
+					"*-east": 270,
+                    "*-south": 180,
+                    "*-west": 90
+                },
+                "rotateZbytype": {
+                    "*-north": 0,
+					"*-east": 270,
+                    "*-south": 180,
+                    "*-west": 90
+                }
+            }
+        ]
+    }
+}
+
+{
+    "variantgroups": [ // wire types
+        {
+            "code": "type",
+            "states": [ "lvpower", "mvpower", "hvpower", "evpower", "allpower", "signalred", "signalgreen", "communication" ]
+        }
+    ],
+    "shapeByType": {
+        "*-lvpower": { "base": "vinteng:block/wire/{type}"},
+        "*-mvpower": { "base": "vinteng:block/wire/{type}"},
+        "*-hvpower": { "base": "vinteng:block/wire/{type}"},
+        "*-evpower": { "base": "vinteng:block/wire/{type}"},
+        "*-allpower": { "base": "vinteng:block/wire/{type}"},
+        "*-signalred": { "base": "vinteng:block/wire/{type}"},
+        "*-signalgreen": { "base": "vinteng:block/wire/{type}"},
+        "*-communication": { "base": "vinteng:block/wire/{type}"}
+    },
+}
+
+
+// for machines
+"behaviors": [{"name": "HorizontalOrientable"}], 
+"entityBehaviorsByType": { "*-active-*": [{ "name": "Animatable" }] }, // maybe?
+"entityBehaviors": [{"name": "VEBEBehaviorWire"}],	
+"variantgroups": [
+    { "code":"state", "states": ["normal", "active", "sleeping"] },
+    { "code":"side", "loadFromProperties": "abstract/horizontalorientation" }
+],
+"drawtype": "json",
+"faceCullMode": "NeverCull",
+"blockmaterial": "Metal",
+"shapeByType": {
+    "*-north": { "base": "vinteng:block/machine/machinename/{state}", "rotateY":0 },
+    "*-east": { "base": "vinteng:block/machine/machinename/{state}", "rotateY":270 },
+    "*-south": { "base": "vinteng:block/machine/machinename/{state}", "rotateY":180 },
+    "*-west": { "base": "vinteng:block/machine/machinename/{state}", "rotateY":90 },
+},
+
+
+"attributesByType": {
+    "*-variant-*":{ }
+}

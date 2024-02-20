@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v7.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v7.0": {
+      "VintageEngineering/0.1.0": {
+        "runtime": {
+          "VintageEngineering.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "VintageEngineering/0.1.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

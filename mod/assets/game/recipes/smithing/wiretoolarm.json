@@ -1,0 +1,13 @@
+{
+	"ingredient": { "type": "item", "code": "game:ingot-*", "name": "metal", "allowedVariants": ["iron", "meteoriciron", "steel"] },
+	"pattern": [[
+		"________###____",
+		"_#######___###_",
+		"_______________",
+		"________###____",
+		"_#######___###_",
+		"_______________"
+	]],
+	"name": "2 Metal Tool arms",
+	"output": { "type": "item", "code": "game:wiretoolarm-{metal}", "stacksize": 2  }
+}

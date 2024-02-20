@@ -1,0 +1,52 @@
+Test Scenarios:
+
+{
+    0 generators,
+    3 consumers,
+    1 storage (transformer)
+}
+powerinstorage > 0
+powerneeded > 0
+powerproduced = 0
+powerstoragecapacity > 0
+
+{
+    1 generator,
+    0 consumers,
+    2 storage (1 battery)
+}
+powerinstorage > 0
+powerneeded = 0
+powerproduced > 0
+powerstoragecapacity > 0
+
+{
+    0 generators,
+    0 consumers,
+    4 storage (transformers)
+}
+powerinstorage > 0
+powerneeded = 0
+powerproduced = 0
+powerstoragecapacity > 0
+
+
+{
+    2 generators,
+    2 consumers,
+    0 storage
+}
+powerinstorage = 0
+powerneeded > 0
+powerproduced > 0
+powerstoragecapacity = 0
+
+{
+    1 generator,
+    2 consumers,
+    2 storage (1 transformer)
+}
+powerinstorage > 0
+powerneeded > 0
+powerproduced > 0
+powerstoragecapacity > 0

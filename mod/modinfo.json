@@ -1,0 +1,10 @@
+{
+  "type": "code",
+  "modid": "vintageengineering",
+  "name": "Vintage Engineering",
+  "authors": [ "Flexible Games" ],
+  "description": "Extending End-Game content with machines and automation.",  
+  "website": "https://www.youtube.com/c/FlexibleGames",  
+  "version": "0.0.2",
+  "dependency": {}
+}

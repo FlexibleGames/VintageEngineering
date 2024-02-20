@@ -1,0 +1,6 @@
+{
+	"vinteng:block-vetestgen-*": "A test Generator",
+	"vinteng:blockdesc-vetestgen-*": "Simply a test generator.",	
+	"vinteng:block-vetestmachine-*": "A test Machine",
+	"vinteng:blockdesc-vetestmachine-*": "Simply a test Machine."	
+}

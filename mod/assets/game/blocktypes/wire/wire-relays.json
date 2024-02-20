@@ -1,0 +1,359 @@
+{
+	"code": "wirerelay",
+	"class": "VEElectricBlock",
+	"entityClass": "VEBERelay",
+	"variantgroups": [
+		{ "code": "type", "states": [ "lvpower", "mvpower", "hvpower", "evpower", "allpower", "signalred", "signalgreen", "communication"] },
+		{ "code":"position", "states": ["up", "down"], "loadFromProperties": "abstract/horizontalorientation" }
+	],
+	"behaviors": [{"name": "OmniAttachable", "properties": { "facingCode": "position" }}],
+	"creativeinventory": { "general": ["*"], "construction": ["*"] },
+	"shapeByType": {
+        "*-north":  { "base": "game:block/relays/{type}", "rotateX": 90, "rotateZ": 180 },
+		"*-east":   { "base": "game:block/relays/{type}", "rotateX": 90, "rotateZ": 270 },
+		"*-south":  { "base": "game:block/relays/{type}", "rotateX": 90, "rotateZ": 0 },
+		"*-west":   { "base": "game:block/relays/{type}", "rotateX": 90, "rotateZ": 90 },
+		"*-up":     { "base": "game:block/relays/{type}"},
+		"*-down":   { "base": "game:block/relays/{type}", "rotateX": 180, "rotateZ": 90 }
+    },
+	"attributes": {
+		"handbook": {
+			"groupBy": ["wirerelay-*-up"],
+			"excludeByType": {
+				"*-up": false,
+				"*": true,
+				"*-allpower-*": true
+			}
+		},
+		"entitytype": "Relay",
+		"priority": 5,
+		"maxpower": 0,
+		"maxpps": 0
+	},
+	"attributesByType": {
+		"*-lvpower-*":{			
+			"wireNodes": [
+				{
+					"index": 0,
+					"wirefunction": "Power",
+					"maxconnections": 5,
+					"powertier": "LV",
+					"networkid": 0,
+					"x1": 0.375,
+					"y1": 0.0625,
+					"z1": 0.375, 
+					"x2": 0.6875,
+					"y2": 0.25,
+					"z2": 0.6875,
+					"rotateXByType": {
+						"*-up": 0,
+						"*-down": 180,
+						"*-north": 90,
+						"*-east": 90,
+						"*-south": 90,
+						"*-west": 90
+					},
+					"rotateZByType": {
+						"*-up": 0,
+						"*-down": 90,
+						"*-north": 180,
+						"*-east": 270,
+						"*-south": 0,
+						"*-west": 90
+					}
+				}
+			]
+		},
+		"*-mvpower-*":{
+			"wireNodes": [
+				{
+					"index": 0,
+					"wirefunction": "Power",
+					"maxconnections": 3,
+					"powertier": "MV",
+					"networkid": 0,
+					"x1": 0.375,
+					"y1": 0.1875,
+					"z1": 0.375, 
+					"x2": 0.6875,
+					"y2": 0.4375,
+					"z2": 0.6875,
+					"rotateXByType": {
+						"*-up": 0,
+						"*-down": 180,
+						"*-north": 90,
+						"*-east": 90,
+						"*-south": 90,
+						"*-west": 90
+					},
+					"rotateZByType": {
+						"*-up": 0,
+						"*-down": 90,
+						"*-north": 180,
+						"*-east": 270,
+						"*-south": 0,
+						"*-west": 90
+					}
+				}
+			]
+		},
+		"*-hvpower-*":{
+			"wireNodes": [
+				{
+					"index": 0,
+					"wirefunction": "Power",
+					"maxconnections": 3,
+					"powertier": "HV",
+					"networkid": 0,
+					"x1": 0.375,
+					"y1": 0.3125,
+					"z1": 0.375, 
+					"x2": 0.6875,
+					"y2": 0.5,
+					"z2": 0.6875,
+					"rotateXByType": {
+						"*-up": 0,
+						"*-down": 180,
+						"*-north": 90,
+						"*-east": 90,
+						"*-south": 90,
+						"*-west": 90
+					},
+					"rotateZByType": {
+						"*-up": 0,
+						"*-down": 90,
+						"*-north": 180,
+						"*-east": 270,
+						"*-south": 0,
+						"*-west": 90
+					}
+				}
+			]
+		},
+		"*-evpower-*":{
+			"wireNodes": [
+				{
+					"index": 0,
+					"wirefunction": "Power",
+					"maxconnections": 3,
+					"powertier": "EV",
+					"networkid": 0,
+					"x1": 0.375,
+					"y1": 0.375,
+					"z1": 0.375, 
+					"x2": 0.6875,
+					"y2": 0.5,
+					"z2": 0.6875,
+					"rotateXByType": {
+						"*-up": 0,
+						"*-down": 180,
+						"*-north": 90,
+						"*-east": 90,
+						"*-south": 90,
+						"*-west": 90
+					},
+					"rotateZByType": {
+						"*-up": 0,
+						"*-down": 90,
+						"*-north": 180,
+						"*-east": 270,
+						"*-south": 0,
+						"*-west": 90
+					}
+				}
+			]
+		},
+		"*-allpower-*":{
+			"wireNodes": [
+				{
+					"index": 0,
+					"wirefunction": "Power",
+					"maxconnections": 4,
+					"powertier": "Any",
+					"networkid": 0,
+					"x1": 0.375,
+					"y1": 0.1875,
+					"z1": 0.375, 
+					"x2": 0.6875,
+					"y2": 0.4375,
+					"z2": 0.6875,
+					"rotateXByType": {
+						"*-up": 0,
+						"*-down": 180,
+						"*-north": 90,
+						"*-east": 90,
+						"*-south": 90,
+						"*-west": 90
+					},
+					"rotateZByType": {
+						"*-up": 0,
+						"*-down": 90,
+						"*-north": 180,
+						"*-east": 270,
+						"*-south": 0,
+						"*-west": 90
+					}
+				}
+			]
+		},
+		"*-signalred-*":{
+			"wireNodes": [
+				{
+					"index": 0,
+					"wirefunction": "Signal",
+					"maxconnections": 3,					
+					"networkid": 0,
+					"x1": 0.375,
+					"y1": 0.125,
+					"z1": 0.375, 
+					"x2": 0.6875,
+					"y2": 0.3125,
+					"z2": 0.6875,
+					"rotateXByType": {
+						"*-up": 0,
+						"*-down": 180,
+						"*-north": 90,
+						"*-east": 90,
+						"*-south": 90,
+						"*-west": 90
+					},
+					"rotateZByType": {
+						"*-up": 0,
+						"*-down": 90,
+						"*-north": 180,
+						"*-east": 270,
+						"*-south": 0,
+						"*-west": 90
+					}
+				}
+			]
+		},
+		"*-signalgreen-*":{
+			"wireNodes": [
+				{
+					"index": 0,
+					"wirefunction": "Signal",
+					"maxconnections": 3,					
+					"networkid": 0,
+					"x1": 0.375,
+					"y1": 0.125,
+					"z1": 0.375, 
+					"x2": 0.6875,
+					"y2": 0.3125,
+					"z2": 0.6875,
+					"rotateXByType": {
+						"*-up": 0,
+						"*-down": 180,
+						"*-north": 90,
+						"*-east": 90,
+						"*-south": 90,
+						"*-west": 90
+					},
+					"rotateZByType": {
+						"*-up": 0,
+						"*-down": 90,
+						"*-north": 180,
+						"*-east": 270,
+						"*-south": 0,
+						"*-west": 90
+					}
+				}
+			]
+		},
+		"*-communication-*":{
+			"wireNodes": [
+				{
+					"index": 0,
+					"wirefunction": "Communication",
+					"maxconnections": 5,					
+					"networkid": 0,
+					"x1": 0.375,
+					"y1": 0.1875,
+					"z1": 0.375, 
+					"x2": 0.6875,
+					"y2": 0.4375,
+					"z2": 0.6875,
+					"rotateXByType": {
+						"*-up": 0,
+						"*-down": 180,
+						"*-north": 90,
+						"*-east": 90,
+						"*-south": 90,
+						"*-west": 90
+					},
+					"rotateZByType": {
+						"*-up": 0,
+						"*-down": 90,
+						"*-north": 180,
+						"*-east": 270,
+						"*-south": 0,
+						"*-west": 90
+					}
+				}
+			]
+		}
+	},	
+	"collisionSelectionBoxByType": {
+		"*-up":    { "x1": 0.375, "y1": 0, "z1": 0.375, "x2": 0.6875, "y2": 0.1875, "z2": 0.6875 },
+		"*-down":  { "x1": 0.375, "y1": 0, "z1": 0.375, "x2": 0.6875, "y2": 0.1875, "z2": 0.6875, "rotateX": 180 },
+		"*-north": { "x1": 0.375, "y1": 0, "z1": 0.375, "x2": 0.6875, "y2": 0.1875, "z2": 0.6875, "rotateX": 90, "rotateZ": 180 },
+		"*-east":  { "x1": 0.375, "y1": 0, "z1": 0.375, "x2": 0.6875, "y2": 0.1875, "z2": 0.6875, "rotateX": 90, "rotateZ": 270 },
+		"*-south": { "x1": 0.375, "y1": 0, "z1": 0.375, "x2": 0.6875, "y2": 0.1875, "z2": 0.6875, "rotateX": 90, "rotateZ": 0 },
+		"*-west":  { "x1": 0.375, "y1": 0, "z1": 0.375, "x2": 0.6875, "y2": 0.1875, "z2": 0.6875, "rotateX": 90, "rotateZ": 90 }
+	},
+	"blockmaterial": "Metal",
+	"drawtype": "json",
+	"faceCullMode": "NeverCull",
+	"sideOpaque": { "all": false },
+    "sidesolidByType": {
+        "*-down": {
+            "all": false,
+            "down": true
+        },
+        "*-up": {
+            "all": false,
+            "up": true
+        },
+        "*-north": {
+            "all": false,
+            "north": true
+        },
+        "*-east": {
+            "all": false,
+            "east": true
+        },
+        "*-west": {
+            "all": false,
+            "west": true
+        },
+        "*-south": {
+            "all": false,
+            "south": true
+        }
+    },	
+	"emitSideAo": { "all": false },
+	"lightAbsorption": 0,
+	"rainPermeable": true,
+	"resistance": 3.5,
+	"sounds": {
+		"place": "game:block/chute",
+		"break": "game:block/chute",
+		"hit": "game:block/chute",
+		"walk": "game:walk/stone"
+	},
+	"maxStackSize": 64,
+	"materialDensity": 600,
+	"heldTpIdleAnimation": "holdbothhandslarge", "heldTpUseAnimation": "twohandplaceblock",
+	"tpHandTransform": {
+		"translation": { "x": -1.23, "y": -0.91, "z": -0.8 },
+		"rotation": { "x": -2, "y": 25, "z": -78 },
+		"scale": 0.4
+	},
+	"drops": [
+		{
+			"type": "block",
+			"code": "wirerelay-{type}-up",
+			"quantity": { "avg": 1, "var": 0 }
+		}
+	]
+}

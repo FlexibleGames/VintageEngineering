@@ -1,0 +1,109 @@
+{
+	"code": "catenery",
+	"class": "CateneryBlockWire",
+	"variantgroups": [
+		{ "code": "type", "states": [ "lvpower", "mvpower", "hvpower", "evpower", "allpower", "signalred", "signalgreen", "communication"] }
+	],
+	"creativeinventory": { "general": ["*"], "construction": ["*"] },
+	"shapeByType": {
+        "*-lvpower": { "base": "game:block/wires/barecopper"},
+        "*-mvpower": { "base": "game:block/wires/barecopper"},
+        "*-hvpower": { "base": "game:block/wires/insulated"},
+        "*-evpower": { "base": "game:block/wires/insulated"},
+        "*-allpower": { "base": "game:block/wires/insulated"},
+        "*-signalred": { "base": "game:block/wires/signalred"},
+        "*-signalgreen": { "base": "game:block/wires/signalgreen"},
+        "*-communication": { "base": "game:block/wires/insulated"}
+    },
+	"attributes": {
+		"handbook": {
+			"groupBy": ["catenary-*"]
+		}
+	},
+	"attributesByType": {
+		"*-lvpower":{
+			"thickness": 0.02,
+			"wirefunction": "Power",
+			"powertier": "LV",
+			"maxlength": 8,
+			"slumpPerMeter": 0.125,
+			"texture": "game:block/metal/plate/copper.png"
+		},
+		"*-mvpower":{
+			"thickness": 0.04,
+			"wirefunction": "Power",
+			"powertier": "MV",
+			"maxlength": 15,
+			"slumpPerMeter": 0.125,
+			"texture": "game:block/metal/plate/copper.png"
+		},
+		"*-hvpower":{
+			"thickness": 0.05,
+			"wirefunction": "Power",
+			"powertier": "HV",
+			"maxlength": 25,
+			"slumpPerMeter": 0.125,
+			"texture": "game:block/metal/ingot/lead.png"
+		},
+		"*-evpower":{
+			"thickness": 0.06,
+			"wirefunction": "Power",
+			"powertier": "EV",
+			"maxlength": 30,
+			"slumpPerMeter": 0.125,
+			"texture": "game:block/metal/ingot/lead.png"
+		},
+		"*-allpower":{
+			"thickness": 0.05,
+			"wirefunction": "Power",
+			"powertier": "Any",
+			"maxlength": 15,
+			"slumpPerMeter": 0.125,
+			"texture": "game:block/metal/ingot/lead.png"
+		},
+		"*-signalred":{
+			"thickness": 0.018,
+			"wirefunction": "Signal",
+			"maxlength": 10,
+			"slumpPerMeter": 0.125,
+			"texture": "game:block/wire/redwire.png"
+		},
+		"*-signalgreen":{
+			"thickness": 0.018,
+			"wirefunction": "Signal",
+			"maxlength": 10,
+			"slumpPerMeter": 0.125,
+			"texture": "game:block/wire/greenwire.png"
+		},
+		"*-communication":{
+			"thickness": 0.02,
+			"wirefunction": "Communication",
+			"maxlength": 15,
+			"slumpPerMeter": 0.125,
+			"texture": "game:block/metal/ingot/lead.png"
+		}
+	},	
+	"blockmaterial": "Metal",
+	"drawtype": "json",
+	"faceCullMode": "NeverCull",
+	"sideOpaque": { "all": false },
+	"emitSideAo": { "all": false },
+	"lightAbsorption": 0,
+	"rainPermeable": true,
+	"resistance": 3.5,
+	"sounds": {
+		"place": "game:block/chute",
+		"break": "game:block/chute",
+		"hit": "game:block/chute",
+		"walk": "game:walk/stone"
+	},
+	"maxStackSize": 64,
+	"materialDensity": 600,
+	"heldTpIdleAnimation": "holdbothhandslarge", "heldTpUseAnimation": "twohandplaceblock",
+	"tpHandTransform": {
+		"translation": { "x": -1.23, "y": -0.91, "z": -0.8 },
+		"rotation": { "x": -2, "y": 25, "z": -78 },
+		"scale": 0.4
+	},
+	"drops": []
+}

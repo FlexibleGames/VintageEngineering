@@ -1,0 +1,75 @@
+{
+	"code": "vetestgen",
+	"class": "VETestGen",
+	"entityClass": "VEBETestGen",
+	"behaviors": [
+		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "vetestgen-off-north" }}}	
+	],
+	"variantgroups": [				
+		{ "code": "state", "states": ["on", "off", "sleeping"] },
+		{ "code":"side", "loadFromProperties": "abstract/horizontalorientation" }
+	],	
+	"attributes": {
+		"handbook": {
+			"groupBy": ["vetestgen-*"],
+			"excludeByType": {
+				"*-off-north": false,
+				"*": true
+			}
+		},		
+		"entitytype": "Producer",
+		"priority": 5,
+		"maxpower": 1024,
+		"maxpps": 128,
+        "wireNodes": [ 
+            {
+                "index": 0,
+                "wirefunction": "Power",
+				"powertier": "LV",
+				"maxconnections": 1, 	
+				"networkid": 0,
+                "x1": 0.8125,
+                "y1": 0.75,
+                "z1": 0,
+                "x2": 1,
+                "y2": 0.875,
+                "z2": 0.1875,
+                "rotateYByType": {
+					"*-north": 0,
+					"*-east": 270,
+                    "*-south": 180,
+                    "*-west": 90
+                }
+            }
+        ]		
+	},
+	"creativeinventory": { "general": ["*-off-north"], "terrain": ["*"], "mechanics": ["*"] },
+	"shapeByType": {
+		"*-north": { "base": "vinteng:block/testgen", "rotateY":0 },
+		"*-east": { "base": "vinteng:block/testgen", "rotateY":270 },
+		"*-south": { "base": "vinteng:block/testgen", "rotateY":180 },
+		"*-west": { "base": "vinteng:block/testgen", "rotateY":90 }
+	},
+	"blockmaterial": "Metal",
+	"textures": {
+		"dogwoodrose": {
+			"base": "game:block/christmas/present/dogwoodrose"
+		},
+		"fire3": { 
+			"base": "game:block/clay/hardened/fire3"			
+		}
+	},
+	"sidesolid": {
+		"all": false, "down": true
+	},
+	"sideopaque": {
+		"all": false
+	},
+	"lightAbsorption": 1,
+	"maxStackSize": 8,
+	"replaceable": 600,
+	"resistance": 1.5,
+	"collisionSelectionBoxes": [		
+		{ "x1": 0.0625, "y1": 0, "z1": 0.0625, "x2": 0.9375, "y2": 0.9375, "z2": 0.9375 }		
+	]
+}

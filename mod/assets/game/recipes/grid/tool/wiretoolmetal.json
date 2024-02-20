@@ -1,0 +1,10 @@
+{
+	"ingredientPattern": "WNW",
+	"ingredients": {
+		"W": { "type": "item", "code": "game:wiretoolarm-*", "name": "material", "allowedVariants": ["iron", "meteoriciron", "steel"]  },
+		"N": { "type": "item", "code": "game:metalnailsandstrips-*" }
+	},
+	"width": 3,
+	"height": 1,
+	"output": { "type": "item", "code": "game:wiretool-{material}", "quantity": 1  }
+}
