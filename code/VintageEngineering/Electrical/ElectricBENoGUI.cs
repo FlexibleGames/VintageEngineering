@@ -229,6 +229,7 @@ namespace VintageEngineering.Electrical
             electricConnections[wirenodeindex].Remove(oldconnection);
             if (electricConnections[wirenodeindex] == null || electricConnections[wirenodeindex].Count == 0)
             {
+                electricConnections.Remove(wirenodeindex);
                 NetworkIDs.Remove(wirenodeindex);
             }
             this.MarkDirty();
@@ -273,7 +274,7 @@ namespace VintageEngineering.Electrical
             }
             foreach (KeyValuePair<int, List<WireNode>> pair in electricConnections)
             {
-                stringBuilder.Append($"Node index {pair.Key} has {((pair.Value == null) ? "null!" : pair.Value.Count)} cons on id {(NetworkIDs.ContainsKey(pair.Key) ? NetworkIDs[pair.Key] : "NULL!")}" + System.Environment.NewLine);
+                stringBuilder.Append($"Node {pair.Key} has {((pair.Value == null) ? "null!" : pair.Value.Count)} cons on id {(NetworkIDs.ContainsKey(pair.Key) ? NetworkIDs[pair.Key] : "NULL!")}" + System.Environment.NewLine);
             }
             return stringBuilder.ToString();
         }

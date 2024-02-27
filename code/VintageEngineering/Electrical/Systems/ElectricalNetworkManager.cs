@@ -356,23 +356,31 @@ namespace VintageEngineering.Electrical.Systems
             network.AddNode(node2, sapi.World.BlockAccessor);
             networks.Add(nextNetworkID, network);
             nextNetworkID++;
-
-
             return network.NetworkID;
-
         }
 
+        /// <summary>
+        /// Creates a new network from a list of nodes and returns the network ID.
+        /// </summary>
+        /// <param name="nodes">List of nodes to add to the new network.</param>
+        /// <returns>NetworkID</returns>
         public long CreateNetwork(List<WireNode> nodes)
         {            
-            ElectricNetwork newnet = new ElectricNetwork(nextNetworkID, sapi);
-            nextNetworkID++;
+            ElectricNetwork newnet = new ElectricNetwork(nextNetworkID, sapi);            
             foreach (WireNode node in nodes)
             {
                 newnet.AddNode(node, sapi.World.BlockAccessor);
             }
+            networks.Add(nextNetworkID, newnet);
+            nextNetworkID++;
             return newnet.NetworkID;
         }
 
+        /// <summary>
+        /// Creates a new network from an Array of nodes and returns the network ID.
+        /// </summary>
+        /// <param name="nodes">Array of WireNodes</param>
+        /// <returns>NetworkID</returns>
         public long CreateNetwork(WireNode[] nodes)
         {
             return CreateNetwork(nodes.ToList<WireNode>());

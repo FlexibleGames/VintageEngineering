@@ -13,5 +13,7 @@ namespace VintageEngineering.Electrical
     {
         public override bool CanReceivePower => false;
         public override bool CanExtractPower => false;
+
+        // TODO: Detect what this is attached to and whether to pass power to/from it.
     }
 }

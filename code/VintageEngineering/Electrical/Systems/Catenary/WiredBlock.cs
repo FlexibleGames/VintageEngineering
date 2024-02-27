@@ -108,9 +108,17 @@ namespace VintageEngineering.Electrical.Systems.Catenary
             // needs to announce breaking wire connections
             CatenaryMod cm = api.ModLoader.GetModSystem<CatenaryMod>(true);
 
-            if (cm != null)
+            if (cm != null && this.api.Side == EnumAppSide.Client)
             {
-                cm.RemoveAllConnectionsAtPos(pos);
+                WireConnectionData wcd = new WireConnectionData()
+                {
+                    _pos = pos,
+                    playerUID = byPlayer.PlayerUID,
+                    opcode = WireConnectionOpCode.RemoveAll
+                };
+                // tell the server to process connections at this position, will push data back to client.
+                cm.clientChannel.SendPacket(wcd);
+                //cm.RemoveAllConnectionsAtPos(pos);
             }
             base.OnBlockBroken(world, pos, byPlayer, dropQuantityMultiplier);
         }

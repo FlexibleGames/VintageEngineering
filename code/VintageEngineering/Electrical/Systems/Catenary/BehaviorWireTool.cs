@@ -32,10 +32,18 @@ namespace VintageEngineering.Electrical.Systems.Catenary
             List<WireConnection> wireConnections = anchor.GetWireConnectionsInBlock(blockSel.SelectionBoxIndex, byEntity, blockSel).ToList<WireConnection>();
             
             if (wireConnections == null || wireConnections.Count == 0) return; // no connections, just another sanity check
-            
+
             // They're RIGHT CLICKING on a wire selection box with wire cutters
             // time to remove all the connections at this spot
-            cm.RemoveAllConnectionsAtPos(blockSel.Position);            
+
+            WireConnectionData wcd = new WireConnectionData()
+                {
+                    opcode = WireConnectionOpCode.RemoveAll,
+                    playerUID = (byEntity as EntityPlayer).PlayerUID,
+                    _pos = blockSel.Position
+                };
+            cm.clientChannel.SendPacket(wcd);
+            //cm.RemoveAllConnectionsAtPos(blockSel.Position);            
 
             handHandling = EnumHandHandling.PreventDefault;
             handling = EnumHandling.PreventSubsequent;

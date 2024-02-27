@@ -154,11 +154,14 @@ namespace VintageEngineering.Electrical.Systems.Catenary
         /// <param name="packet">The packet of type WireConnectionData</param>
         private void onDataFromClient(IServerPlayer fromPlayer, WireConnectionData packet)
         {
-            if (packet != null && packet.connection != null)
+            if (packet != null)
             {
                 if (packet.opcode == WireConnectionOpCode.Add)
                 {
-                    AddConnection(packet.connection);
+                    if (packet.connection != null)
+                    {
+                        AddConnection(packet.connection);
+                    }
                 }
                 if (packet.opcode == WireConnectionOpCode.Remove || packet.opcode == WireConnectionOpCode.RemoveAll)
                 {
@@ -606,7 +609,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
         /// <param name="wirecondata">WireConnectionData packet</param>
         public void RemoveConnection(WireConnectionData wirecondata)
         {
-            if (wirecondata.opcode == WireConnectionOpCode.Remove)
+            if (wirecondata.opcode == WireConnectionOpCode.Remove && wirecondata.connection != null)
             {
                 RemoveConnection(wirecondata.connection, null, null, null);
             }
