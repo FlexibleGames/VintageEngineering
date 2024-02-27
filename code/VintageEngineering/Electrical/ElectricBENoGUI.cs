@@ -212,7 +212,10 @@ namespace VintageEngineering.Electrical
             {
                 electricConnections.Add(wirenodeindex, new List<WireNode> { newconnection });
             }
-            electricConnections[wirenodeindex].Add(newconnection);
+            else
+            {
+                electricConnections[wirenodeindex].Add(newconnection);
+            }
             this.MarkDirty();
         }
 
@@ -314,7 +317,7 @@ namespace VintageEngineering.Electrical
             else
             {
                 NetworkIDs = new Dictionary<int, long>();
-            }
+            }            
         }
         #endregion
     }

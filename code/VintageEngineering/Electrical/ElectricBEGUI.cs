@@ -300,7 +300,7 @@ namespace VintageEngineering.Electrical
             else
             {
                 NetworkIDs = new Dictionary<int, long>();
-            }
+            }            
         }
         #endregion
 

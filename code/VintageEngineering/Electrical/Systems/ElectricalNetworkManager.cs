@@ -198,11 +198,7 @@ namespace VintageEngineering.Electrical.Systems
 
             // add the connection references to the entities regardless of networkID status
             startentity.AddConnection(start.index, end); // add the connection to the start node
-            endentity.AddConnection(end.index, start);   // add the connection to the end node
-
-            // lets mark them dirty right away to ensure client is updated.
-//            sapi.World.BlockAccessor.GetBlockEntity(start.blockPos).MarkDirty();
-//            sapi.World.BlockAccessor.GetBlockEntity(end.blockPos).MarkDirty();
+            endentity.AddConnection(end.index, start);   // add the connection to the end node            
 
             if (startid == 0 && endid == 0)
             {
@@ -225,9 +221,9 @@ namespace VintageEngineering.Electrical.Systems
                 // both nodes have a network already, merge the networks
                 if (!MergeNetworks(startid, endid))
                 {
-                    sapi.Logger.Error($"VintEng: Error merging networks {startid} and {endid}");
-                    return;
+                    sapi.Logger.Error($"VintEng: Error merging networks {startid} and {endid}");                    
                 }
+                return;
             }
             // if we're here, only one of the id's = 0, so propagate the existing network to it
             if (startid != 0)
