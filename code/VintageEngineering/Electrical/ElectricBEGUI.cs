@@ -111,6 +111,7 @@ namespace VintageEngineering.Electrical
             {
                 electricpower = 0;
             }
+            this.MarkDirty();
         }
 
         public ulong ExtractPower(ulong powerWanted, float dt, bool simulate = false)

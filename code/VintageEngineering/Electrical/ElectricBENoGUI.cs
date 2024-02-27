@@ -107,10 +107,15 @@ namespace VintageEngineering.Electrical
 
         public virtual void CheatPower(bool drain = false)
         {
-            if (drain) { electricpower = 0; return; }
-
-            electricpower = MaxPower;
-            return;
+            if (!drain)
+            {
+                electricpower = MaxPower;
+            }
+            else
+            {
+                electricpower = 0;
+            }
+            this.MarkDirty();
         }
 
         public virtual ulong ExtractPower(ulong powerWanted, float dt, bool simulate = false)
