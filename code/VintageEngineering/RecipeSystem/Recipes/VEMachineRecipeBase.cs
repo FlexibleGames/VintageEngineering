@@ -10,7 +10,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
     /// <summary>
     /// This Base class holds common elements for all machine recipes.
     /// </summary>
-    public class VEMachineRecipeBase : IByteSerializable
+    public abstract class VEMachineRecipeBase : IByteSerializable
     {
         /// <summary>
         /// How much power does it take to craft one iteration of this recipe?
