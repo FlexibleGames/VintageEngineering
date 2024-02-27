@@ -159,7 +159,8 @@ namespace VintageEngineering.Electrical.Systems
                     if (storageNodes.Count > 1) storageNodes.Sort((x, y) => x.Priority.CompareTo(y.Priority));
                     break;
                 default: break;
-            }                        
+            }
+            blockAccessor.GetBlockEntity(node.blockPos).MarkDirty();
         }
 
         public void RemoveNode(WireNode node, IBlockAccessor blockAccessor)
@@ -191,6 +192,7 @@ namespace VintageEngineering.Electrical.Systems
                         break;
                     default: break;
                 }
+                blockAccessor.GetBlockEntity(node.blockPos).MarkDirty();
             }
         }
 

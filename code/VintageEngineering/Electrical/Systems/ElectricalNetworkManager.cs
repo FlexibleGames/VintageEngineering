@@ -196,6 +196,10 @@ namespace VintageEngineering.Electrical.Systems
             startentity.AddConnection(start.index, end); // add the connection to the start node
             endentity.AddConnection(end.index, start);   // add the connection to the end node
 
+            // lets mark them dirty right away to ensure client is updated.
+            sapi.World.BlockAccessor.GetBlockEntity(start.blockPos).MarkDirty();
+            sapi.World.BlockAccessor.GetBlockEntity(end.blockPos).MarkDirty();
+
             if (startid == 0 && endid == 0)
             {
                 // edge case, both start and end id's == 0, meaning neither have a network.
@@ -244,7 +248,7 @@ namespace VintageEngineering.Electrical.Systems
         /// <returns>True if successful</returns>        
         public bool MergeNetworks(long network1,  long network2)
         {
-            List<WireNode> nodesToProcess = networks[network2].allNodes;
+            List<WireNode> nodesToProcess = networks[network2].allNodes;            
             // the ACTUAL wire connections do not change, just the network IDs and ElectricNetwork lists.
             foreach (WireNode node in nodesToProcess)
             {
@@ -256,7 +260,7 @@ namespace VintageEngineering.Electrical.Systems
                 }
             }
             networks[network2].Clear(); // clear the lists in the network
-            networks.Remove(network1);  // remove the network from the manager
+            networks.Remove(network2);  // remove the network from the manager
             nodesToProcess.Clear();     // clear this list, just in case
             return true;
         }

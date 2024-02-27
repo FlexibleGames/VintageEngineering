@@ -9,12 +9,12 @@
 	"behaviors": [{"name": "OmniAttachable", "properties": { "facingCode": "position" }}],
 	"creativeinventory": { "general": ["*"], "construction": ["*"] },
 	"shapeByType": {
-        "*-north":  { "base": "game:block/relays/{type}", "rotateX": 90, "rotateZ": 180 },
-		"*-east":   { "base": "game:block/relays/{type}", "rotateX": 90, "rotateZ": 270 },
-		"*-south":  { "base": "game:block/relays/{type}", "rotateX": 90, "rotateZ": 0 },
-		"*-west":   { "base": "game:block/relays/{type}", "rotateX": 90, "rotateZ": 90 },
+        "*-north":  { "base": "game:block/relays/{type}", "rotateX": 270 },
+		"*-east":   { "base": "game:block/relays/{type}", "rotateZ": 270 },
+		"*-south":  { "base": "game:block/relays/{type}", "rotateX": 90 },
+		"*-west":   { "base": "game:block/relays/{type}", "rotateZ": 90 },
 		"*-up":     { "base": "game:block/relays/{type}"},
-		"*-down":   { "base": "game:block/relays/{type}", "rotateX": 180, "rotateZ": 90 }
+		"*-down":   { "base": "game:block/relays/{type}", "rotateX": 180 }
     },
 	"attributes": {
 		"handbook": {
@@ -42,9 +42,9 @@
 					"x1": 0.375,
 					"y1": 0.0625,
 					"z1": 0.375, 
-					"x2": 0.6875,
+					"x2": 0.625,
 					"y2": 0.25,
-					"z2": 0.6875,
+					"z2": 0.625,
 					"rotateXByType": {
 						"*-up": 0,
 						"*-down": 180,
@@ -55,7 +55,7 @@
 					},
 					"rotateZByType": {
 						"*-up": 0,
-						"*-down": 90,
+						"*-down": 0,
 						"*-north": 180,
 						"*-east": 270,
 						"*-south": 0,
@@ -294,12 +294,12 @@
 		}
 	},	
 	"collisionSelectionBoxByType": {
-		"*-up":    { "x1": 0.375, "y1": 0, "z1": 0.375, "x2": 0.6875, "y2": 0.1875, "z2": 0.6875 },
-		"*-down":  { "x1": 0.375, "y1": 0, "z1": 0.375, "x2": 0.6875, "y2": 0.1875, "z2": 0.6875, "rotateX": 180 },
-		"*-north": { "x1": 0.375, "y1": 0, "z1": 0.375, "x2": 0.6875, "y2": 0.1875, "z2": 0.6875, "rotateX": 90, "rotateZ": 180 },
-		"*-east":  { "x1": 0.375, "y1": 0, "z1": 0.375, "x2": 0.6875, "y2": 0.1875, "z2": 0.6875, "rotateX": 90, "rotateZ": 270 },
-		"*-south": { "x1": 0.375, "y1": 0, "z1": 0.375, "x2": 0.6875, "y2": 0.1875, "z2": 0.6875, "rotateX": 90, "rotateZ": 0 },
-		"*-west":  { "x1": 0.375, "y1": 0, "z1": 0.375, "x2": 0.6875, "y2": 0.1875, "z2": 0.6875, "rotateX": 90, "rotateZ": 90 }
+		"*-up":    { "x1": 0.375, "y1": 0, "z1": 0.375, "x2": 0.625, "y2": 0.4375, "z2": 0.625 },
+		"*-down":  { "x1": 0.375, "y1": 0, "z1": 0.375, "x2": 0.625, "y2": 0.4375, "z2": 0.625, "rotateX": 180 },
+		"*-north": { "x1": 0.375, "y1": 0, "z1": 0.375, "x2": 0.625, "y2": 0.4375, "z2": 0.625, "rotateX": 90, "rotateZ": 180 },
+		"*-east":  { "x1": 0.375, "y1": 0, "z1": 0.375, "x2": 0.625, "y2": 0.4375, "z2": 0.625, "rotateX": 90, "rotateZ": 270 },
+		"*-south": { "x1": 0.375, "y1": 0, "z1": 0.375, "x2": 0.625, "y2": 0.4375, "z2": 0.625, "rotateX": 90, "rotateZ": 0 },
+		"*-west":  { "x1": 0.375, "y1": 0, "z1": 0.375, "x2": 0.625, "y2": 0.4375, "z2": 0.625, "rotateX": 90, "rotateZ": 90 }
 	},
 	"blockmaterial": "Metal",
 	"drawtype": "json",

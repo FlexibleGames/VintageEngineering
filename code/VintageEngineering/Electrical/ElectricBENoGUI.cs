@@ -203,7 +203,7 @@ namespace VintageEngineering.Electrical
             {
                 electricConnections.Add(wirenodeindex, new List<WireNode> { newconnection });
             }
-            electricConnections[wirenodeindex].Append(newconnection);
+            electricConnections[wirenodeindex].Add(newconnection);
         }
 
         public void RemoveConnection(int wirenodeindex, WireNode oldconnection)
