@@ -449,6 +449,7 @@ namespace VintageEngineering.Electrical.Systems
             }
             else
             {
+                // delete empty networks to avoid a 'memory leak' in save-game files.
                 api.ModLoader.GetModSystem<ElectricalNetworkMod>().manager.DeleteNetwork(NetworkID);
             }
             return true;

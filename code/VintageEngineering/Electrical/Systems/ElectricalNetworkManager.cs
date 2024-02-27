@@ -124,6 +124,10 @@ namespace VintageEngineering.Electrical.Systems
             startentity.RemoveConnection(start.index, end); // remove the connection from start
             endentity.RemoveConnection(end.index, start);   // remove the connection from end
 
+            // mark 'em dirty!
+//            sapi.World.BlockAccessor.GetBlockEntity(start.blockPos).MarkDirty();
+//            sapi.World.BlockAccessor.GetBlockEntity(end.blockPos).MarkDirty();
+
             // if either node has only 1 connection, its an end point and no further processing is needed
             if (numconstart == 1)
             {
@@ -197,8 +201,8 @@ namespace VintageEngineering.Electrical.Systems
             endentity.AddConnection(end.index, start);   // add the connection to the end node
 
             // lets mark them dirty right away to ensure client is updated.
-            sapi.World.BlockAccessor.GetBlockEntity(start.blockPos).MarkDirty();
-            sapi.World.BlockAccessor.GetBlockEntity(end.blockPos).MarkDirty();
+//            sapi.World.BlockAccessor.GetBlockEntity(start.blockPos).MarkDirty();
+//            sapi.World.BlockAccessor.GetBlockEntity(end.blockPos).MarkDirty();
 
             if (startid == 0 && endid == 0)
             {

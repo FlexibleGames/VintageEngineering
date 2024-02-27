@@ -133,6 +133,7 @@ namespace VintageEngineering.Electrical
                 // PPS meets or exceeds power wanted, this machine can cover all power needs.
                 if (!simulate) electricpower -= powerWanted;
                 isSleeping = false;
+                this.MarkDirty();
                 return 0; // all power wanted was supplied
             }
             else
@@ -140,6 +141,7 @@ namespace VintageEngineering.Electrical
                 // powerWanted exceeds how much we can supply
                 if (!simulate) electricpower -= pps; // simulation mode doesn't change machines power total.                
                 isSleeping = false;
+                this.MarkDirty();
                 return powerWanted - pps; // return powerWanted reduced by our PPS.
             }
         }
@@ -181,6 +183,7 @@ namespace VintageEngineering.Electrical
                 // meaning we can take it all.
                 if (!simulate) electricpower += powerOffered;
                 isSleeping = false;
+                this.MarkDirty();
                 return 0;
             }
             else
@@ -188,6 +191,7 @@ namespace VintageEngineering.Electrical
                 // far more common, powerOffered exceeds PPS
                 if (!simulate) electricpower += pps;
                 isSleeping = false;
+                this.MarkDirty();
                 return powerOffered - pps;
             }
         }
@@ -204,6 +208,7 @@ namespace VintageEngineering.Electrical
                 electricConnections.Add(wirenodeindex, new List<WireNode> { newconnection });
             }
             electricConnections[wirenodeindex].Add(newconnection);
+            this.MarkDirty();
         }
 
         public void RemoveConnection(int wirenodeindex, WireNode oldconnection)
@@ -218,6 +223,7 @@ namespace VintageEngineering.Electrical
             {
                 NetworkIDs.Remove(wirenodeindex);
             }
+            this.MarkDirty();
         }
 
         public long GetNetworkID(int selectionIndex = 0)
@@ -243,6 +249,7 @@ namespace VintageEngineering.Electrical
                 return true;
             }
             NetworkIDs.Add(selectionIndex, networkID);
+            this.MarkDirty();
             return true;
         }
         #endregion
@@ -267,8 +274,7 @@ namespace VintageEngineering.Electrical
         #region AttributeTrees
         public override void ToTreeAttributes(ITreeAttribute tree)
         {
-            base.ToTreeAttributes(tree);
-            ITreeAttribute invtree = new TreeAttribute();
+            base.ToTreeAttributes(tree);            
 
             tree.SetBool("issleeping", isSleeping);
             tree.SetBool("isenabled", isEnabled);
