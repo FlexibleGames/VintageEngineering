@@ -8,8 +8,6 @@
 	"textureSizes": {
 	},
 	"textures": {
-		"dogwoodrose": "game:block/christmas/present/dogwoodrose",
-		"fire3": "game:block/clay/hardened/fire3"
 	},
 	"elements": [
 		{
@@ -39,27 +37,27 @@
 						"up": { "texture": "#fire3", "uv": [ 0.0, 0.0, 8.0, 8.0 ] },
 						"down": { "texture": "#fire3", "uv": [ 0.0, 0.0, 8.0, 8.0 ] }
 					}
-				},
+				}
+			]
+		},
+		{
+			"name": "WireConnection1Cube",
+			"from": [ 14.0, 12.0, 1.0 ],
+			"to": [ 15.0, 13.0, 2.0 ],
+			"rotationOrigin": [ 14.0, 12.0, 1.0 ],
+			"faces": {
+				"north": { "texture": "#fire3", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
+				"east": { "texture": "#fire3", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
+				"south": { "texture": "#fire3", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
+				"west": { "texture": "#fire3", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
+				"up": { "texture": "#fire3", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
+				"down": { "texture": "#fire3", "uv": [ 0.0, 0.0, 1.0, 1.0 ] }
+			},
+			"attachmentpoints": [
 				{
-					"name": "WireConnection1Cube",
-					"from": [ 13.0, 12.0, 0.0 ],
-					"to": [ 14.0, 13.0, 1.0 ],
-					"rotationOrigin": [ 13.0, 12.0, 0.0 ],
-					"faces": {
-						"north": { "texture": "#fire3", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
-						"east": { "texture": "#fire3", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
-						"south": { "texture": "#fire3", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
-						"west": { "texture": "#fire3", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
-						"up": { "texture": "#fire3", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
-						"down": { "texture": "#fire3", "uv": [ 0.0, 0.0, 1.0, 1.0 ] }
-					},
-					"attachmentpoints": [
-						{
-							"code": "WireConnection1",
-							"posX": "0.5","posY": "1.0","posZ": "0.5",
-							"rotationX": "0.0","rotationY": "0.0","rotationZ": "0.0"
-						}
-					]
+					"code": "WireConnection1",
+					"posX": "0.5","posY": "1.0","posZ": "0.5",
+					"rotationX": "0.0","rotationY": "0.0","rotationZ": "0.0"
 				}
 			]
 		}
