@@ -1,0 +1,17 @@
+[
+	{
+		"code": "basic-metal-plate",
+		"enabled": true,
+		"attributes": {
+			"requires": "vepressmold-plate"
+		},
+		"powerpercraft": 512,
+		"ingredients": [
+			{ "type": "item", "code": "game:ingot-*", "quantity": 1, "name": "metal", "allowedVariants": ["copper", "brass", "tinbronze", "bismuthbronze", "blackbronze", "silver", "gold", "iron", "lead", "tin", "zinc", "bismuth", "chromium", "electrum", "platinum", "titanium", "molybdochalkos", "meteoriciron", "steel"] }
+		],
+		"outputs": [ 
+			{ "type": "item", "code": "game:metalplate-{metal}", "stacksize": 1 },
+			{ "type": "item", "code": "game:metalbit-{metal}", "stacksize": 5, "variable": 2 }
+		]
+	}
+]

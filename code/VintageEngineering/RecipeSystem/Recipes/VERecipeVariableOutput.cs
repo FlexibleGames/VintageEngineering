@@ -1,0 +1,90 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Vintagestory.API.Common;
+using Vintagestory.API.MathTools;
+
+namespace VintageEngineering.RecipeSystem.Recipes
+{
+    public class VERecipeVariableOutput : JsonItemStack
+    {
+        public override void FromBytes(BinaryReader reader, IClassRegistryAPI instancer)
+        {
+            base.FromBytes(reader, instancer);
+            if (reader.ReadBoolean())
+            {
+                Variable = reader.ReadInt32();
+            }
+            
+        }
+
+        public override void ToBytes(BinaryWriter writer)
+        {
+            base.ToBytes(writer);
+            writer.Write(Variable != null);
+            if (Variable != null)
+            {
+                writer.Write(Variable.Value);
+            }            
+        }
+
+        /// <summary>
+        /// Make full copy of this ItemStack
+        /// </summary>
+        /// <returns></returns>
+        public new VERecipeVariableOutput Clone()
+        {
+            VERecipeVariableOutput output = new VERecipeVariableOutput();
+            output.Code = this.Code.Clone();
+            ItemStack resolved = this.ResolvedItemstack;
+            output.ResolvedItemstack = ((resolved != null) ? resolved.Clone() : null);
+            output.StackSize = this.StackSize;
+            output.Type = this.Type;
+            if (this.Attributes != null)
+            {
+                output.Attributes = this.Attributes.Clone();
+            }
+            output.Variable = this.Variable;
+            return output;
+        }
+
+        /// <summary>
+        /// Returns a random stacksize value between (inclusive) StackSize-Variable and Stacksize+Variable<br/>
+        /// CAN return 0 if Output Stacksize = Variable<br/>
+        /// Returns -1 if output stack has not been resolved. Call Resolve(..) on Output recipe entries!
+        /// </summary>
+        /// <param name="resolver"></param>
+        /// <param name="sourceForErrorLogging"></param>
+        /// <param name="printWarningOnError"></param>
+        /// <returns></returns>
+        public int VariableResolve(IWorldAccessor resolver, string sourceForErrorLogging, bool printWarningOnError = true)
+        {
+            int newstack = -1;
+            if (this.ResolvedItemstack != null && Variable != null && Variable.Value != 0)
+            {
+                Random rand = new Random(resolver.Seed);
+                newstack = rand.Next(Math.Max(0, this.ResolvedItemstack.StackSize - Variable.Value), this.ResolvedItemstack.StackSize + Variable.Value + 1);
+                if (newstack < 0) newstack = 0;
+            }
+            else
+            {
+                if (this.ResolvedItemstack == null && printWarningOnError)
+                {
+                    resolver.Logger.Error($"VintEng: Cannot resolve variable {sourceForErrorLogging} Recipe Ouput, must resolve Output ItemStack first!");
+                }
+                newstack = -1;
+            }
+
+            return newstack;
+        }
+
+        /// <summary>
+        /// Determines what +/- limit the base stacksize can be altered, can be null!<br/>
+        /// <u>Careful:</u> If Stacksize = 2 and Variable = 2 then there is a chance that <u>nothing</u> could be crafted.
+        /// </summary>
+        public int? Variable;
+    }
+}
