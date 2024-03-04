@@ -19,22 +19,22 @@ namespace VintageEngineering.Electrical
     public abstract class ElectricBEGUI : BlockEntityOpenableContainer, IElectricalBlockEntity, IWireNetwork
     {
         /// <summary>
-        /// Total power this Block Entity has
+        /// Total power this Block Entity has. Saved in base ElectricBE.
         /// </summary>
         protected ulong electricpower = 0L;
 
         /// <summary>
-        /// Is this machine 'sleeping'?
+        /// Is this machine 'sleeping'? Saved in base ElectricBE.
         /// </summary>
         protected bool isSleeping = false;
 
         /// <summary>
-        /// What Priority is this machine in the Electric Network its attached too?
+        /// What Priority is this machine in the Electric Network its attached too? Saved in base ElectricBE.
         /// </summary>
         protected int priority = 5;
 
         /// <summary>
-        /// Is this machine on?
+        /// Is this machine on? Saved in base ElectricBE.
         /// </summary>
         protected bool isEnabled = true;
 
@@ -320,7 +320,7 @@ namespace VintageEngineering.Electrical
 
         public long GetNetworkID(int selectionIndex = 0)
         {
-            if (NetworkIDs == null)
+            if (NetworkIDs == null) 
             {
                 NetworkIDs = new Dictionary<int, long>();
                 return 0;

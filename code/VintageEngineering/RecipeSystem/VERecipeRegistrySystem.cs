@@ -15,7 +15,7 @@ namespace VintageEngineering.RecipeSystem
     {
         public static bool canRegister = false;
 
-        public List<MetalPressRecipe> MetalPressRecipes = new List<MetalPressRecipe>();
+        public List<MetalPressRecipe> MetalPressRecipes = new List<MetalPressRecipe>();        
 
         public override double ExecuteOrder()
         {

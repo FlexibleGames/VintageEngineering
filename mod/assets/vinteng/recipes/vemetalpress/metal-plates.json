@@ -3,7 +3,7 @@
 		"code": "basic-metal-plate",
 		"enabled": true,
 		"attributes": {
-			"requires": "vepressmold-plate"
+			"requires": "vinteng:vepressmold-plate-*"
 		},
 		"powerpercraft": 512,
 		"ingredients": [

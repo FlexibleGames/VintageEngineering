@@ -32,8 +32,7 @@ namespace VintageEngineering.GUI
 				cr.SetSource(pattern);
 				pattern.Dispose();
 			}
-//			cr.Paint();
-
+//			cr.Paint();			
 			cr.NewPath();
 			cr.MoveTo(2, 2);
 			cr.LineTo(2, 25);
@@ -81,75 +80,82 @@ namespace VintageEngineering.GUI
 //			cr.Restore();
 		}
 
-		public static void HorizontalBar(Context cr, double[] rgba, double lineWidth = 1.0, bool strokeOrFill = true, bool defaultPattern = true, float width = 40, float height = 10)
-		{
-			Pattern pattern = null;
-			Matrix matrix = cr.Matrix;
+        public static void NewHorizontalBar(Context cr, int x, int y, double[] rgba, double lineWidth = 3.0, bool strokeOrFill = true, bool defaultPattern = true, float width = 100, float height = 25)
+        {
+            Pattern pattern = null;
+            Matrix matrix = cr.Matrix;
 
-			cr.Save();
-			float w = 40;
-			float h = 10;
-			float scale = Math.Min(width / w, height / h);
-			//matrix.Translate(x + Math.Max(0, (width - w * scale) / 2), y + Math.Max(0, (height - h * scale) / 2));
-			matrix.Scale(scale, scale);
-			cr.Matrix = matrix;
+            //cr.Save();
+            float w = 100;
+            float h = 25;
+            float wscale = width / w;
+			float hscale = height / h;
+//            matrix.Translate(x + Math.Max(0, (width - w * scale) / 2), y + Math.Max(0, (height - h * scale) / 2));
+            matrix.Scale(wscale, hscale);
+            cr.Matrix = matrix;
 
-			if (defaultPattern)
-			{
-				pattern = new SolidPattern(rgba[0], rgba[1], rgba[2], rgba[3]);
-				cr.SetSource(pattern);
-				pattern.Dispose();
-			}
+            if (defaultPattern)
+            {
+                pattern = new SolidPattern(rgba[0], rgba[1], rgba[2], rgba[3]);
+                cr.SetSource(pattern);
+                pattern.Dispose();
+            }
 
-			cr.Operator = Operator.Over;
-			cr.LineWidth = lineWidth;
-			cr.MiterLimit = 4;
-			cr.LineCap = 0;
-			cr.LineJoin = 0;
+            cr.Operator = Operator.Over;
+            cr.LineWidth = lineWidth;
+            cr.MiterLimit = 4;
+            cr.LineCap = 0;
+            cr.LineJoin = 0;
 
-			cr.NewPath();
-			cr.MoveTo(10, 1);
-			cr.LineTo(1, 1);
-			cr.LineTo(1, 9);
-			cr.LineTo(10, 9);
-			cr.LineTo(10, 8);
-			cr.LineTo(11, 8);
-			cr.LineTo(11, 9);
-			cr.LineTo(20, 9);
-			cr.LineTo(20, 6);
-			cr.LineTo(21, 6);
-			cr.LineTo(21, 9);
-			cr.LineTo(30, 9);
-			cr.LineTo(30, 8);
-			cr.LineTo(31, 8);
-			cr.LineTo(31, 9);
-			cr.LineTo(39, 9);
-			cr.LineTo(39, 1);
-			cr.LineTo(31, 0);
-			cr.LineTo(31, 2);
-			cr.LineTo(30, 2);
-			cr.LineTo(30, 1);
-			cr.LineTo(20, 1);
-			cr.LineTo(20, 4);
-			cr.LineTo(20, 4);
-			cr.LineTo(20, 1);
-			cr.LineTo(11, 1);
-			cr.LineTo(11, 2);
-			cr.LineTo(10, 2);
-			cr.ClosePath();
-			cr.MoveTo(10, 1);
-			cr.Tolerance = 0.1;
-			cr.Antialias = Antialias.None;
-			if (strokeOrFill)
-			{
-				cr.Stroke();
-			}
-			else
-			{
-				cr.Fill();
-			}									
-		}
+            cr.NewPath();            
+//            cr.LineTo(100, 0);
+//            cr.LineTo(100, 25);
+//            cr.LineTo(0, 25);
+//            cr.LineTo(0, 0);
+//            cr.ClosePath();
+            cr.MoveTo(2, 2);
+            cr.LineTo(2, 23);
+            cr.LineTo(23, 23);
+            cr.LineTo(23, 20);
+            cr.LineTo(25, 20);
+            cr.LineTo(25, 23);
+            cr.LineTo(49, 23);
+            cr.LineTo(49, 17);
+            cr.LineTo(51, 17);
+            cr.LineTo(51, 23);
+            cr.LineTo(74, 23);
+            cr.LineTo(74, 19);
+            cr.LineTo(76, 19);
+            cr.LineTo(76, 23);
+            cr.LineTo(98, 23);
+            cr.LineTo(98, 2);
+            cr.LineTo(76, 2);
+            cr.LineTo(76, 6);
+            cr.LineTo(74, 6);
+            cr.LineTo(74, 2);
+            cr.LineTo(51, 2);
+            cr.LineTo(51, 8);
+            cr.LineTo(49, 8);
+            cr.LineTo(49, 2);
+            cr.LineTo(25, 2);
+            cr.LineTo(25, 5);
+            cr.LineTo(23, 5);
+            cr.LineTo(23, 2);
+            cr.LineTo(2, 2);
+            cr.ClosePath();
+            cr.MoveTo(0, 0);
 
+            cr.Tolerance = 0.1;
+            cr.Antialias = Antialias.None;
+            if (strokeOrFill)
+            {
+                cr.Stroke();
+            }
+            else
+            {
+                cr.Fill();
+            }
+        }
 
-	}
+    }
 }

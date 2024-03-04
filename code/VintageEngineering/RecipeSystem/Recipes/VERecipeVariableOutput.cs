@@ -54,7 +54,8 @@ namespace VintageEngineering.RecipeSystem.Recipes
         /// <summary>
         /// Returns a random stacksize value between (inclusive) StackSize-Variable and Stacksize+Variable<br/>
         /// CAN return 0 if Output Stacksize = Variable<br/>
-        /// Returns -1 if output stack has not been resolved. Call Resolve(..) on Output recipe entries!
+        /// Returns -1 if output stack has not been resolved. Call Resolve(..) on Output recipe entries!<br/>
+        /// If Output is NOT variable, this returns the normal set stacksize.
         /// </summary>
         /// <param name="resolver"></param>
         /// <param name="sourceForErrorLogging"></param>
@@ -64,10 +65,13 @@ namespace VintageEngineering.RecipeSystem.Recipes
         {
             int newstack = -1;
             if (this.ResolvedItemstack != null && Variable != null && Variable.Value != 0)
-            {
-                Random rand = new Random(resolver.Seed);
-                newstack = rand.Next(Math.Max(0, this.ResolvedItemstack.StackSize - Variable.Value), this.ResolvedItemstack.StackSize + Variable.Value + 1);
+            {                
+                newstack = resolver.Rand.Next(Math.Max(0, this.ResolvedItemstack.StackSize - Variable.Value), this.ResolvedItemstack.StackSize + Variable.Value + 1);
                 if (newstack < 0) newstack = 0;
+            }
+            else if (this.ResolvedItemstack != null && Variable == null)
+            {
+                return this.ResolvedItemstack.StackSize;
             }
             else
             {

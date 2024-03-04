@@ -1,0 +1,76 @@
+{
+	"code": "vepressmold",	
+	"storageFlags": 4097,
+	"attributes": {
+		"rackable": true,
+		"toolrackTransform": {
+			"translation": { "x": 0, "y": 0.75, "z": 0 },
+			"rotation": { "x": 0, "y": 1, "z": -1 },
+			"scale": 1.5
+		},
+		"groundStorageTransform": {
+			"translation": { "x": 0, "y": -0.05, "z": 0.02 },
+			"rotation": { "x": 26, "y": 90, "z": -90 },
+			"scale": 0.88
+		},
+		"handbook": {
+			"groupBy": ["vepressmold-*"]
+		}
+	},
+	"behaviors": [{ 
+		"name": "GroundStorable",
+		"properties": {
+			"layout": "SingleCenter",
+			"wallOffY": 1,
+			"sprintKey": true,
+			"selectionBox": { "x1": 0.125, "y1": 0, "z1": 0.125, "x2": 0.875, "y2": 0.1, "z2": 0.875 },
+			"collisionBox": { "x1": 0, "y1": 0, "z1": 0, "x2": 0, "y2": 0, "z2": 0 }
+		}
+	}],
+	"variantgroups": [
+        { "code": "type", "states": ["plate", "gear"] },
+		{ "code": "metal", "states": ["tinbronze", "iron", "meteoriciron", "steel", "titanium"] }
+	],		
+    "maxstacksize": 1,
+	"heldTpHitAnimation": "smithing",
+	"shapeByType": { 
+		"*-plate-*": { "base": "vinteng:item/metalpress-platemold" },
+        "*-gear-*": { "base": "vinteng:item/metalpress-gearmold" }
+	},
+	"texturesByType": {
+		"*": {
+			"steel": { "base": "game:block/metal/plate/{metal}" }
+		}
+	},
+	"durabilitybytype": {		
+		"*-tinbronze": 400,	
+		"*-iron": 1000,
+		"*-meteoriciron": 5500,
+		"*-steel": 4500,
+        "*-titanium": 10000
+	},
+	"creativeinventory": { "general": ["*"], "items": ["*"], "tools": ["*"] },
+	"fpHandTransform": {
+		"translation": { "x": 0, "y": 0.4, "z": 0 },
+		"rotation": { "x": -33, "y": 6, "z": 90 },
+		"origin": { "x": 0.5, "y": 0, "z": 0.5 },
+		"scale": 2.75
+	},
+	"guiTransform": {
+		"translation": { "x": 3, "y": 0, "z": 0 },
+		"rotation": { "x": -41, "y": 47, "z": -23 },
+		"origin": { "x": 0.5299, "y": 0, "z": 0.48 },
+		"scale": 1.46
+	},
+	"groundTransform": {
+		"translation": { "x": 0, "y": 0, "z": 0 },
+		"rotation": { "x": 0, "y": 0, "z": 0 },
+		"origin": { "x": 0.5, "y": 0, "z": 0.5 },
+		"scale": 4.5
+	},
+	"tpHandTransform": {
+		"translation": { "x": -0.85, "y": -0.68, "z": -0.22 },
+		"rotation": { "x": 90, "y": 1, "z": 0 },
+		"scale": 0.7
+	}
+}

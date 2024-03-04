@@ -7,6 +7,8 @@ using Vintagestory.API.Client;
 using Vintagestory.GameContent;
 using Vintagestory.API.Datastructures;
 using VintageEngineering.Electrical;
+using VintageEngineering.RecipeSystem.Recipes;
+using VintageEngineering.RecipeSystem;
 
 namespace VintageEngineering
 {
@@ -23,20 +25,35 @@ namespace VintageEngineering
 
         // Recipe stuff, generic and hard coded for now
         #region RecipeStuff
-        private string recipeInput = "ingot";
-        private string recipeOutput = "metalplate";
-        private AssetLocation craftingCode;
-        // how much power is required to 'make' one item.
-        // 32 PPS -> 512 cost = 16 seconds per craft
-        private ulong  recipePowerCost = 512;
-        // how much progress are we to finishing one craft? 0 -> 1
-        private float recipeProgress = 0;
+        /// <summary>
+        /// Current Recipe (if any) that the machine can or is crafting.
+        /// </summary>
+        public MetalPressRecipe currentPressRecipe;
+
+        /// <summary>
+        /// Current power applied to the current recipe.
+        /// </summary>
+        public ulong recipePowerApplied;
+
+        /// <summary>
+        /// 0 -> 1 float of recipe progress
+        /// </summary>
+        public float RecipeProgress
+        {
+            get 
+            { 
+                if (currentPressRecipe == null) { return 0f; }
+                return (float)recipePowerApplied / (float)currentPressRecipe.PowerPerCraft;
+            }
+        }
         private bool isCrafting = false;
         
         #endregion
 
-        public bool IsCrafting { get { return isCrafting; } }
-        public float RecipeProgress { get { return recipeProgress; } }
+        /// <summary>
+        /// Is this machine currently working on something?
+        /// </summary>
+        public bool IsCrafting { get { return isCrafting; } }        
 
         public override bool CanExtractPower => false;
         public override bool CanReceivePower => true;
@@ -51,6 +68,14 @@ namespace VintageEngineering
         private ItemSlot OutputSlot
         {
             get { return this.inventory[1]; }
+        }
+
+        private ItemSlot ExtraOutputSlot
+        { get { return this.inventory[2]; } }
+
+        private ItemSlot MoldSlot
+        {
+            get { return this.inventory[3]; }
         }
 
         private ItemStack InputStack
@@ -78,7 +103,7 @@ namespace VintageEngineering
         {
             get
             {
-                return "Test Machine";
+                return "Metal Press";
             }
         }
 
@@ -109,63 +134,125 @@ namespace VintageEngineering
 
         public void OnSlotModified(int slotId)
         {
-            base.Block = this.Api.World.BlockAccessor.GetBlock(this.Pos);
-            this.MarkDirty(this.Api.Side == EnumAppSide.Server, null);
-            if (this.Api is ICoreClientAPI && this.clientDialog != null)
+//            base.Block = this.Api.World.BlockAccessor.GetBlock(this.Pos);
+//            this.MarkDirty(this.Api.Side == EnumAppSide.Server, null);
+            if (slotId == 0 || slotId == 3)
             {
-                clientDialog.Update(recipeProgress, CurrentPower);
-            }
-            if (slotId == 0)
-            {
-                // new thing in the input slot!
+                // new thing in the input or mold slot!
                 if (InputSlot.Empty)
                 {
-                    isCrafting = false; 
-                    recipeProgress = 0;
+                    isCrafting = false;
+                    isSleeping = true;
+                    currentPressRecipe = null;
+                    recipePowerApplied = 0;
                 }
-                MarkDirty(false, null);
+                else
+                {
+                    FindMatchingRecipe();
+                }
+                MarkDirty(true, null);
                 if (clientDialog != null && clientDialog.IsOpened())
                 {
-                    clientDialog.SingleComposer.ReCompose();
+                    clientDialog.Update(RecipeProgress, CurrentPower, currentPressRecipe);
+                }
+            }            
+        }
+
+        /// <summary>
+        /// Find a matching Metal Press Recipe given the Blocks inventory.
+        /// </summary>        
+        /// <returns>True if recipe found that matches ingredient and mold.</returns>
+        public bool FindMatchingRecipe()
+        {
+            if (InputSlot.Empty)
+            {
+                currentPressRecipe = null;
+                isCrafting = false;
+                isSleeping = true;                
+                return false;
+            }
+
+            this.currentPressRecipe = null;
+            List<MetalPressRecipe> mprecipes = Api.ModLoader.GetModSystem<VERecipeRegistrySystem>(true).MetalPressRecipes;            
+            
+            foreach (MetalPressRecipe mprecipe in mprecipes)
+            {
+                if (mprecipe.Enabled && mprecipe.Matches(InputSlot, MoldSlot))
+                {
+                    currentPressRecipe = mprecipe;
+                    isCrafting = true;
+                    isSleeping = false;                    
+                    return true;
                 }
             }
-            isSleeping = false;
+            currentPressRecipe = null;
+            isCrafting = false;
+            isSleeping = true;
+            return false;
         }
 
         public string GetOutputText()
         {
-            float recipeProgressPercent = recipeProgress * 100;
+            float recipeProgressPercent = RecipeProgress * 100;
             string onOff = isEnabled ? "On" : "Off";
             string crafting = isCrafting ? $"Craft: {recipeProgressPercent:N1}%" : "Not Crafting";
             if (isSleeping) onOff = "Sleeping";
             return $"{crafting} | {onOff} | Power: {CurrentPower:N0}/{MaxPower:N0}";
         }
 
-        public Item HasPlate(ItemStack itemStack)
+        /// <summary>
+        /// Check whether the output inventory is full. Index of 0 is main output, index of 1 is the optional additional output.
+        /// </summary>
+        /// <param name="outputslotid">0 or 1, any other values might cause a blackhole and ruin the universe.</param>
+        /// <returns>True if there is room in that inventory slot.</returns>
+        public bool HasRoomInOutput(int outputslotid = 0)
         {
-            if (itemStack.Item.FirstCodePart() == recipeInput) // is the item an ingot?
+            if (currentPressRecipe != null && !InputSlot.Empty) // active recipe
             {
-                string metalType = itemStack.Item.FirstCodePart(1);
-                if (metalType != null)
+                if (InputSlot.Itemstack.Satisfies(currentPressRecipe.Ingredients[0].ResolvedItemstack) )
                 {
-                    Item metalPlate = Api.World.GetItem(new AssetLocation($"{recipeOutput}-{metalType}"));
-                    if (metalPlate != null) return metalPlate;
+                    // input stack is valid for active recipe, the recipe might be valid, but the outputs are from another recipe
+                    // machine needs to be emptied for new recipe to start
+                    if (!Inventory[outputslotid+1].Empty)
+                    {                        
+                        // if the output slot has something in it, is it the same thing we make?
+                        if (Inventory[outputslotid+1].Itemstack.Collectible.Code == currentPressRecipe.Outputs[outputslotid].ResolvedItemstack.Collectible.Code)
+                        {
+                            // the same thing is in the output as we make, so can make more...?
+                            if (Inventory[outputslotid + 1].Itemstack.StackSize < Inventory[outputslotid+1].Itemstack.Collectible.MaxStackSize)
+                            {
+                                return true;
+                            }                        
+                        }
+
+                    }
+                    else
+                    {
+                        return true;
+                    }
                 }
             }
-            return null;
+            return false;
         }
         public void OnSimTick(float deltatime)
         {
             if (this.Api is ICoreServerAPI) // only simulates on the server!
             {
-                updateBouncer += deltatime;
+                // if the machine is ON but not crafting, it's sleeping, tick slower
+                if (isSleeping)
+                {
+                    updateBouncer += deltatime;
+                    if (updateBouncer < 2f) return;                    
+                }
+                updateBouncer = 0;
                 
                 // if we're sleeping, bounce out of here. Extremely fast updates.                
                 if (isEnabled && !isSleeping) // block is enabled (on/off) 
                 {
-                    if (isCrafting && recipeProgress < 1f) // machine is activly crafting and recipe isn't done
+                    if (isCrafting && RecipeProgress < 1f) // machine is activly crafting and recipe isn't done
                     {
                         if (CurrentPower == 0) return; // we have no power, there's no point in trying. bounce
+                        if (!HasRoomInOutput(0)) return; // output is full... bounce
 
                         // scale power to apply to recipe by how much time has passed
                         float powerToApply = MaxPPS * deltatime;
@@ -173,85 +260,100 @@ namespace VintageEngineering
                         if (CurrentPower < powerToApply) return; // we don't have enough power to continue... bounce.
 
                         // calculate percent of progress for this time-step.
-                        float percentOfTotal = powerToApply / recipePowerCost;
+                        float percentOfTotal = powerToApply / currentPressRecipe.PowerPerCraft;
                         // apply progress to recipe progress.
-                        recipeProgress += percentOfTotal;
+                        recipePowerApplied += (ulong)Math.Round(powerToApply);
                         electricpower -= (ulong)Math.Round(powerToApply);
                     }
                     else if (!IsCrafting) // machine isn't crafting
                     {
-                        // enabled but not crafting, can we start crafting?
-                        if (!InputSlot.Empty)
+                        // enabled but not crafting means we have no valid recipe
+                        isSleeping = true; // go to sleep
+                    }
+                    if (RecipeProgress >= 1f)
+                    {
+                        // progress finished! 
+                        ItemStack outputstack = new ItemStack(Api.World.GetItem(currentPressRecipe.Outputs[0].ResolvedItemstack.Collectible.Code),
+                                                       currentPressRecipe.Outputs[0].ResolvedItemstack.StackSize);
+                        if (HasRoomInOutput(0))
                         {
-                            // input slot has something in it, valid?
-                            // while it should always be valid as we filter the input, you never know!
-                            // should we check output stack to see?
-                            Item outputItem = HasPlate(InputStack);
-                            if (outputItem != null)
+                            // output is empty! need a new stack
+                            // Api.World.GetItem(craftingCode)
+                            if (OutputSlot.Empty)
                             {
-                                if (OutputSlot.Itemstack != null && OutputSlot.Itemstack.Item != outputItem)
-                                {
-                                    // the item we make isn't the type of thing in the output...
-                                    // it's either this or sit idle while a thing is crafted...
-                                    isSleeping = true;
-                                }
+                                Inventory[1].Itemstack = outputstack.Clone();
+                            }
+                            else
+                            {
+                                int capleft = Inventory[1].Itemstack.Collectible.MaxStackSize - Inventory[1].Itemstack.StackSize;
+
+                                if (capleft <= 0) Api.World.SpawnItemEntity(outputstack, Pos.UpCopy(1).ToVec3d());
+                                else if (capleft >= outputstack.StackSize) Inventory[1].Itemstack.StackSize += outputstack.StackSize;
                                 else
                                 {
-                                    craftingCode = outputItem.Code;
-                                    recipeProgress = 0f;
-                                    isCrafting = true;
+                                    Inventory[1].Itemstack.StackSize += capleft;
+                                    outputstack.StackSize -= capleft;
+                                    Api.World.SpawnItemEntity(outputstack, Pos.UpCopy(1).ToVec3d());
                                 }
+
                             }
-                        }
-                        else isSleeping = true; // input is empty, go to sleep
-                    }
-                    if (recipeProgress > 1f)
-                    {
-                        // progress finished!
-                        if (OutputSlot.Empty)
-                        {
-                            // Api.World.GetItem(craftingCode)
-                            OutputSlot.Itemstack = new ItemStack(Api.World.GetItem(craftingCode), 1);
-                            InputSlot.TakeOut(1);
-                            isCrafting = false;
-                            recipeProgress = 0f;
                         }
                         else
                         {
-                            ItemStack craftedItem = new ItemStack(Api.World.GetItem(craftingCode), 1);
-                            if (OutputSlot.Itemstack.Item == craftedItem.Item)
+                            // no room in main output, how'd we get in here, machine should stop when full...
+                            Api.World.SpawnItemEntity(outputstack, Pos.UpCopy(1).ToVec3d());
+                        }
+                        if (currentPressRecipe.Outputs.Length > 1)
+                        {
+                            // this recipe has a second output
+                            int varoutput = currentPressRecipe.Outputs[1].VariableResolve(Api.World, "VintEng: Metal Press Craft output");
+
+                            // depending on Variable set in output stacksize COULD be 0.
+                            ItemStack extraoutputstack = new ItemStack(Api.World.GetItem(currentPressRecipe.Outputs[1].ResolvedItemstack.Collectible.Code),
+                                                                       varoutput);
+                            if (extraoutputstack.StackSize > 0 && HasRoomInOutput(1))
                             {
-                                if (OutputSlot.Itemstack.StackSize < OutputSlot.Itemstack.Item.MaxStackSize)
-                                {                                    
-                                    OutputSlot.Itemstack.StackSize += 1;
-                                    InputSlot.TakeOut(1);
-                                    isCrafting = false;
-                                    recipeProgress = 0f;
+                                if (ExtraOutputSlot.Empty)
+                                {
+                                    Inventory[2].Itemstack = extraoutputstack.Clone();
                                 }
                                 else
                                 {
-                                    // item is done, but output is full...
-                                    // go to sleep, Function OnSlotModified wakes it back up
-                                    isSleeping = true;
+                                    // drop extras on the ground
+                                    int capremaining = Inventory[2].Itemstack.Collectible.MaxStackSize - Inventory[2].Itemstack.StackSize;
+                                    if (capremaining >= extraoutputstack.StackSize)
+                                    {
+                                        Inventory[2].Itemstack.StackSize += extraoutputstack.StackSize;
+                                    }
+                                    else
+                                    {
+                                        Inventory[2].Itemstack.StackSize += capremaining;
+                                        extraoutputstack.StackSize -= capremaining;
+                                        Api.World.SpawnItemEntity(extraoutputstack, Pos.UpCopy(1).ToVec3d());
+                                        // spawn what we can't fit
+                                    }
                                 }
                             }
                             else
                             {
-                                // item is done, but output is different type?
-                                // go to sleep, Function OnSlotModified wakes it back up
-                                // this shouldn't fire as it checks before starting the craft
-                                isSleeping = true;
+                                // no room in output, drop on ground
+                                // TODO Drop in FRONT of the block, or some predetermined place.
+                                Api.World.SpawnItemEntity(extraoutputstack, this.Pos.UpCopy(1).ToVec3d());
                             }
-                        }
-                    }
-                }
 
-                // if the machine is sleeping, update 4 times slower
-                if (updateBouncer >= (isSleeping ? 2f : 0.5f)) // half second client updates... too much?
-                {
-                    clientDialog?.Update(recipeProgress, CurrentPower);
-                    MarkDirty(false, null);
-                    updateBouncer = 0f;
+                        }
+                        // remove used ingredients from input
+
+                        InputSlot.TakeOut(currentPressRecipe.Ingredients[0].Quantity);
+                        if (!FindMatchingRecipe())
+                        {
+                            isSleeping = true;
+                            isCrafting = false;
+                        }
+                        recipePowerApplied = 0;
+                        MarkDirty(true, null);
+                        Api.World.BlockAccessor.MarkBlockEntityDirty(this.Pos);
+                    }
                 }
             }
         }
@@ -279,7 +381,7 @@ namespace VintageEngineering
                 base.toggleInventoryDialogClient(byPlayer, delegate
                 {
                     this.clientDialog = new TestMachineGUI(DialogTitle, Inventory, this.Pos, this.Api as ICoreClientAPI, this);
-                    this.clientDialog.Update(recipeProgress, CurrentPower);
+                    this.clientDialog.Update(RecipeProgress, CurrentPower, currentPressRecipe);
                     return this.clientDialog;
                 });
             }
@@ -291,8 +393,7 @@ namespace VintageEngineering
             base.OnReceivedClientPacket(player, packetid, data);
             if (packetid == 1002) // Enable button pressed
             {
-                isEnabled = !isEnabled;
-                isSleeping = false;
+                isEnabled = !isEnabled;                               
                 MarkDirty(true, null);
             }    
         }
@@ -300,7 +401,7 @@ namespace VintageEngineering
         public override void OnReceivedServerPacket(int packetid, byte[] data)
         {
             base.OnReceivedServerPacket(packetid, data);
-            if (clientDialog != null) clientDialog.Update(recipeProgress, CurrentPower);
+            if (clientDialog != null) clientDialog.Update(RecipeProgress, CurrentPower, currentPressRecipe);
         }
 
         public override void ToTreeAttributes(ITreeAttribute tree)
@@ -310,14 +411,9 @@ namespace VintageEngineering
             this.inventory.ToTreeAttributes(invtree);
             tree["inventory"] = invtree;
 
-            tree.SetFloat("recipeProgress", recipeProgress);
+            tree.SetLong("recipepowerapplied", (long)recipePowerApplied);
             
-            tree.SetBool("isCrafting", isCrafting);                        
-            
-            if (isCrafting)
-            {
-                tree.SetString("craftingCode", craftingCode.ToString());
-            }
+            tree.SetBool("isCrafting", isCrafting);            
         }
 
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldForResolving)
@@ -325,18 +421,17 @@ namespace VintageEngineering
             base.FromTreeAttributes(tree, worldForResolving);
             this.inventory.FromTreeAttributes(tree.GetTreeAttribute("inventory"));
             if (Api != null) Inventory.AfterBlocksLoaded(this.Api.World);
-            recipeProgress = tree.GetFloat("recipeProgress");
-            
-            isCrafting = tree.GetBool("isCrafting");
-                        
-            if (isCrafting)
-            {
-                craftingCode = new AssetLocation(tree.GetString("craftingCode"));
-            }
+            recipePowerApplied = (ulong)tree.GetLong("recipepowerapplied");            
+            isCrafting = tree.GetBool("isCrafting");            
+
+            FindMatchingRecipe();
             if (Api != null && Api.Side == EnumAppSide.Client)
             {
-                if (this.clientDialog != null) clientDialog.Update(recipeProgress, CurrentPower);
                 MarkDirty(true, null);
+                if (this.clientDialog != null)
+                {
+                    clientDialog.Update(RecipeProgress, CurrentPower, currentPressRecipe);                    
+                }                
             }
         }
     }

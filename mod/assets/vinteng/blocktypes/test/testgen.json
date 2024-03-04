@@ -26,7 +26,7 @@
                 "index": 0,
                 "wirefunction": "Power",
 				"powertier": "LV",
-				"maxconnections": 1, 	
+				"maxconnections": 1, 
 				"networkid": 0,
                 "x1": 0.8125,
                 "y1": 0.6875,

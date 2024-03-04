@@ -39,12 +39,12 @@ namespace VintageEngineering.Electrical
         int NumConnections(int wirenodeindex);
         
         /// <summary>
-        /// Max power this entity stores.
+        /// Max power this entity stores. Set in JSON.
         /// </summary>
         ulong MaxPower { get; }
 
         /// <summary>
-        /// Max Power Per Second this Entity can handle, incoming and outgoing and generating.
+        /// Max Power Per Second this Entity can handle, incoming and outgoing and generating. Set in JSON.
         /// </summary>
         ulong MaxPPS { get; }
 
@@ -54,39 +54,40 @@ namespace VintageEngineering.Electrical
         ulong CurrentPower { get; }
 
         /// <summary>
-        /// What type of Electrical Entity is this?
+        /// What type of Electrical Entity is this? 
         /// <br>This is set in the JSON Attributes "entitytype" variable.</br>
         /// </summary>
         EnumElectricalEntityType ElectricalEntityType { get; }
 
         /// <summary>
-        /// Can Receive Power?
+        /// Can Receive Power? Override to set.
         /// </summary>
         bool CanReceivePower { get; }
 
         /// <summary>
-        /// Can power be extracted?
+        /// Can power be extracted? Override to set.
         /// </summary>
         bool CanExtractPower { get; }
 
         /// <summary>
-        /// Is Power Full? i.e. MaxPower == CurrentPower
+        /// Is Power Full? i.e. Can simply be MaxPower == CurrentPower
         /// </summary>
         bool IsPowerFull { get; }
 
         /// <summary>
-        /// Is this block sleeping?
-        /// <br>A sleeping machine ticks at a slower rate to preserve update time.</br>
+        /// Is this block sleeping? Saved in base ElectricBE.<br/>
+        /// If a machine is ON but NOT Crafting it is sleeping.<br/>
+        /// A sleeping machine ticks at a slower rate to preserve update time.
         /// </summary>
         bool IsSleeping { get; }
 
         /// <summary>
-        /// Is this Machine Enabled? (On/Off)
+        /// Is this Machine Enabled? (On/Off) Saved in base ElectricBE.
         /// </summary>
         bool IsEnabled { get; }
 
         /// <summary>
-        /// What is the Priority of this Entity?
+        /// What is the Priority of this Entity? Saved in base ElectricBE.
         /// <br>1 = highest priority.</br>
         /// <br>If every entity is the same priority, then the priority system is negated.</br>
         /// <br>Higher Priority generators are first to empty, machines are first to fill, etc.</br>
@@ -95,7 +96,8 @@ namespace VintageEngineering.Electrical
         int Priority { get; }
 
         /// <summary>
-        /// Takes powerOffered and removes any power needed and returns power left over.
+        /// Takes powerOffered and removes any power needed and returns power left over.<br/>
+        /// It's up to the implementing block entity to track it's internal power and PPS limits.
         /// </summary>
         /// <param name="powerOffered">Power offered to this Entity</param>
         /// <param name="dt">Delta Time; Time elapsed since last update.</param>
@@ -104,7 +106,8 @@ namespace VintageEngineering.Electrical
         ulong ReceivePower(ulong powerOffered, float dt, bool simulate = false);
 
         /// <summary>
-        /// Reduces powerWanted by power held in this entity
+        /// Reduces powerWanted by power held in this entity.<br/>
+        /// It's up to the implementing block entity to track it's internal power and PPS limits.
         /// </summary>
         /// <param name="powerWanted">How much total power is needed</param>
         /// <param name="dt">Delta Time; Time elapsed since last update.</param>
@@ -113,8 +116,8 @@ namespace VintageEngineering.Electrical
         ulong ExtractPower(ulong powerWanted, float dt, bool simulate = false);
 
         /// <summary>
-        /// Will completely fill power buffer or completely drain power buffer if drain = true
-        /// <br>A fast way for Electrical Networks to process power for this entity.</br>
+        /// Completely fill (or drain) power buffer.<br/>
+        /// A fast way for Electrical Networks to process power for this entity.<br/>        
         /// </summary>
         /// <param name="drain">[Optional] Drain power to 0 if true.</param>
         void CheatPower(bool drain = false);

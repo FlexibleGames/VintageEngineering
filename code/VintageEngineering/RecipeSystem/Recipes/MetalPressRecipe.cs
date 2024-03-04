@@ -28,7 +28,13 @@ namespace VintageEngineering.RecipeSystem.Recipes
         /// Set in attributes => requires, what item Code must be present for this recipe to progress?<br/>
         /// For the Metal Press, it is the specific mold placed into the press. Metal press inventory will have a special slot for this mold.
         /// </summary>
-        public string Requires { get; set; }
+        public AssetLocation Requires { get; set; }
+
+        /// <summary>
+        /// Set in attributes => requirevariants, what variants, if any, are allowed of this type for this recipe.<br/>
+        /// For example, for the metal press to make Titanium Plate, only the steel and titanium plate mold could be allowed.
+        /// </summary>
+        public string[] RequireVariants { get; set; }
 
         public string Code { get; set; }
 
@@ -75,7 +81,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
                 RecipeID = this.RecipeID,
                 Name = this.Name,
                 Enabled = this.Enabled,
-                Requires = this.Requires,
+                Requires = Requires != null ? this.Requires.Clone() : null,
                 Code = this.Code,
                 PowerPerCraft = this.PowerPerCraft,
                 Attributes = this.Attributes?.Clone(),
@@ -83,6 +89,41 @@ namespace VintageEngineering.RecipeSystem.Recipes
                 Outputs = outclone
             };
         }
+
+        /// <summary>
+        /// Checks the validity of given ingredient and requires string to this recipe.<br/>        
+        /// </summary>        
+        /// <param name="ingredient">ItemSlot input ingredient</param>
+        /// <param name="requirescode">Required Press Mold Code if aplicable.</param>
+        /// <returns></returns>
+        public bool Matches(ItemSlot ingredient, ItemSlot requireslot)
+        {
+            if (ingredient.Empty) return false; // no ingredient to even check, bounce
+
+            // Satisfies call ignores fields not needed to test for equality, like stacksize.
+            if (!ingredient.Itemstack.Satisfies(Ingredients[0].ResolvedItemstack)) return false;     
+            // check stack sizes... 
+            if (ingredient.Itemstack.StackSize < Ingredients[0].ResolvedItemstack.StackSize) return false;
+
+            if (Requires != null) // if this recipe requires something, we need to check for it in the requires slot
+            {
+                if (requireslot.Empty) return false;
+                if (Requires.IsWildCard)
+                {
+                    // TODO check for variants
+                    return WildcardUtil.Match(Requires, requireslot.Itemstack.Collectible.Code);
+                }
+                else
+                {
+                    return Requires.Equals(requireslot.Itemstack.Collectible.Code);
+                }
+            }
+            else
+            {
+                return requireslot.Empty;
+            }
+        }
+
 
         public Dictionary<string, string[]> GetNameToCodeMapping(IWorldAccessor world)
         {
@@ -136,18 +177,48 @@ namespace VintageEngineering.RecipeSystem.Recipes
             {
                 Outputs[i].Resolve(world, sourceForErrorLogging);
             }
-            if (Attributes != null && Attributes["requires"] != null)
+            if (Attributes != null)
             {
-                Requires = Attributes["requires"].AsString();
+                if (Attributes["requires"] != null)
+                {
+                    Requires = new AssetLocation(Attributes["requires"].AsString());
+                }
+                if (Attributes["requirevariants"] != null)
+                {
+                    if (Attributes["requirevariants"].IsArray())
+                    {
+                        RequireVariants = Attributes["requirevariants"].AsArray<string>();
+                    }
+                    else
+                    {
+                        RequireVariants = new string[1] { Attributes["requirevariants"].AsString() }; 
+                    }
+                }
             }
+
             return true;
         }
 
+        /// <summary>
+        /// Converts a Byte stream into this recipe, used for syncing client and server.
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <param name="resolver"></param>
         public void FromBytes(BinaryReader reader, IWorldAccessor resolver)
         {
             RecipeID = reader.ReadInt32();
             Name = new AssetLocation(reader.ReadString());
-            Requires = reader.ReadBoolean() ? reader.ReadString() : null;
+            Requires = reader.ReadBoolean() ? new AssetLocation(reader.ReadString()) : null;
+
+            if (reader.ReadBoolean()) // RequireVariants
+            {                
+                int numvar = reader.ReadInt32();
+                RequireVariants = new string[numvar];
+                for (int i =0; i<numvar; i++)
+                {
+                    RequireVariants[i] = reader.ReadString();
+                }
+            }
             Code = reader.ReadBoolean() ? reader.ReadString() : null;
             PowerPerCraft = reader.ReadInt64();
             Attributes = reader.ReadBoolean() ? new JsonObject(JToken.Parse(reader.ReadString())) : null;
@@ -167,21 +238,38 @@ namespace VintageEngineering.RecipeSystem.Recipes
             }
             if (Requires == null && Attributes != null && Attributes["requires"] != null)
             {
-                Requires = Attributes["requires"].AsString();
+                Requires = new AssetLocation(Attributes["requires"].AsString());
+
             }
         }
 
+        /// <summary>
+        /// Convert this recipe into a byte stream to sync client and server.
+        /// </summary>
+        /// <param name="writer"></param>
         public void ToBytes(BinaryWriter writer)
         {
             writer.Write(RecipeID);
             writer.Write(Name.ToShortString());            
 
             writer.Write(Requires != null);
-            if (Requires != null) { writer.Write(Requires); }
+            if (Requires != null) { writer.Write(Requires.ToString()); }
+
+            writer.Write(RequireVariants != null);
+            if (RequireVariants != null)
+            {
+                writer.Write(RequireVariants.Length);
+                for (int i = 0; i < RequireVariants.Length; i++)
+                {
+                    writer.Write(RequireVariants[i]);
+                }
+            }
+
             writer.Write(Code != null);
             if (Code != null) { writer.Write(Code); }
 
             writer.Write(PowerPerCraft);
+
             writer.Write(Attributes != null);
             if (Attributes != null) { writer.Write(Attributes.Token.ToString()); }
 
@@ -190,6 +278,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
             {
                 Ingredients[i].ToBytes(writer);
             }
+
             writer.Write(Outputs.Length);
             for (int i =0; i< Outputs.Length;i++)
             {

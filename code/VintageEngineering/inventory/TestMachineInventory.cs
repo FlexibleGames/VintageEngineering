@@ -7,6 +7,8 @@ using Vintagestory.API.Server;
 using Vintagestory.API.Client;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
+using VintageEngineering.RecipeSystem.Recipes;
+using VintageEngineering.RecipeSystem;
 
 namespace VintageEngineering
 {
@@ -19,18 +21,38 @@ namespace VintageEngineering
 
         public override float GetSuitability(ItemSlot sourceSlot, ItemSlot targetSlot, bool isMerge)
         {
-            
-            if (targetSlot == _slots[0] && sourceSlot.Itemstack.Collectible.FirstCodePart() == "ingot")
+            if (targetSlot == _slots[_slots.Length - 1])
+            {
+                return 0f;
+            }
+            if (targetSlot == _slots[0])
             {
                 return 4f;
             }
             return base.GetSuitability(sourceSlot, targetSlot, isMerge);
         }
 
-
+        /// <summary>
+        /// Can the sinkSlot contain the item is sourceSlot?
+        /// </summary>
+        /// <param name="sinkSlot"></param>
+        /// <param name="sourceSlot"></param>
+        /// <returns>True if yes</returns>
         public override bool CanContain(ItemSlot sinkSlot, ItemSlot sourceSlot)
         {
-            return sinkSlot == _slots[0] && sourceSlot.Itemstack.Item.FirstCodePart() == "ingot";
+            // strict slot restrictions
+            if (GetSlotId(sinkSlot) == 0)
+            {
+                // input slot
+                return true;
+            }
+            else if (GetSlotId(sinkSlot) == 3)
+            {
+                // Mold slot
+                string moldcode = sourceSlot.Itemstack?.Collectible?.FirstCodePart();
+                return (moldcode == "vepressmold");
+            }
+            return true;
         }
 
         public override bool HasOpened(IPlayer player)
@@ -54,13 +76,13 @@ namespace VintageEngineering
         {
             get
             {
-                if (slotId > 1 || slotId < 0) return null;
+                if (slotId > 3 || slotId < 0) return null;
 
                 return _slots[slotId];
             }
             set
             {
-                if (slotId > 1 || slotId < 0) throw new ArgumentOutOfRangeException("slotId");
+                if (slotId > 3 || slotId < 0) throw new ArgumentOutOfRangeException("slotId");
                 if (value == null) throw new ArgumentNullException("value");
                 _slots[slotId] = value;
             }
@@ -71,9 +93,16 @@ namespace VintageEngineering
             return new ItemSlotSurvival(this);
         }
 
+        /// <summary>
+        /// Slot index 0 is input, 1 & 2 is output, and 3 is press mold
+        /// </summary>
+        /// <param name="inventoryID"></param>
+        /// <param name="api"></param>
         public TestMachineInventory(string inventoryID, ICoreAPI api) : base(inventoryID, api)
         {
-            _slots = base.GenEmptySlots(2);
+            _slots = base.GenEmptySlots(4);
+            _slots[3].MaxSlotStackSize = 1;
+            _slots[3].StorageType = EnumItemStorageFlags.Custom2;
         }
 
         public override void LateInitialize(string inventoryID, ICoreAPI api)
@@ -97,7 +126,10 @@ namespace VintageEngineering
 
         public override ItemSlot GetAutoPullFromSlot(BlockFacing atBlockFace)
         {
-            return _slots[1];
+
+            if (!_slots[1].Empty) return _slots[1]; // empty the first output slot first, then the second, extra output
+
+            return _slots[2];
         }
 
         public override void FromTreeAttributes(ITreeAttribute tree)

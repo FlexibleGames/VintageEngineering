@@ -49,7 +49,8 @@ namespace VintageEngineering.RecipeSystem.Recipes
         Dictionary<string, string[]> GetNameToCodeMapping(IWorldAccessor world);
 
         /// <summary>
-        /// Turns Ingredients (and Outputs) into IItemStacks
+        /// Turns Ingredients (and Outputs) into IItemStacks<br/>
+        /// Also use this to process any custom recipe Attributes!
         /// </summary>
         /// <param name="world"></param>
         /// <param name="sourceForErrorLogging"></param>
