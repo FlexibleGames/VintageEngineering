@@ -3,17 +3,17 @@
 	"storageFlags": 4097,
 	"attributes": {
 		"rackable": true,		
-		toolrackTransform: {
-			translation: { x: -0.06, y: 0.48, z: 0 },
-			rotation: { x: -20, y: -15, z: 0 },
-			origin: { x: 0.5, y: 0, z: 0.5 },
-			scale: 0.75
+		"toolrackTransform": {
+			"translation": { "x": -0.06, "y": 0.48, "z": 0 },
+			"rotation": { "x": -20, "y": -15, "z": 0 },
+			"origin": { "x": 0.5, "y": 0, "z": 0.5 },
+			"scale": 0.75
 		},		
 		"groundStorageTransform": {
-				"translation": { x: 0.02, y: -0.17, z: -0.02 },
-				"rotation": { x: 90, y: 90, z: -90 },
+				"translation": { "x": 0.02, "y": -0.17, "z": -0.02 },
+				"rotation": { "x": 90, "y": 90, "z": -90 },
 				"scale": 0.67
-			}		
+		},		
 		"handbook": {
 			"groupBy": ["vepressmold-*"]
 		}
@@ -68,8 +68,8 @@
 		"scale": 4.5
 	},
 	"tpHandTransform": {
-		"translation": { x: -0.85, y: -0.6, z: -0.22 },
-		"rotation": { x: 41, y: 0, z: 0 },
+		"translation": { "x": -0.85, "y": -0.6, "z": -0.22 },
+		"rotation": { "x": 41, "y": 0, "z": 0 },
 		"scale": 0.7
 	}
 }
