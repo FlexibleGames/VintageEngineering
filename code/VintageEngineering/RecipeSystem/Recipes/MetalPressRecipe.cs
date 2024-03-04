@@ -179,11 +179,11 @@ namespace VintageEngineering.RecipeSystem.Recipes
             }
             if (Attributes != null)
             {
-                if (Attributes["requires"] != null)
+                if (Attributes["requires"].Exists)
                 {
                     Requires = new AssetLocation(Attributes["requires"].AsString());
                 }
-                if (Attributes["requirevariants"] != null)
+                if (Attributes["requirevariants"].Exists)
                 {
                     if (Attributes["requirevariants"].IsArray())
                     {
