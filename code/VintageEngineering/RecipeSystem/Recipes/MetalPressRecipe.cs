@@ -111,6 +111,10 @@ namespace VintageEngineering.RecipeSystem.Recipes
                 if (Requires.IsWildCard)
                 {
                     // TODO check for variants
+                    if (RequireVariants != null)
+                    {
+                        return WildcardUtil.MatchesVariants(Requires, requireslot.Itemstack.Collectible.Code, RequireVariants);
+                    }
                     return WildcardUtil.Match(Requires, requireslot.Itemstack.Collectible.Code);
                 }
                 else
@@ -236,10 +240,21 @@ namespace VintageEngineering.RecipeSystem.Recipes
                 Outputs[i].FromBytes(reader, resolver.ClassRegistry);
                 Outputs[i].Resolve(resolver, "Metal Press Recipe (FromBytes)");
             }
-            if (Requires == null && Attributes != null && Attributes["requires"] != null)
+            if (Requires == null && Attributes != null && Attributes["requires"].Exists)
             {
                 Requires = new AssetLocation(Attributes["requires"].AsString());
 
+                if (RequireVariants == null && Attributes["requiresvariants"].Exists)
+                {
+                    if (Attributes["requirevariants"].IsArray())
+                    {
+                        RequireVariants = Attributes["requirevariants"].AsArray<string>();
+                    }
+                    else
+                    {
+                        RequireVariants = new string[1] { Attributes["requirevariants"].AsString() };
+                    }
+                }
             }
         }
 

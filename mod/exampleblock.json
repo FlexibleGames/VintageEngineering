@@ -1,10 +1,6 @@
 {
     "entityclass": "ElectricalBlockEntity",  // MUST be a BE that inherits from ElectricalBlockEntity
 
-	"entityBehaviors": [	
-		{"name": "VEBEBehaviorWire"} // behavior defines a wire-connectable block and saves Catenery (wire) connections and data.
-	],	
-    
     "attributes": {
 		"entitytype": "Producer", // valid types: Producer, Consumer, Storage, Transformer, Toggle, Relay, Other
 		"priority": 5,			  // set order to receive or give power, in-game UI should be able to set this

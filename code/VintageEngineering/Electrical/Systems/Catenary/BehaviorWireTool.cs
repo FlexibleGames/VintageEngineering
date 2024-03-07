@@ -20,9 +20,10 @@ namespace VintageEngineering.Electrical.Systems.Catenary
         }
 
         public override void OnHeldInteractStart(ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel, bool firstEvent, ref EnumHandHandling handHandling, ref EnumHandling handling)
-        {            
+        {
             //base.OnHeldInteractStart(slot, byEntity, blockSel, entitySel, firstEvent, ref handHandling, ref handling);
             //if (handHandling == EnumHandHandling.PreventDefault) return;
+            if (blockSel == null) return;
             IWireAnchor anchor = byEntity.World.BlockAccessor.GetBlock(blockSel.Position) as IWireAnchor;
             if (anchor == null) { return; }
             int consat = cm.GetNumberConnectionsAt(blockSel);

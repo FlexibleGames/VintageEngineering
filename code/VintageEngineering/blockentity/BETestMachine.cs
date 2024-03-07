@@ -297,6 +297,7 @@ namespace VintageEngineering
                                 }
 
                             }
+                            OutputSlot.MarkDirty();
                         }
                         else
                         {
@@ -340,11 +341,35 @@ namespace VintageEngineering
                                 // TODO Drop in FRONT of the block, or some predetermined place.
                                 Api.World.SpawnItemEntity(extraoutputstack, this.Pos.UpCopy(1).ToVec3d());
                             }
-
+                            ExtraOutputSlot.MarkDirty();
                         }
                         // remove used ingredients from input
-
                         InputSlot.TakeOut(currentPressRecipe.Ingredients[0].Quantity);
+                        InputSlot.MarkDirty();
+
+                        // damage the mold...
+                        if (!MoldSlot.Empty)
+                        {
+                            string moldmetal = "game:metalbit-" + MoldSlot.Itemstack.Collectible.LastCodePart();
+                            int molddur = MoldSlot.Itemstack.Collectible.GetRemainingDurability(MoldSlot.Itemstack);
+                            molddur -= 1;
+                            MoldSlot.Itemstack.Attributes.SetInt("durability", molddur);
+                            if (molddur == 0)
+                            {
+                                if (Api.Side == EnumAppSide.Server)
+                                {                                    
+                                    AssetLocation thebits = new AssetLocation(moldmetal);
+                                    int newstack = Api.World.Rand.Next(5, 16);
+                                    ItemStack bitstack = new ItemStack(Api.World.GetItem(thebits), newstack);
+                                    Api.World.SpawnItemEntity(bitstack, Pos.UpCopy().ToVec3d(), null);
+                                }
+                                MoldSlot.Itemstack = null; // NO SOUP FOR YOU                                
+                                Api.World.PlaySoundAt(new AssetLocation("sounds/effect/toolbreak"),
+                                    this.Pos.X, this.Pos.Y, this.Pos.Z, null, 1f, 16f, 1f);
+                            }
+                            MoldSlot.MarkDirty();
+                        }
+
                         if (!FindMatchingRecipe())
                         {
                             isSleeping = true;

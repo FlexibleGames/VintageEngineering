@@ -43,8 +43,8 @@
 	},
 	"durabilitybytype": {		
 		"*-tinbronze": 400,	
-		"*-iron": 1000,
-		"*-meteoriciron": 5500,
+		"*-iron": 800,
+		"*-meteoriciron": 2000,
 		"*-steel": 4500,
         "*-titanium": 10000
 	},
