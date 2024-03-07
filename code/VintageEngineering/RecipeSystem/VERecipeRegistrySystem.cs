@@ -15,7 +15,7 @@ namespace VintageEngineering.RecipeSystem
     {
         public static bool canRegister = false;
 
-        public List<MetalPressRecipe> MetalPressRecipes = new List<MetalPressRecipe>();        
+        public List<RecipeMetalPress> MetalPressRecipes = new List<RecipeMetalPress>();        
 
         public override double ExecuteOrder()
         {
@@ -29,7 +29,7 @@ namespace VintageEngineering.RecipeSystem
 
         public override void Start(ICoreAPI api)
         {            
-            this.MetalPressRecipes = api.RegisterRecipeRegistry<RecipeRegistryGeneric<MetalPressRecipe>>("vemetalpressrecipes").Recipes;
+            this.MetalPressRecipes = api.RegisterRecipeRegistry<RecipeRegistryGeneric<RecipeMetalPress>>("vemetalpressrecipes").Recipes;
         }
 
         public override void AssetsLoaded(ICoreAPI api)
@@ -41,7 +41,7 @@ namespace VintageEngineering.RecipeSystem
             }                        
         }
 
-        public void RegisterMetalPressRecipe(MetalPressRecipe metalPressRecipe)
+        public void RegisterMetalPressRecipe(RecipeMetalPress metalPressRecipe)
         {
             if (!VERecipeRegistrySystem.canRegister)
             {

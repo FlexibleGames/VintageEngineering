@@ -9,6 +9,10 @@ using Vintagestory.API.MathTools;
 
 namespace VintageEngineering.RecipeSystem.Recipes
 {
+
+    /// <summary>
+    /// A class to allow for variable recipe output based on the games World Rand functions.
+    /// </summary>
     public class VERecipeVariableOutput : JsonItemStack
     {
         public override void FromBytes(BinaryReader reader, IClassRegistryAPI instancer)

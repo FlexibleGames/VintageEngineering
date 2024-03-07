@@ -12,12 +12,12 @@ using VintageEngineering.RecipeSystem;
 
 namespace VintageEngineering
 {
-    public class BETestMachine : ElectricBEGUI
+    public class BEMetalPress : ElectricBEGUI
     {
         ICoreClientAPI capi;
         ICoreServerAPI sapi;
-        private TestMachineInventory inventory;
-        private TestMachineGUI clientDialog;
+        private InvMetalPress inventory;
+        private GUIMetalPress clientDialog;
                 
        
         // a bouncer to limit GUI updates
@@ -28,7 +28,7 @@ namespace VintageEngineering
         /// <summary>
         /// Current Recipe (if any) that the machine can or is crafting.
         /// </summary>
-        public MetalPressRecipe currentPressRecipe;
+        public RecipeMetalPress currentPressRecipe;
 
         /// <summary>
         /// Current power applied to the current recipe.
@@ -109,9 +109,9 @@ namespace VintageEngineering
 
         public override string InventoryClassName { get { return "TestMachineInventory"; } }
 
-        public BETestMachine()
+        public BEMetalPress()
         {
-            this.inventory = new TestMachineInventory(null, null);
+            this.inventory = new InvMetalPress(null, null);
             this.inventory.SlotModified += OnSlotModified;
         }
 
@@ -126,7 +126,7 @@ namespace VintageEngineering
             if (this.clientDialog != null)
             {
                 this.clientDialog.TryClose();
-                TestMachineGUI testGenGUI = this.clientDialog;
+                GUIMetalPress testGenGUI = this.clientDialog;
                 if (testGenGUI != null) testGenGUI.Dispose();
                 this.clientDialog = null;
             }
@@ -173,9 +173,9 @@ namespace VintageEngineering
             }
 
             this.currentPressRecipe = null;
-            List<MetalPressRecipe> mprecipes = Api.ModLoader.GetModSystem<VERecipeRegistrySystem>(true).MetalPressRecipes;            
+            List<RecipeMetalPress> mprecipes = Api.ModLoader.GetModSystem<VERecipeRegistrySystem>(true).MetalPressRecipes;            
             
-            foreach (MetalPressRecipe mprecipe in mprecipes)
+            foreach (RecipeMetalPress mprecipe in mprecipes)
             {
                 if (mprecipe.Enabled && mprecipe.Matches(InputSlot, MoldSlot))
                 {
@@ -405,7 +405,7 @@ namespace VintageEngineering
             {
                 base.toggleInventoryDialogClient(byPlayer, delegate
                 {
-                    this.clientDialog = new TestMachineGUI(DialogTitle, Inventory, this.Pos, this.Api as ICoreClientAPI, this);
+                    this.clientDialog = new GUIMetalPress(DialogTitle, Inventory, this.Pos, this.Api as ICoreClientAPI, this);
                     this.clientDialog.Update(RecipeProgress, CurrentPower, currentPressRecipe);
                     return this.clientDialog;
                 });

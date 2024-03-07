@@ -11,17 +11,16 @@ using VintageEngineering.RecipeSystem.Recipes;
 
 namespace VintageEngineering
 {
-    public class TestMachineGUI : GuiDialogBlockEntity
+    public class GUIMetalPress : GuiDialogBlockEntity
     {
-        private BETestMachine betestmach;
-        private MetalPressRecipe pressRecipe;
-        private long lastRedrawMS;
+        private BEMetalPress betestmach;
+        private RecipeMetalPress pressRecipe;        
         private ulong _currentPower;
         private ulong _maxPower;
         private float _craftProgress;
 
         
-        public TestMachineGUI(string dialogTitle, InventoryBase inventory, BlockPos blockEntityPos, ICoreClientAPI capi, BETestMachine bentity) : base(dialogTitle, inventory, blockEntityPos, capi)
+        public GUIMetalPress(string dialogTitle, InventoryBase inventory, BlockPos blockEntityPos, ICoreClientAPI capi, BEMetalPress bentity) : base(dialogTitle, inventory, blockEntityPos, capi)
         {            
             if (base.IsDuplicate)
             {
@@ -269,7 +268,7 @@ namespace VintageEngineering
  //           ctx.Save();
         }
 
-        public void Update(float craftProgress, ulong curPower, MetalPressRecipe mprecipe = null)
+        public void Update(float craftProgress, ulong curPower, RecipeMetalPress mprecipe = null)
         {
             this._craftProgress = craftProgress;
             this._currentPower = curPower;

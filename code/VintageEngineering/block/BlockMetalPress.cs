@@ -8,7 +8,7 @@ using VintageEngineering.Electrical;
 
 namespace VintageEngineering
 {
-    public class BlockTestMachine : ElectricBlock
+    public class BlockMetalPress : ElectricBlock
     {
         ICoreClientAPI capi;
         ICoreServerAPI sapi;
@@ -32,7 +32,7 @@ namespace VintageEngineering
                 return false;
             }
             if (base.OnWireInteractionStart(world, byPlayer, blockSel)) return true;
-            BETestMachine machEntity = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BETestMachine;
+            BEMetalPress machEntity = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEMetalPress;
             if (machEntity != null)
             {
                 machEntity.OnPlayerRightClick(byPlayer, blockSel);
@@ -43,7 +43,7 @@ namespace VintageEngineering
 
         public override string GetPlacedBlockInfo(IWorldAccessor world, BlockPos pos, IPlayer forPlayer)
         {
-            BETestMachine bETestMach = world.BlockAccessor.GetBlockEntity(pos) as BETestMachine;
+            BEMetalPress bETestMach = world.BlockAccessor.GetBlockEntity(pos) as BEMetalPress;
             if (bETestMach != null)
             {
                 return bETestMach.GetOutputText() + base.GetPlacedBlockInfo(world, pos, forPlayer);

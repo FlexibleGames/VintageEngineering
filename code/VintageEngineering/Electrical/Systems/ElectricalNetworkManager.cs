@@ -91,8 +91,8 @@ namespace VintageEngineering.Electrical.Systems
             EnumWireFunction wfunction = Enum.Parse<EnumWireFunction>(block.Attributes["wirefunction"].AsString("None"));
             if (wfunction != EnumWireFunction.Power) return; // not a wire for power, bounce without consuming.
 
-            IElectricalBlockEntity startentity = sapi.World.BlockAccessor.GetBlockEntity(start.blockPos) as IElectricalBlockEntity;
-            IElectricalBlockEntity endentity = sapi.World.BlockAccessor.GetBlockEntity(end.blockPos) as IElectricalBlockEntity;
+            IElectricalConnection startentity = sapi.World.BlockAccessor.GetBlockEntity(start.blockPos) as IElectricalConnection;
+            IElectricalConnection endentity = sapi.World.BlockAccessor.GetBlockEntity(end.blockPos) as IElectricalConnection;
 
             if (startentity == null || endentity == null)
             {
@@ -175,8 +175,8 @@ namespace VintageEngineering.Electrical.Systems
             EnumWireFunction wfunction = Enum.Parse<EnumWireFunction>(block.Attributes["wirefunction"].AsString("None"));
             if (wfunction != EnumWireFunction.Power) return; // not a wire for power, bounce without consuming.
 
-            IElectricalBlockEntity startentity = sapi.World.BlockAccessor.GetBlockEntity(start.blockPos) as IElectricalBlockEntity;
-            IElectricalBlockEntity endentity = sapi.World.BlockAccessor.GetBlockEntity(end.blockPos) as IElectricalBlockEntity;
+            IElectricalConnection startentity = sapi.World.BlockAccessor.GetBlockEntity(start.blockPos) as IElectricalConnection;
+            IElectricalConnection endentity = sapi.World.BlockAccessor.GetBlockEntity(end.blockPos) as IElectricalConnection;
 
             if (startentity == null  || endentity == null)
             {
@@ -283,8 +283,8 @@ namespace VintageEngineering.Electrical.Systems
             // if we add all the node connections from one side and we contain the other sides node,
             // then the network doesn't need to be split
             // and by the time we get in here, the connection has been removed from the block entities
-            IElectricalBlockEntity startent = sapi.World.BlockAccessor.GetBlockEntity(startnode.blockPos) as IElectricalBlockEntity;
-            IElectricalBlockEntity endent = sapi.World.BlockAccessor.GetBlockEntity(endnode.blockPos) as IElectricalBlockEntity;
+            IElectricalConnection startent = sapi.World.BlockAccessor.GetBlockEntity(startnode.blockPos) as IElectricalConnection;
+            IElectricalConnection endent = sapi.World.BlockAccessor.GetBlockEntity(endnode.blockPos) as IElectricalConnection;
 
             if (startent == null || endent == null)
             {
@@ -306,7 +306,7 @@ namespace VintageEngineering.Electrical.Systems
                     {
                         continue;
                     }
-                    IElectricalBlockEntity enode = sapi.World.BlockAccessor.GetBlockEntity(node.blockPos) as IElectricalBlockEntity;
+                    IElectricalConnection enode = sapi.World.BlockAccessor.GetBlockEntity(node.blockPos) as IElectricalConnection;
                     if (enode == null) continue; // something bad happened, bounce to next one
                     nodestoadd.AddRange(enode.GetConnections(node.index)); // add this nodes connection to next list
                 }

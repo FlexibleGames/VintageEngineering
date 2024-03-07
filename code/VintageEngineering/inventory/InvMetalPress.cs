@@ -12,7 +12,7 @@ using VintageEngineering.RecipeSystem;
 
 namespace VintageEngineering
 {
-    public class TestMachineInventory : InventoryBase, ISlotProvider
+    public class InvMetalPress : InventoryBase, ISlotProvider
     {
         ICoreClientAPI capi;
         ICoreServerAPI sapi;
@@ -98,7 +98,7 @@ namespace VintageEngineering
         /// </summary>
         /// <param name="inventoryID"></param>
         /// <param name="api"></param>
-        public TestMachineInventory(string inventoryID, ICoreAPI api) : base(inventoryID, api)
+        public InvMetalPress(string inventoryID, ICoreAPI api) : base(inventoryID, api)
         {
             _slots = base.GenEmptySlots(4);
             _slots[3].MaxSlotStackSize = 1;

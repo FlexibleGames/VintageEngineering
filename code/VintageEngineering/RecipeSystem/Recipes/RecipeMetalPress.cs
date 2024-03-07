@@ -13,7 +13,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
     /// <summary>
     /// Metal Press has one input and up to 2 outputs
     /// </summary>
-    public class MetalPressRecipe : IByteSerializable, IVEMachineRecipeBase<MetalPressRecipe>
+    public class RecipeMetalPress : IByteSerializable, IVEMachineRecipeBase<RecipeMetalPress>
     {
         /// <summary>
         /// Increases as recipes are added, first recipe added is ID=1, second is ID=2 and so on.
@@ -47,7 +47,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
         public CraftingRecipeIngredient[] Ingredients;
         public VERecipeVariableOutput[] Outputs;
 
-        IRecipeIngredient[] IVEMachineRecipeBase<MetalPressRecipe>.Ingredients
+        IRecipeIngredient[] IVEMachineRecipeBase<RecipeMetalPress>.Ingredients
         {
             get
             {
@@ -56,7 +56,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
         }
 
 
-        IRecipeOutput[] IVEMachineRecipeBase<MetalPressRecipe>.Outputs
+        IRecipeOutput[] IVEMachineRecipeBase<RecipeMetalPress>.Outputs
         {
             get
             {
@@ -64,7 +64,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
             }
         }
 
-        public MetalPressRecipe Clone()
+        public RecipeMetalPress Clone()
         {
             CraftingRecipeIngredient[] cloned = new CraftingRecipeIngredient[Ingredients.Length];
             for (int i = 0; i < Ingredients.Length; i++)
@@ -76,7 +76,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
             {
                 outclone[i] = Outputs[i].Clone();
             }
-            return new MetalPressRecipe
+            return new RecipeMetalPress
             {
                 RecipeID = this.RecipeID,
                 Name = this.Name,

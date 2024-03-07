@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VintageEngineering.Electrical.Systems;
 using VintageEngineering.Electrical.Systems.Catenary;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
@@ -14,7 +15,7 @@ namespace VintageEngineering.Electrical
     /// Base Class for Block Entities that require no GUI and have no inventory.
     /// <br>Used for Relays, Transformers, and Toggles.</br>
     /// </summary>
-    public abstract class ElectricBENoGUI : BlockEntity, IElectricalBlockEntity, IWireNetwork
+    public abstract class ElectricBENoGUI : BlockEntity, IElectricalBlockEntity, IWireNetwork, IElectricalConnection
     {
         /// <summary>
         /// Total power this Block Entity has

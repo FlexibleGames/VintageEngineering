@@ -37,7 +37,7 @@ namespace VintageEngineering.RecipeSystem
             }
 
             // Now for all the recipe loading...
-            this.LoadRecipes<MetalPressRecipe>("ve metal press recipe", "recipes/vemetalpress", delegate (MetalPressRecipe r)
+            this.LoadRecipes<RecipeMetalPress>("ve metal press recipe", "recipes/vemetalpress", delegate (RecipeMetalPress r)
             {
                 verrs.RegisterMetalPressRecipe(r);
             });

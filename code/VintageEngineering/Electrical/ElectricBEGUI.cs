@@ -16,7 +16,7 @@ namespace VintageEngineering.Electrical
     /// Base BlockEntity for machines that require a GUI and/or have an inventory.
     /// <br>Holds Electric Network Connections and Network ID mapping.</br>
     /// </summary>
-    public abstract class ElectricBEGUI : BlockEntityOpenableContainer, IElectricalBlockEntity, IWireNetwork
+    public abstract class ElectricBEGUI : BlockEntityOpenableContainer, IElectricalBlockEntity, IWireNetwork, IElectricalConnection
     {
         /// <summary>
         /// Total power this Block Entity has. Saved in base ElectricBE.

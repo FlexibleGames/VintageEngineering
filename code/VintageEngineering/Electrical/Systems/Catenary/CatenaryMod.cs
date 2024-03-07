@@ -96,9 +96,6 @@ namespace VintageEngineering.Electrical.Systems.Catenary
         ICoreServerAPI sapi;
         ICoreClientAPI capi;
 
-        // Simple system to limit pending wire rendering to protect FPS integrity.
-        private float renderbouncer = 0f;
-
         #region ModSystem
 
         public override bool ShouldLoad(EnumAppSide forSide)
