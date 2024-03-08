@@ -136,7 +136,7 @@ namespace VintageEngineering.RecipeSystem
                             {
                                 output.FillPlaceHolder(variantCode, variants[i % variants.Length]);
                             }
-                        }                        
+                        }
                     }
                     first = false;
                 }

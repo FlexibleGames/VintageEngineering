@@ -173,7 +173,8 @@ namespace VintageEngineering
             }
 
             this.currentPressRecipe = null;
-            List<RecipeMetalPress> mprecipes = Api.ModLoader.GetModSystem<VERecipeRegistrySystem>(true).MetalPressRecipes;            
+            if (Api == null) return false;
+            List<RecipeMetalPress> mprecipes = Api?.ModLoader?.GetModSystem<VERecipeRegistrySystem>(true)?.MetalPressRecipes;            
             
             foreach (RecipeMetalPress mprecipe in mprecipes)
             {
@@ -181,7 +182,7 @@ namespace VintageEngineering
                 {
                     currentPressRecipe = mprecipe;
                     isCrafting = true;
-                    isSleeping = false;                    
+                    isSleeping = false;
                     return true;
                 }
             }
@@ -348,7 +349,7 @@ namespace VintageEngineering
                         InputSlot.MarkDirty();
 
                         // damage the mold...
-                        if (!MoldSlot.Empty)
+                        if (!MoldSlot.Empty && currentPressRecipe.RequiresDurability) // let the recipe control whether durability is used
                         {
                             string moldmetal = "game:metalbit-" + MoldSlot.Itemstack.Collectible.LastCodePart();
                             int molddur = MoldSlot.Itemstack.Collectible.GetRemainingDurability(MoldSlot.Itemstack);

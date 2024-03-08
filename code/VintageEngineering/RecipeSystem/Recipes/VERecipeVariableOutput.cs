@@ -21,8 +21,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
             if (reader.ReadBoolean())
             {
                 Variable = reader.ReadInt32();
-            }
-            
+            }            
         }
 
         public override void ToBytes(BinaryWriter writer)

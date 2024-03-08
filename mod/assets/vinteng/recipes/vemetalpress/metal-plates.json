@@ -3,7 +3,25 @@
 		"code": "basic-metal-plate",
 		"enabled": true,
 		"attributes": {
-			"requires": "vinteng:vepressmold-plate-*"
+			"requires": "vinteng:vepressmold-plate-tinbronze",
+			"requiresdurability": true
+		},
+		"powerpercraft": 512,
+		"ingredients": [
+			{ "type": "item", "code": "game:ingot-*", "quantity": 1, "name": "metal", "allowedVariants": ["copper", "brass", "tinbronze", "bismuthbronze", "blackbronze", "silver", "gold"] }
+		],
+		"outputs": [ 
+			{ "type": "item", "code": "game:metalplate-{metal}", "stacksize": 1 },
+			{ "type": "item", "code": "game:metalbit-{metal}", "stacksize": 5, "variable": 2 }
+		]
+	},
+	{
+		"code": "advanced-metal-plate",
+		"enabled": true,
+		"attributes": {
+			"requires": "vinteng:vepressmold-plate-*",
+			"requiresvariants": ["iron", "meteoriciron", "steel", "titanium"],
+			"requiresdurability": true
 		},
 		"powerpercraft": 512,
 		"ingredients": [
@@ -13,5 +31,5 @@
 			{ "type": "item", "code": "game:metalplate-{metal}", "stacksize": 1 },
 			{ "type": "item", "code": "game:metalbit-{metal}", "stacksize": 5, "variable": 2 }
 		]
-	}
+	}	
 ]

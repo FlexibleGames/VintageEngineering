@@ -38,7 +38,8 @@
 	},
 	"texturesByType": {
 		"*": {
-			"steel": { "base": "game:block/metal/plate/{metal}" }
+			"steel": { "base": "game:block/metal/plate/{metal}" },
+			"null": { "base": "game:block/metal/plate/{metal}" }
 		}
 	},
 	"durabilitybytype": {		

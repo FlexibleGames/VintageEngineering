@@ -34,7 +34,12 @@ namespace VintageEngineering.RecipeSystem.Recipes
         /// Set in attributes => requirevariants, what variants, if any, are allowed of this type for this recipe.<br/>
         /// For example, for the metal press to make Titanium Plate, only the steel and titanium plate mold could be allowed.
         /// </summary>
-        public string[] RequireVariants { get; set; }
+        public string[] RequiresVariants { get; set; }
+
+        /// <summary>
+        /// Specifies whether the item this recipe requires consumes durability every craft.
+        /// </summary>
+        public bool RequiresDurability { get; set; }
 
         public string Code { get; set; }
 
@@ -111,9 +116,9 @@ namespace VintageEngineering.RecipeSystem.Recipes
                 if (Requires.IsWildCard)
                 {
                     // TODO check for variants
-                    if (RequireVariants != null)
+                    if (RequiresVariants != null)
                     {
-                        return WildcardUtil.MatchesVariants(Requires, requireslot.Itemstack.Collectible.Code, RequireVariants);
+                        return WildcardUtil.MatchesVariants(Requires, requireslot.Itemstack.Collectible.Code, RequiresVariants);
                     }
                     return WildcardUtil.Match(Requires, requireslot.Itemstack.Collectible.Code);
                 }
@@ -187,16 +192,20 @@ namespace VintageEngineering.RecipeSystem.Recipes
                 {
                     Requires = new AssetLocation(Attributes["requires"].AsString());
                 }
-                if (Attributes["requirevariants"].Exists)
+                if (Attributes["requiresvariants"].Exists)
                 {
-                    if (Attributes["requirevariants"].IsArray())
+                    if (Attributes["requiresvariants"].IsArray())
                     {
-                        RequireVariants = Attributes["requirevariants"].AsArray<string>();
+                        RequiresVariants = Attributes["requiresvariants"].AsArray<string>();
                     }
                     else
                     {
-                        RequireVariants = new string[1] { Attributes["requirevariants"].AsString() }; 
+                        RequiresVariants = new string[1] { Attributes["requiresvariants"].AsString() }; 
                     }
+                }
+                if (Attributes["requiresdurability"].Exists)
+                {
+                    RequiresDurability = Attributes["requiresdurability"].AsBool(false);
                 }
             }
 
@@ -217,10 +226,10 @@ namespace VintageEngineering.RecipeSystem.Recipes
             if (reader.ReadBoolean()) // RequireVariants
             {                
                 int numvar = reader.ReadInt32();
-                RequireVariants = new string[numvar];
+                RequiresVariants = new string[numvar];
                 for (int i =0; i<numvar; i++)
                 {
-                    RequireVariants[i] = reader.ReadString();
+                    RequiresVariants[i] = reader.ReadString();
                 }
             }
             Code = reader.ReadBoolean() ? reader.ReadString() : null;
@@ -244,15 +253,15 @@ namespace VintageEngineering.RecipeSystem.Recipes
             {
                 Requires = new AssetLocation(Attributes["requires"].AsString());
 
-                if (RequireVariants == null && Attributes["requiresvariants"].Exists)
+                if (RequiresVariants == null && Attributes["requiresvariants"].Exists)
                 {
                     if (Attributes["requirevariants"].IsArray())
                     {
-                        RequireVariants = Attributes["requirevariants"].AsArray<string>();
+                        RequiresVariants = Attributes["requirevariants"].AsArray<string>();
                     }
                     else
                     {
-                        RequireVariants = new string[1] { Attributes["requirevariants"].AsString() };
+                        RequiresVariants = new string[1] { Attributes["requirevariants"].AsString() };
                     }
                 }
             }
@@ -270,13 +279,13 @@ namespace VintageEngineering.RecipeSystem.Recipes
             writer.Write(Requires != null);
             if (Requires != null) { writer.Write(Requires.ToString()); }
 
-            writer.Write(RequireVariants != null);
-            if (RequireVariants != null)
+            writer.Write(RequiresVariants != null);
+            if (RequiresVariants != null)
             {
-                writer.Write(RequireVariants.Length);
-                for (int i = 0; i < RequireVariants.Length; i++)
+                writer.Write(RequiresVariants.Length);
+                for (int i = 0; i < RequiresVariants.Length; i++)
                 {
-                    writer.Write(RequireVariants[i]);
+                    writer.Write(RequiresVariants[i]);
                 }
             }
 
