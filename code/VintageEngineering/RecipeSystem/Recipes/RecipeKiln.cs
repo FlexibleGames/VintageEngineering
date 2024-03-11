@@ -12,7 +12,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
 {
     /// <summary>
     /// Recipe isn't needed for basic firing of clay objects, but this exists for anything ELSE you want to bake at really high temps.<br/>
-    /// 3x3 input slots and 3x3 output slots. <br/>
+    /// Recipe can have a temperature setting under attributes=>requires.<br/>
     /// Having different slots for input/output makes automation FAR easier and efficient.
     /// </summary>
     public class RecipeKiln : IByteSerializable, IVEMachineRecipeBase<RecipeKiln>
@@ -27,8 +27,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
         public bool Enabled { get; set; } = true;
 
         /// <summary>
-        /// Set in attributes => requires, what item Code must be present for this recipe to progress?<br/>
-        /// For the Metal Press, it is the specific mold placed into the press. Metal press inventory will have a special slot for this mold.
+        /// Set in attributes => requires, what temperature the machine must be for this recipe to progress?<br/>        
         /// </summary>
         public AssetLocation Requires { get; set; }
 

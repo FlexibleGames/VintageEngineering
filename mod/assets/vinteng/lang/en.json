@@ -16,5 +16,6 @@
 	"vinteng:gui-machine-sleeping": "Machine is sleeping.",
 	"vinteng:gui-is-sleeping-short": "Zzzz",
 	"vinteng:gui-machine-ingredients": "Recipe ingredients needed!",
-	"vinteng:gui-no-valid-recipe": "No valid recipe found."
+	"vinteng:gui-no-valid-recipe": "No valid recipe found.",
+	"vinteng:storyevent-recipes": "Mysterious Constructs..."
 }

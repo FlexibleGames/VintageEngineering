@@ -47,10 +47,14 @@
 	},
 	"creativeinventory": { "general": ["vetestmachine-off-north"], "terrain": ["*"], "mechanics": ["*"] },
 	"shapeByType": {
-		"*-north": { "base": "vinteng:block/testgen", "rotateY":0 },
-		"*-east": { "base": "vinteng:block/testgen", "rotateY":270 },
-		"*-south": { "base": "vinteng:block/testgen", "rotateY":180 },
-		"*-west": { "base": "vinteng:block/testgen", "rotateY":90 }
+		"*-on-north": { "base": "vinteng:block/lv/metalpress-on", "rotateY":0 },
+		"*-on-east": { "base": "vinteng:block/lv/metalpress-on", "rotateY":270 },
+		"*-on-south": { "base": "vinteng:block/lv/metalpress-on", "rotateY":180 },
+		"*-on-west": { "base": "vinteng:block/lv/metalpress=on", "rotateY":90 },
+		"*-north": { "base": "vinteng:block/lv/metalpress-off", "rotateY":0 },
+		"*-east": { "base": "vinteng:block/lv/metalpress-off", "rotateY":270 },
+		"*-south": { "base": "vinteng:block/lv/metalpress-off", "rotateY":180 },
+		"*-west": { "base": "vinteng:block/lv/metalpress=off", "rotateY":90 }		
 	},		
 	"blockmaterial": "Metal",
 	"textures": {

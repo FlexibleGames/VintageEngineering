@@ -1,0 +1,27 @@
+{
+	"editor": {
+		"allAngles": false,
+		"entityTextureMode": false
+	},
+	"textureWidth": 16,
+	"textureHeight": 16,
+	"textureSizes": {
+	},
+	"textures": {
+	},
+	"elements": [
+		{
+			"name": "rod",
+			"from": [ 2.5, 0.0, 7.5 ], 
+			"to": [ 12.5, 1.0, 8.5 ], 
+			"rotationOrigin": [ 3.0, 0.0, 7.0 ],
+			"faces": {
+				"north": { "texture": "#metal", "uv": [ 0.0, 0.0, 10.0, 1.0 ] },
+				"east": { "texture": "#metal", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
+				"south": { "texture": "#metal", "uv": [ 0.0, 0.0, 10.0, 1.0 ] },
+				"west": { "texture": "#metal", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
+				"up": { "texture": "#metal", "uv": [ 0.0, 0.0, 10.0, 1.0 ] },
+				"down": { "texture": "#metal", "uv": [ 0.0, 0.0, 10.0, 1.0 ] }
+			}
+		}
+	]}

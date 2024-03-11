@@ -37,7 +37,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
         public string[] RequiresVariants { get; set; }
 
         /// <summary>
-        /// Specifies whether the item this recipe requires consumes durability every craft.
+        /// [Not Used for this recipe type] Specifies whether the item this recipe requires consumes durability every craft.
         /// </summary>
         public bool RequiresDurability { get; set; }
 

@@ -1,0 +1,43 @@
+{
+    "code": "sawdust",
+	"heldTpIdleAnimation": "holdbothhands",
+	"heldRightReadyAnimation": "holdbothhands",
+	"attributes": {
+		"barrelMoveToLiquidSlot": true,
+		"inContainerTexture": { "base": "block/wood/barrel/raw-peanut" },
+		"dissolveInWater": true,
+		"displaycaseable": true, 
+		"shelvable": true,
+		"onDisplayTransform": {
+			"translation": { "x": 0.05, "y": 0, "z": 0 },
+			"origin": { "x": 0.5, "y": 0, "z": 0.5 },
+			"scale": 0.65
+		}
+	},
+	"shape": { "base": "game:item/resource/crushed/potash" },
+	"texture": { "base": "game:item/resource/crushed/potash" },
+	"creativeinventory": { "general": ["*"], "items": ["*"] },
+	"maxstacksize": 128,
+	"materialDensity": 500,
+	"guiTransform": {
+		"translation": { "x": 3, "y": 1, "z": -25 },
+		"rotation": { "x": 155, "y": 12, "z": 0 },
+		"origin": { "x": 0.4, "y": -0.1, "z": 0.8 },
+		"scale": 2.54
+	},
+	"fpHandTransform": {
+		"rotation": { "x": 54, "y": 99, "z": -30 },
+		"scale": 1.34
+	},
+	"tpHandTransform": {
+		"translation": { "x": -1.87, "y": -1.25, "z": -0.8 },
+		"rotation": { "x": 70, "y": 11, "z": -65 },
+		"scale": 0.41
+	},
+	"groundTransform": {
+		"translation": { "x": 0, "y": 0.2, "z": 0 },
+		"rotation": { "x": -4, "y": 8, "z": 0 },
+		"origin": { "x": 0.5, "y": 0.5, "z": 0.5299 },
+		"scale": 1.92
+	}
+}

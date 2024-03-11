@@ -45,7 +45,11 @@ namespace VintageEngineering.RecipeSystem
         /// </summary>
         public List<RecipeCNC>          CNCRecipes = new List<RecipeCNC>();
         /// <summary>
-        /// Bake things into other things
+        /// Bake small things into other things.
+        /// </summary>
+        public List<RecipeKiln>         KilnRecipes = new List<RecipeKiln>();
+        /// <summary>
+        /// Turn Combustable things into other things
         /// </summary>
         public List<RecipeCokeOven>     CokeOvenRecipes = new List<RecipeCokeOven>();
         /// <summary>
@@ -155,6 +159,16 @@ namespace VintageEngineering.RecipeSystem
             }
             recipeCNC.RecipeID = CNCRecipes.Count + 1;
             this.CNCRecipes.Add(recipeCNC);
+        }
+
+        public void RegisterKilnRecipes(RecipeKiln recipeKilnRecipes)
+        {
+            if (!VERecipeRegistrySystem.canRegister)
+            {
+                throw new InvalidOperationException("VintEng | RecipeRegistrySystem: Can no longer register CNC recipes. Register during AssetsLoaded/AssetsFinalize and with ExecuteOrder < 99999");
+            }
+            recipeKilnRecipes.RecipeID = KilnRecipes.Count + 1;
+            this.KilnRecipes.Add(recipeKilnRecipes);
         }
 
         public void RegisterCokeOvenRecipe(RecipeCokeOven recipeCokeOven)

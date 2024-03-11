@@ -43,7 +43,7 @@ namespace VintageEngineering.RecipeSystem
                 verrs.RegisterMetalPressRecipe(r);
             });
 
-            sapi.World.Logger.StoryEvent(Lang.Get("Mysterious Forces...", Array.Empty<object>()));
+            sapi.World.Logger.StoryEvent(Lang.Get("vinteng:storyevent-recipes", Array.Empty<object>()));
         }
 
         public void LoadRecipes<T>(string name, string path, Action<T> RegisterMethod) where T : IVEMachineRecipeBase<T>

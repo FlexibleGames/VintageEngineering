@@ -1,0 +1,47 @@
+[
+    {
+		"code": "lv-wire-from-rod",
+		"enabled": true,
+		"attributes": {
+			"requires": "vinteng:vediecast-lv-*",
+			"requiresdurability": true
+		},
+		"powerpercraft": 512,
+		"ingredients": [
+			{ "type": "item", "code": "vinteng:metalrod", "quantity": 1, "allowedVariants": ["copper"] }
+		],
+		"outputs": [ 
+			{ "type": "item", "code": "game:catenery-lvpower", "stacksize": 12 }	
+		]
+	},
+    {
+		"code": "mv-wire-from-rod",
+		"enabled": true,
+		"attributes": {
+			"requires": "vinteng:vediecast-mv-*",
+			"requiresdurability": true
+		},
+		"powerpercraft": 512,
+		"ingredients": [
+			{ "type": "item", "code": "vinteng:metalrod", "quantity": 1, "allowedVariants": ["copper"] }
+		],
+		"outputs": [ 
+			{ "type": "item", "code": "game:catenery-mvpower", "stacksize": 6 }	
+		]
+	},
+    {
+		"code": "hv-wire-from-rod",
+		"enabled": true,
+		"attributes": {
+			"requires": "vinteng:vediecast-hv-*",
+			"requiresdurability": true
+		},
+		"powerpercraft": 1024,
+		"ingredients": [
+			{ "type": "item", "code": "vinteng:metalrod", "quantity": 1, "allowedVariants": ["steel"] }
+		],
+		"outputs": [ 
+			{ "type": "item", "code": "game:catenery-hvpower", "stacksize": 4 }	
+		]
+	}   	    	    
+]
