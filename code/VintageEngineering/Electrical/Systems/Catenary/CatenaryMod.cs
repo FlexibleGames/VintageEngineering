@@ -41,7 +41,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
 
     /// <summary>
     /// System that tracks, saves/loads, and renders wires of any purpose in the game.
-    /// <br>It's up to other mods to implement ModSystems to create and simulate the wire networks stored/created in this system.</br>    
+    /// <br>It's up to other mods to implement ModSystems to create and simulate the wires stored/created in this system.</br>    
     /// <br>Includes two events, one for adding wire connections and one for removing. Subscribe to these events in your Network mod to build & manage the connections.</br>
     /// </summary>
     public class CatenaryMod : ModSystem, IRenderer, IDisposable

@@ -23,6 +23,9 @@ Conveyor belts for moving goods around. At least I hope this won't crush FPS.
 ## Help Is Welcome
 Immersive Engineering has had over 80 contributers, I know a project like this is just overwhelming for one person. So I will be more then welcoming of other contributions.
 
+# Contributers 
+QuentinQP, Mister Andy Dandy, Rinly
+
 **What can you help with?**
 - Models
 - Textures
@@ -50,4 +53,5 @@ Once I have one or two solid examples of working solutions to the above I'll be 
 ## Realism Isn't The Goal
 While I know some people love the gritty grindy slow process that chews up real life hours like candy, not everyone has the time. The default balance of this mod will try to give players penty to accomplish without taking months out of their lives.
 
-Of course as is the way of all my mods, you will be able to customize some base settings to make things harder or easier. Some things will have to be simplified to save update tick rate, like fluid and electrical system updates. I want to ensure players are able to build big without creating 4 FPS experiences.
+Of course as is the way of all my mods, you will be able to customize some base settings to make things harder or easier. Some things will have to be simplified to save update tick rate, like fluid and electrical system updates. I want to ensure players are able to build big without creating 4 FPS experiences. As usual, all the JSON the game uses for recipes, machine settings, etc will be fully patchable with the base-game
+mechanics so you can customize the experience all you want.

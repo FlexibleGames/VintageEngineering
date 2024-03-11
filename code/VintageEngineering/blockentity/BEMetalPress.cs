@@ -274,15 +274,14 @@ namespace VintageEngineering
                     if (RecipeProgress >= 1f)
                     {
                         // progress finished! 
-                        ItemStack outputstack = new ItemStack(Api.World.GetItem(currentPressRecipe.Outputs[0].ResolvedItemstack.Collectible.Code),
-                                                       currentPressRecipe.Outputs[0].ResolvedItemstack.StackSize);
+                        ItemStack outputstack = currentPressRecipe.Outputs[0].ResolvedItemstack.Clone();
                         if (HasRoomInOutput(0))
                         {
                             // output is empty! need a new stack
                             // Api.World.GetItem(craftingCode)
                             if (OutputSlot.Empty)
                             {
-                                Inventory[1].Itemstack = outputstack.Clone();
+                                Inventory[1].Itemstack = outputstack;
                             }
                             else
                             {

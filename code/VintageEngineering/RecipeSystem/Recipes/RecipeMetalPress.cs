@@ -11,7 +11,7 @@ using Vintagestory.API.Util;
 namespace VintageEngineering.RecipeSystem.Recipes
 {
     /// <summary>
-    /// Metal Press has one input and up to 2 outputs
+    /// Metal Press has one input, 1 mold slot, and up to 2 outputs
     /// </summary>
     public class RecipeMetalPress : IByteSerializable, IVEMachineRecipeBase<RecipeMetalPress>
     {
