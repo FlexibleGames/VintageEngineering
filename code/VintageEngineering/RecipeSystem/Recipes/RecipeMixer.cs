@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
+using Vintagestory.API.Util;
 
 namespace VintageEngineering.RecipeSystem.Recipes
 {
@@ -77,7 +78,44 @@ namespace VintageEngineering.RecipeSystem.Recipes
 
         public Dictionary<string, string[]> GetNameToCodeMapping(IWorldAccessor world)
         {
-            throw new NotImplementedException();
+            Dictionary<string, string[]> mappings = new Dictionary<string, string[]>();
+            foreach (CraftingRecipeIngredient val in this.Ingredients)
+            {
+                if (val.Name != null && val.Name.Length != 0 && val.Code.Path.Contains("*"))
+                {
+                    int wildcardStartLen = val.Code.Path.IndexOf("*");
+                    int wildcardEndLen = val.Code.Path.Length - wildcardStartLen - 1;
+                    List<string> codes = new List<string>();
+                    if (val.Type == EnumItemClass.Block)
+                    {
+                        for (int i = 0; i < world.Blocks.Count; i++)
+                        {
+                            Block block = world.Blocks[i];
+                            if (!(((block != null) ? block.Code : null) == null) && !block.IsMissing && (val.SkipVariants == null || !WildcardUtil.MatchesVariants(val.Code, block.Code, val.SkipVariants)) && WildcardUtil.Match(val.Code, block.Code, val.AllowedVariants))
+                            {
+                                string code = block.Code.Path.Substring(wildcardStartLen);
+                                string codepart = code.Substring(0, code.Length - wildcardEndLen);
+                                codes.Add(codepart);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        for (int j = 0; j < world.Items.Count; j++)
+                        {
+                            Item item = world.Items[j];
+                            if (!(((item != null) ? item.Code : null) == null) && !item.IsMissing && (val.SkipVariants == null || !WildcardUtil.MatchesVariants(val.Code, item.Code, val.SkipVariants)) && WildcardUtil.Match(val.Code, item.Code, val.AllowedVariants))
+                            {
+                                string code2 = item.Code.Path.Substring(wildcardStartLen);
+                                string codepart2 = code2.Substring(0, code2.Length - wildcardEndLen);
+                                codes.Add(codepart2);
+                            }
+                        }
+                    }
+                    mappings[val.Name] = codes.ToArray();
+                }
+            }
+            return mappings;
         }
 
         public bool Resolve(IWorldAccessor world, string sourceForErrorLogging)

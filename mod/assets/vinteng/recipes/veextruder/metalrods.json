@@ -4,14 +4,32 @@
 		"enabled": true,
 		"attributes": {
 			"requires": "vinteng:vediecast-rod-*",
-			"requiresdurability": true
+			"requiresdurability": true,
+			"requirestemp": 1100
 		},
 		"powerpercraft": 1024,
 		"ingredients": [
-			{ "type": "item", "code": "game:ingot-*", "quantity": 1, "name":"metal", "allowedVariants": ["copper", "brass", "tinbronze", "iron", "steel"] }
+			{ "type": "item", "code": "game:ingot-*", "quantity": 1, "name":"metal", "allowedVariants": ["copper", "brass", "tinbronze", "iron"] }
 		],
 		"outputs": [ 
 			{ "type": "item", "code": "vinteng:metalrod-{metal}", "stacksize": 4 }	
 		]
-	}
+	},
+    {
+		"code": "steel-rod-from-ingot",
+		"enabled": true,
+		"attributes": {
+			"requires": "vinteng:vediecast-rod-*",
+			"requiresvariants": ["meteoriciron", "steel", "titanium"],
+			"requiresdurability": true,
+			"requirestemp": 1300
+		},
+		"powerpercraft": 2048,
+		"ingredients": [
+			{ "type": "item", "code": "game:ingot-*", "quantity": 1, "name":"metal", "allowedVariants": ["steel"] }
+		],
+		"outputs": [ 
+			{ "type": "item", "code": "vinteng:metalrod-{metal}", "stacksize": 4 }	
+		]
+	}	
 ]

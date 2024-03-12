@@ -1,6 +1,5 @@
 {
 	"editor": {
-		"collapsedPaths": "Root/Shaft Origin N,Root/Shaft Origin S/Main Shaft 50,Root/Shaft Origin S",
 		"allAngles": false,
 		"entityTextureMode": false
 	},
@@ -508,9 +507,9 @@
 		},
 		{
 			"name": "Main",
-			"from": [ 0.0, 1.0, 0.0 ],
-			"to": [ 0.0, 1.0, 0.0 ],
-			"rotationOrigin": [ 8.0, 1.0, 1.0 ],
+			"from": [ -0.2, 0.0, 1.0 ],
+			"to": [ -0.2, 0.0, 1.0 ],
+			"rotationOrigin": [ 8.0, 0.0, 1.0 ],
 			"rotationX": -90.0,
 			"faces": {
 			},
@@ -890,4 +889,82 @@
 				"south": { "texture": "#display-arrow", "uv": [ 0.0, 0.0, 16.0, 16.0 ], "autoUv": false }
 			}
 		}
-	]}
+	],
+	"animations": [
+		{
+			"name": "craft",
+			"code": "craft",
+			"quantityframes": 130,
+			"onActivityStopped": "Rewind",
+			"onAnimationEnd": "Repeat",
+			"keyframes": [
+				{
+					"frame": 0,
+					"elements": {
+						"Press": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0 },
+						"Main Shaft 2": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": -180.0 },
+						"Main Shaft 50": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 180.0 }
+					}
+				},
+				{
+					"frame": 15,
+					"elements": {
+						"Press": { "offsetX": 0.0, "offsetY": -1.0, "offsetZ": 0.0 },
+						"Press Plate Shaft Middle": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0 },
+						"Main Shaft 2": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": -135.0 },
+						"Main Shaft 50": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 135.0 }
+					}
+				},
+				{
+					"frame": 35,
+					"elements": {
+						"Press Plate Shaft Middle": { "offsetX": 0.0, "offsetY": 0.7, "offsetZ": 0.0 },
+						"Main Shaft 50": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 90.0 },
+						"Main Shaft 2": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": -90.0 }
+					}
+				},
+				{
+					"frame": 45,
+					"elements": {
+						"Main Shaft 50": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 45.0 },
+						"Main Shaft 2": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": -45.0 }
+					}
+				},
+				{
+					"frame": 60,
+					"elements": {
+						"Main Shaft 50": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 22.5 },
+						"Main Shaft 2": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": -22.5 }
+					}
+				},
+				{
+					"frame": 90,
+					"elements": {
+						"Press": { "offsetX": 0.0, "offsetY": -6.0, "offsetZ": 0.0 },
+						"Press Plate Shaft Middle": { "offsetX": 0.0, "offsetY": 5.9, "offsetZ": 0.0 },
+						"Main Shaft 2": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 0.0 },
+						"Main Shaft 50": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 0.0 }
+					}
+				},
+				{
+					"frame": 110,
+					"elements": {
+						"Press": { "offsetX": 0.0, "offsetY": -6.0, "offsetZ": 0.0 },
+						"Press Plate Shaft Middle": { "offsetX": 0.0, "offsetY": 5.9, "offsetZ": 0.0 },
+						"Main Shaft 2": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 0.0 },
+						"Main Shaft 50": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 0.0 }
+					}
+				},
+				{
+					"frame": 114,
+					"elements": {
+						"Press": { "offsetX": 0.0, "offsetY": -6.0, "offsetZ": 0.0 },
+						"Press Plate Shaft Middle": { "offsetX": 0.0, "offsetY": 5.9, "offsetZ": 0.0 },
+						"Main Shaft 2": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 0.0 },
+						"Main Shaft 50": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 0.0 }
+					}
+				}
+			]
+		}
+	]
+}

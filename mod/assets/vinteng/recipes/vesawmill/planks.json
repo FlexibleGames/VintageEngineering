@@ -9,11 +9,12 @@
 		},
 		"powerpercraft": 512,
 		"ingredients": [
-			{ "type": "item", "code": "game:log-placed-*-ud", "quantity": 1, "name": "wood" }
+			{ "type": "block", "code": "game:log-placed-*-ud", "quantity": 1, "name": "wood" }
 		],
 		"outputs": [ 
 			{ "type": "item", "code": "game:plank-{wood}", "stacksize": 16 },
-			{ "type": "item", "code": "vinteng:sawdust", "stacksize": 6, "variable": 5 }
+			{ "type": "item", "code": "vinteng:sawdust", "stacksize": 6, "variable": 5 },
+			{ "type": "item", "code": "game:stick", "stacksize": 3, "variable": 2 }
 		]
 	},
 	{
@@ -26,11 +27,12 @@
 		},
 		"powerpercraft": 512,
 		"ingredients": [
-			{ "type": "item", "code": "game:logsection-placed-*-ne-ud", "quantity": 1, "name": "wood" }
+			{ "type": "block", "code": "game:logsection-placed-*-ne-ud", "quantity": 1, "name": "wood" }
 		],
 		"outputs": [ 
 			{ "type": "item", "code": "game:plank-{wood}", "stacksize": 16 },
-			{ "type": "item", "code": "vinteng:sawdust", "stacksize": 6, "variable": 5 }
+			{ "type": "item", "code": "vinteng:sawdust", "stacksize": 6, "variable": 5 },
+			{ "type": "item", "code": "game:stick", "stacksize": 3, "variable": 2 }
 		]
 	},	
 	{
@@ -43,7 +45,7 @@
 		},
 		"powerpercraft": 512,
 		"ingredients": [
-			{ "type": "item", "code": "game:planks-*-ud", "quantity": 1, "name": "wood", "skipVariants": ["agedebony", "rottenebony"] }
+			{ "type": "block", "code": "game:planks-*-ud", "quantity": 1, "name": "wood", "skipVariants": ["agedebony", "rottenebony"] }
 		],
 		"outputs": [ 
 			{ "type": "item", "code": "game:plank-{wood}", "stacksize": 4 }
@@ -59,7 +61,7 @@
 		},
 		"powerpercraft": 512,
 		"ingredients": [
-			{ "type": "item", "code": "game:planks-*-ns", "quantity": 1, "name": "wood", "skipVariants": ["agedebony", "rottenebony"] }
+			{ "type": "block", "code": "game:planks-*-ns", "quantity": 1, "name": "wood", "skipVariants": ["agedebony", "rottenebony"] }
 		],
 		"outputs": [ 
 			{ "type": "item", "code": "game:plank-{wood}", "stacksize": 4 }
@@ -75,7 +77,7 @@
 		},
 		"powerpercraft": 512,
 		"ingredients": [
-			{ "type": "item", "code": "game:plankstairs-*-up-north-free", "quantity": 1, "name": "wood", "skipVariants": ["agedebony", "rottenebony"] }
+			{ "type": "block", "code": "game:plankstairs-*-up-north-free", "quantity": 1, "name": "wood", "skipVariants": ["agedebony", "rottenebony"] }
 		],
 		"outputs": [ 
 			{ "type": "item", "code": "game:plank-{wood}", "stacksize": 3 }
@@ -91,7 +93,7 @@
 		},
 		"powerpercraft": 512,
 		"ingredients": [
-			{ "type": "item", "code": "game:plankslab-*-down-free", "quantity": 1, "name": "wood", "skipVariants": ["agedebony", "rottenebony"] }
+			{ "type": "block", "code": "game:plankslab-*-down-free", "quantity": 1, "name": "wood", "skipVariants": ["agedebony", "rottenebony"] }
 		],
 		"outputs": [ 
 			{ "type": "item", "code": "game:plank-{wood}", "stacksize": 2 }

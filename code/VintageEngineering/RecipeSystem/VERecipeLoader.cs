@@ -42,6 +42,18 @@ namespace VintageEngineering.RecipeSystem
             {
                 verrs.RegisterMetalPressRecipe(r);
             });
+            this.LoadRecipes<RecipeLogSplitter>("ve log splitter recipe", "recipes/velogsplitter", delegate (RecipeLogSplitter r)
+            {
+                verrs.RegisterLogSplitterRecipe(r);
+            });
+            this.LoadRecipes<RecipeSawMill>("ve sawmill recipe", "recipes/vesawmill", delegate (RecipeSawMill r)
+            {
+                verrs.RegisterSawMillRecipe(r);
+            });
+            this.LoadRecipes<RecipeExtruder>("ve extruder recipe", "recipes/veextruder", delegate (RecipeExtruder r)
+            {
+                verrs.RegisterExtruderRecipe(r);
+            });
 
             sapi.World.Logger.StoryEvent(Lang.Get("vinteng:storyevent-recipes", Array.Empty<object>()));
         }

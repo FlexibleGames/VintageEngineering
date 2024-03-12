@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
+using VintageEngineering.blockentity;
 using VintageEngineering.Electrical.Systems;
 using VintageEngineering.Electrical.Systems.Catenary;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
+using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent;
 
@@ -24,9 +28,10 @@ namespace VintageEngineering.Electrical
         protected ulong electricpower = 0L;
 
         /// <summary>
-        /// Is this machine 'sleeping'? Saved in base ElectricBE.
+        /// Machine States are On, Off, and Sleeping<br/>
+        /// Saved with base ToTreeAttribute call.
         /// </summary>
-        protected bool isSleeping = false;
+        private EnumBEState machineState;
 
         /// <summary>
         /// What Priority is this machine in the Electric Network its attached too? Saved in base ElectricBE.
@@ -34,19 +39,44 @@ namespace VintageEngineering.Electrical
         protected int priority = 5;
 
         /// <summary>
-        /// Is this machine on? Saved in base ElectricBE.
-        /// </summary>
-        protected bool isEnabled = true;
-
-        /// <summary>
         /// All WireNodes that this block connects to. Index is the WireNode index the connections attach too.
         /// </summary>
         protected Dictionary<int, List<WireNode>> electricConnections = null;
-
+        
         /// <summary>
         /// Network ID's indexed by the WireNode index (Set in JSON)
         /// </summary>
         protected Dictionary<int, long> NetworkIDs = null;
+
+        /// <summary>
+        /// Utility for setting, starting, and stopping animations.
+        /// </summary>
+        protected BlockEntityAnimationUtil AnimUtil
+        {
+            get
+            {
+                BEBehaviorAnimatable behavior = base.GetBehavior<BEBehaviorAnimatable>();
+                if (behavior == null) return null;
+                return behavior.animUtil;
+            }
+        }
+
+        /// <summary>
+        /// Machine States are On, Off, and Sleeping<br/>
+        /// Saved with base ToTreeAttribute call.
+        /// </summary>
+        public EnumBEState MachineState
+        {
+            get { return machineState; }
+            set
+            {
+                if (machineState != value)
+                {
+                    machineState = value;
+                    StateChange(); 
+                }
+            }
+        }
 
         #region IElectricBlockEntity
         public virtual ulong MaxPower 
@@ -57,7 +87,7 @@ namespace VintageEngineering.Electrical
                 {
                     return (ulong)Block.Attributes["maxpower"].AsDouble(0);
                 }
-                return 0;
+                return 0;                
             }
         }
 
@@ -93,15 +123,13 @@ namespace VintageEngineering.Electrical
 
         public bool IsPowerFull => MaxPower == CurrentPower;
 
-        public bool IsSleeping => isSleeping;
-
         public int Priority => priority;
 
-        public bool IsEnabled => isEnabled;
+        public bool IsSleeping => machineState == EnumBEState.Sleeping;
 
+        public bool IsEnabled => machineState == EnumBEState.Sleeping || machineState == EnumBEState.On;
 
-
-        public void CheatPower(bool drain = false)
+        public virtual void CheatPower(bool drain = false)
         {
             if (!drain)
             {
@@ -114,8 +142,17 @@ namespace VintageEngineering.Electrical
             this.MarkDirty();
         }
 
-        public ulong ExtractPower(ulong powerWanted, float dt, bool simulate = false)
+        /// <summary>
+        /// Called when MachineState is changed. Override to trigger animations and other fancy things.
+        /// </summary>
+        public virtual void StateChange()
         {
+
+        }
+
+        public virtual ulong ExtractPower(ulong powerWanted, float dt, bool simulate = false)
+        {
+            if (MachineState == EnumBEState.Off) return powerWanted; // machine is off, bounce.
             if (electricpower == 0) return powerWanted; // we have no power to give
 
             // what is the max power transfer of this machine for this DeltaTime update tick?
@@ -133,22 +170,21 @@ namespace VintageEngineering.Electrical
             {
                 // PPS meets or exceeds power wanted, this machine can cover all power needs.
                 if (!simulate) electricpower -= powerWanted;
-                isSleeping = false;
                 this.MarkDirty();
                 return 0; // all power wanted was supplied
             }
             else
             {
                 // powerWanted exceeds how much we can supply
-                if (!simulate) electricpower -= pps; // simulation mode doesn't change machines power total.                
-                isSleeping = false;
+                if (!simulate) electricpower -= pps; // simulation mode doesn't change machines power total.                                
                 this.MarkDirty();
                 return powerWanted - pps; // return powerWanted reduced by our PPS.
             }
         }
 
-        public ulong ReceivePower(ulong powerOffered, float dt, bool simulate = false)
+        public virtual ulong ReceivePower(ulong powerOffered, float dt, bool simulate = false)
         {
+            if (MachineState != EnumBEState.Off) return powerOffered; // machine is off, bounce.
             if (CurrentPower == MaxPower) return powerOffered; // we're full, bounce fast
 
             // what is the max power transfer of this machine for this DeltaTime update tick?
@@ -165,8 +201,7 @@ namespace VintageEngineering.Electrical
             if (pps >= powerOffered)  // if amount we can take exceeds amount offered
             {                
                 // meaning we can take it all.
-                if (!simulate) electricpower += powerOffered;
-                isSleeping = false;
+                if (!simulate) electricpower += powerOffered;                
                 this.MarkDirty();
                 return 0;
             }
@@ -174,7 +209,6 @@ namespace VintageEngineering.Electrical
             {
                 // far more common, powerOffered exceeds PPS
                 if (!simulate) electricpower += pps;
-                isSleeping = false;
                 this.MarkDirty();
                 return powerOffered - pps;
             }
@@ -234,6 +268,27 @@ namespace VintageEngineering.Electrical
             base.Initialize(api);
             if (electricConnections == null) electricConnections = new Dictionary<int, List<WireNode>>();
             if (NetworkIDs == null) NetworkIDs = new Dictionary<int, long>();
+            if (api.Side == EnumAppSide.Client)
+            {
+                BlockEntityAnimationUtil animbeutil = this.AnimUtil;
+                if (animbeutil == null) return;
+                animbeutil.InitializeAnimator("vemetalpress", null, null, new Vec3f(0f, this.GetRotation(), 0f));
+            }
+        }
+
+        public int GetRotation()
+        {
+            RegistryObject block = this.Api.World.BlockAccessor.GetBlock(this.Pos);
+            int rot = 0;
+            string lastpart = block.LastCodePart(0); // "north", "east", "south", "west"
+            switch (lastpart)
+            {
+                case "north": return 0;
+                case "west": return 90;
+                case "south": return 180;
+                case "east": return 270;
+                default: return 0;
+            }
         }
 
         public virtual string GetNetworkInfo()
@@ -267,8 +322,7 @@ namespace VintageEngineering.Electrical
             base.ToTreeAttributes(tree);
             ITreeAttribute invtree = new TreeAttribute();
                                                 
-            tree.SetBool("issleeping", isSleeping);
-            tree.SetBool("isenabled", isEnabled);
+            tree.SetString("machinestate", machineState.ToString());
             tree.SetInt("priority", priority);
             tree.SetLong("currentpower", (long)electricpower);
             tree.SetBytes("connections", SerializerUtil.Serialize(electricConnections));
@@ -278,8 +332,7 @@ namespace VintageEngineering.Electrical
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldForResolving)
         {
             base.FromTreeAttributes(tree, worldForResolving);
-            isSleeping = tree.GetBool("issleeping", false);
-            isEnabled = tree.GetBool("isenabled", true);
+            MachineState = Enum.Parse<EnumBEState>(tree.GetString("machinestate", "Sleeping"));
             priority = tree.GetInt("priority", 5);
             electricpower = (ulong)tree.GetLong("currentpower", 0);
 

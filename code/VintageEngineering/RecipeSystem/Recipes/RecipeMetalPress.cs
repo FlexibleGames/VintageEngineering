@@ -41,6 +41,12 @@ namespace VintageEngineering.RecipeSystem.Recipes
         /// </summary>
         public bool RequiresDurability { get; set; }
 
+        /// <summary>
+        /// If set, what temp does the input have to be for the recipe to progress?<br/>
+        /// If this isn't set it will default to 0.
+        /// </summary>
+        public int RequiresTemp { get; set; }
+
         public string Code { get; set; }
 
         public long PowerPerCraft { get; set; }
@@ -87,6 +93,8 @@ namespace VintageEngineering.RecipeSystem.Recipes
                 Name = this.Name,
                 Enabled = this.Enabled,
                 Requires = Requires != null ? this.Requires.Clone() : null,
+                RequiresVariants = this.RequiresVariants != null ? this.RequiresVariants.FastCopy(RequiresVariants.Length) : null,
+                RequiresTemp = this.RequiresTemp,
                 Code = this.Code,
                 PowerPerCraft = this.PowerPerCraft,
                 Attributes = this.Attributes?.Clone(),
@@ -96,11 +104,11 @@ namespace VintageEngineering.RecipeSystem.Recipes
         }
 
         /// <summary>
-        /// Checks the validity of given ingredient and requires string to this recipe.<br/>        
+        /// Checks the validity of given ingredient and "requires" item to this recipe.<br/>        
         /// </summary>        
         /// <param name="ingredient">ItemSlot input ingredient</param>
-        /// <param name="requirescode">Required Press Mold Code if aplicable.</param>
-        /// <returns></returns>
+        /// <param name="requireslot">Required Press Mold Code if aplicable.</param>
+        /// <returns>True if valid.</returns>
         public bool Matches(ItemSlot ingredient, ItemSlot requireslot)
         {
             if (ingredient.Empty) return false; // no ingredient to even check, bounce
@@ -207,6 +215,10 @@ namespace VintageEngineering.RecipeSystem.Recipes
                 {
                     RequiresDurability = Attributes["requiresdurability"].AsBool(false);
                 }
+                if (Attributes["requirestemp"].Exists)
+                {
+                    RequiresTemp = Attributes["requirestemp"].AsInt();
+                }
             }
 
             return true;
@@ -232,6 +244,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
                     RequiresVariants[i] = reader.ReadString();
                 }
             }
+            RequiresTemp = reader.ReadInt32();
             Code = reader.ReadBoolean() ? reader.ReadString() : null;
             PowerPerCraft = reader.ReadInt64();
             Attributes = reader.ReadBoolean() ? new JsonObject(JToken.Parse(reader.ReadString())) : null;
@@ -255,13 +268,13 @@ namespace VintageEngineering.RecipeSystem.Recipes
 
                 if (RequiresVariants == null && Attributes["requiresvariants"].Exists)
                 {
-                    if (Attributes["requirevariants"].IsArray())
+                    if (Attributes["requiresvariants"].IsArray())
                     {
-                        RequiresVariants = Attributes["requirevariants"].AsArray<string>();
+                        RequiresVariants = Attributes["requiresvariants"].AsArray<string>();
                     }
                     else
                     {
-                        RequiresVariants = new string[1] { Attributes["requirevariants"].AsString() };
+                        RequiresVariants = new string[1] { Attributes["requiresvariants"].AsString() };
                     }
                 }
             }
@@ -288,6 +301,8 @@ namespace VintageEngineering.RecipeSystem.Recipes
                     writer.Write(RequiresVariants[i]);
                 }
             }
+
+            writer.Write(RequiresTemp);
 
             writer.Write(Code != null);
             if (Code != null) { writer.Write(Code); }

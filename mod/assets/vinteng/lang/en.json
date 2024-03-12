@@ -7,6 +7,33 @@
 	"vinteng:itemdesc-vepressmold-plate-*": "Use in a Metal Press to make plates. Mold will wear out over time, durability depends on material.",
 	"vinteng:item-vepressmold-gear-*": "Gear mold for Metal Press machine.",
 	"vinteng:itemdesc-vepressmold-gear-*": "Use in a Metal Press to make gears. Mold will wear out over time, durability depends on material.",
+
+	"vinteng:item-vediecast-lv-*": "LV Gauge Die Cast.",
+	"vinteng:itemdesc-vediecast-lv-*": "Use in an Extruder to make LV gauge wire from copper rods.",
+	"vinteng:item-vediecast-mv-*": "MV Gauge Die Cast.",
+	"vinteng:itemdesc-vediecast-mv-*": "Use in an Extruder to make MV gauge wire from copper rods.",
+	"vinteng:item-vediecast-hv-*": "HV Gauge Die Cast.",
+	"vinteng:itemdesc-vediecast-hv-*": "Use in an Extruder to make HV gauge wire from steel rods.",
+	"vinteng:item-vediecast-rod-*": "Metal Rod Die Cast.",
+	"vinteng:itemdesc-vediecast-rod-*": "Use in an Extruder to make metal rods from ingots.",
+	"vinteng:item-vediecast-screw-*": "Screw Die Cast.",
+	"vinteng:itemdesc-vediecast-screw-*": "Use in an Extruder to make metal screws from rods.",
+
+	"vinteng:item-vesawblade-*": "Saw Blade",
+	"vinteng:itemdesc-vesawblade-*": "Use in a Sawmill to make planks from logs. Will wear out over time, durability depends on material.<br><br>Can also convert plank blocks, stairs, and slabs back into raw planks.",
+
+	"vinteng:item-metalrod-copper": "Metal Rod (Copper)",
+	"vinteng:item-metalrod-brass": "Metal Rod (Brass)",
+	"vinteng:item-metalrod-tinbronze": "Metal Rod (TinBronze)",
+	"vinteng:item-metalrod-iron": "Metal Rod (Iron)",
+	"vinteng:item-metalrod-steel": "Metal Rod (Steel)",
+	"vinteng:itemdesc-metalrod-*": "Metal rods are used to make wires as well as a sturdy building material in recipes. Made from ingots in the Extruder.",
+
+	"vinteng:item-screw-brass": "Brass Screw",
+	"vinteng:item-screw-iron": "Iron Screw",
+	"vinteng:item-screw-steel": "Steek Screw",
+	"vinteng:itemdesc-screw-*": "Screws are good at keeping things together. Made from rods in the Extruder using the screw die cast.",
+
 	"vinteng:gui-mold-text": "Mold",
 	"vinteng:gui-turn-on": "Turn On",
 	"vinteng:gui-turn-off": "Turn Off",

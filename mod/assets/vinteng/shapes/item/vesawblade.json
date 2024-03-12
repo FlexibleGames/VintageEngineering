@@ -8,8 +8,8 @@
 	"textureSizes": {
 	},
 	"textures": {
-		"gold1": "game:block/metal/sheet-plain/gold1",
-		"steel": "game:block/metal/sheet-plain/steel"
+		"gold1": "game:block/metal/plate/gold",
+		"steel": "game:block/metal/plate/steel"
 	},
 	"elements": [
 		{

@@ -893,7 +893,7 @@
 	"animations": [
 		{
 			"name": "process",
-			"code": "process",
+			"code": "craft",
 			"quantityframes": 130,
 			"onActivityStopped": "Rewind",
 			"onAnimationEnd": "Repeat",

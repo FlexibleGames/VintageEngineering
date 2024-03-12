@@ -142,7 +142,7 @@ namespace VintageEngineering
                 if (InputSlot.Empty)
                 {
                     isCrafting = false;
-                    isSleeping = true;
+                    IsSleeping = true;
                     currentPressRecipe = null;
                     recipePowerApplied = 0;
                 }
@@ -168,7 +168,7 @@ namespace VintageEngineering
             {
                 currentPressRecipe = null;
                 isCrafting = false;
-                isSleeping = true;                
+                IsSleeping = true;                
                 return false;
             }
 
@@ -182,13 +182,13 @@ namespace VintageEngineering
                 {
                     currentPressRecipe = mprecipe;
                     isCrafting = true;
-                    isSleeping = false;
+                    IsSleeping = false;
                     return true;
                 }
             }
             currentPressRecipe = null;
             isCrafting = false;
-            isSleeping = true;
+            IsSleeping = true;
             return false;
         }
 
@@ -197,7 +197,7 @@ namespace VintageEngineering
             float recipeProgressPercent = RecipeProgress * 100;
             string onOff = isEnabled ? "On" : "Off";
             string crafting = isCrafting ? $"Craft: {recipeProgressPercent:N1}%" : "Not Crafting";
-            if (isSleeping) onOff = "Sleeping";
+            if (IsSleeping) onOff = "Sleeping";
             return $"{crafting} | {onOff} | Power: {CurrentPower:N0}/{MaxPower:N0}";
         }
 
@@ -240,7 +240,7 @@ namespace VintageEngineering
             if (this.Api is ICoreServerAPI) // only simulates on the server!
             {
                 // if the machine is ON but not crafting, it's sleeping, tick slower
-                if (isSleeping)
+                if (IsSleeping)
                 {
                     updateBouncer += deltatime;
                     if (updateBouncer < 2f) return;                    
@@ -248,7 +248,7 @@ namespace VintageEngineering
                 updateBouncer = 0;
                 
                 // if we're sleeping, bounce out of here. Extremely fast updates.                
-                if (isEnabled && !isSleeping) // block is enabled (on/off) 
+                if (isEnabled && !IsSleeping) // block is enabled (on/off) 
                 {
                     if (isCrafting && RecipeProgress < 1f) // machine is activly crafting and recipe isn't done
                     {
@@ -269,7 +269,7 @@ namespace VintageEngineering
                     else if (!IsCrafting) // machine isn't crafting
                     {
                         // enabled but not crafting means we have no valid recipe
-                        isSleeping = true; // go to sleep
+                        IsSleeping = true; // go to sleep
                     }
                     if (RecipeProgress >= 1f)
                     {
@@ -372,7 +372,7 @@ namespace VintageEngineering
 
                         if (!FindMatchingRecipe())
                         {
-                            isSleeping = true;
+                            IsSleeping = true;
                             isCrafting = false;
                         }
                         recipePowerApplied = 0;

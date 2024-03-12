@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VintageEngineering.blockentity;
 using VintageEngineering.Electrical.Systems;
 using VintageEngineering.Electrical.Systems.Catenary;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.Util;
+using Vintagestory.GameContent;
 
 namespace VintageEngineering.Electrical
 {
@@ -23,19 +25,15 @@ namespace VintageEngineering.Electrical
         protected ulong electricpower = 0L;
 
         /// <summary>
-        /// Is this machine 'sleeping'?
+        /// Machine States are On, Off, and Sleeping<br/>
+        /// Saved with base ToTreeAttribute call.
         /// </summary>
-        protected bool isSleeping = false;
+        private EnumBEState machineState;
 
         /// <summary>
         /// What Priority is this machine in the Electric Network its attached too?
         /// </summary>
         protected int priority = 5;
-
-        /// <summary>
-        /// Is this machine on?
-        /// </summary>
-        protected bool isEnabled = true;
 
         /// <summary>
         /// All WireNodes that this block connects to. Index is the WireNode index the connections attach too.
@@ -47,6 +45,35 @@ namespace VintageEngineering.Electrical
         /// </summary>
         protected Dictionary<int, long> NetworkIDs = null;
 
+        /// <summary>
+        /// Utility for setting, starting, and stopping animations.
+        /// </summary>
+        protected BlockEntityAnimationUtil AnimUtil
+        {
+            get
+            {
+                BEBehaviorAnimatable behavior = base.GetBehavior<BEBehaviorAnimatable>();
+                if (behavior == null) return null;
+                return behavior.animUtil;
+            }
+        }
+
+        /// <summary>
+        /// Machine States are On, Off, and Sleeping<br/>
+        /// Saved with base ToTreeAttribute call.
+        /// </summary>
+        public EnumBEState MachineState
+        {
+            get { return machineState; }
+            set
+            {
+                if (machineState != value)
+                {
+                    machineState = value;
+                    StateChange();
+                }
+            }
+        }
 
         public override void Initialize(ICoreAPI api)
         {
@@ -100,9 +127,9 @@ namespace VintageEngineering.Electrical
 
         public virtual bool IsPowerFull => CurrentPower == MaxPower;
 
-        public virtual bool IsSleeping => isSleeping;
+        public bool IsSleeping => machineState == EnumBEState.Sleeping;
 
-        public virtual bool IsEnabled => isEnabled;
+        public bool IsEnabled => machineState == EnumBEState.Sleeping || machineState == EnumBEState.On;
 
         public virtual int Priority => priority;
 
@@ -121,6 +148,7 @@ namespace VintageEngineering.Electrical
 
         public virtual ulong ExtractPower(ulong powerWanted, float dt, bool simulate = false)
         {
+            if (MachineState == EnumBEState.Off) return powerWanted; // machine is off, bounce.
             if (electricpower == 0) return powerWanted; // we have no power to give
 
             // what is the max power transfer of this machine for this DeltaTime update tick?
@@ -137,19 +165,22 @@ namespace VintageEngineering.Electrical
             if (pps >= powerWanted) // this will probably rarely fire.
             {
                 // PPS meets or exceeds power wanted, this machine can cover all power needs.
-                if (!simulate) electricpower -= powerWanted;
-                isSleeping = false;
+                if (!simulate) electricpower -= powerWanted;                
                 this.MarkDirty();
                 return 0; // all power wanted was supplied
             }
             else
             {
                 // powerWanted exceeds how much we can supply
-                if (!simulate) electricpower -= pps; // simulation mode doesn't change machines power total.                
-                isSleeping = false;
+                if (!simulate) electricpower -= pps; // simulation mode doesn't change machines power total.                                
                 this.MarkDirty();
                 return powerWanted - pps; // return powerWanted reduced by our PPS.
             }
+        }
+
+        public virtual void StateChange()
+        {
+
         }
 
         public List<WireNode> GetConnections(int wirenodeindex)
@@ -171,6 +202,7 @@ namespace VintageEngineering.Electrical
 
         public virtual ulong ReceivePower(ulong powerOffered, float dt, bool simulate = false)
         {
+            if (MachineState == EnumBEState.Off) return powerOffered; // machine is off, bounce.
             if (CurrentPower == MaxPower) return powerOffered; // we're full, bounce fast
 
             // what is the max power transfer of this machine for this DeltaTime update tick?
@@ -187,16 +219,14 @@ namespace VintageEngineering.Electrical
             if (pps >= powerOffered)  // if amount we can take exceeds amount offered
             {
                 // meaning we can take it all.
-                if (!simulate) electricpower += powerOffered;
-                isSleeping = false;
+                if (!simulate) electricpower += powerOffered;                
                 this.MarkDirty();
                 return 0;
             }
             else
             {
                 // far more common, powerOffered exceeds PPS
-                if (!simulate) electricpower += pps;
-                isSleeping = false;
+                if (!simulate) electricpower += pps;                
                 this.MarkDirty();
                 return powerOffered - pps;
             }

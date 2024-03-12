@@ -4,7 +4,8 @@
 		"enabled": true,
 		"attributes": {
 			"requires": "vinteng:vepressmold-plate-tinbronze",
-			"requiresdurability": true
+			"requiresdurability": true,
+			"requirestemp": 800
 		},
 		"powerpercraft": 512,
 		"ingredients": [
@@ -21,7 +22,8 @@
 		"attributes": {
 			"requires": "vinteng:vepressmold-plate-*",
 			"requiresvariants": ["iron", "meteoriciron", "steel", "titanium"],
-			"requiresdurability": true
+			"requiresdurability": true,
+			"requirestemp": 1100
 		},
 		"powerpercraft": 512,
 		"ingredients": [
