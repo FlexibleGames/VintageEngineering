@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace VintageEngineering.blockentity
+namespace VintageEngineering
 {
     /// <summary>
     /// What State is this Block Entity at?

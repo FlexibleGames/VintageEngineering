@@ -9,6 +9,7 @@ using Vintagestory.API.Datastructures;
 using VintageEngineering.Electrical;
 using VintageEngineering.RecipeSystem.Recipes;
 using VintageEngineering.RecipeSystem;
+using Vintagestory.API.MathTools;
 
 namespace VintageEngineering
 {
@@ -142,7 +143,7 @@ namespace VintageEngineering
                 if (InputSlot.Empty)
                 {
                     isCrafting = false;
-                    IsSleeping = true;
+                    MachineState = EnumBEState.Sleeping;
                     currentPressRecipe = null;
                     recipePowerApplied = 0;
                 }
@@ -168,7 +169,7 @@ namespace VintageEngineering
             {
                 currentPressRecipe = null;
                 isCrafting = false;
-                IsSleeping = true;                
+                MachineState = EnumBEState.Sleeping;
                 return false;
             }
 
@@ -182,22 +183,29 @@ namespace VintageEngineering
                 {
                     currentPressRecipe = mprecipe;
                     isCrafting = true;
-                    IsSleeping = false;
+                    MachineState = EnumBEState.On;
                     return true;
                 }
             }
             currentPressRecipe = null;
             isCrafting = false;
-            IsSleeping = true;
+            MachineState = EnumBEState.Sleeping;
             return false;
         }
 
         public string GetOutputText()
         {
             float recipeProgressPercent = RecipeProgress * 100;
-            string onOff = isEnabled ? "On" : "Off";
+            string onOff;
+            switch (MachineState)
+            {
+                case EnumBEState.On: onOff = "On"; break;
+                case EnumBEState.Off: onOff = "Off"; break;
+                case EnumBEState.Sleeping: onOff = "Sleeping"; break;
+                default: onOff = "Error"; break;
+            }
             string crafting = isCrafting ? $"Craft: {recipeProgressPercent:N1}%" : "Not Crafting";
-            if (IsSleeping) onOff = "Sleeping";
+            
             return $"{crafting} | {onOff} | Power: {CurrentPower:N0}/{MaxPower:N0}";
         }
 
@@ -248,7 +256,7 @@ namespace VintageEngineering
                 updateBouncer = 0;
                 
                 // if we're sleeping, bounce out of here. Extremely fast updates.                
-                if (isEnabled && !IsSleeping) // block is enabled (on/off) 
+                if (MachineState == EnumBEState.On) // block is enabled (on/off) 
                 {
                     if (isCrafting && RecipeProgress < 1f) // machine is activly crafting and recipe isn't done
                     {
@@ -269,7 +277,7 @@ namespace VintageEngineering
                     else if (!IsCrafting) // machine isn't crafting
                     {
                         // enabled but not crafting means we have no valid recipe
-                        IsSleeping = true; // go to sleep
+                        MachineState = EnumBEState.Sleeping; // go to sleep
                     }
                     if (RecipeProgress >= 1f)
                     {
@@ -342,10 +350,7 @@ namespace VintageEngineering
                                 Api.World.SpawnItemEntity(extraoutputstack, this.Pos.UpCopy(1).ToVec3d());
                             }
                             ExtraOutputSlot.MarkDirty();
-                        }
-                        // remove used ingredients from input
-                        InputSlot.TakeOut(currentPressRecipe.Ingredients[0].Quantity);
-                        InputSlot.MarkDirty();
+                        }                                            
 
                         // damage the mold...
                         if (!MoldSlot.Empty && currentPressRecipe.RequiresDurability) // let the recipe control whether durability is used
@@ -369,10 +374,13 @@ namespace VintageEngineering
                             }
                             MoldSlot.MarkDirty();
                         }
+                        // remove used ingredients from input
+                        InputSlot.TakeOut(currentPressRecipe.Ingredients[0].Quantity);
+                        InputSlot.MarkDirty();
 
                         if (!FindMatchingRecipe())
                         {
-                            IsSleeping = true;
+                            MachineState = EnumBEState.Sleeping;
                             isCrafting = false;
                         }
                         recipePowerApplied = 0;
@@ -393,10 +401,39 @@ namespace VintageEngineering
             else
             {
                 capi = api as ICoreClientAPI;
+                if (AnimUtil != null)
+                {
+                    AnimUtil.InitializeAnimator("vemetalpress", null, null, new Vec3f(0f, GetRotation(), 0f) );
+                }
             }
             this.inventory.Pos = this.Pos;
             this.inventory.LateInitialize($"{InventoryClassName}-{this.Pos.X}/{this.Pos.Y}/{this.Pos.Z}", api);
             this.RegisterGameTickListener(new Action<float>(OnSimTick), 100, 0);
+        }
+
+        public override void StateChange()
+        {
+            if (MachineState == EnumBEState.On)
+            {
+                if (AnimUtil != null)
+                {
+                    AnimUtil.StartAnimation(new AnimationMetaData
+                    {
+                        Animation = "crafting",
+                        Code = "crafting",
+                        AnimationSpeed = 1f,
+                        EaseOutSpeed = 1f,
+                        EaseInSpeed = 1f
+                    });
+                }
+            }
+            else
+            {
+                if (AnimUtil != null)
+                {
+                    AnimUtil.StopAnimation("crafting");
+                }
+            }
         }
 
         public override bool OnPlayerRightClick(IPlayer byPlayer, BlockSelection blockSel)
@@ -418,7 +455,14 @@ namespace VintageEngineering
             base.OnReceivedClientPacket(player, packetid, data);
             if (packetid == 1002) // Enable button pressed
             {
-                isEnabled = !isEnabled;                               
+                if (IsEnabled) // we're enabled, we need to turn off
+                {
+                    MachineState = EnumBEState.Off;
+                }
+                else
+                {
+                    MachineState = isCrafting ? EnumBEState.On : EnumBEState.Sleeping;
+                }                                    
                 MarkDirty(true, null);
             }    
         }

@@ -31,11 +31,11 @@
 				"powertier": "LV",
 				"maxconnections": 1,
 				"networkid": 0,
-                "x1": 0.8125,
-                "y1": 0.6875,
+                "x1": 0.4375,
+                "y1": 0.8125,
                 "z1": 0,
-                "x2": 1,
-                "y2": 0.875,
+                "x2": 0.625,
+                "y2": 1,
                 "z2": 0.1875,
                 "rotateYByType": {
 					"*-north": 0,
@@ -73,6 +73,6 @@
 	"replaceable": 600,
 	"resistance": 1.5,
 	"collisionSelectionBoxes": [		
-		{ "x1": 0, "y1": 0, "z1": 0, "x2": 1, "y2": 2, "z2": 1 }		
+		{ "x1": 0, "y1": 0, "z1": 0, "x2": 1, "y2": 1, "z2": 1 }		
 	]
 }

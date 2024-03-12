@@ -27,6 +27,10 @@
       <HintPath>..\..\..\..\..\Users\simtr\AppData\Roaming\Vintagestory\VintagestoryLib.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="VSEssentials">
+      <HintPath>..\..\..\..\..\Users\simtr\AppData\Roaming\Vintagestory\Mods\VSEssentials.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="VSSurvivalMod">
       <HintPath>..\..\..\..\..\Users\simtr\AppData\Roaming\Vintagestory\Mods\VSSurvivalMod.dll</HintPath>
       <Private>False</Private>

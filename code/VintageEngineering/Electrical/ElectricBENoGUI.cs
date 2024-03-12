@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using VintageEngineering.blockentity;
 using VintageEngineering.Electrical.Systems;
 using VintageEngineering.Electrical.Systems.Catenary;
 using Vintagestory.API.Common;
@@ -314,10 +312,8 @@ namespace VintageEngineering.Electrical
         #region AttributeTrees
         public override void ToTreeAttributes(ITreeAttribute tree)
         {
-            base.ToTreeAttributes(tree);            
-
-            tree.SetBool("issleeping", isSleeping);
-            tree.SetBool("isenabled", isEnabled);
+            base.ToTreeAttributes(tree);
+            tree.SetString("machinestate", machineState.ToString());
             tree.SetInt("priority", priority);
             tree.SetLong("currentpower", (long)electricpower);
             tree.SetBytes("connections", SerializerUtil.Serialize(electricConnections));
@@ -327,8 +323,7 @@ namespace VintageEngineering.Electrical
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldForResolving)
         {
             base.FromTreeAttributes(tree, worldForResolving);
-            isSleeping = tree.GetBool("issleeping", false);
-            isEnabled = tree.GetBool("isenabled", true);
+            MachineState = Enum.Parse<EnumBEState>(tree.GetString("machinestate", "Sleeping"));
             priority = tree.GetInt("priority", 5);
             electricpower = (ulong)tree.GetLong("currentpower", 0);
 

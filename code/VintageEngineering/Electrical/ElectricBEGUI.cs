@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
-using System.Threading.Tasks;
-using System.Transactions;
-using VintageEngineering.blockentity;
 using VintageEngineering.Electrical.Systems;
 using VintageEngineering.Electrical.Systems.Catenary;
 using Vintagestory.API.Common;
@@ -184,7 +180,7 @@ namespace VintageEngineering.Electrical
 
         public virtual ulong ReceivePower(ulong powerOffered, float dt, bool simulate = false)
         {
-            if (MachineState != EnumBEState.Off) return powerOffered; // machine is off, bounce.
+            if (MachineState == EnumBEState.Off) return powerOffered; // machine is off, bounce.
             if (CurrentPower == MaxPower) return powerOffered; // we're full, bounce fast
 
             // what is the max power transfer of this machine for this DeltaTime update tick?
@@ -268,22 +264,15 @@ namespace VintageEngineering.Electrical
             base.Initialize(api);
             if (electricConnections == null) electricConnections = new Dictionary<int, List<WireNode>>();
             if (NetworkIDs == null) NetworkIDs = new Dictionary<int, long>();
-            if (api.Side == EnumAppSide.Client)
-            {
-                BlockEntityAnimationUtil animbeutil = this.AnimUtil;
-                if (animbeutil == null) return;
-                animbeutil.InitializeAnimator("vemetalpress", null, null, new Vec3f(0f, this.GetRotation(), 0f));
-            }
         }
 
         public int GetRotation()
         {
-            RegistryObject block = this.Api.World.BlockAccessor.GetBlock(this.Pos);
-            int rot = 0;
+            RegistryObject block = this.Api.World.BlockAccessor.GetBlock(this.Pos);            
             string lastpart = block.LastCodePart(0); // "north", "east", "south", "west"
             switch (lastpart)
             {
-                case "north": return 0;
+                case "north": return 0; 
                 case "west": return 90;
                 case "south": return 180;
                 case "east": return 270;
