@@ -1,6 +1,6 @@
 {
-	"code": "catenery",
-	"class": "CateneryBlockWire",
+	"code": "catenary",
+	"class": "CatenaryBlockWire",
 	"variantgroups": [
 		{ "code": "type", "states": [ "lvpower", "mvpower", "hvpower", "evpower", "allpower", "signalred", "signalgreen", "communication"] }
 	],
@@ -105,5 +105,10 @@
 		"rotation": { "x": -2, "y": 25, "z": -78 },
 		"scale": 0.4
 	},
+	"guiTransform": {
+		"rotation": { "x": -22.6, "y": -45.3, "z": 29 },
+		"origin": { "x": 0.5, "y": 0, "z": 0.5 },
+		"scale": 1.84
+	},	
 	"drops": []
 }

@@ -24,7 +24,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
             cm = catenaryMod;
             capi = c_api;
             chunksize = capi.World.BlockAccessor.ChunkSize;
-            capi.Event.RegisterRenderer(this, EnumRenderStage.Opaque, "catenerynetwork");
+            capi.Event.RegisterRenderer(this, EnumRenderStage.Opaque, "catenarynetwork");
         }
 
         public void Dispose()
@@ -82,7 +82,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
         /// <br>Keeps wire connection objects to ensure proper texture gets used.</br>
         /// <br>If chunk_position is set and does not exist in the dataset, update will be skipped.</br>
         /// </summary>
-        /// <param name="wireData">Catenery Data</param>
+        /// <param name="wireData">Catenary Data</param>
         /// <param name="chunk_position">[Optional] ChunkPosition</param>
         public void UpdateWireMeshes(CatenaryData wireData, Vec3i chunk_position = null) 
         {

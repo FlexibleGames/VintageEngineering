@@ -266,6 +266,11 @@ namespace VintageEngineering.Electrical
             if (NetworkIDs == null) NetworkIDs = new Dictionary<int, long>();
         }
 
+        /// <summary>
+        /// Returns Rotation depending on what direction this block is facing.<br/>
+        /// north return 0, west return 90, south returns 180, east returns 270
+        /// </summary>
+        /// <returns>Rotate value</returns>
         public int GetRotation()
         {
             RegistryObject block = this.Api.World.BlockAccessor.GetBlock(this.Pos);            
@@ -296,9 +301,9 @@ namespace VintageEngineering.Electrical
             return stringBuilder.ToString();
         }
 
-        public bool IsPlayerHoldingWire(IPlayer byPlayer, BlockSelection blockSel)
+        public virtual bool IsPlayerHoldingWire(IPlayer byPlayer, BlockSelection blockSel)
         {
-            if (byPlayer.InventoryManager.ActiveHotbarSlot?.Itemstack?.Collectible?.FirstCodePart() == "catenery")
+            if (byPlayer.InventoryManager.ActiveHotbarSlot?.Itemstack?.Collectible?.FirstCodePart() == "catenary")
             {
                 return true;
             }

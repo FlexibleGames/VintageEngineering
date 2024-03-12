@@ -349,6 +349,11 @@
 		"rotation": { "x": -2, "y": 25, "z": -78 },
 		"scale": 0.4
 	},
+	"guiTransform": {
+		"translation": { "x": 0, "y": -17, "z": 0 },
+		"rotation": { "x": -19, "y": -37, "z": -1 },
+		"scale": 2.49
+	},	
 	"drops": [
 		{
 			"type": "block",

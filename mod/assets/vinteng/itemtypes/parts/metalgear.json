@@ -1,0 +1,109 @@
+{
+	"code": "metalgear",
+	"creativeinventory": {
+		"items": [ "*" ]
+	},
+	"drawtype": "json",
+	"shape": { "base": "vinteng:item/parts/gear" },
+	"maxstacksize": 64,
+	"variantgroups": [
+		{
+			"code": "metal",
+			"states": [ "copper", "brass", "tinbronze", "gold", "iron", "steel", "chromium", "electrum", "platinum", "titanium" ]
+		}
+	],
+	"attributes": {
+		"groundStorageTransform": {
+				"translation": {
+					"x": 0.01,
+					"y": 0,
+					"z": -0.01
+				},
+				"rotation": {
+					"x": 0,
+					"y": 45,
+					"z": 0
+				}
+		}
+  	},
+  	"behaviors": [
+    {
+      "name": "GroundStorable",
+      "properties": {
+        "layout": "Quadrants",
+        "collisionBox": {
+          "x1": 0,
+          "y1": 0,
+          "z1": 0,
+          "x2": 1,
+          "y2": 0.0625,
+          "z2": 1
+        }
+      }
+    }
+  	],
+	"textures": {
+		"metal": { "base": "game:block/metal/plate/{metal}" }
+	},
+	"guiTransform": {
+		"translation": { "x": 0, "y": 6.1, "z": 0 },
+		"rotation": { "x": 7, "y": 112, "z": -72 },
+		"origin": { "x": 0.43, "y": 0, "z": 0.44 },
+		"scale": 2.74
+	},
+	"fpHandTransform": {
+		"translation": {
+			"x": -0.1,
+			"y": 0.2,
+			"z": 0
+		},
+		"rotation": {
+			"x": 90,
+			"y": 99,
+			"z": -42
+		},
+		"origin": {
+			"x": 0.5,
+			"y": 0,
+			"z": 0.5
+		},
+		"scale": 2.15
+	},
+	"groundTransform": {
+		"translation": {
+			"x": 0,
+			"y": 0,
+			"z": 0
+		},
+		"rotation": {
+			"x": 0,
+			"y": 0,
+			"z": 0
+		},
+		"origin": {
+			"x": 0.5,
+			"y": 0,
+			"z": 0.5
+		},
+		"scale": 4.31
+	},
+	"tpHandTransform": {
+		"translation": {
+			"x": -0.78,
+			"y": -0.09,
+			"z": -0.67
+		},
+		"rotation": {
+			"x": 9,
+			"y": -1,
+			"z": -16
+		},
+		"origin": {
+			"x": 0.5,
+			"y": 0,
+			"z": 0.5
+		},
+		"scale": 0.76
+	}
+
+}

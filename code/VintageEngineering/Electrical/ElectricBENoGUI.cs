@@ -80,7 +80,43 @@ namespace VintageEngineering.Electrical
             if (NetworkIDs == null) NetworkIDs = new Dictionary<int, long>();
         }
 
-#region interfaces
+        /// <summary>
+        /// Returns Rotation depending on what direction this block is facing.<br/>
+        /// north return 0, west return 90, south returns 180, east returns 270
+        /// </summary>
+        /// <returns>Rotate value</returns>
+        public int GetRotation()
+        {
+            RegistryObject block = this.Api.World.BlockAccessor.GetBlock(this.Pos);
+            string lastpart = block.LastCodePart(0); // "north", "east", "south", "west"
+            switch (lastpart)
+            {
+                case "north": return 0;
+                case "west": return 90;
+                case "south": return 180;
+                case "east": return 270;
+                default: return 0;
+            }
+        }
+
+        public virtual bool IsPlayerHoldingWire(IPlayer byPlayer, BlockSelection blockSel)
+        {
+            if (byPlayer.InventoryManager.ActiveHotbarSlot?.Itemstack?.Collectible?.FirstCodePart() == "catenary")
+            {
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Override to define particles and animations when machine changes state.
+        /// </summary>
+        public virtual void StateChange()
+        {
+
+        }
+
+        #region IElectricBlockEntity
         public virtual ulong MaxPower
         {
             get
@@ -175,29 +211,6 @@ namespace VintageEngineering.Electrical
                 return powerWanted - pps; // return powerWanted reduced by our PPS.
             }
         }
-
-        public virtual void StateChange()
-        {
-
-        }
-
-        public List<WireNode> GetConnections(int wirenodeindex)
-        {
-            if (electricConnections == null) return null;
-            if (electricConnections[wirenodeindex] == null) return null;
-            if (electricConnections[wirenodeindex].Count == 0) return null;
-
-            return electricConnections[wirenodeindex].ToList<WireNode>();
-        }
-
-        public int NumConnections(int wirenodeindex)
-        {
-            if (electricConnections == null) return 0;
-            if (electricConnections[wirenodeindex] == null) return 0;
-
-            return electricConnections[wirenodeindex].Count;
-        }
-
         public virtual ulong ReceivePower(ulong powerOffered, float dt, bool simulate = false)
         {
             if (MachineState == EnumBEState.Off) return powerOffered; // machine is off, bounce.
@@ -217,17 +230,38 @@ namespace VintageEngineering.Electrical
             if (pps >= powerOffered)  // if amount we can take exceeds amount offered
             {
                 // meaning we can take it all.
-                if (!simulate) electricpower += powerOffered;                
+                if (!simulate) electricpower += powerOffered;
                 this.MarkDirty();
                 return 0;
             }
             else
             {
                 // far more common, powerOffered exceeds PPS
-                if (!simulate) electricpower += pps;                
+                if (!simulate) electricpower += pps;
                 this.MarkDirty();
                 return powerOffered - pps;
             }
+        }
+
+        #endregion
+
+
+        #region IElectricalConnection
+        public List<WireNode> GetConnections(int wirenodeindex)
+        {
+            if (electricConnections == null) return null;
+            if (electricConnections[wirenodeindex] == null) return null;
+            if (electricConnections[wirenodeindex].Count == 0) return null;
+
+            return electricConnections[wirenodeindex].ToList<WireNode>();
+        }
+
+        public int NumConnections(int wirenodeindex)
+        {
+            if (electricConnections == null) return 0;
+            if (electricConnections[wirenodeindex] == null) return 0;
+
+            return electricConnections[wirenodeindex].Count;
         }
 
         public void AddConnection(int wirenodeindex, WireNode newconnection)

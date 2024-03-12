@@ -164,7 +164,7 @@ namespace VintageEngineering.Electrical.Systems
         }
 
         /// <summary>
-        /// Vital function called by the Catenery mod OnWireConnected Event
+        /// Vital function called by the Catenary mod OnWireConnected Event
         /// </summary>
         /// <param name="start">Start Node</param>
         /// <param name="end">End Node</param>

@@ -12,6 +12,9 @@ using Vintagestory.API.Util;
 
 namespace VintageEngineering.Electrical.Systems
 {
+    /// <summary>
+    /// Interface that defines common Electric Network features.
+    /// </summary>
     public interface IElectricNetwork
     {
         /// <summary>

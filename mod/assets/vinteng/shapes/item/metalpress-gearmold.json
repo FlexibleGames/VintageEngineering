@@ -8,7 +8,6 @@
 	"textureSizes": {
 	},
 	"textures": {
-		"steel": "game:block/clay/ceramic"
 	},
 	"elements": [
 		{
@@ -226,17 +225,6 @@
 								"west": { "texture": "#steel", "uv": [ 0.0, 0.0, 1.0, 1.5 ], "windMode": [-1,-1,-1,-1] },
 								"up": { "texture": "#steel", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
 								"down": { "texture": "#steel", "uv": [ 0.0, 0.0, 1.0, 1.0 ] }
-							}
-						},
-						{
-							"name": "MoldPart Bottom",
-							"from": [ 5.0, 0.0, 5.0 ],
-							"to": [ 11.0, 0.1, 11.0 ],
-							"renderInEditor": false,
-							"rotationOrigin": [ 5.0, 0.0, 6.0 ],
-							"faces": {
-								"up": { "texture": "#steel", "uv": [ 0.0, 0.0, 6.0, 6.0 ] },
-								"down": { "texture": "#steel", "uv": [ 0.0, 0.0, 6.0, 6.0 ] }
 							}
 						}
 					]

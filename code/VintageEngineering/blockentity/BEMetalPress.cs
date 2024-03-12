@@ -14,7 +14,7 @@ using Vintagestory.API.Util;
 
 namespace VintageEngineering
 {
-    public class BEMetalPress : ElectricBEGUI
+    public class BEMetalPress : ElectricBEGUI, ITexPositionSource
     {
         ICoreClientAPI capi;
         ICoreServerAPI sapi;
@@ -114,8 +114,7 @@ namespace VintageEngineering
         public BEMetalPress()
         {
             this.inventory = new InvMetalPress(null, null);
-            this.inventory.SlotModified += OnSlotModified;
-            moldMesh = new MeshData();
+            this.inventory.SlotModified += OnSlotModified;            
         }
 
         public override void OnBlockBroken(IPlayer byPlayer = null)
@@ -163,16 +162,14 @@ namespace VintageEngineering
             {
                 if (Api.Side == EnumAppSide.Client)
                 {
-                    if (!Inventory[slotId].Empty)
-                    {
-                        UpdateMesh(slotId);
-                    }
+                    UpdateMesh(slotId);
                 }
             }
         }
 
         #region MoldMeshStuff
         protected Shape nowTesselatingShape;
+        protected CollectibleObject nowTesselatingObj;
         protected MeshData moldMesh;
         private Vec3f center = new Vec3f(0.5f, 0, 0.5f);
 
@@ -186,7 +183,9 @@ namespace VintageEngineering
             {
                 if (inventory[slotid].Empty)
                 {
+                    if (moldMesh != null) moldMesh.Dispose();
                     moldMesh = null;
+                    MarkDirty(true, null);
                     return;
                 }
                 MeshData meshData = GenMesh(inventory[slotid].Itemstack);
@@ -222,12 +221,13 @@ namespace VintageEngineering
                 }
                 else
                 {
+                    nowTesselatingObj = stack.Collectible;
                     nowTesselatingShape = null;
                     if (stack.Item.Shape != null)
                     {
                         nowTesselatingShape = capi.TesselatorManager.GetCachedShape(stack.Item.Shape.Base);
                     }
-                    capi.Tesselator.TesselateItem(stack.Item, out meshData);
+                    capi.Tesselator.TesselateItem(stack.Item, out meshData, this);
                     meshData.RenderPassesAndExtraBits.Fill((short)2);
                 }
             }
@@ -236,11 +236,74 @@ namespace VintageEngineering
 
         public override bool OnTesselation(ITerrainMeshPool mesher, ITesselatorAPI tessThreadTesselator)
         {
+            base.OnTesselation(mesher, tessThreadTesselator); // renders an ACTIVE animation
+            
             if (moldMesh != null)
             {
-                mesher.AddMeshData(moldMesh, 1);
+                mesher.AddMeshData(moldMesh, 1); // add a mold if we have one
             }
-            return false;
+            if (AnimUtil.activeAnimationsByAnimCode.Count == 0 &&
+                (AnimUtil.animator != null && AnimUtil.animator.ActiveAnimationCount == 0))
+            {
+                return false; // add base-machine mesh if we're NOT animating
+            }
+            return true; // do not add base mesh if we're animating
+        }
+
+        public TextureAtlasPosition this[string textureCode]
+        {
+            get
+            {
+                Item item = nowTesselatingObj as Item;
+                Dictionary<string, CompositeTexture> dictionary = (Dictionary<string, CompositeTexture>)((item != null) ? item.Textures : (nowTesselatingObj as Block).Textures);
+                AssetLocation assetLocation = null;
+                CompositeTexture compositeTexture;
+                if (dictionary.TryGetValue(textureCode, out compositeTexture))
+                {
+                    assetLocation = compositeTexture.Baked.BakedName;
+                }
+                if (assetLocation == null && dictionary.TryGetValue("all", out compositeTexture))
+                {
+                    assetLocation = compositeTexture.Baked.BakedName;
+                }
+                if (assetLocation == null)
+                {
+                    Shape shape = this.nowTesselatingShape;
+                    if (shape != null)
+                    {
+                        shape.Textures.TryGetValue(textureCode, out assetLocation);
+                    }
+                }
+                if (assetLocation == null)
+                {
+                    assetLocation = new AssetLocation(textureCode);
+                }
+                return this.getOrCreateTexPos(assetLocation);
+            }
+        }
+
+        private TextureAtlasPosition getOrCreateTexPos(AssetLocation texturePath)
+        {
+            TextureAtlasPosition textureAtlasPosition = this.capi.BlockTextureAtlas[texturePath];
+            if (textureAtlasPosition == null)
+            {
+                IAsset asset = this.capi.Assets.TryGet(texturePath.Clone().WithPathPrefixOnce("textures/").WithPathAppendixOnce(".png"), true);
+                if (asset != null)
+                {
+                    BitmapRef bmp = asset.ToBitmap(this.capi);
+                    int num;
+                    //this.capi.BlockTextureAtlas.InsertTextureCached(texturePath, bmp, out num, out textureAtlasPosition, 0.005f);
+                    this.capi.BlockTextureAtlas.GetOrInsertTexture(texturePath, out num, out textureAtlasPosition, null, 0.005f);
+                }
+                else
+                {
+                    ILogger logger = this.capi.World.Logger;
+                    string str = "For render in block ";
+                    AssetLocation code = base.Block.Code;
+                    logger.Warning($"For render in block {((code != null) ? code.ToString() : "null")}, item {this.nowTesselatingObj.Code} defined texture {texturePath}, no such texture found.");
+                }
+            }
+            return textureAtlasPosition;
         }
 
         #endregion
@@ -491,6 +554,7 @@ namespace VintageEngineering
                 {
                     AnimUtil.InitializeAnimator("vemetalpress", null, null, new Vec3f(0f, GetRotation(), 0f) );
                 }
+                UpdateMesh(3);
             }
             this.inventory.Pos = this.Pos;
             this.inventory.LateInitialize($"{InventoryClassName}-{this.Pos.X}/{this.Pos.Y}/{this.Pos.Z}", api);
@@ -581,13 +645,13 @@ namespace VintageEngineering
 
             FindMatchingRecipe();
             if (Api != null && Api.Side == EnumAppSide.Client)
-            {
-                MarkDirty(true, null);
+            {                
                 if (this.clientDialog != null)
                 {
                     clientDialog.Update(RecipeProgress, CurrentPower, currentPressRecipe);                    
                 }
-                if (!inventory[3].Empty) UpdateMesh(3);
+                UpdateMesh(3);
+                MarkDirty(true, null);
             }
         }
     }

@@ -11,7 +11,7 @@
 		}
 		},
 		{
-		"name": "VEWireTool"	
+		"name": "CatenaryWireToolBehavior"
 		}],
 	"variantgroups": [
 		{ "code": "metal", "states": ["iron", "meteoriciron", "steel" ] }

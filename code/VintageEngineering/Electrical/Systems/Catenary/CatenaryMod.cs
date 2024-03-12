@@ -114,7 +114,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
             if (api.Side is EnumAppSide.Client)
             {
                 capi = api as ICoreClientAPI;
-                clientChannel = capi.Network.RegisterChannel("catenerymod")
+                clientChannel = capi.Network.RegisterChannel("catenarymod")
                     .RegisterMessageType(typeof(WireConnectionData))
                     .SetMessageHandler<WireConnectionData>(onDataFromServer)
                     .RegisterMessageType(typeof(CatenaryData))
@@ -123,19 +123,19 @@ namespace VintageEngineering.Electrical.Systems.Catenary
             else
             {
                 sapi = api as ICoreServerAPI;
-                serverChannel = sapi.Network.RegisterChannel("catenerymod")
+                serverChannel = sapi.Network.RegisterChannel("catenarymod")
                     .RegisterMessageType(typeof(WireConnectionData))
                     .SetMessageHandler<WireConnectionData>(onDataFromClient)
                     .RegisterMessageType(typeof(CatenaryData));
             }
-            api.RegisterBlockClass("CateneryBlockWire", typeof(BlockWire));            
-            api.RegisterCollectibleBehaviorClass("VEWireTool", typeof(BehaviorWireTool));
+            api.RegisterBlockClass("CatenaryBlockWire", typeof(BlockWire));            
+            api.RegisterCollectibleBehaviorClass("CatenaryWireToolBehavior", typeof(BehaviorWireTool));
         }
 
         /// <summary>
-        /// Update client with fresh catenery data, this will not contain meshes or meshrefs.
+        /// Update client with fresh catenary data, this will not contain meshes or meshrefs.
         /// </summary>
-        /// <param name="packet">CateneryData</param>
+        /// <param name="packet">CatenaryData</param>
         private void onWireDataFromServer(CatenaryData packet)
         {
             // the wire renderer holds a copy of this data that contains the mesh and VAO meshrefs
@@ -210,11 +210,11 @@ namespace VintageEngineering.Electrical.Systems.Catenary
         {
             try
             {
-                data = SerializerUtil.Deserialize<CatenaryData>(sapi.WorldManager.SaveGame.GetData("catenerydata"));
+                data = SerializerUtil.Deserialize<CatenaryData>(sapi.WorldManager.SaveGame.GetData("catenarydata"));
             }
             catch (Exception e)
             {
-                sapi.Logger.Error($"CateneryMod: Error loading SaveGame data, possible data does not exist yet.{System.Environment.NewLine} {e}");
+                sapi.Logger.Error($"CatenaryMod: Error loading SaveGame data, its possible data does not exist yet.{System.Environment.NewLine} {e}");
                 data = new CatenaryData();
             }
         }
@@ -222,8 +222,8 @@ namespace VintageEngineering.Electrical.Systems.Catenary
         private void Event_GameWorldSave()
         {
             byte[] databytes = SerializerUtil.Serialize(data);
-            sapi.WorldManager.SaveGame.StoreData("catenerydata", databytes);
-            sapi.Logger.Debug($"CateneryMod: Saved {databytes.Length} bytes of CateneryData to savegame.");
+            sapi.WorldManager.SaveGame.StoreData("catenarydata", databytes);
+            sapi.Logger.Debug($"CatenaryMod: Saved {databytes.Length} bytes of CatenaryData to savegame.");
         }
 
         private void OnChunkDirty(Vec3i chunkCoord, IWorldChunk chunk, EnumChunkDirtyReason reason)
@@ -640,12 +640,12 @@ namespace VintageEngineering.Electrical.Systems.Catenary
                 serverChannel.BroadcastPacket(data);
                 if (removed > 1)
                 {
-                    sapi.Logger.Error($"CateneryMod: Error removing connection {con}, {removed} matches found!");
+                    sapi.Logger.Error($"CatenaryMod: Error removing connection {con}, {removed} matches found!");
                 }
             }
             else
             {
-                sapi.Logger.Error($"CateneryMod: Error Removing connection {con}, no match found!");
+                sapi.Logger.Error($"CatenaryMod: Error Removing connection {con}, no match found!");
             }
 
             // while we remove 2 connections, only one is 'true' as the endpoints get a copy of the connection
@@ -665,7 +665,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
         }
 
         /// <summary>
-        /// Adds a WireConnection to CateneryData object
+        /// Adds a WireConnection to CatenaryData object
         /// <br>Triggers OnWireConnected event for any subscribed network mods.</br>
         /// </summary>
         /// <param name="placedWire">WireConnection added</param>
@@ -685,7 +685,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
             }
             else
             {
-                sapi.Logger.Error($"CateneryMod: Error Adding connection: {placedWire}, already exists!");
+                sapi.Logger.Error($"CatenaryMod: Error Adding connection: {placedWire}, already exists!");
             }
 
             BoolRef consumed = new BoolRef();            
@@ -706,7 +706,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
                 }
                 catch(Exception ex)
                 {
-                    api.Logger.Error($"CateneryMod: Exception in TriggerRemoveConnection | {ex}");                    
+                    api.Logger.Error($"CatenaryMod: Exception in TriggerRemoveConnection | {ex}");                    
                 }
                 if (consumed.value) break;
             }                        
@@ -724,7 +724,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
                 }
                 catch (Exception ex)
                 {
-                    api.Logger.Error($"CateneryMod: Exception in TriggerAddConnection | {ex}");
+                    api.Logger.Error($"CatenaryMod: Exception in TriggerAddConnection | {ex}");
                 }
                 if (consumed.value) break;
             }

@@ -6,7 +6,7 @@
 		},
 		"powerpercraft": 512,
 		"ingredients": [
-			{ "type": "block", "code": "game:log-*", "quantity": 1, "allowedVariants": ["placed-birch-ud", "placed-oak-ud", "placed-maple-ud", "placed-pine-ud", "placed-acacia-ud", "placed-redwood-ud", "placed-larch-ud", "placed-baldcypress-ud", "placed-walnut-ud"] }
+			{ "type": "block", "code": "game:log-*", "quantity": 1, "name":"woodtype", "allowedVariants": ["placed-birch-ud", "placed-oak-ud", "placed-maple-ud", "placed-pine-ud", "placed-acacia-ud", "placed-redwood-ud", "placed-larch-ud", "placed-baldcypress-ud", "placed-walnut-ud"] }
 		],
 		"outputs": [ 
 			{ "type": "item", "code": "game:firewood", "stacksize": 8 },
@@ -20,7 +20,7 @@
 		},
 		"powerpercraft": 512,
 		"ingredients": [
-			{ "type": "block", "code": "game:logsection-placed-*", "quantity": 1 }
+			{ "type": "block", "code": "game:logsection-placed-*", "quantity": 1, "name":"woodtype" }
 		],
 		"outputs": [ 
 			{ "type": "item", "code": "game:firewood", "stacksize": 8 },
@@ -34,7 +34,7 @@
 		},
 		"powerpercraft": 640,
 		"ingredients": [
-			{ "type": "block", "code": "game:log-*", "quantity": 1, "allowedVariants": ["placed-kapok-ud", "placed-purpleheart-ud", "placed-ebony-ud"] }
+			{ "type": "block", "code": "game:log-*", "quantity": 1, "name":"woodtype", "allowedVariants": ["placed-kapok-ud", "placed-purpleheart-ud", "placed-ebony-ud"] }
 		],
 		"outputs": [ 
 			{ "type": "item", "code": "game:firewood", "stacksize": 6 },

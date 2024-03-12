@@ -69,7 +69,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
                         return GetWireSelectionBoxes(blockAccessor, pos);
                     }
                 }
-                if ((api as ICoreClientAPI).World.Player.InventoryManager.ActiveHotbarSlot?.Itemstack?.Block?.FirstCodePart() == "catenery")
+                if ((api as ICoreClientAPI).World.Player.InventoryManager.ActiveHotbarSlot?.Itemstack?.Block?.FirstCodePart() == "catenary")
                 {
                     // player is holding wire
                     if (wireAnchors.Length > 0)

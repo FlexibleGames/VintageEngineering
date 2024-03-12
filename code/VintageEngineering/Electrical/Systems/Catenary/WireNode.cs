@@ -45,7 +45,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
 
         /// <summary>
         /// Network ID associated with this Node, only set via Mod-added networks. Saved in Attributes["wireNodes"][index]["networkid"]
-        /// <br>Catenery Mod ignores this value.</br>
+        /// <br>Catenary Mod ignores this value.</br>
         /// </summary>
         public long networkid;
 

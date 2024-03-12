@@ -77,7 +77,7 @@ namespace VintageEngineering.Electrical
 
         /// <summary>
         /// Vital Call: Override to determine if a given Wire type (Block) can connect to this Machine.
-        /// <br>Wire Type (Block) Defined in the Catenery mod.</br>
+        /// <br>Wire Type (Block) Defined in the Catenary mod.</br>
         /// </summary>
         /// <param name="world">World Accessor</param>
         /// <param name="wireitem">Wire Block Player is Holding</param>

@@ -1,9 +1,9 @@
 {
-	"code": "vetestmachine",
-	"class": "VETestMachine",
-	"entityClass": "VEBETestMachine",
+	"code": "vemetalpress",
+	"class": "VEMetalPress",
+	"entityClass": "VEBEMetalPress",
 	"behaviors": [
-		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "vetestmachine-off-north" }}}
+		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "vemetalpress-off-north" }}}
 	],
 	"variantgroups": [		
 		{ "code": "state", "states": ["on", "off", "sleeping"] },
@@ -12,7 +12,7 @@
 	"entityBehaviorsByType": { "*": [{ "name": "Animatable" }] },
 	"attributes": {
 		"handbook": {
-			"groupBy": ["vetestmachine-*"],
+			"groupBy": ["vemetalpress-*"],
 			"excludeByType": {
 				"*-off-north": false,
 				"*-on-*": true,
@@ -46,7 +46,7 @@
             }
         ]		
 	},
-	"creativeinventory": { "general": ["vetestmachine-off-north"], "terrain": ["*"], "mechanics": ["*"] },
+	"creativeinventory": { "general": ["vemetalpress-off-north"], "terrain": ["*"], "mechanics": ["*"] },
 	"shapeByType": {
 		"*-north": 	{ "base": "vinteng:block/lv/metalpress", "rotateY":0 },
 		"*-east": 	{ "base": "vinteng:block/lv/metalpress", "rotateY":270 },

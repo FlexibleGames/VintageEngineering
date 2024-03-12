@@ -12,7 +12,7 @@
 			{ "type": "item", "code": "vinteng:metalrod-*", "quantity": 1, "allowedVariants": ["copper"] }
 		],
 		"outputs": [ 
-			{ "type": "block", "code": "game:catenery-lvpower", "stacksize": 12 }	
+			{ "type": "block", "code": "game:catenary-lvpower", "stacksize": 12 }	
 		]
 	},
     {
@@ -28,7 +28,7 @@
 			{ "type": "item", "code": "vinteng:metalrod-*", "quantity": 1, "allowedVariants": ["copper"] }
 		],
 		"outputs": [ 
-			{ "type": "block", "code": "game:catenery-mvpower", "stacksize": 6 }	
+			{ "type": "block", "code": "game:catenary-mvpower", "stacksize": 6 }	
 		]
 	},
     {
@@ -44,7 +44,7 @@
 			{ "type": "item", "code": "vinteng:metalrod-*", "quantity": 1, "allowedVariants": ["steel"] }
 		],
 		"outputs": [ 
-			{ "type": "block", "code": "game:catenery-hvpower", "stacksize": 4 }	
+			{ "type": "block", "code": "game:catenary-hvpower", "stacksize": 4 }	
 		]
 	}   	    	    
 ]

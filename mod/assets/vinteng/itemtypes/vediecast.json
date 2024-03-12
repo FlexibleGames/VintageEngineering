@@ -2,18 +2,19 @@
 	"code": "vediecast",	
 	"storageFlags": 4097,
 	"attributes": {
-		"rackable": true,		
+		"rackable": true,				
 		"toolrackTransform": {
-			"translation": { "x": -0.06, "y": 0.48, "z": 0 },
-			"rotation": { "x": -20, "y": -15, "z": 0 },
+			"translation": { "x": 0.4, "y": 0.58, "z": 0 },
+			"rotation": { "x": -180, "y": 0, "z": -9 },
 			"origin": { "x": 0.5, "y": 0, "z": 0.5 },
-			"scale": 0.75
-		},		
+			"scale": 2.41
+		},					
 		"groundStorageTransform": {
-				"translation": { "x": 0.02, "y": -0.17, "z": -0.02 },
-				"rotation": { "x": 90, "y": 90, "z": -90 },
-				"scale": 0.67
-		},		
+			"translation": { "x": 0.02, "y": -0.001, "z": -0.02 },
+			"rotation": { "x": 90, "y": 90, "z": -90 },
+			"origin": { "x": 0.5, "y": 0, "z": 0.5 },
+			"scale": 1.53
+		},
 		"handbook": {
 			"groupBy": ["vediecast-*"]
 		}
@@ -33,11 +34,11 @@
     "maxstacksize": 1,
 	"heldTpHitAnimation": "smithing",
 	"shapeByType": { 
-		"*-lv": { "base": "vinteng:item/vediecast-lv" },
-        "*-mv": { "base": "vinteng:item/vediecast-mv" },
-		"*-hv": { "base": "vinteng:item/vediecast-hv" },		
-		"*-rod": { "base": "vinteng:item/vediecast-rod" },
-		"*-screw": { "base": "vinteng:item/vediecast-lv" }
+		"*-lv-*": { "base": "vinteng:item/vediecast-lv" },
+        "*-mv-*": { "base": "vinteng:item/vediecast-mv" },
+		"*-hv-*": { "base": "vinteng:item/vediecast-hv" },		
+		"*-rod-*": { "base": "vinteng:item/vediecast-rod" },
+		"*-screw-*": { "base": "vinteng:item/vediecast-lv" }
 	},
 	"texturesByType": {
 		"*": {
@@ -63,7 +64,7 @@
 		"translation": { "x": 3, "y": 0, "z": 0 },
 		"rotation": { "x": -41, "y": 47, "z": -23 },
 		"origin": { "x": 0.5299, "y": 0, "z": 0.48 },
-		"scale": 1.46
+		"scale": 4
 	},
 	"groundTransform": {
 		"translation": { "x": 0, "y": 0, "z": 0 },
@@ -74,6 +75,6 @@
 	"tpHandTransform": {
 		"translation": { "x": -0.85, "y": -0.6, "z": -0.22 },
 		"rotation": { "x": 41, "y": 0, "z": 0 },
-		"scale": 0.7
+		"scale": 0.74
 	}
 }
