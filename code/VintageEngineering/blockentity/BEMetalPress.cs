@@ -10,6 +10,7 @@ using VintageEngineering.Electrical;
 using VintageEngineering.RecipeSystem.Recipes;
 using VintageEngineering.RecipeSystem;
 using Vintagestory.API.MathTools;
+using Vintagestory.API.Util;
 
 namespace VintageEngineering
 {
@@ -114,6 +115,7 @@ namespace VintageEngineering
         {
             this.inventory = new InvMetalPress(null, null);
             this.inventory.SlotModified += OnSlotModified;
+            moldMesh = new MeshData();
         }
 
         public override void OnBlockBroken(IPlayer byPlayer = null)
@@ -156,8 +158,92 @@ namespace VintageEngineering
                 {
                     clientDialog.Update(RecipeProgress, CurrentPower, currentPressRecipe);
                 }
-            }            
+            }
+            if (slotId == 3)
+            {
+                if (Api.Side == EnumAppSide.Client)
+                {
+                    if (!Inventory[slotId].Empty)
+                    {
+                        UpdateMesh(slotId);
+                    }
+                }
+            }
         }
+
+        #region MoldMeshStuff
+        protected Shape nowTesselatingShape;
+        protected MeshData moldMesh;
+        private Vec3f center = new Vec3f(0.5f, 0, 0.5f);
+
+        public Size2i AtlasSize
+        {
+            get { return this.capi.BlockTextureAtlas.Size; }
+        }
+        public void UpdateMesh(int slotid)
+        {
+            if (Api.Side != EnumAppSide.Server)
+            {
+                if (inventory[slotid].Empty)
+                {
+                    moldMesh = null;
+                    return;
+                }
+                MeshData meshData = GenMesh(inventory[slotid].Itemstack);
+                if (meshData != null)
+                {
+                    TranslateMesh(meshData, 1f);
+                    moldMesh = meshData;
+                }
+            }
+        }
+
+        public void TranslateMesh(MeshData meshData, float scale)
+        {
+            meshData.Scale(center, scale, scale, scale);
+            meshData.Translate(0, 0.1875f, 0);
+        }
+
+        public MeshData GenMesh(ItemStack stack)
+        {
+            IContainedMeshSource meshSource = stack.Collectible as IContainedMeshSource;
+            MeshData meshData;
+
+            if (meshSource != null)
+            {
+                meshData = meshSource.GenMesh(stack, capi.BlockTextureAtlas, Pos);
+                meshData.Rotate(new Vec3f(0.5f, 0.5f, 0.5f), 0f, base.Block.Shape.rotateY * 0.0174532924f, 0f);
+            }
+            else
+            {
+                if (stack.Class == EnumItemClass.Block)
+                {
+                    meshData = capi.TesselatorManager.GetDefaultBlockMesh(stack.Block).Clone();
+                }
+                else
+                {
+                    nowTesselatingShape = null;
+                    if (stack.Item.Shape != null)
+                    {
+                        nowTesselatingShape = capi.TesselatorManager.GetCachedShape(stack.Item.Shape.Base);
+                    }
+                    capi.Tesselator.TesselateItem(stack.Item, out meshData);
+                    meshData.RenderPassesAndExtraBits.Fill((short)2);
+                }
+            }
+            return meshData;
+        }
+
+        public override bool OnTesselation(ITerrainMeshPool mesher, ITesselatorAPI tessThreadTesselator)
+        {
+            if (moldMesh != null)
+            {
+                mesher.AddMeshData(moldMesh, 1);
+            }
+            return false;
+        }
+
+        #endregion
 
         /// <summary>
         /// Find a matching Metal Press Recipe given the Blocks inventory.
@@ -419,10 +505,10 @@ namespace VintageEngineering
                 {
                     AnimUtil.StartAnimation(new AnimationMetaData
                     {
-                        Animation = "crafting",
-                        Code = "crafting",
+                        Animation = "craft",
+                        Code = "craft",
                         AnimationSpeed = 1f,
-                        EaseOutSpeed = 1f,
+                        EaseOutSpeed = 4f,
                         EaseInSpeed = 1f
                     });
                 }
@@ -431,7 +517,7 @@ namespace VintageEngineering
             {
                 if (AnimUtil != null)
                 {
-                    AnimUtil.StopAnimation("crafting");
+                    AnimUtil.StopAnimation("craft");
                 }
             }
         }
@@ -500,7 +586,8 @@ namespace VintageEngineering
                 if (this.clientDialog != null)
                 {
                     clientDialog.Update(RecipeProgress, CurrentPower, currentPressRecipe);                    
-                }                
+                }
+                if (!inventory[3].Empty) UpdateMesh(3);
             }
         }
     }

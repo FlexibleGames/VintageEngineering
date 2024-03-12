@@ -123,7 +123,7 @@ namespace VintageEngineering.Electrical
 
         public bool IsSleeping => machineState == EnumBEState.Sleeping;
 
-        public bool IsEnabled => machineState == EnumBEState.Sleeping || machineState == EnumBEState.On;
+        public bool IsEnabled => machineState != EnumBEState.Off;
 
         public virtual void CheatPower(bool drain = false)
         {
@@ -197,7 +197,7 @@ namespace VintageEngineering.Electrical
             if (pps >= powerOffered)  // if amount we can take exceeds amount offered
             {                
                 // meaning we can take it all.
-                if (!simulate) electricpower += powerOffered;                
+                if (!simulate) electricpower += powerOffered;
                 this.MarkDirty();
                 return 0;
             }

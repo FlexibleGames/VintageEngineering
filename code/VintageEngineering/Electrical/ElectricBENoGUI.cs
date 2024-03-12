@@ -127,7 +127,7 @@ namespace VintageEngineering.Electrical
 
         public bool IsSleeping => machineState == EnumBEState.Sleeping;
 
-        public bool IsEnabled => machineState == EnumBEState.Sleeping || machineState == EnumBEState.On;
+        public bool IsEnabled => machineState != EnumBEState.Off;
 
         public virtual int Priority => priority;
 
