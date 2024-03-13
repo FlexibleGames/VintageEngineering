@@ -14,7 +14,7 @@ using Vintagestory.GameContent;
 namespace VintageEngineering.RecipeSystem.Recipes
 {
     /// <summary>
-    /// Mixer will have 4 item inputs, 2 fluid input, 1 item and 1 fluid output<br/>
+    /// A Giant Blender... Mixer will have 4 item inputs, 2 fluid input, 1 item and 1 fluid output<br/>
     /// Will also likely try to support Barrel Recipes...<br/>
     /// More complex fluid-based crafting will exist in other machines in higher tiers.
     /// </summary>

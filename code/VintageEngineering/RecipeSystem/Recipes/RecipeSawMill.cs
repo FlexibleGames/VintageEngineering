@@ -225,14 +225,14 @@ namespace VintageEngineering.RecipeSystem.Recipes
             {
                 Ingredients[i] = new CraftingRecipeIngredient();
                 Ingredients[i].FromBytes(reader, resolver);
-                Ingredients[i].Resolve(resolver, "Metal Press Recipe (FromBytes)");
+                Ingredients[i].Resolve(resolver, "VE SawMill Recipe (FromBytes)");
             }
             Outputs = new VERecipeVariableOutput[reader.ReadInt32()];
             for (int i = 0; i < Outputs.Length; i++)
             {
                 Outputs[i] = new VERecipeVariableOutput();
                 Outputs[i].FromBytes(reader, resolver.ClassRegistry);
-                Outputs[i].Resolve(resolver, "Metal Press Recipe (FromBytes)");
+                Outputs[i].Resolve(resolver, "VE SawMill Recipe (FromBytes)");
             }
             if (Attributes != null)
             {
