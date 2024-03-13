@@ -227,18 +227,6 @@ namespace VintageEngineering.RecipeSystem.Recipes
         {
             RecipeID = reader.ReadInt32();
             Name = new AssetLocation(reader.ReadString());
-            Requires = reader.ReadBoolean() ? new AssetLocation(reader.ReadString()) : null;
-
-            if (reader.ReadBoolean()) // RequireVariants
-            {
-                int numvar = reader.ReadInt32();
-                RequiresVariants = new string[numvar];
-                for (int i = 0; i < numvar; i++)
-                {
-                    RequiresVariants[i] = reader.ReadString();
-                }
-            }
-            RequiresTemp = reader.ReadInt32();
             Code = reader.ReadBoolean() ? reader.ReadString() : null;
             PowerPerCraft = reader.ReadInt64();
             Attributes = reader.ReadBoolean() ? new JsonObject(JToken.Parse(reader.ReadString())) : null;
@@ -256,11 +244,11 @@ namespace VintageEngineering.RecipeSystem.Recipes
                 Outputs[i].FromBytes(reader, resolver.ClassRegistry);
                 Outputs[i].Resolve(resolver, "Metal Press Recipe (FromBytes)");
             }
-            if (Requires == null && Attributes != null && Attributes["requires"].Exists)
+            if (Attributes != null)
             {
-                Requires = new AssetLocation(Attributes["requires"].AsString());
+                if (Attributes["requires"].Exists) Requires = new AssetLocation(Attributes["requires"].AsString());
 
-                if (RequiresVariants == null && Attributes["requiresvariants"].Exists)
+                if (Attributes["requiresvariants"].Exists)
                 {
                     if (Attributes["requiresvariants"].IsArray())
                     {
@@ -271,6 +259,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
                         RequiresVariants = new string[1] { Attributes["requiresvariants"].AsString() };
                     }
                 }
+                if (Attributes["requirestemp"].Exists) RequiresTemp = Attributes["requirestemp"].AsInt(0);
             }
         }
 
@@ -278,36 +267,16 @@ namespace VintageEngineering.RecipeSystem.Recipes
         {
             writer.Write(RecipeID);
             writer.Write(Name.ToShortString());
-
-            writer.Write(Requires != null);
-            if (Requires != null) { writer.Write(Requires.ToString()); }
-
-            writer.Write(RequiresVariants != null);
-            if (RequiresVariants != null)
-            {
-                writer.Write(RequiresVariants.Length);
-                for (int i = 0; i < RequiresVariants.Length; i++)
-                {
-                    writer.Write(RequiresVariants[i]);
-                }
-            }
-
-            writer.Write(RequiresTemp);
-
             writer.Write(Code != null);
             if (Code != null) { writer.Write(Code); }
-
             writer.Write(PowerPerCraft);
-
             writer.Write(Attributes != null);
             if (Attributes != null) { writer.Write(Attributes.Token.ToString()); }
-
             writer.Write(Ingredients.Length);
             for (int i = 0; i < Ingredients.Length; i++)
             {
                 Ingredients[i].ToBytes(writer);
             }
-
             writer.Write(Outputs.Length);
             for (int i = 0; i < Outputs.Length; i++)
             {
