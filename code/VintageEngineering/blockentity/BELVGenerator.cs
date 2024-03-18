@@ -10,7 +10,7 @@ using VintageEngineering.Electrical;
 
 namespace VintageEngineering
 {
-    public class BETestGen : ElectricBEGUI
+    public class BELVGenerator : ElectricBEGUI
     {
         ICoreClientAPI capi;
         ICoreServerAPI sapi;
@@ -83,13 +83,13 @@ namespace VintageEngineering
         {
             get
             {
-                return "Test Generator";
+                return "LV Generator";
             }
         }
 
-        public override string InventoryClassName { get { return "TestGenInventory"; } }
+        public override string InventoryClassName { get { return "VELVGeneratorInv"; } }
 
-        public BETestGen()
+        public BELVGenerator()
         {
             this.inventory = new TestGenInventory(null, null);
             this.inventory.SlotModified += OnSlotModified;
@@ -171,7 +171,7 @@ namespace VintageEngineering
                 {
                     CanDoBurn();
                 }
-                if (updateBouncer >= 0.5f)
+                if (updateBouncer >= 0.25f)
                 {
                     prevGenTemp = genTemp;
                     if (faceHasMachine[0] || faceHasMachine[1] || faceHasMachine[2] || faceHasMachine[3]) CanGivePower(deltatime);
@@ -201,7 +201,7 @@ namespace VintageEngineering
         public void CanGivePower(float dt)
         {
             // a temporary routine to push power into a machine, will be an electric network eventually
-            IElectricalBlockEntity beTestMachine;
+            IElectricalBlockEntity beElectricalMachine;
             for (int x = 0; x < 4; x++)
             {
                 if (CurrentPower > 0)
@@ -212,34 +212,34 @@ namespace VintageEngineering
                         switch(x)
                         {
                             case 0: 
-                                beTestMachine = this.Api.World.BlockAccessor.GetBlockEntity(this.Pos.NorthCopy()) as IElectricalBlockEntity;
-                                if (beTestMachine != null)
+                                beElectricalMachine = this.Api.World.BlockAccessor.GetBlockEntity(this.Pos.NorthCopy()) as IElectricalBlockEntity;
+                                if (beElectricalMachine != null)
                                 {
-                                    electricpower = beTestMachine.ReceivePower(electricpower, dt);
+                                    electricpower = beElectricalMachine.ReceivePower(electricpower, dt);
                                     if (electricpower == 0) continue;
                                 }
                                 break;
                             case 1:
-                                beTestMachine = this.Api.World.BlockAccessor.GetBlockEntity(this.Pos.EastCopy()) as IElectricalBlockEntity;
-                                if (beTestMachine != null)
+                                beElectricalMachine = this.Api.World.BlockAccessor.GetBlockEntity(this.Pos.EastCopy()) as IElectricalBlockEntity;
+                                if (beElectricalMachine != null)
                                 {
-                                    electricpower = beTestMachine.ReceivePower(electricpower, dt);
+                                    electricpower = beElectricalMachine.ReceivePower(electricpower, dt);
                                     if (electricpower == 0) continue;
                                 }
                                 break;
                             case 2:
-                                beTestMachine = this.Api.World.BlockAccessor.GetBlockEntity(this.Pos.SouthCopy()) as IElectricalBlockEntity;
-                                if (beTestMachine != null)
+                                beElectricalMachine = this.Api.World.BlockAccessor.GetBlockEntity(this.Pos.SouthCopy()) as IElectricalBlockEntity;
+                                if (beElectricalMachine != null)
                                 {
-                                    electricpower = beTestMachine.ReceivePower(electricpower, dt);
+                                    electricpower = beElectricalMachine.ReceivePower(electricpower, dt);
                                     if (electricpower == 0) continue;
                                 }
                                 break;
                             case 3:
-                                beTestMachine = this.Api.World.BlockAccessor.GetBlockEntity(this.Pos.WestCopy()) as IElectricalBlockEntity;
-                                if (beTestMachine != null)
+                                beElectricalMachine = this.Api.World.BlockAccessor.GetBlockEntity(this.Pos.WestCopy()) as IElectricalBlockEntity;
+                                if (beElectricalMachine != null)
                                 {
-                                    electricpower = beTestMachine.ReceivePower(electricpower, dt);
+                                    electricpower = beElectricalMachine.ReceivePower(electricpower, dt);
                                     if (electricpower == 0) continue;
                                 }
                                 break;
@@ -254,25 +254,25 @@ namespace VintageEngineering
             // checks neighbor blocks searching for a machine.
             // for the test, only check horizontally N E S W
             faceHasMachine[0] = false;
-            if (world.BlockAccessor.GetBlock(this.Pos.NorthCopy()).FirstCodePart() == "vetestmachine")
+            if (world.BlockAccessor.GetBlockEntity(this.Pos.NorthCopy()) is IElectricalBlockEntity)
             {
                 faceHasMachine[0] = true;
             }
 
             faceHasMachine[1] = false;
-            if (world.BlockAccessor.GetBlock(this.Pos.EastCopy()).FirstCodePart() == "vetestmachine")
+            if (world.BlockAccessor.GetBlockEntity(this.Pos.EastCopy()) is IElectricalBlockEntity)
             {
                 faceHasMachine[1] = true;
             }
 
             faceHasMachine[2] = false;
-            if (world.BlockAccessor.GetBlock(this.Pos.SouthCopy()).FirstCodePart() == "vetestmachine")
+            if (world.BlockAccessor.GetBlockEntity(this.Pos.SouthCopy()) is IElectricalBlockEntity)
             {
                 faceHasMachine[2] = true;
             }
 
             faceHasMachine[3] = false;
-            if (world.BlockAccessor.GetBlock(this.Pos.WestCopy()).FirstCodePart() == "vetestmachine")
+            if (world.BlockAccessor.GetBlockEntity(this.Pos.WestCopy()) is IElectricalBlockEntity)
             {
                 faceHasMachine[3] = true;
             }

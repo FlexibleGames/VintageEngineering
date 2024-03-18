@@ -109,7 +109,7 @@ namespace VintageEngineering
             }
         }
 
-        public override string InventoryClassName { get { return "TestMachineInventory"; } }
+        public override string InventoryClassName { get { return "VEMetalPressInv"; } }
 
         public BEMetalPress()
         {

@@ -8,7 +8,7 @@ using VintageEngineering.Electrical;
 
 namespace VintageEngineering
 {
-    public class BlockTestGen : ElectricBlock
+    public class BlockLVGenerator : ElectricBlock
     {
         ICoreClientAPI capi;
         ICoreServerAPI sapi;
@@ -28,7 +28,7 @@ namespace VintageEngineering
         public override void OnNeighbourBlockChange(IWorldAccessor world, BlockPos pos, BlockPos neibpos)
         {
             base.OnNeighbourBlockChange(world, pos, neibpos);
-            BETestGen bETestGen = world.BlockAccessor.GetBlockEntity(pos) as BETestGen;
+            BELVGenerator bETestGen = world.BlockAccessor.GetBlockEntity(pos) as BELVGenerator;
             if (bETestGen != null)
             {
                 bETestGen.NeighborUpdate(world);
@@ -38,7 +38,7 @@ namespace VintageEngineering
         public override void OnBlockPlaced(IWorldAccessor world, BlockPos blockPos, ItemStack byItemStack = null)
         {
             base.OnBlockPlaced(world, blockPos, byItemStack);
-            BETestGen bETestGen = world.BlockAccessor.GetBlockEntity(blockPos) as BETestGen;
+            BELVGenerator bETestGen = world.BlockAccessor.GetBlockEntity(blockPos) as BELVGenerator;
             if (bETestGen != null)
             {
                 bETestGen.NeighborUpdate(world);
@@ -53,7 +53,7 @@ namespace VintageEngineering
             }
             if (base.OnWireInteractionStart(world, byPlayer, blockSel)) return true;
 
-            BETestGen genEntity = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BETestGen;
+            BELVGenerator genEntity = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BELVGenerator;
             if (genEntity != null)
             {
                 genEntity.OnPlayerRightClick(byPlayer, blockSel);
@@ -65,7 +65,7 @@ namespace VintageEngineering
 
         public override string GetPlacedBlockInfo(IWorldAccessor world, BlockPos pos, IPlayer forPlayer)
         {
-            BETestGen bETestGen = world.BlockAccessor.GetBlockEntity(pos) as BETestGen;
+            BELVGenerator bETestGen = world.BlockAccessor.GetBlockEntity(pos) as BELVGenerator;
             if (bETestGen != null)
             {
                 return bETestGen.GetOutputText() + base.GetPlacedBlockInfo(world, pos, forPlayer);

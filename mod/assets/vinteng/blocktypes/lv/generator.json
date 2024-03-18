@@ -1,32 +1,32 @@
 {
-	"code": "vetestgen",
-	"class": "VETestGen",
-	"entityClass": "VEBETestGen",
+	"code": "velvgenerator",
+	"class": "VELVGenerator",
+	"entityClass": "VEBELVGenerator",
 	"behaviors": [
-		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "vetestgen-off-north" }}}	
+		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "velvgenerator-off-north" }}}
 	],
-	"variantgroups": [				
+	"variantgroups": [
 		{ "code": "state", "states": ["on", "off", "sleeping"] },
 		{ "code":"side", "loadFromProperties": "abstract/horizontalorientation" }
-	],	
+	],
 	"attributes": {
 		"handbook": {
-			"groupBy": ["vetestgen-*"],
+			"groupBy": ["velvgenerator-*"],
 			"excludeByType": {
 				"*-off-north": false,
 				"*": true
 			}
-		},		
+		},
 		"entitytype": "Producer",
 		"priority": 5,
 		"maxpower": 1024,
-		"maxpps": 128,
-        "wireNodes": [ 
+		"maxpps": 32,
+        "wireNodes": [
             {
                 "index": 0,
                 "wirefunction": "Power",
 				"powertier": "LV",
-				"maxconnections": 1, 
+				"maxconnections": 1,
 				"networkid": 0,
                 "x1": 0.40625,
                 "y1": 0.375,
@@ -41,7 +41,7 @@
                     "*-west": 90
                 }
             }
-        ]		
+        ]
 	},
 	"creativeinventory": { "general": ["*-off-north"], "terrain": ["*"], "mechanics": ["*"] },
 	"shapeByType": {
@@ -63,7 +63,7 @@
 	"maxStackSize": 8,
 	"replaceable": 600,
 	"resistance": 1.5,
-	"collisionSelectionBoxes": [		
-		{ "x1": 0.0625, "y1": 0, "z1": 0.0625, "x2": 0.9375, "y2": 0.9375, "z2": 0.9375 }		
+	"collisionSelectionBoxes": [
+		{ "x1": 0.0625, "y1": 0, "z1": 0.0625, "x2": 0.9375, "y2": 0.9375, "z2": 0.9375 }
 	]
 }

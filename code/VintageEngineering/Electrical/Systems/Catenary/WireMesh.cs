@@ -18,7 +18,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
         /// </summary>
         /// <param name="x">Horizontal Position</param>
         /// <param name="d">?</param>
-        /// <param name="a">?</param>
+        /// <param name="a">Amount of slump, smaller value = more slump</param>
         /// <returns>Vertical offset</returns>
         static float Catenary(float x, float d = 1, float a = 2)
         {
@@ -80,7 +80,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
                 float y = dPos.Y / nSec * j;
                 float z = dPos.Z / nSec * j;
                 float l = (float)Math.Sqrt(x * x + y * y + z * z);
-                float dy = Catenary(l / dist, 1, 2f);
+                float dy = Catenary(l / dist, 1, 1f);
                 pos = new Vec3f(x, y + dy, z);
 
 

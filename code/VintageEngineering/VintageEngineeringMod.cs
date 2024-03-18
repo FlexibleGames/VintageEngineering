@@ -37,14 +37,14 @@ namespace VintageEngineering
         {
             api.RegisterBlockClass("VEElectricBlock", typeof(ElectricBlock)); // generic electric block
 
-            api.RegisterBlockClass("VETestGen", typeof(BlockTestGen));
+            api.RegisterBlockClass("VELVGenerator", typeof(BlockLVGenerator));
             api.RegisterBlockClass("VEMetalPress", typeof(BlockMetalPress));
         }
         public void RegisterBlockEntities(ICoreAPI api)
         {
             api.RegisterBlockEntityClass("VEBERelay", typeof(ElectricBERelay));
 
-            api.RegisterBlockEntityClass("VEBETestGen", typeof(BETestGen));
+            api.RegisterBlockEntityClass("VEBELVGenerator", typeof(BELVGenerator));
             api.RegisterBlockEntityClass("VEBEMetalPress", typeof(BEMetalPress));
         }
     }

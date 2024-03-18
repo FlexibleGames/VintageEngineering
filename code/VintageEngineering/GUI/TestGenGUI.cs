@@ -11,12 +11,12 @@ namespace VintageEngineering
 {
     public class TestGenGUI : GuiDialogBlockEntity
     {
-        private BETestGen betestgen;
+        private BELVGenerator betestgen;
         private long lastRedrawMS;
         private ulong _currentPower;
         private ulong _maxPower;
 
-        public TestGenGUI(string dialogTitle, InventoryBase inventory, BlockPos blockEntityPos, ICoreClientAPI capi, BETestGen bentity) : base(dialogTitle, inventory, blockEntityPos, capi)
+        public TestGenGUI(string dialogTitle, InventoryBase inventory, BlockPos blockEntityPos, ICoreClientAPI capi, BELVGenerator bentity) : base(dialogTitle, inventory, blockEntityPos, capi)
         {
             if (base.IsDuplicate)
             {
