@@ -11,6 +11,7 @@ using VintageEngineering.RecipeSystem.Recipes;
 using VintageEngineering.RecipeSystem;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
+using Vintagestory.API.Config;
 
 namespace VintageEngineering
 {
@@ -105,7 +106,7 @@ namespace VintageEngineering
         {
             get
             {
-                return "Metal Press";
+                return Lang.Get("vinteng:gui-title-metalpress");
             }
         }
 
@@ -145,6 +146,7 @@ namespace VintageEngineering
                 {
                     isCrafting = false;
                     MachineState = EnumBEState.Sleeping;
+                    StateChange();
                     currentPressRecipe = null;
                     recipePowerApplied = 0;
                 }
@@ -314,18 +316,25 @@ namespace VintageEngineering
         /// <returns>True if recipe found that matches ingredient and mold.</returns>
         public bool FindMatchingRecipe()
         {
+            if (MachineState == EnumBEState.Off) // if the machine is off, bounce.
+            {
+                return false;
+            }
             if (InputSlot.Empty)
             {
                 currentPressRecipe = null;
                 isCrafting = false;
                 MachineState = EnumBEState.Sleeping;
+                StateChange();
                 return false;
             }
 
             this.currentPressRecipe = null;
             if (Api == null) return false;
-            List<RecipeMetalPress> mprecipes = Api?.ModLoader?.GetModSystem<VERecipeRegistrySystem>(true)?.MetalPressRecipes;            
-            
+            List<RecipeMetalPress> mprecipes = Api?.ModLoader?.GetModSystem<VERecipeRegistrySystem>(true)?.MetalPressRecipes;
+
+            if (mprecipes == null) return false;
+
             foreach (RecipeMetalPress mprecipe in mprecipes)
             {
                 if (mprecipe.Enabled && mprecipe.Matches(InputSlot, MoldSlot))
@@ -333,12 +342,14 @@ namespace VintageEngineering
                     currentPressRecipe = mprecipe;
                     isCrafting = true;
                     MachineState = EnumBEState.On;
+                    StateChange();
                     return true;
                 }
             }
             currentPressRecipe = null;
             isCrafting = false;
             MachineState = EnumBEState.Sleeping;
+            StateChange();
             return false;
         }
 
@@ -348,14 +359,14 @@ namespace VintageEngineering
             string onOff;
             switch (MachineState)
             {
-                case EnumBEState.On: onOff = "On"; break;
-                case EnumBEState.Off: onOff = "Off"; break;
-                case EnumBEState.Sleeping: onOff = "Sleeping"; break;
+                case EnumBEState.On: onOff = Lang.Get("vinteng:gui-word-on"); break;
+                case EnumBEState.Off: onOff = Lang.Get("vinteng:gui-word-off"); break;
+                case EnumBEState.Sleeping: onOff = Lang.Get("vinteng:gui-word-sleeping"); ; break;
                 default: onOff = "Error"; break;
             }
-            string crafting = isCrafting ? $"Craft: {recipeProgressPercent:N1}%" : "Not Crafting";
+            string crafting = isCrafting ? $"{Lang.Get("vinteng:gui-word-crafting")}: {recipeProgressPercent:N1}%" : $"{Lang.Get("vinteng:gui-machine-notcrafting")}";
             
-            return $"{crafting} | {onOff} | Power: {CurrentPower:N0}/{MaxPower:N0}";
+            return $"{crafting} | {onOff} | {Lang.Get("vinteng:gui-word-power")}: {CurrentPower:N0}/{MaxPower:N0}";
         }
 
         /// <summary>
@@ -427,6 +438,7 @@ namespace VintageEngineering
                     {
                         // enabled but not crafting means we have no valid recipe
                         MachineState = EnumBEState.Sleeping; // go to sleep
+                        StateChange();
                     }
                     if (RecipeProgress >= 1f)
                     {
@@ -465,40 +477,42 @@ namespace VintageEngineering
                         {
                             // this recipe has a second output
                             int varoutput = currentPressRecipe.Outputs[1].VariableResolve(Api.World, "VintEng: Metal Press Craft output");
-
-                            // depending on Variable set in output stacksize COULD be 0.
-                            ItemStack extraoutputstack = new ItemStack(Api.World.GetItem(currentPressRecipe.Outputs[1].ResolvedItemstack.Collectible.Code),
-                                                                       varoutput);
-                            if (extraoutputstack.StackSize > 0 && HasRoomInOutput(1))
+                            if (varoutput > 0)
                             {
-                                if (ExtraOutputSlot.Empty)
+                                // depending on Variable set in output stacksize COULD be 0.
+                                ItemStack extraoutputstack = new ItemStack(Api.World.GetItem(currentPressRecipe.Outputs[1].ResolvedItemstack.Collectible.Code),
+                                                                           varoutput);
+                                if (extraoutputstack.StackSize > 0 && HasRoomInOutput(1))
                                 {
-                                    Inventory[2].Itemstack = extraoutputstack.Clone();
-                                }
-                                else
-                                {
-                                    // drop extras on the ground
-                                    int capremaining = Inventory[2].Itemstack.Collectible.MaxStackSize - Inventory[2].Itemstack.StackSize;
-                                    if (capremaining >= extraoutputstack.StackSize)
+                                    if (ExtraOutputSlot.Empty)
                                     {
-                                        Inventory[2].Itemstack.StackSize += extraoutputstack.StackSize;
+                                        Inventory[2].Itemstack = extraoutputstack.Clone();
                                     }
                                     else
                                     {
-                                        Inventory[2].Itemstack.StackSize += capremaining;
-                                        extraoutputstack.StackSize -= capremaining;
-                                        Api.World.SpawnItemEntity(extraoutputstack, Pos.UpCopy(1).ToVec3d());
-                                        // spawn what we can't fit
+                                        // drop extras on the ground
+                                        int capremaining = Inventory[2].Itemstack.Collectible.MaxStackSize - Inventory[2].Itemstack.StackSize;
+                                        if (capremaining >= extraoutputstack.StackSize)
+                                        {
+                                            Inventory[2].Itemstack.StackSize += extraoutputstack.StackSize;
+                                        }
+                                        else
+                                        {
+                                            Inventory[2].Itemstack.StackSize += capremaining;
+                                            extraoutputstack.StackSize -= capremaining;
+                                            Api.World.SpawnItemEntity(extraoutputstack, Pos.UpCopy(1).ToVec3d());
+                                            // spawn what we can't fit
+                                        }
                                     }
                                 }
+                                else
+                                {
+                                    // no room in output, drop on ground
+                                    // TODO Drop in FRONT of the block, or some predetermined place.
+                                    Api.World.SpawnItemEntity(extraoutputstack, this.Pos.UpCopy(1).ToVec3d());
+                                }
+                                ExtraOutputSlot.MarkDirty();
                             }
-                            else
-                            {
-                                // no room in output, drop on ground
-                                // TODO Drop in FRONT of the block, or some predetermined place.
-                                Api.World.SpawnItemEntity(extraoutputstack, this.Pos.UpCopy(1).ToVec3d());
-                            }
-                            ExtraOutputSlot.MarkDirty();
                         }                                            
 
                         // damage the mold...
@@ -511,14 +525,14 @@ namespace VintageEngineering
                             if (molddur == 0)
                             {
                                 if (Api.Side == EnumAppSide.Server)
-                                {                                    
+                                {
                                     AssetLocation thebits = new AssetLocation(moldmetal);
                                     int newstack = Api.World.Rand.Next(5, 16);
                                     ItemStack bitstack = new ItemStack(Api.World.GetItem(thebits), newstack);
                                     Api.World.SpawnItemEntity(bitstack, Pos.UpCopy().ToVec3d(), null);
                                 }
                                 MoldSlot.Itemstack = null; // NO SOUP FOR YOU                                
-                                Api.World.PlaySoundAt(new AssetLocation("sounds/effect/toolbreak"),
+                                Api.World.PlaySoundAt(new AssetLocation("game:sounds/effect/toolbreak"),
                                     this.Pos.X, this.Pos.Y, this.Pos.Z, null, 1f, 16f, 1f);
                             }
                             MoldSlot.MarkDirty();
@@ -531,6 +545,7 @@ namespace VintageEngineering
                         {
                             MachineState = EnumBEState.Sleeping;
                             isCrafting = false;
+                            StateChange();
                         }
                         recipePowerApplied = 0;
                         MarkDirty(true, null);
@@ -569,8 +584,8 @@ namespace VintageEngineering
                 {
                     AnimUtil.StartAnimation(new AnimationMetaData
                     {
-                        Animation = "craft",
-                        Code = "craft",
+                        Animation = base.Block.Attributes["craftinganimcode"].AsString(),
+                        Code = base.Block.Attributes["craftinganimcode"].AsString(),
                         AnimationSpeed = 1f,
                         EaseOutSpeed = 4f,
                         EaseInSpeed = 1f
@@ -580,9 +595,13 @@ namespace VintageEngineering
             else
             {
                 if (AnimUtil != null)
-                {
+                {                    
                     AnimUtil.StopAnimation("craft");
                 }
+            }
+            if (Api != null && Api.Side == EnumAppSide.Client && clientDialog != null && clientDialog.IsOpened())
+            {
+                clientDialog.Update(RecipeProgress, CurrentPower, currentPressRecipe);
             }
         }
 
@@ -612,15 +631,16 @@ namespace VintageEngineering
                 else
                 {
                     MachineState = isCrafting ? EnumBEState.On : EnumBEState.Sleeping;
-                }                                    
+                }
                 MarkDirty(true, null);
+                StateChange();
             }    
         }
 
         public override void OnReceivedServerPacket(int packetid, byte[] data)
         {
             base.OnReceivedServerPacket(packetid, data);
-            if (clientDialog != null) clientDialog.Update(RecipeProgress, CurrentPower, currentPressRecipe);
+            if (clientDialog != null && clientDialog.IsOpened()) clientDialog.Update(RecipeProgress, CurrentPower, currentPressRecipe);
         }
 
         public override void ToTreeAttributes(ITreeAttribute tree)

@@ -80,7 +80,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
                 float y = dPos.Y / nSec * j;
                 float z = dPos.Z / nSec * j;
                 float l = (float)Math.Sqrt(x * x + y * y + z * z);
-                float dy = Catenary(l / dist, 1, 1f);
+                float dy = Catenary(l / dist, 1, 0.75f);
                 pos = new Vec3f(x, y + dy, z);
 
 

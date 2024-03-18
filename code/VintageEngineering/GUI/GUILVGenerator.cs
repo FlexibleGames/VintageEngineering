@@ -6,17 +6,18 @@ using Vintagestory.API.Server;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
+using Vintagestory.API.Config;
 
 namespace VintageEngineering
 {
-    public class TestGenGUI : GuiDialogBlockEntity
+    public class GUILVGenerator : GuiDialogBlockEntity
     {
         private BELVGenerator betestgen;
         private long lastRedrawMS;
         private ulong _currentPower;
         private ulong _maxPower;
 
-        public TestGenGUI(string dialogTitle, InventoryBase inventory, BlockPos blockEntityPos, ICoreClientAPI capi, BELVGenerator bentity) : base(dialogTitle, inventory, blockEntityPos, capi)
+        public GUILVGenerator(string dialogTitle, InventoryBase inventory, BlockPos blockEntityPos, ICoreClientAPI capi, BELVGenerator bentity) : base(dialogTitle, inventory, blockEntityPos, capi)
         {
             if (base.IsDuplicate)
             {
@@ -76,7 +77,7 @@ namespace VintageEngineering
 
             this.SingleComposer = capi.Gui.CreateCompo("vetestgendlg" + (blockPos?.ToString()), window)
                 .AddShadedDialogBG(dialog, true, 5)
-                .AddDialogTitleBar("TestGen", new Action(OnTitleBarClose), null, null)
+                .AddDialogTitleBar(Lang.Get("vinteng:gui-title-lvgenerator"), new Action(OnTitleBarClose), null, null)
                 .BeginChildElements(dialog)
 
                 .AddInset(powerInset, 2, 0.85f)
@@ -85,7 +86,7 @@ namespace VintageEngineering
                 .AddItemSlotGrid(Inventory, new Action<object>(SendInvPacket), 1, new int[1], fuelGrid, "fuelSlot")
 
                 .AddInset(textInset, 2, 0)
-                .AddDynamicText("updating...", outputText, textBounds, "outputText")
+                .AddDynamicText("", outputText, textBounds, "outputText")
                 
                 .EndChildElements()
                 .Compose(true);
@@ -129,15 +130,12 @@ namespace VintageEngineering
             if (!this.IsOpened()) return; // no need to update when the dialog isn't open.
 
             _currentPower = curpower;
-            string newText = $"{gentemp:N1}°C \n{burntime:N1} seconds\n-----------\n  Power\n{_currentPower:N0} of\n{_maxPower:N0} Max";            
-            if (capi.ElapsedMilliseconds - this.lastRedrawMS > 500L)
+            string newText = $"{gentemp:N1}°C{System.Environment.NewLine}{burntime:N1} {Lang.Get("vinteng:gui-word-seconds")}{System.Environment.NewLine}{Lang.Get("vinteng:gui-word-power")}:{System.Environment.NewLine}{_currentPower:N0}/{_maxPower:N0}";            
+
+            if (base.SingleComposer != null)
             {
-                if (base.SingleComposer != null)
-                {
-                    base.SingleComposer.GetDynamicText("outputText").SetNewText(newText);
-                    base.SingleComposer.GetCustomDraw("powerDrawer").Redraw();
-                }
-                this.lastRedrawMS = this.capi.ElapsedMilliseconds;
+                base.SingleComposer.GetDynamicText("outputText").SetNewText(newText);
+                base.SingleComposer.GetCustomDraw("powerDrawer").Redraw();
             }
         }
 

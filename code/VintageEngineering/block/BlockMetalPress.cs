@@ -32,12 +32,12 @@ namespace VintageEngineering
                 return false;
             }
             if (base.OnWireInteractionStart(world, byPlayer, blockSel)) return true;
-            BEMetalPress machEntity = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEMetalPress;
-            if (machEntity != null)
-            {
-                machEntity.OnPlayerRightClick(byPlayer, blockSel);
-                return true;
-            }
+            //BEMetalPress machEntity = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEMetalPress;
+            //if (machEntity != null)
+            //{
+            //    machEntity.OnPlayerRightClick(byPlayer, blockSel);
+            //    return true;
+            //}
             else return base.OnBlockInteractStart(world, byPlayer, blockSel);
         }
 

@@ -53,12 +53,12 @@ namespace VintageEngineering
             }
             if (base.OnWireInteractionStart(world, byPlayer, blockSel)) return true;
 
-            BELVGenerator genEntity = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BELVGenerator;
-            if (genEntity != null)
-            {
-                genEntity.OnPlayerRightClick(byPlayer, blockSel);
-                return true;
-            }
+            //BELVGenerator genEntity = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BELVGenerator;
+            //if (genEntity != null)
+            //{
+            //    genEntity.OnPlayerRightClick(byPlayer, blockSel);
+            //    return true;
+            //}
 
             return true;
         }

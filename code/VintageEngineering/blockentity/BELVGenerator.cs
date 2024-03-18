@@ -7,6 +7,7 @@ using Vintagestory.API.Client;
 using Vintagestory.GameContent;
 using Vintagestory.API.Datastructures;
 using VintageEngineering.Electrical;
+using Vintagestory.API.Config;
 
 namespace VintageEngineering
 {
@@ -14,8 +15,8 @@ namespace VintageEngineering
     {
         ICoreClientAPI capi;
         ICoreServerAPI sapi;
-        private TestGenInventory inventory;
-        private TestGenGUI clientDialog;
+        private InvLVGenerator inventory;
+        private GUILVGenerator clientDialog;
                 
         private float tempToGen = 100;
         private float prevGenTemp = 20f;
@@ -36,6 +37,9 @@ namespace VintageEngineering
 
         public float FuelBurnTime { get { return fuelBurnTime; } }
         public float GenTemp { get { return genTemp; } }
+        /// <summary>
+        /// FuelBurnTime is > 0 and we have space for power.
+        /// </summary>
         public bool IsGenerating
         {
             get
@@ -83,7 +87,7 @@ namespace VintageEngineering
         {
             get
             {
-                return "LV Generator";
+                return Lang.Get("vinteng:gui-title-lvgenerator");
             }
         }
 
@@ -91,7 +95,7 @@ namespace VintageEngineering
 
         public BELVGenerator()
         {
-            this.inventory = new TestGenInventory(null, null);
+            this.inventory = new InvLVGenerator(null, null);
             this.inventory.SlotModified += OnSlotModified;
         }
 
@@ -106,7 +110,7 @@ namespace VintageEngineering
             if (this.clientDialog != null)
             {
                 this.clientDialog.TryClose();
-                TestGenGUI testGenGUI = this.clientDialog;
+                GUILVGenerator testGenGUI = this.clientDialog;
                 if (testGenGUI != null) testGenGUI.Dispose();
                 this.clientDialog = null;
             }
@@ -129,15 +133,7 @@ namespace VintageEngineering
         public string GetOutputText()
         {
             // NetworkInfo inclusion could be locked behind a config flag or something in the future
-            return $"{GenTemp:N1}°C {FuelBurnTime:N1} seconds | {CurrentPower:N0}/{MaxPower:N0} Power";
-        }
-
-        private void SetDialogValues(ITreeAttribute dialogTree)
-        {
-            dialogTree.SetFloat("gentemperature", this.genTemp);
-            dialogTree.SetFloat("fuelburntime", this.fuelBurnTime);
-            dialogTree.SetLong("maxpower", (long)this.MaxPower);
-            dialogTree.SetLong("currentpower", (long)this.CurrentPower);
+            return $"{GenTemp:N1}°C {FuelBurnTime:N1} {Lang.Get("vinteng:gui-word-seconds")} | {CurrentPower:N0}/{MaxPower:N0} {Lang.Get("vinteng:gui-word-power")}";
         }
 
         public void OnBurnTick(float deltatime)
@@ -175,9 +171,13 @@ namespace VintageEngineering
                 {
                     prevGenTemp = genTemp;
                     if (faceHasMachine[0] || faceHasMachine[1] || faceHasMachine[2] || faceHasMachine[3]) CanGivePower(deltatime);
-                    MarkDirty(false, null);
+                    MarkDirty(true, null);
                     updateBouncer = 0f;
                 }
+            }
+            if (Api != null && Api.Side == EnumAppSide.Client)
+            {
+                if (this.clientDialog != null) clientDialog.Update(genTemp, fuelBurnTime, CurrentPower);
             }
         }
 
@@ -194,7 +194,7 @@ namespace VintageEngineering
                 {
                     FuelStack = null;
                 }
-                MarkDirty();
+                MarkDirty(true);
             }
         }
 
@@ -321,7 +321,7 @@ namespace VintageEngineering
             {
                 base.toggleInventoryDialogClient(byPlayer, delegate
                 {
-                    this.clientDialog = new TestGenGUI(DialogTitle, Inventory, this.Pos, this.Api as ICoreClientAPI, this);
+                    this.clientDialog = new GUILVGenerator(DialogTitle, Inventory, this.Pos, this.Api as ICoreClientAPI, this);
                     clientDialog.Update(genTemp, fuelBurnTime, CurrentPower);
                     return this.clientDialog;
                 });

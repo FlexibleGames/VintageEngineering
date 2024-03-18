@@ -5,7 +5,7 @@
 	"behaviors": [
 		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "vemetalpress-off-north" }}}
 	],
-	"variantgroups": [		
+	"variantgroups": [
 		{ "code": "state", "states": ["on", "off", "sleeping"] },
 		{ "code":"side", "loadFromProperties": "abstract/horizontalorientation" }
 	],
@@ -17,14 +17,15 @@
 				"*-off-north": false,
 				"*-on-*": true,
 				"*-off-*": true,
-				"*-sleeping-*": true								
+				"*-sleeping-*": true
 			}
 		},
+		"craftinganimcode": "craft",
 		"entitytype": "Consumer",
 		"priority": 5,
 		"maxpower": 1024,
-		"maxpps": 64,		
-        "wireNodes": [ 
+		"maxpps": 64,
+        "wireNodes": [
             {
                 "index": 0,
                 "wirefunction": "Power",
@@ -44,22 +45,22 @@
                     "*-west": 90
                 }
             }
-        ]		
+        ]
 	},
 	"creativeinventory": { "general": ["vemetalpress-off-north"], "terrain": ["*"], "mechanics": ["*"] },
 	"shapeByType": {
 		"*-north": 	{ "base": "vinteng:block/lv/metalpress", "rotateY":0 },
 		"*-east": 	{ "base": "vinteng:block/lv/metalpress", "rotateY":270 },
 		"*-south": 	{ "base": "vinteng:block/lv/metalpress", "rotateY":180 },
-		"*-west": 	{ "base": "vinteng:block/lv/metalpress", "rotateY":90 }	
-	},		
+		"*-west": 	{ "base": "vinteng:block/lv/metalpress", "rotateY":90 }
+	},
 	"blockmaterial": "Metal",
 	"textures": {
 		"dogwoodrose": {
 			"base": "game:block/christmas/present/lilac"
 		},
-		"fire3": { 
-			"base": "game:block/clay/hardened/fire3"			
+		"fire3": {
+			"base": "game:block/clay/hardened/fire3"
 		}
 	},
 	"sidesolid": {
@@ -72,7 +73,7 @@
 	"maxStackSize": 8,
 	"replaceable": 600,
 	"resistance": 1.5,
-	"collisionSelectionBoxes": [		
-		{ "x1": 0, "y1": 0, "z1": 0, "x2": 1, "y2": 1, "z2": 1 }		
+	"collisionSelectionBoxes": [
+		{ "x1": 0, "y1": 0, "z1": 0, "x2": 1, "y2": 1, "z2": 1 }
 	]
 }

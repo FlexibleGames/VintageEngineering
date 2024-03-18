@@ -1,16 +1,14 @@
 {
-	"vinteng:block-vetestgen-*": "A test Generator",
-	"vinteng:blockdesc-vetestgen-*": "Simply a test generator.",	
 	"vinteng:block-velvgenerator-*": "VE Generator (LV)",
-	"vinteng:blockdesc-velvgenerator-*": "Burns combustibles to generate power, inefficient, upgrade as soon as possible.",	
+	"vinteng:blockdesc-velvgenerator-*": "Burns combustibles to generate power, inefficient, upgrade as soon as possible.",
 	"vinteng:block-vemetalpress-*": "VE Metal Press",
 	"vinteng:blockdesc-vemetalpress-*": "Uses electricity to stamp out metal things using molds.",
-	
+
 	"vinteng:block-vesawmill-*": "VE Saw Mill",
 	"vinteng:blockdesc-vesawmill-*": "The saw mill can efficiently process logs into wood boards, as well as recycle plank blocks, slabs, and stairs back into boards.",
 	"vinteng:block-velogsplitter-*": "VE Log Splitter",
 	"vinteng:blockdesc-velogsplitter-*": "The log splitters primary purpose is to efficiently process logs into firewood.",
-	
+
 	"vinteng:item-vepressmold-plate-*": "Plate mold for Metal Press machine.",
 	"vinteng:itemdesc-vepressmold-plate-*": "Use in a Metal Press to make plates. Mold will wear out over time, durability depends on material.",
 	"vinteng:item-vepressmold-gear-*": "Gear mold for Metal Press machine.",
@@ -58,11 +56,20 @@
 	"vinteng:gui-turn-on": "Turn On",
 	"vinteng:gui-turn-off": "Turn Off",
 	"vinteng:gui-metal-press-mold": "Place a mold in the mold slot.",
-	"vinteng:gui-machine-crafting": "Crafting",
+	"vinteng:gui-word-crafting": "Crafting",
+	"vinteng:gui-word-sleeping": "Sleeping",
+	"vinteng:gui-word-on": "On",
+	"vinteng:gui-word-off": "Off",
+	"vinteng:gui-word-power": "Power",
+	"vinteng:gui-word-seconds": "Seconds",
+	"vinteng:gui-machine-notcrafting": "Not Crafting",
 	"vinteng:gui-machine-off": "Machine is turned off.",
 	"vinteng:gui-machine-sleeping": "Machine is sleeping.",
 	"vinteng:gui-is-sleeping-short": "Zzzz",
 	"vinteng:gui-machine-ingredients": "Recipe ingredients needed!",
 	"vinteng:gui-no-valid-recipe": "No valid recipe found.",
-	"vinteng:storyevent-recipes": "Mysterious Constructs..."
+	"vinteng:storyevent-recipes": "Mysterious Constructs...",
+
+	"vinteng:gui-title-metalpress": "Metal Press",
+	"vinteng:gui-title-lvgenerator": "LV Generator"
 }

@@ -194,6 +194,10 @@ namespace VintageEngineering
             {
                 outputstring = $"Error";
             }
+            if (!betestmach.IsEnabled)
+            {
+                outputstring = Lang.Get("vinteng:gui-word-off");
+            }
             return outputstring;
         }
 

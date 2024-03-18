@@ -10,7 +10,7 @@ using Vintagestory.API.MathTools;
 
 namespace VintageEngineering
 {
-    public class TestGenInventory : InventoryBase, ISlotProvider
+    public class InvLVGenerator : InventoryBase, ISlotProvider
     {
         ICoreClientAPI capi;
         ICoreServerAPI sapi;
@@ -64,7 +64,7 @@ namespace VintageEngineering
             } 
         }
 
-        public TestGenInventory(string inventoryID, ICoreAPI api) : base(inventoryID, api)
+        public InvLVGenerator(string inventoryID, ICoreAPI api) : base(inventoryID, api)
         {
             _slots = base.GenEmptySlots(1);
         }
