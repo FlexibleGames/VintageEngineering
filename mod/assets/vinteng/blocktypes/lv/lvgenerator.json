@@ -3,17 +3,16 @@
 	"class": "VELVGenerator",
 	"entityClass": "VEBELVGenerator",
 	"behaviors": [
-		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "velvgenerator-off-north" }}}
+		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "velvgenerator-north" }}}
 	],
 	"variantgroups": [
-		{ "code": "state", "states": ["on", "off", "sleeping"] },
 		{ "code":"side", "loadFromProperties": "abstract/horizontalorientation" }
 	],
 	"attributes": {
 		"handbook": {
 			"groupBy": ["velvgenerator-*"],
 			"excludeByType": {
-				"*-off-north": false,
+				"*-north": false,
 				"*": true
 			}
 		},
@@ -43,7 +42,7 @@
             }
         ]
 	},
-	"creativeinventory": { "general": ["*-off-north"], "terrain": ["*"], "mechanics": ["*"] },
+	"creativeinventory": { "general": ["*-north"], "terrain": ["*"], "mechanics": ["*"] },
 	"shapeByType": {
 		"*-north": { "base": "vinteng:block/lv/generator", "rotateY":0 },
 		"*-east": { "base": "vinteng:block/lv/generator", "rotateY":270 },

@@ -139,7 +139,7 @@ namespace VintageEngineering.Electrical
         }
 
         /// <summary>
-        /// Called when MachineState is changed. Override to trigger animations and other fancy things.
+        /// Called when MachineState is changed. Override to trigger animations, GUI updates, and other fancy things.
         /// </summary>
         public virtual void StateChange()
         {

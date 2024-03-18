@@ -3,10 +3,9 @@
 	"class": "VEMetalPress",
 	"entityClass": "VEBEMetalPress",
 	"behaviors": [
-		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "vesawmill-off-north" }}}
+		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "vesawmill-north" }}}
 	],
 	"variantgroups": [
-		{ "code": "state", "states": ["on", "off", "sleeping"] },
 		{ "code":"side", "loadFromProperties": "abstract/horizontalorientation" }
 	],
 	"entityBehaviorsByType": { "*": [{ "name": "Animatable" }] },
@@ -14,10 +13,8 @@
 		"handbook": {
 			"groupBy": ["vesawmill-*"],
 			"excludeByType": {
-				"*-off-north": false,
-				"*-on-*": true,
-				"*-off-*": true,
-				"*-sleeping-*": true
+				"*-north": false,
+				"*": true
 			}
 		},
 		"entitytype": "Consumer",
@@ -31,12 +28,12 @@
 				"powertier": "LV",
 				"maxconnections": 1,
 				"networkid": 0,
-                "x1": 0.5625,
-                "y1": 0.375,
+                "x1": 0.5,
+                "y1": 0.3125,
                 "z1": 0,
                 "x2": 0.6875,
                 "y2": 0.5,
-                "z2": 0.125,
+                "z2": 0.1875,
                 "rotateYByType": {
 					"*-north": 0,
 					"*-east": 270,
@@ -46,7 +43,7 @@
             }
         ]
 	},
-	"creativeinventory": { "general": ["vesawmill-off-north"], "terrain": ["*"], "mechanics": ["*"] },
+	"creativeinventory": { "general": ["vesawmill-north"], "terrain": ["*"], "mechanics": ["*"] },
 	"shapeByType": {
 		"*-north": 	{ "base": "vinteng:block/lv/sawmill", "rotateY":0 },
 		"*-east": 	{ "base": "vinteng:block/lv/sawmill", "rotateY":270 },
@@ -54,9 +51,7 @@
 		"*-west": 	{ "base": "vinteng:block/lv/sawmill", "rotateY":90 }
 	},
 	"blockmaterial": "Metal",
-	"textures": {
-
-	},
+	"textures": {},
 	"sidesolid": {
 		"all": false, "down": true
 	},
@@ -69,5 +64,8 @@
 	"resistance": 1.5,
 	"collisionSelectionBoxes": [
 		{ "x1": 0, "y1": 0, "z1": 0, "x2": 1, "y2": 1, "z2": 1 }
-	]
+	],
+	"guiTransform": {
+		"rotation": { "x": -22.6, "y": 134, "z": 0 }
+	}
 }

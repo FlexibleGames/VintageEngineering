@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using VintageEngineering.Electrical.Systems.Catenary;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
+using Vintagestory.GameContent;
 
 namespace VintageEngineering.Electrical
 {
@@ -54,8 +51,7 @@ namespace VintageEngineering.Electrical
         }
         public override void OnLoaded(ICoreAPI api)
         {
-            base.OnLoaded(api); // base call sets wire anchors and functions
-
+            base.OnLoaded(api); // IMPORTANT base call sets wire anchors and functions
         }
 
         public override string GetPlacedBlockInfo(IWorldAccessor world, BlockPos pos, IPlayer forPlayer)
@@ -70,8 +66,18 @@ namespace VintageEngineering.Electrical
             if (blockSel != null && !world.Claims.TryAccess(byPlayer, blockSel.Position, EnumBlockAccessFlags.Use))
             {
                 return false; // only block if we can't interact via permissions with this block
-            }
+            }            
             if (base.OnWireInteractionStart(world, byPlayer, blockSel)) return true;
+            BlockEntity machEntity = world.BlockAccessor.GetBlockEntity(blockSel.Position);
+            if (machEntity != null)
+            {
+                if (machEntity is BlockEntityOpenableContainer)
+                {
+                    // allows the GUI to be opened
+                    (machEntity as BlockEntityOpenableContainer).OnPlayerRightClick(byPlayer, blockSel);
+                }
+                return true;
+            }
             return true;
         }
 

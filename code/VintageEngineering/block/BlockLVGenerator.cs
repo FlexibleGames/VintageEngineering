@@ -45,24 +45,6 @@ namespace VintageEngineering
             }
         }
 
-        public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
-        {
-            if (blockSel != null && !world.Claims.TryAccess(byPlayer, blockSel.Position, EnumBlockAccessFlags.Use))
-            {
-                return false;
-            }
-            if (base.OnWireInteractionStart(world, byPlayer, blockSel)) return true;
-
-            //BELVGenerator genEntity = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BELVGenerator;
-            //if (genEntity != null)
-            //{
-            //    genEntity.OnPlayerRightClick(byPlayer, blockSel);
-            //    return true;
-            //}
-
-            return true;
-        }
-
         public override string GetPlacedBlockInfo(IWorldAccessor world, BlockPos pos, IPlayer forPlayer)
         {
             BELVGenerator bETestGen = world.BlockAccessor.GetBlockEntity(pos) as BELVGenerator;

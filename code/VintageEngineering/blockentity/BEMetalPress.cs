@@ -582,19 +582,22 @@ namespace VintageEngineering
             {
                 if (AnimUtil != null)
                 {
-                    AnimUtil.StartAnimation(new AnimationMetaData
+                    if (base.Block.Attributes["craftinganimcode"].Exists)
                     {
-                        Animation = base.Block.Attributes["craftinganimcode"].AsString(),
-                        Code = base.Block.Attributes["craftinganimcode"].AsString(),
-                        AnimationSpeed = 1f,
-                        EaseOutSpeed = 4f,
-                        EaseInSpeed = 1f
-                    });
+                        AnimUtil.StartAnimation(new AnimationMetaData
+                        {
+                            Animation = base.Block.Attributes["craftinganimcode"].AsString(),
+                            Code = base.Block.Attributes["craftinganimcode"].AsString(),
+                            AnimationSpeed = 1f,
+                            EaseOutSpeed = 4f,
+                            EaseInSpeed = 1f
+                        });
+                    }
                 }
             }
             else
             {
-                if (AnimUtil != null)
+                if (AnimUtil != null && AnimUtil.animator.ActiveAnimationCount > 0)
                 {                    
                     AnimUtil.StopAnimation("craft");
                 }

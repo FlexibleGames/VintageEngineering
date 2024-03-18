@@ -25,22 +25,6 @@ namespace VintageEngineering
             }
         }
 
-        public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
-        {            
-            if (blockSel != null && !world.Claims.TryAccess(byPlayer, blockSel.Position, EnumBlockAccessFlags.Use))
-            {
-                return false;
-            }
-            if (base.OnWireInteractionStart(world, byPlayer, blockSel)) return true;
-            //BEMetalPress machEntity = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEMetalPress;
-            //if (machEntity != null)
-            //{
-            //    machEntity.OnPlayerRightClick(byPlayer, blockSel);
-            //    return true;
-            //}
-            else return base.OnBlockInteractStart(world, byPlayer, blockSel);
-        }
-
         public override string GetPlacedBlockInfo(IWorldAccessor world, BlockPos pos, IPlayer forPlayer)
         {
             BEMetalPress bETestMach = world.BlockAccessor.GetBlockEntity(pos) as BEMetalPress;
