@@ -144,10 +144,23 @@ namespace VintageEngineering.Electrical
         {            
         }
 
-        public virtual ulong RatedPower(float dt)
+        public virtual ulong RatedPower(float dt, bool isInsert = false)
         {
+            if (!IsEnabled)
+            {
+                return 0;
+            }
             ulong rate = ((ulong)Math.Round(MaxPPS * dt));
-            return CurrentPower < rate ? CurrentPower : rate;
+            if (isInsert)
+            {
+                ulong emptycap = MaxPower - CurrentPower;
+                return emptycap < rate ? emptycap : rate;
+            }
+            else
+            {
+                // extracting
+                return CurrentPower < rate ? CurrentPower : rate;
+            }
         }
 
         public virtual ulong ExtractPower(ulong powerWanted, float dt, bool simulate = false)
@@ -210,7 +223,7 @@ namespace VintageEngineering.Electrical
                 // far more common, powerOffered exceeds PPS
                 if (!simulate) electricpower += pps;
                 this.MarkDirty();
-                return powerOffered - pps;
+                return powerOffered - pps; 
             }
         }
 
@@ -268,6 +281,12 @@ namespace VintageEngineering.Electrical
             base.Initialize(api);
             if (electricConnections == null) electricConnections = new Dictionary<int, List<WireNode>>();
             if (NetworkIDs == null) NetworkIDs = new Dictionary<int, long>();
+        }
+
+        public override void OnBlockPlaced(ItemStack byItemStack = null)
+        {
+            base.OnBlockPlaced(byItemStack);
+            MachineState = EnumBEState.Sleeping; // when first placed, a machine is on and not crafting.
         }
 
         /// <summary>

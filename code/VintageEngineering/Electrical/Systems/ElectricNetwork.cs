@@ -259,15 +259,15 @@ namespace VintageEngineering.Electrical.Systems
                 foreach (IElectricalBlockEntity entity in producerNodes)
                 {
                     //totalpoweringen += entity.CurrentPower;
-                    totalpoweringen += entity.RatedPower(deltaTime);
+                    totalpoweringen += entity.RatedPower(deltaTime, false);
                 }
             }
             if (storageNodes.Count > 0)
             {
                 foreach (IElectricalBlockEntity entity in storageNodes)
                 {
-                    totalinstorage += entity.CurrentPower;
-                    totalstorageavailable += entity.MaxPower - entity.CurrentPower;
+                    totalinstorage += entity.RatedPower(deltaTime, false); // how much to extract
+                    totalstorageavailable += entity.RatedPower(deltaTime, true); // how much to insert, if available
                 }
             }
             totalpoweroffered = totalpoweringen + totalinstorage;
@@ -321,7 +321,7 @@ namespace VintageEngineering.Electrical.Systems
                     if (totalpowerused == 0) break;
                     totalpowerused = entity.ExtractPower(totalpowerused, deltaTime);
                 }
-                if (totalpowerused != 0)
+                if (totalpowerused > 1) // 0 just didn't cut it due to rounding issues.
                 {
                     throw new Exception("VintEng: Did not consume all power used.");
                 }

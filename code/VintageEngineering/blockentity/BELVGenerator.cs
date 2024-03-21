@@ -25,7 +25,7 @@ namespace VintageEngineering
         private int maxTemp;
         private float fuelBurnTime;
         private float maxBurnTime;
-        private float updateBouncer = 0;
+        private float sleepTimer = 0;
 
         /// <summary>
         /// N E S W
@@ -37,16 +37,7 @@ namespace VintageEngineering
 
         public float FuelBurnTime { get { return fuelBurnTime; } }
         public float GenTemp { get { return genTemp; } }
-        /// <summary>
-        /// FuelBurnTime is > 0 and we have space for power.
-        /// </summary>
-        public bool IsGenerating
-        {
-            get
-            {
-                return (fuelBurnTime > 0f && CurrentPower < MaxPower);
-            }
-        }
+
         public bool IsBurning
         {
             get
@@ -118,12 +109,24 @@ namespace VintageEngineering
 
         public void OnSlotModified(int slotId)
         {
+            if (slotId == 0)
+            {
+                if (Inventory[0].Itemstack != null && !Inventory[0].Empty && Inventory[0].Itemstack.Collectible.CombustibleProps != null)
+                {
+                    sleepTimer += 5; // ensure the machine gets a full upate next tick
+                    if (fuelBurnTime == 0) CanDoBurn(); // update burn time if we have no burn time left.
+                    StateChange(EnumBEState.On);
+                }
+                else
+                {
+                    StateChange(EnumBEState.Sleeping);
+                }
+            }
             base.Block = this.Api.World.BlockAccessor.GetBlock(this.Pos);
             this.MarkDirty(this.Api.Side == EnumAppSide.Server, null);
             if (this.Api is ICoreClientAPI && this.clientDialog != null)
             {
                 clientDialog.Update(genTemp, fuelBurnTime, CurrentPower);
-                //this.SetDialogValues(this.clientDialog.Attributes);
             }
             IWorldChunk chunkatPos = this.Api.World.BlockAccessor.GetChunkAtBlockPos(this.Pos);
             if (chunkatPos == null) return;
@@ -136,44 +139,74 @@ namespace VintageEngineering
             return $"{GenTemp:N1}°C {FuelBurnTime:N1} {Lang.Get("vinteng:gui-word-seconds")} | {CurrentPower:N0}/{MaxPower:N0} {Lang.Get("vinteng:gui-word-power")}";
         }
 
+        public override void StateChange(EnumBEState newstate)
+        {
+            if (MachineState == newstate) return; // no change, nothing to see here.            
+            MachineState = newstate;
+
+            if (Api != null && Api.Side == EnumAppSide.Client && clientDialog != null && clientDialog.IsOpened())
+            {
+                clientDialog.Update(GenTemp, fuelBurnTime, CurrentPower);
+            }
+            MarkDirty(true, null);
+        }
+
         public void OnBurnTick(float deltatime)
         {
             if (this.Api is ICoreServerAPI)
             {
-                updateBouncer += deltatime;
-                if (IsGenerating) // we have fuel and space for power
+                if (!IsEnabled) return;
+                if (IsSleeping)
                 {
-                    this.fuelBurnTime -= deltatime;
-                    if (this.fuelBurnTime <= 0f)
+                    if (genTemp != 20f) genTemp = ChangeTemperature(genTemp, 20f, deltatime);
+                    sleepTimer += deltatime;
+                    if (sleepTimer < 2f) return;
+                    else sleepTimer = 0;
+                }                
+
+                if (CurrentPower != MaxPower)
+                {
+                    if (fuelBurnTime > 0f || genTemp > tempToGen) // now will generate additional power as long as it's hot enough.
                     {
-                        fuelBurnTime = 0f;
-                        maxBurnTime = 0f; 
+                        // we have space for power AND we have fuel
+                        StateChange(EnumBEState.On); // turn it on!
+                        genTemp = ChangeTemperature(genTemp, maxTemp, deltatime);
+                        fuelBurnTime -= deltatime; // burn!
+                        if (fuelBurnTime <= 0f) 
+                        { 
+                            fuelBurnTime = 0f;
+                            maxBurnTime = 0f;
+                            maxTemp = 20; // important
+                            if (!Inventory[0].Empty) CanDoBurn();
+                        }
+
+                        if (genTemp >= tempToGen)
+                        {
+                            // we're hot enough to generate power, currenly hard coded to 100
+                            electricpower += ((ulong)Math.Round(MaxPPS * deltatime));
+                            if (CurrentPower > MaxPower) electricpower = MaxPower;
+                        }
+                    }
+                    else
+                    {
+                        // we have space for power and no burn time
+                        if (genTemp != 20f) genTemp = ChangeTemperature(genTemp, 20f, deltatime);
+                        CanDoBurn(); // check for fuel for the next tick
                     }
                 }
-                if (IsGenerating) // we have fuel and space for power, duplicate check in case previous check ran us dry.
+                else
                 {
-                    genTemp = ChangeTemperature(genTemp, maxTemp, deltatime);
-                    if (genTemp >= tempToGen)
-                    {
-                        electricpower += (ulong)(deltatime * MaxPPS);
-                        if (CurrentPower > MaxPower) electricpower = MaxPower;
-                    }
+                    // power is full
+                    if (genTemp != 20f) genTemp = ChangeTemperature(genTemp, 20f, deltatime); // cool it down
+                    StateChange(EnumBEState.Sleeping); // go to sleep... zzzz
                 }
-                if (!IsGenerating) // either fuel is out or power is full
+                prevGenTemp = genTemp;
+                if ((faceHasMachine[0] || faceHasMachine[1] || faceHasMachine[2] || faceHasMachine[3]) && CurrentPower > 0)
                 {
-                    genTemp = ChangeTemperature(genTemp, 20, deltatime);
+                    GiveNeighborsPower(deltatime);
+                    StateChange(EnumBEState.On);
                 }
-                if (!IsPowerFull && !IsBurning) // space for power AND not burning anything
-                {
-                    CanDoBurn();
-                }
-                if (updateBouncer >= 0.25f)
-                {
-                    prevGenTemp = genTemp;
-                    if (faceHasMachine[0] || faceHasMachine[1] || faceHasMachine[2] || faceHasMachine[3]) CanGivePower(deltatime);
-                    MarkDirty(true, null);
-                    updateBouncer = 0f;
-                }
+                MarkDirty(true, null);
             }
             if (Api != null && Api.Side == EnumAppSide.Client)
             {
@@ -194,17 +227,23 @@ namespace VintageEngineering
                 {
                     FuelStack = null;
                 }
+                StateChange(EnumBEState.On); // ensure we're on!
+                FuelSlot.MarkDirty();
                 MarkDirty(true);
             }
         }
 
-        public void CanGivePower(float dt)
+        public void GiveNeighborsPower(float dt)
         {
             // a temporary routine to push power into a machine, will be an electric network eventually
             IElectricalBlockEntity beElectricalMachine;
+            ulong ratedpower = this.RatedPower(dt);
+            ulong ratedpowerbackup = ratedpower;
+            if (ratedpower > CurrentPower) ratedpower = CurrentPower;
+
             for (int x = 0; x < 4; x++)
             {
-                if (CurrentPower > 0)
+                if (ratedpower > 0)
                 {
                     if (faceHasMachine[x])
                     {                        
@@ -215,34 +254,39 @@ namespace VintageEngineering
                                 beElectricalMachine = this.Api.World.BlockAccessor.GetBlockEntity(this.Pos.NorthCopy()) as IElectricalBlockEntity;
                                 if (beElectricalMachine != null)
                                 {
-                                    electricpower = beElectricalMachine.ReceivePower(electricpower, dt);
-                                    if (electricpower == 0) continue;
+                                    ratedpower = beElectricalMachine.ReceivePower(ratedpower, dt);
+                                    if (ratedpower == 0) continue;
                                 }
                                 break;
                             case 1:
                                 beElectricalMachine = this.Api.World.BlockAccessor.GetBlockEntity(this.Pos.EastCopy()) as IElectricalBlockEntity;
                                 if (beElectricalMachine != null)
                                 {
-                                    electricpower = beElectricalMachine.ReceivePower(electricpower, dt);
-                                    if (electricpower == 0) continue;
+                                    ratedpower = beElectricalMachine.ReceivePower(ratedpower, dt);
+                                    if (ratedpower == 0) continue;
                                 }
                                 break;
                             case 2:
                                 beElectricalMachine = this.Api.World.BlockAccessor.GetBlockEntity(this.Pos.SouthCopy()) as IElectricalBlockEntity;
                                 if (beElectricalMachine != null)
                                 {
-                                    electricpower = beElectricalMachine.ReceivePower(electricpower, dt);
-                                    if (electricpower == 0) continue;
+                                    ratedpower = beElectricalMachine.ReceivePower(ratedpower, dt);
+                                    if (ratedpower == 0) continue;
                                 }
                                 break;
                             case 3:
                                 beElectricalMachine = this.Api.World.BlockAccessor.GetBlockEntity(this.Pos.WestCopy()) as IElectricalBlockEntity;
                                 if (beElectricalMachine != null)
                                 {
-                                    electricpower = beElectricalMachine.ReceivePower(electricpower, dt);
-                                    if (electricpower == 0) continue;
+                                    ratedpower = beElectricalMachine.ReceivePower(ratedpower, dt);
+                                    if (ratedpower == 0) continue;
                                 }
                                 break;
+                        }
+                        ulong usedpower = ratedpowerbackup - ratedpower;
+                        if (usedpower > 0)
+                        {
+                            electricpower -= usedpower;
                         }
                     }
                 }

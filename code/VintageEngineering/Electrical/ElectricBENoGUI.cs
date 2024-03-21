@@ -180,10 +180,23 @@ namespace VintageEngineering.Electrical
             this.MarkDirty();
         }
 
-        public virtual ulong RatedPower(float dt)
+        public virtual ulong RatedPower(float dt, bool isInsert = false)
         {
+            if (!IsEnabled)
+            {
+                return 0;
+            }
             ulong rate = ((ulong)Math.Round(MaxPPS * dt));
-            return CurrentPower < rate ? CurrentPower : rate;
+            if (isInsert)
+            {
+                ulong emptycap = MaxPower - CurrentPower;
+                return emptycap < rate ? emptycap : rate;
+            }
+            else
+            {
+                // extracting
+                return CurrentPower < rate ? CurrentPower : rate;
+            }
         }
 
         public virtual ulong ExtractPower(ulong powerWanted, float dt, bool simulate = false)
