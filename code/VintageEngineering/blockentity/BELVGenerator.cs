@@ -136,7 +136,18 @@ namespace VintageEngineering
         public string GetOutputText()
         {
             // NetworkInfo inclusion could be locked behind a config flag or something in the future
-            return $"{GenTemp:N1}°C {FuelBurnTime:N1} {Lang.Get("vinteng:gui-word-seconds")} | {CurrentPower:N0}/{MaxPower:N0} {Lang.Get("vinteng:gui-word-power")}";
+            
+            string onOff;
+            switch (MachineState)
+            {
+                case EnumBEState.On: onOff = Lang.Get("vinteng:gui-word-burning"); break;
+                case EnumBEState.Off: onOff = Lang.Get("vinteng:gui-word-off"); break;
+                case EnumBEState.Sleeping: onOff = Lang.Get("vinteng:gui-word-sleeping"); ; break;
+                default: onOff = "Error"; break;
+            }
+            string crafting = $"{GenTemp:N1}°C {FuelBurnTime:N1} {Lang.Get("vinteng:gui-word-seconds")}";
+
+            return $"{crafting} | {onOff}{System.Environment.NewLine}{Lang.Get("vinteng:gui-word-power")}: {CurrentPower:N0}/{MaxPower:N0}";            
         }
 
         public override void StateChange(EnumBEState newstate)

@@ -68,9 +68,12 @@ namespace VintageEngineering.RecipeSystem
         }
 
         public override void Start(ICoreAPI api)
-        {            
+        {
             this.MetalPressRecipes = api.RegisterRecipeRegistry<RecipeRegistryGeneric<RecipeMetalPress>>("vemetalpressrecipes").Recipes;
             this.LogSplitterRecipes = api.RegisterRecipeRegistry<RecipeRegistryGeneric<RecipeLogSplitter>>("velogsplitterrecipes").Recipes;
+            this.SawMillRecipes = api.RegisterRecipeRegistry<RecipeRegistryGeneric<RecipeSawMill>>("vesawmillrecipes").Recipes;
+
+            this.ExtruderRecipes = api.RegisterRecipeRegistry<RecipeRegistryGeneric<RecipeExtruder>>("veextruderrecipes").Recipes;
         }
 
         public override void AssetsLoaded(ICoreAPI api)

@@ -55,6 +55,9 @@
 	"vinteng:item-metalgear-titanium": "Titanium Gear",
 	"vinteng:itemdesc-metalgear-*": "A simple gear, used for crafting machinery. Made from metal plates in the metal press using the Gear Mold.",
 
+	"vinteng:item-sawdust": "Sawdust",
+	"vinteng:itemdesc-sawdust": "A byproduct of the sawmill, burns hot and fast and makes a good base for paper products.",
+
 	"vinteng:gui-mold-text": "Mold",
 	"vinteng:gui-turn-on": "Turn On",
 	"vinteng:gui-turn-off": "Turn Off",
@@ -62,6 +65,7 @@
 	"vinteng:gui-extruder-die": "Place a Die Cast in the Die Cast slot.",
 	"vinteng:gui-word-crafting": "Crafting",
 	"vinteng:gui-word-sleeping": "Sleeping",
+	"vinteng:gui-word-burning": "Burning",
 	"vinteng:gui-word-on": "On",
 	"vinteng:gui-word-off": "Off",
 	"vinteng:gui-word-power": "Power",

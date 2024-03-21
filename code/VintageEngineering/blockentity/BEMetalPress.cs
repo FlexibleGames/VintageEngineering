@@ -554,6 +554,7 @@ namespace VintageEngineering
             if (api.Side == EnumAppSide.Server)
             {
                 sapi = api as ICoreServerAPI;
+                this.RegisterGameTickListener(new Action<float>(OnSimTick), 100, 0);
             }
             else
             {
@@ -565,8 +566,7 @@ namespace VintageEngineering
                 UpdateMesh(3);
             }
             this.inventory.Pos = this.Pos;
-            this.inventory.LateInitialize($"{InventoryClassName}-{this.Pos.X}/{this.Pos.Y}/{this.Pos.Z}", api);
-            this.RegisterGameTickListener(new Action<float>(OnSimTick), 100, 0);
+            this.inventory.LateInitialize($"{InventoryClassName}-{this.Pos.X}/{this.Pos.Y}/{this.Pos.Z}", api);            
         }
 
         public override void StateChange(EnumBEState newstate)
@@ -632,7 +632,7 @@ namespace VintageEngineering
                 {
                     StateChange(isCrafting ? EnumBEState.On : EnumBEState.Sleeping);
                 }
-                MarkDirty(true, null);                
+                MarkDirty(true, null);
             }
         }
 
