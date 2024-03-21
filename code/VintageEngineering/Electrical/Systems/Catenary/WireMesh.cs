@@ -8,17 +8,13 @@ namespace VintageEngineering.Electrical.Systems.Catenary
 {
     public class WireMesh
     {
-        // Major thank you to VonZeeple
-        // There just was simply no way I could have figured out how to do this.
-        // check out their work at https://github.com/VonZeeple/Signals
-
         /// <summary>
         /// Calculate wire hang
         /// <br>Check https://en.wikipedia.org/wiki/Catenary </br>
         /// </summary>
         /// <param name="x">Horizontal Position</param>
         /// <param name="d">?</param>
-        /// <param name="a">Amount of slump, smaller value = more slump</param>
+        /// <param name="a">Amount of slump, smaller value = more slump but less smooth.</param>
         /// <returns>Vertical offset</returns>
         static float Catenary(float x, float d = 1, float a = 2)
         {

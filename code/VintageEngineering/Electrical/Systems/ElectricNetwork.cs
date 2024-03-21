@@ -258,7 +258,8 @@ namespace VintageEngineering.Electrical.Systems
             {
                 foreach (IElectricalBlockEntity entity in producerNodes)
                 {
-                    totalpoweringen += entity.CurrentPower;
+                    //totalpoweringen += entity.CurrentPower;
+                    totalpoweringen += entity.RatedPower(deltaTime);
                 }
             }
             if (storageNodes.Count > 0)

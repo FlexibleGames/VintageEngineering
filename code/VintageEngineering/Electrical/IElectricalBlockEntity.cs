@@ -64,6 +64,15 @@ namespace VintageEngineering.Electrical
         int Priority { get; }
 
         /// <summary>
+        /// Power Needed/Available Rated to a machines MaxPPS given the deltaTime.<br/>
+        /// Used by the Electric Network to quickly determine power for a given tick time.<br/>
+        /// Should not actually alter a machines power.
+        /// </summary>
+        /// <param name="dt">DeltaTime (time betwen ticks in decimal seconds)</param>
+        /// <returns>Power for this deltatime</returns>
+        ulong RatedPower(float dt);
+
+        /// <summary>
         /// Takes powerOffered and removes any power needed and returns power left over.<br/>
         /// It's up to the implementing block entity to track it's internal power and PPS limits.
         /// </summary>

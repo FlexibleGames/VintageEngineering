@@ -37,7 +37,7 @@
 			{ "type": "block", "code": "game:log-*", "quantity": 1, "name":"woodtype", "allowedVariants": ["placed-kapok-ud", "placed-purpleheart-ud", "placed-ebony-ud"] }
 		],
 		"outputs": [ 
-			{ "type": "item", "code": "game:firewood", "stacksize": 6 },
+			{ "type": "item", "code": "game:firewood", "stacksize": 8 },
 			{ "type": "item", "code": "game:stick", "stacksize": 3, "variable": 1 }
 		]
 	}			

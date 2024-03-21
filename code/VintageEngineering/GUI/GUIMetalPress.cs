@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using Cairo;
 using Vintagestory.API.Client;
-using Vintagestory.API.Server;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Common;
-using Vintagestory.API.Datastructures;
 using Vintagestory.API.Config;
 using VintageEngineering.RecipeSystem.Recipes;
 
@@ -115,7 +112,7 @@ namespace VintageEngineering
 
             this.SingleComposer = capi.Gui.CreateCompo("vetestgendlg" + (blockPos?.ToString()), window)
                 .AddShadedDialogBG(dialog, true, 5)
-                .AddDialogTitleBar("Metal Press", new Action(OnTitleBarClose), null, null)
+                .AddDialogTitleBar(Lang.Get("vinteng:gui-title-metalpress"), new Action(OnTitleBarClose), null, null)
                 .BeginChildElements(dialog)
 
                 .AddInset(powerInset, 2, 0.85f)

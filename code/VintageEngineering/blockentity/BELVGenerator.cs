@@ -11,7 +11,7 @@ using Vintagestory.API.Config;
 
 namespace VintageEngineering
 {
-    public class BELVGenerator : ElectricBEGUI
+    public class BELVGenerator : ElectricBE
     {
         ICoreClientAPI capi;
         ICoreServerAPI sapi;

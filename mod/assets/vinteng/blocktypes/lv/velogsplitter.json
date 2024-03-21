@@ -1,7 +1,7 @@
 {
 	"code": "velogsplitter",
-	"class": "VEMetalPress",
-	"entityClass": "VEBEMetalPress",
+	"class": "VELogSplitter",
+	"entityClass": "VEBELogSplitter",
 	"behaviors": [
 		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "velogsplitter-north" }}}
 	],

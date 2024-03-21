@@ -15,14 +15,14 @@ using Vintagestory.API.Config;
 
 namespace VintageEngineering
 {
-    public class BEMetalPress : ElectricBEGUI, ITexPositionSource
+    public class BEMetalPress : ElectricBE, ITexPositionSource
     {
         ICoreClientAPI capi;
         ICoreServerAPI sapi;
         private InvMetalPress inventory;
         private GUIMetalPress clientDialog;
-                
-       
+
+
         // a bouncer to limit GUI updates
         private float updateBouncer = 0;
 
@@ -43,20 +43,20 @@ namespace VintageEngineering
         /// </summary>
         public float RecipeProgress
         {
-            get 
-            { 
+            get
+            {
                 if (currentPressRecipe == null) { return 0f; }
                 return (float)recipePowerApplied / (float)currentPressRecipe.PowerPerCraft;
             }
         }
         private bool isCrafting = false;
-        
+
         #endregion
 
         /// <summary>
         /// Is this machine currently working on something?
         /// </summary>
-        public bool IsCrafting { get { return isCrafting; } }        
+        public bool IsCrafting { get { return isCrafting; } }
 
         public override bool CanExtractPower => false;
         public override bool CanReceivePower => true;
@@ -115,7 +115,7 @@ namespace VintageEngineering
         public BEMetalPress()
         {
             this.inventory = new InvMetalPress(null, null);
-            this.inventory.SlotModified += OnSlotModified;            
+            this.inventory.SlotModified += OnSlotModified;
         }
 
         public override void OnBlockBroken(IPlayer byPlayer = null)
@@ -145,8 +145,7 @@ namespace VintageEngineering
                 if (InputSlot.Empty)
                 {
                     isCrafting = false;
-                    MachineState = EnumBEState.Sleeping;
-                    StateChange();
+                    StateChange(EnumBEState.Sleeping);                  
                     currentPressRecipe = null;
                     recipePowerApplied = 0;
                 }
@@ -239,7 +238,7 @@ namespace VintageEngineering
         public override bool OnTesselation(ITerrainMeshPool mesher, ITesselatorAPI tessThreadTesselator)
         {
             base.OnTesselation(mesher, tessThreadTesselator); // renders an ACTIVE animation
-            
+
             if (moldMesh != null)
             {
                 mesher.AddMeshData(moldMesh, 1); // add a mold if we have one
@@ -299,8 +298,7 @@ namespace VintageEngineering
                 }
                 else
                 {
-                    ILogger logger = this.capi.World.Logger;
-                    string str = "For render in block ";
+                    ILogger logger = this.capi.World.Logger;                    
                     AssetLocation code = base.Block.Code;
                     logger.Warning($"For render in block {((code != null) ? code.ToString() : "null")}, item {this.nowTesselatingObj.Code} defined texture {texturePath}, no such texture found.");
                 }
@@ -312,7 +310,7 @@ namespace VintageEngineering
 
         /// <summary>
         /// Find a matching Metal Press Recipe given the Blocks inventory.
-        /// </summary>        
+        /// </summary>
         /// <returns>True if recipe found that matches ingredient and mold.</returns>
         public bool FindMatchingRecipe()
         {
@@ -324,8 +322,7 @@ namespace VintageEngineering
             {
                 currentPressRecipe = null;
                 isCrafting = false;
-                MachineState = EnumBEState.Sleeping;
-                StateChange();
+                StateChange(EnumBEState.Sleeping);                
                 return false;
             }
 
@@ -341,15 +338,13 @@ namespace VintageEngineering
                 {
                     currentPressRecipe = mprecipe;
                     isCrafting = true;
-                    MachineState = EnumBEState.On;
-                    StateChange();
+                    StateChange(EnumBEState.On);                    
                     return true;
                 }
             }
             currentPressRecipe = null;
             isCrafting = false;
-            MachineState = EnumBEState.Sleeping;
-            StateChange();
+            StateChange(EnumBEState.Sleeping);            
             return false;
         }
 
@@ -365,7 +360,7 @@ namespace VintageEngineering
                 default: onOff = "Error"; break;
             }
             string crafting = isCrafting ? $"{Lang.Get("vinteng:gui-word-crafting")}: {recipeProgressPercent:N1}%" : $"{Lang.Get("vinteng:gui-machine-notcrafting")}";
-            
+
             return $"{crafting} | {onOff} | {Lang.Get("vinteng:gui-word-power")}: {CurrentPower:N0}/{MaxPower:N0}";
         }
 
@@ -383,7 +378,7 @@ namespace VintageEngineering
                     // input stack is valid for active recipe, the recipe might be valid, but the outputs are from another recipe
                     // machine needs to be emptied for new recipe to start
                     if (!Inventory[outputslotid+1].Empty)
-                    {                        
+                    {
                         // if the output slot has something in it, is it the same thing we make?
                         if (Inventory[outputslotid+1].Itemstack.Collectible.Code == currentPressRecipe.Outputs[outputslotid].ResolvedItemstack.Collectible.Code)
                         {
@@ -391,7 +386,7 @@ namespace VintageEngineering
                             if (Inventory[outputslotid + 1].Itemstack.StackSize < Inventory[outputslotid+1].Itemstack.Collectible.MaxStackSize)
                             {
                                 return true;
-                            }                        
+                            }
                         }
 
                     }
@@ -411,12 +406,12 @@ namespace VintageEngineering
                 if (IsSleeping)
                 {
                     updateBouncer += deltatime;
-                    if (updateBouncer < 2f) return;                    
+                    if (updateBouncer < 2f) return;
                 }
                 updateBouncer = 0;
-                
-                // if we're sleeping, bounce out of here. Extremely fast updates.                
-                if (MachineState == EnumBEState.On) // block is enabled (on/off) 
+
+                // if we're sleeping, bounce out of here. Extremely fast updates.
+                if (MachineState == EnumBEState.On) // block is enabled (on/off)
                 {
                     if (isCrafting && RecipeProgress < 1f) // machine is activly crafting and recipe isn't done
                     {
@@ -437,12 +432,11 @@ namespace VintageEngineering
                     else if (!IsCrafting) // machine isn't crafting
                     {
                         // enabled but not crafting means we have no valid recipe
-                        MachineState = EnumBEState.Sleeping; // go to sleep
-                        StateChange();
+                        StateChange(EnumBEState.Sleeping); // go to sleep                        
                     }
                     if (RecipeProgress >= 1f)
                     {
-                        // progress finished! 
+                        // progress finished!
                         ItemStack outputstack = currentPressRecipe.Outputs[0].ResolvedItemstack.Clone();
                         if (HasRoomInOutput(0))
                         {
@@ -513,7 +507,7 @@ namespace VintageEngineering
                                 }
                                 ExtraOutputSlot.MarkDirty();
                             }
-                        }                                            
+                        }
 
                         // damage the mold...
                         if (!MoldSlot.Empty && currentPressRecipe.RequiresDurability) // let the recipe control whether durability is used
@@ -531,7 +525,7 @@ namespace VintageEngineering
                                     ItemStack bitstack = new ItemStack(Api.World.GetItem(thebits), newstack);
                                     Api.World.SpawnItemEntity(bitstack, Pos.UpCopy().ToVec3d(), null);
                                 }
-                                MoldSlot.Itemstack = null; // NO SOUP FOR YOU                                
+                                MoldSlot.Itemstack = null; // NO SOUP FOR YOU
                                 Api.World.PlaySoundAt(new AssetLocation("game:sounds/effect/toolbreak"),
                                     this.Pos.X, this.Pos.Y, this.Pos.Z, null, 1f, 16f, 1f);
                             }
@@ -543,9 +537,8 @@ namespace VintageEngineering
 
                         if (!FindMatchingRecipe())
                         {
-                            MachineState = EnumBEState.Sleeping;
-                            isCrafting = false;
-                            StateChange();
+                            StateChange(EnumBEState.Sleeping);
+                            isCrafting = false;                            
                         }
                         recipePowerApplied = 0;
                         MarkDirty(true, null);
@@ -576,8 +569,11 @@ namespace VintageEngineering
             this.RegisterGameTickListener(new Action<float>(OnSimTick), 100, 0);
         }
 
-        public override void StateChange()
+        public override void StateChange(EnumBEState newstate)
         {
+            if (MachineState == newstate) return; // no change, nothing to see here.            
+            MachineState = newstate;
+
             if (MachineState == EnumBEState.On)
             {
                 if (AnimUtil != null)
@@ -597,15 +593,16 @@ namespace VintageEngineering
             }
             else
             {
-                if (AnimUtil != null && AnimUtil.animator.ActiveAnimationCount > 0)
-                {                    
-                    AnimUtil.StopAnimation("craft");
+                if (AnimUtil != null && AnimUtil.animator != null && AnimUtil.animator.ActiveAnimationCount > 0)
+                {
+                    AnimUtil.StopAnimation(base.Block.Attributes["craftinganimcode"].AsString());
                 }
             }
             if (Api != null && Api.Side == EnumAppSide.Client && clientDialog != null && clientDialog.IsOpened())
             {
                 clientDialog.Update(RecipeProgress, CurrentPower, currentPressRecipe);
             }
+            MarkDirty(true, null);
         }
 
         public override bool OnPlayerRightClick(IPlayer byPlayer, BlockSelection blockSel)
@@ -629,15 +626,14 @@ namespace VintageEngineering
             {
                 if (IsEnabled) // we're enabled, we need to turn off
                 {
-                    MachineState = EnumBEState.Off;
+                    StateChange(EnumBEState.Off);
                 }
                 else
                 {
-                    MachineState = isCrafting ? EnumBEState.On : EnumBEState.Sleeping;
+                    StateChange(isCrafting ? EnumBEState.On : EnumBEState.Sleeping);
                 }
-                MarkDirty(true, null);
-                StateChange();
-            }    
+                MarkDirty(true, null);                
+            }
         }
 
         public override void OnReceivedServerPacket(int packetid, byte[] data)
@@ -654,8 +650,8 @@ namespace VintageEngineering
             tree["inventory"] = invtree;
 
             tree.SetLong("recipepowerapplied", (long)recipePowerApplied);
-            
-            tree.SetBool("isCrafting", isCrafting);            
+
+            tree.SetBool("isCrafting", isCrafting);
         }
 
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldForResolving)
@@ -663,15 +659,15 @@ namespace VintageEngineering
             base.FromTreeAttributes(tree, worldForResolving);
             this.inventory.FromTreeAttributes(tree.GetTreeAttribute("inventory"));
             if (Api != null) Inventory.AfterBlocksLoaded(this.Api.World);
-            recipePowerApplied = (ulong)tree.GetLong("recipepowerapplied");            
-            isCrafting = tree.GetBool("isCrafting");            
+            recipePowerApplied = (ulong)tree.GetLong("recipepowerapplied");
+            isCrafting = tree.GetBool("isCrafting");
 
             FindMatchingRecipe();
             if (Api != null && Api.Side == EnumAppSide.Client)
-            {                
+            {
                 if (this.clientDialog != null)
                 {
-                    clientDialog.Update(RecipeProgress, CurrentPower, currentPressRecipe);                    
+                    clientDialog.Update(RecipeProgress, CurrentPower, currentPressRecipe);
                 }
                 UpdateMesh(3);
                 MarkDirty(true, null);

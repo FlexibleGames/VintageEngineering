@@ -13,10 +13,10 @@ using Vintagestory.GameContent;
 namespace VintageEngineering.Electrical
 {
     /// <summary>
-    /// Base BlockEntity for machines that require a GUI and/or have an inventory.
+    /// Base BlockEntity for all machines.
     /// <br>Holds Electric Network Connections and Network ID mapping.</br>
     /// </summary>
-    public abstract class ElectricBEGUI : BlockEntityOpenableContainer, IElectricalBlockEntity, IWireNetwork, IElectricalConnection
+    public abstract class ElectricBE : BlockEntityOpenableContainer, IElectricalBlockEntity, IWireNetwork, IElectricalConnection
     {
         /// <summary>
         /// Total power this Block Entity has. Saved in base ElectricBE.
@@ -69,7 +69,6 @@ namespace VintageEngineering.Electrical
                 if (machineState != value)
                 {
                     machineState = value;
-                    StateChange(); 
                 }
             }
         }
@@ -139,11 +138,16 @@ namespace VintageEngineering.Electrical
         }
 
         /// <summary>
-        /// Called when MachineState is changed. Override to trigger animations, GUI updates, and other fancy things.
+        /// Called when changing MachineState. Override to trigger animations, GUI updates, and other fancy things.
         /// </summary>
-        public virtual void StateChange()
-        {
+        public virtual void StateChange(EnumBEState newState = EnumBEState.Sleeping)
+        {            
+        }
 
+        public virtual ulong RatedPower(float dt)
+        {
+            ulong rate = ((ulong)Math.Round(MaxPPS * dt));
+            return CurrentPower < rate ? CurrentPower : rate;
         }
 
         public virtual ulong ExtractPower(ulong powerWanted, float dt, bool simulate = false)
@@ -156,7 +160,7 @@ namespace VintageEngineering.Electrical
             // pps at this point is the PPS from JSON multiplied by DeltaTime (fractional second timing).
             // NOT going to deal with fractinal amounts of power. So Rounding errors are expected.
 
-            if (pps == 0) pps = ulong.MaxValue; // PPS of 0 means NO LIMIT ***This would break recipes***
+            if (pps == 0) pps = ulong.MaxValue; // PPS of 0 means NO LIMIT ***This will break recipes***
 
             // PPS can't exceed the amount of power we have in this generator
             // i.e. we can't provide power we don't have
@@ -326,7 +330,7 @@ namespace VintageEngineering.Electrical
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldForResolving)
         {
             base.FromTreeAttributes(tree, worldForResolving);
-            MachineState = Enum.Parse<EnumBEState>(tree.GetString("machinestate", "Sleeping"));
+            machineState = Enum.Parse<EnumBEState>(tree.GetString("machinestate", "Sleeping"));
             priority = tree.GetInt("priority", 5);
             electricpower = (ulong)tree.GetLong("currentpower", 0);
 

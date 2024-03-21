@@ -59,6 +59,7 @@
 	"vinteng:gui-turn-on": "Turn On",
 	"vinteng:gui-turn-off": "Turn Off",
 	"vinteng:gui-metal-press-mold": "Place a mold in the mold slot.",
+	"vinteng:gui-extruder-die": "Place a Die Cast in the Die Cast slot.",
 	"vinteng:gui-word-crafting": "Crafting",
 	"vinteng:gui-word-sleeping": "Sleeping",
 	"vinteng:gui-word-on": "On",
@@ -70,9 +71,11 @@
 	"vinteng:gui-machine-sleeping": "Machine is sleeping.",
 	"vinteng:gui-is-sleeping-short": "Zzzz",
 	"vinteng:gui-machine-ingredients": "Recipe ingredients needed!",
+	"vinteng:gui-machine-isfull": "An Output Slot is full.",
 	"vinteng:gui-no-valid-recipe": "No valid recipe found.",
 	"vinteng:storyevent-recipes": "Mysterious Constructs...",
 
 	"vinteng:gui-title-metalpress": "Metal Press",
-	"vinteng:gui-title-lvgenerator": "LV Generator"
+	"vinteng:gui-title-lvgenerator": "LV Generator",
+	"vinteng:gui-title-logsplitter": "Log Splitter"
 }

@@ -180,6 +180,12 @@ namespace VintageEngineering.Electrical
             this.MarkDirty();
         }
 
+        public virtual ulong RatedPower(float dt)
+        {
+            ulong rate = ((ulong)Math.Round(MaxPPS * dt));
+            return CurrentPower < rate ? CurrentPower : rate;
+        }
+
         public virtual ulong ExtractPower(ulong powerWanted, float dt, bool simulate = false)
         {
             if (MachineState == EnumBEState.Off) return powerWanted; // machine is off, bounce.

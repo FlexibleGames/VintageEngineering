@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace VintageEngineering.Electrical
 {
     /// <summary>
-    /// A Relay is a simple block for wire connections, like on the tops of power poles.
+    /// A Relay is a simple block for wire connections, like on the tops of power poles.    
     /// </summary>
     public class ElectricBERelay : ElectricBENoGUI
     {
