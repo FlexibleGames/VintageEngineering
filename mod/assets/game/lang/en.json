@@ -1,35 +1,35 @@
 {
 	"block-catenary-lvpower": "Electrical Wire (LV)",
-	"blockdesc-catenary-lvpower": "Wire for Low Voltage Electrical Networks.",	
+	"blockdesc-catenary-lvpower": "Wire for Low Voltage Electrical Networks.",
 	"block-catenary-mvpower": "Electrical Wire (MV)",
-	"blockdesc-catenary-mvpower": "Wire for Medium Voltage Electrical Networks.",	
+	"blockdesc-catenary-mvpower": "Wire for Medium Voltage Electrical Networks.",
 	"block-catenary-hvpower": "Electrical Wire (HV)",
-	"blockdesc-catenary-hvpower": "Wire for High Voltage Electrical Networks.",		
+	"blockdesc-catenary-hvpower": "Wire for High Voltage Electrical Networks.",
 	"block-catenary-evpower": "Electrical Wire (EV)",
-	"blockdesc-catenary-evpower": "Wire for Extreme Voltage Electrical Networks.",	
+	"blockdesc-catenary-evpower": "Wire for Extreme Voltage Electrical Networks.",
 	"block-catenary-allpower": "Electrical Wire (All)",
-	"blockdesc-catenary-allpower": "Wire for Any Voltage Electrical Networks.",	
+	"blockdesc-catenary-allpower": "Wire for Any Voltage Electrical Networks.",
 	"block-catenary-signalred": "Signal Wire (Red)",
-	"blockdesc-catenary-signalred": "Red wire for Signal Networks.",	
+	"blockdesc-catenary-signalred": "Red wire for Signal Networks.",
 	"block-catenary-signalgreen": "Signal Wire (Green)",
-	"blockdesc-catenary-signalgreen": "Green wire for Signal Networks.",		
+	"blockdesc-catenary-signalgreen": "Green wire for Signal Networks.",
 	"block-catenary-communication": "Communication Wire",
-	"blockdesc-catenary-communication": "Generic Communication Wire.",	
+	"blockdesc-catenary-communication": "Generic Communication Wire.",
 
 	"item-wiretool-iron": "Wire Tool (Iron)",
 	"itemdesc-wiretool-iron": "Tool for cutting wire connections.",
 	"item-wiretool-meteoriciron": "Wire Tool (Meteoric Iron)",
 	"itemdesc-wiretool-meteoriciron": "Tool for cutting wire connections.",
 	"item-wiretool-steel": "Wire Tool (Steel)",
-	"itemdesc-wiretool-steel": "Tool for cutting wire connections.",	
+	"itemdesc-wiretool-steel": "Tool for cutting wire connections.",
 
 	"item-wiretoolarm-iron": "Wire Tool Arm (Iron)",
 	"itemdesc-wiretoolarm-iron": "Component for wire cutting tool.",
 	"item-wiretoolarm-meteoriciron": "Wire Tool Arm (Meteoric Iron)",
 	"itemdesc-wiretoolarm-meteoriciron": "Component for wire cutting tool",
 	"item-wiretoolarm-steel": "Wire Tool Arm (Steel)",
-	"itemdesc-wiretoolarm-steel": "Component for wire cutting tool",	
-	
+	"itemdesc-wiretoolarm-steel": "Component for wire cutting tool",
+
 	"block-wirerelay-lvpower-*": "Wire Relay (LV)",
 	"blockdesc-wirerelay-lvpower-*": "A simple wire relay for connecting LV wires. Holds no power. Use to run wires around your base.",
 
@@ -52,6 +52,13 @@
 	"blockdesc-wirerelay-signalgreen-*": "A relay for running Green Signal wire.",
 
 	"block-wirerelay-communication-*": "Wire Relay (Communication)",
-	"blockdesc-wirerelay-communication-*": "A relay for running Communication lines."
-	
+	"blockdesc-wirerelay-communication-*": "A relay for running Communication lines.",
+
+	"gui-catenary-invalidblock": "Not a wire connectable block.",
+	"gui-catenary-needwire": "You need {0} wires to connect these points.",
+	"gui-catenary-badstart": "Starting Block became invalid.",
+	"gui-catenary-wireinvalid": "Cannot attach this wire to this machine.",
+	"gui-catenary-connecttoself": "Cannot connect a machine to itself.",
+	"gui-catenary-wiretooshort": "Wire is too short.",
+	"gui-catenary-wiretoolong": "Wire is too long, exceeds max length."
 }

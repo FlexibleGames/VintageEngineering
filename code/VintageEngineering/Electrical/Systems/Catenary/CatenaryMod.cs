@@ -5,6 +5,7 @@ using System.Linq;
 using VintageEngineering.Electrical.Systems.Catenary;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
@@ -32,6 +33,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
     /// <param name="block">Block type of connection</param>
     /// <param name="consumed">Set to true to stop further calls.</param>
     public delegate void OnWireRemovedDelegate(WireNode start, WireNode end, Block block, BoolRef consumed);
+
 
     [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
     public class CatenaryData
@@ -313,7 +315,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
             {
                 // check this early on to save time                
                 IServerPlayer splayer = api.World.PlayerByUid((byEntity as EntityPlayer).PlayerUID) as IServerPlayer;
-                if (api.Side == EnumAppSide.Server) sapi.SendIngameError(splayer as IServerPlayer, "invalid", "Not a valid wire-connectable block.");
+                if (api.Side == EnumAppSide.Server) sapi.SendIngameError(splayer as IServerPlayer, "invalid", Lang.Get("gui-catenary-invalidblock"));
                 return; // don't even try to connect if these are not wire enabled blocks
             }
 
@@ -351,7 +353,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
             // We are currently connected to a start position
             if (wiredBlock == null)
             {
-                if (capi != null) capi.TriggerIngameError(this, "error", "Starting Block is invalid.");
+                if (capi != null) capi.TriggerIngameError(this, "error", Lang.Get("gui-catenary-badstart"));
                 CancelPlace(block as BlockWire, byEntity);
                 return;
             }
@@ -360,7 +362,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
             // start and end block pos are the same, bounce
             if (ws.startPos == blocksel.Position) 
             {
-                if (capi != null) capi.TriggerIngameError(this, "cannotattach", "Cannot connect a machine to itself.");
+                if (capi != null) capi.TriggerIngameError(this, "cannotattach", Lang.Get("gui-catenary-connecttoself"));
                 return; 
             }
 
@@ -368,7 +370,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
             if (!wiredBlock.CanAttachWire(api.World, block, blocksel))
             {
                 // wire connection is NOT valid...
-                if (capi != null) capi.TriggerIngameError(this, "cannotattach", "Cannot attach wire to this machine.");
+                if (capi != null) capi.TriggerIngameError(this, "cannotattach", Lang.Get("gui-catenary-wireinvalid"));
                 //CancelPlace(block as BlockWire, byEntity);
                 return;
             }
@@ -376,16 +378,18 @@ namespace VintageEngineering.Electrical.Systems.Catenary
             Vec3f nowEndOffset = GetEndOffset(eplr.Player, ws);
 
             // what length is the current pending wire?
-            int length = (int)Math.Ceiling((double)nowEndOffset.DistanceTo(ws.startOffset));
+            //int length = (int)Math.Ceiling((double)nowEndOffset.DistanceTo(ws.startOffset)); DOH!
+            double length = Math.Ceiling(ws.startPos.DistanceTo(blocksel.Position));
             int maxlen = block.Attributes["maxlength"].AsInt(0);
-            // bounce if our length exceeds the max for the wire
-            if (length < 0.01f)
+            if (length < 0.05)
             {
-                if (capi != null) capi.TriggerIngameError(this, "lengthtoshort", "Wire to short.");
+                if (capi != null) capi.TriggerIngameError(this, "tooshort", Lang.Get("gui-catenary-wiretooshort"));
+                return;
             }
+            // bounce if our length exceeds the max for the wire
             if (length > maxlen)
             {
-                if (capi != null) capi.TriggerIngameError(this, "lengthexceeded", "Wire to long, exceeds max length.");
+                if (capi != null) capi.TriggerIngameError(this, "lengthexceeded", Lang.Get("gui-catenary-wiretoolong"));
                // CancelPlace(block as BlockWire, byEntity);
                 return;
             }
@@ -407,13 +411,13 @@ namespace VintageEngineering.Electrical.Systems.Catenary
             EntityPlayer entityPlayer = byEntity as EntityPlayer;
             if (slot.StackSize < length && entityPlayer.Player.WorldData.CurrentGameMode != EnumGameMode.Creative)
             {
-                if (capi != null) capi.TriggerIngameError(this, "notenoughitems", $"You need {length} wires to connect these points.");
+                if (capi != null) capi.TriggerIngameError(this, "notenoughitems", Lang.Get("gui-catenary-needwire", new object[] { length }));
                 CancelPlace(block as BlockWire, byEntity);
                 return;
             }
             else
             {
-                slot.TakeOut(length);
+                slot.TakeOut((int)Math.Ceiling(length));
                 slot.MarkDirty();
             }
             
@@ -435,11 +439,6 @@ namespace VintageEngineering.Electrical.Systems.Catenary
         
         public void OnRenderFrame(float deltatime, EnumRenderStage stage)
         {
-            /// A BOUNCE to save FPS, only updates the dynamic wire every 0.5 seconds.
-            //renderbouncer += deltatime;
-            //if (renderbouncer < 0.5) return;
-            //renderbouncer = 0f;
-
             if (stage != EnumRenderStage.Opaque) return;
 
             WirePlacerWorkSpace ws = this.getWorkSpace(capi.World.Player.PlayerUID);
@@ -568,7 +567,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
                 if (blockSel.Block is IWireAnchor wiredBlock)
                 {
                     // Number of Anchors vs. Selection Box Index
-                    if (blockSel.SelectionBoxIndex < wiredBlock.NumAnchorsInBlock(EnumWireFunction.Any))
+                    if (blockSel.SelectionBoxIndex < wiredBlock.NumAnchorsInBlock(ws.wireFunction))
                     {
                         // Can the block (wire) type attach to selection index anchor?
                         if (wiredBlock.CanAttachWire(player.Entity.World, player.InventoryManager.ActiveHotbarSlot.Itemstack.Block, player.CurrentBlockSelection))

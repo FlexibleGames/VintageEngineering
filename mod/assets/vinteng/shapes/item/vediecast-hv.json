@@ -8,7 +8,7 @@
 	"textureSizes": {
 	},
 	"textures": {
-		"steel": "block/metal/plate/steel"
+		"steel": "game:block/metal/plate/steel"
 	},
 	"elements": [
 		{

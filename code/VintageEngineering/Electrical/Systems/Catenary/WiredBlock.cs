@@ -204,7 +204,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
             int num = 0;
             foreach (WireNode anchor in wireAnchors)
             {
-                if ((anchor.wirefunction & wfunction) == wfunction) num++;
+                if (anchor.wirefunction == wfunction) num++;
             }
             return num;
         }
