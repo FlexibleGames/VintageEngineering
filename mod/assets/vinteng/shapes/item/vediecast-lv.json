@@ -8,63 +8,64 @@
 	"textureSizes": {
 	},
 	"textures": {
-		"steel": "game:block/metal/plate/steel"
 	},
 	"elements": [
 		{
 			"name": "DieTop",
 			"from": [ 6.0, 0.0, 6.0 ],
-			"to": [ 10.0, 0.5, 7.75 ],
+			"to": [ 10.0, 1.0, 7.75 ],
 			"rotationOrigin": [ 8.0, 0.0, 8.0 ],
 			"faces": {
-				"north": { "texture": "#steel", "uv": [ 0.0, 0.0, 4.0, 0.5 ] },
-				"east": { "texture": "#steel", "uv": [ 0.0, 0.0, 1.5, 0.5 ] },
-				"south": { "texture": "#steel", "uv": [ 0.0, 0.0, 4.0, 0.5 ] },
-				"west": { "texture": "#steel", "uv": [ 0.0, 0.0, 1.5, 0.5 ] },
+				"north": { "texture": "#steel", "uv": [ 0.0, 0.0, 4.0, 1.0 ] },
+				"east": { "texture": "#steel", "uv": [ 0.0, 0.0, 1.5, 1.0 ] },
+				"south": { "texture": "#steel", "uv": [ 0.0, 0.0, 4.0, 1.0 ] },
+				"west": { "texture": "#steel", "uv": [ 0.0, 0.0, 1.5, 1.0 ] },
 				"up": { "texture": "#steel", "uv": [ 0.0, 0.0, 4.0, 1.5 ] },
 				"down": { "texture": "#steel", "uv": [ 0.0, 0.0, 4.0, 1.5 ] }
-			}
-		},
-		{
-			"name": "DieBottom",
-			"from": [ 6.0, 0.0, 8.25 ],
-			"to": [ 10.0, 0.5, 10.0 ],
-			"rotationOrigin": [ 8.0, 0.0, 8.0 ],
-			"faces": {
-				"north": { "texture": "#steel", "uv": [ 0.0, 0.0, 4.0, 0.5 ] },
-				"east": { "texture": "#steel", "uv": [ 0.0, 0.0, 1.5, 0.5 ] },
-				"south": { "texture": "#steel", "uv": [ 0.0, 0.0, 4.0, 0.5 ] },
-				"west": { "texture": "#steel", "uv": [ 0.0, 0.0, 1.5, 0.5 ] },
-				"up": { "texture": "#steel", "uv": [ 0.0, 0.0, 4.0, 1.5 ] },
-				"down": { "texture": "#steel", "uv": [ 0.5, 0.0, 4.5, 1.5 ] }
-			}
-		},
-		{
-			"name": "DieLeft",
-			"from": [ 6.0, 0.0, 7.75 ],
-			"to": [ 7.75, 0.5, 8.25 ],
-			"rotationOrigin": [ 8.0, 0.0, 8.0 ],
-			"faces": {
-				"north": { "texture": "#steel", "uv": [ 0.0, 0.0, 1.5, 0.5 ] },
-				"east": { "texture": "#steel", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
-				"south": { "texture": "#steel", "uv": [ 0.0, 0.0, 1.5, 0.5 ] },
-				"west": { "texture": "#steel", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
-				"up": { "texture": "#steel", "uv": [ 0.0, 0.0, 1.5, 0.5 ] },
-				"down": { "texture": "#steel", "uv": [ 0.0, 0.0, 1.5, 0.5 ] }
-			}
-		},
-		{
-			"name": "DieRight",
-			"from": [ 8.25, 0.0, 7.75 ],
-			"to": [ 10.0, 0.5, 8.25 ],
-			"rotationOrigin": [ 8.0, 0.0, 8.0 ],
-			"faces": {
-				"north": { "texture": "#steel", "uv": [ 0.0, 0.0, 1.5, 0.5 ] },
-				"east": { "texture": "#steel", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
-				"south": { "texture": "#steel", "uv": [ 0.0, 0.0, 1.5, 0.5 ] },
-				"west": { "texture": "#steel", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
-				"up": { "texture": "#steel", "uv": [ 0.0, 0.0, 1.5, 0.5 ] },
-				"down": { "texture": "#steel", "uv": [ 0.0, 0.0, 1.5, 0.5 ] }
-			}
+			},
+			"children": [
+				{
+					"name": "DieBottom",
+					"from": [ 0.0, 0.0, 2.25 ],
+					"to": [ 4.0, 1.0, 4.0 ],
+					"rotationOrigin": [ 2.0, 0.0, 2.0 ],
+					"faces": {
+						"north": { "texture": "#steel", "uv": [ 0.0, 0.0, 4.0, 1.0 ] },
+						"east": { "texture": "#steel", "uv": [ 0.0, 0.0, 1.5, 1.0 ] },
+						"south": { "texture": "#steel", "uv": [ 0.0, 0.0, 4.0, 1.0 ] },
+						"west": { "texture": "#steel", "uv": [ 0.0, 0.0, 1.5, 1.0 ] },
+						"up": { "texture": "#steel", "uv": [ 0.0, 0.0, 4.0, 1.5 ] },
+						"down": { "texture": "#steel", "uv": [ 0.5, 0.0, 4.5, 1.5 ] }
+					}
+				},
+				{
+					"name": "DieLeft",
+					"from": [ 0.0, 0.0, 1.75 ],
+					"to": [ 1.75, 1.0, 2.25 ],
+					"rotationOrigin": [ 2.0, 0.0, 2.0 ],
+					"faces": {
+						"north": { "texture": "#steel", "uv": [ 0.0, 0.0, 1.5, 1.0 ] },
+						"east": { "texture": "#steel", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
+						"south": { "texture": "#steel", "uv": [ 0.0, 0.0, 1.5, 1.0 ] },
+						"west": { "texture": "#steel", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
+						"up": { "texture": "#steel", "uv": [ 0.0, 0.0, 1.5, 0.5 ] },
+						"down": { "texture": "#steel", "uv": [ 0.0, 0.0, 1.5, 0.5 ] }
+					}
+				},
+				{
+					"name": "DieRight",
+					"from": [ 2.25, 0.0, 1.75 ],
+					"to": [ 4.0, 1.0, 2.25 ],
+					"rotationOrigin": [ 2.0, 0.0, 2.0 ],
+					"faces": {
+						"north": { "texture": "#steel", "uv": [ 0.0, 0.0, 1.5, 1.0 ] },
+						"east": { "texture": "#steel", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
+						"south": { "texture": "#steel", "uv": [ 0.0, 0.0, 1.5, 1.0 ] },
+						"west": { "texture": "#steel", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
+						"up": { "texture": "#steel", "uv": [ 0.0, 0.0, 1.5, 0.5 ] },
+						"down": { "texture": "#steel", "uv": [ 0.0, 0.0, 1.5, 0.5 ] }
+					}
+				}
+			]
 		}
 	]}

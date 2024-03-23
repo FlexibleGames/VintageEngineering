@@ -343,6 +343,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
                     ws.startIndex = blocksel.SelectionBoxIndex;
                     ws.startNetID = -1;
                     ws.thickness = block.Attributes["thickness"].AsFloat(0.125f);
+                    ws.maxlength = block.Attributes["maxlength"].AsInt(1);
                     ws.wireFunction = Enum.Parse<EnumWireFunction>(block.Attributes["wirefunction"].AsString());
                     ws.block = block;
                     ws.nowBuilding = true; // setting this triggers the renderer 
@@ -453,7 +454,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
 
             // Bounce if distance is >= maxlength of wire
             int maxlength = ws.block.Attributes["maxlength"].AsInt(1);
-            if ((double)ws.startOffset.DistanceTo(nowEndOffset) >= maxlength) return;
+            if ((double)ws.startOffset.DistanceTo(nowEndOffset) > maxlength) return;
 
             if (ws.endOffset != nowEndOffset)
             {
@@ -561,8 +562,9 @@ namespace VintageEngineering.Electrical.Systems.Catenary
         {
             Vec3d vec = player.Entity.SidedPos.AheadCopy(2.0).XYZ.Add(player.Entity.LocalEyePos).Sub(ws.startPos);
             if (player.CurrentBlockSelection != null)
-            {
-                BlockSelection blockSel = player.CurrentBlockSelection;
+            {                
+                BlockSelection blockSel = player.CurrentBlockSelection;                
+
                 // Is this a valid IWireAnchor derived Block?
                 if (blockSel.Block is IWireAnchor wiredBlock)
                 {
@@ -572,12 +574,12 @@ namespace VintageEngineering.Electrical.Systems.Catenary
                         // Can the block (wire) type attach to selection index anchor?
                         if (wiredBlock.CanAttachWire(player.Entity.World, player.InventoryManager.ActiveHotbarSlot.Itemstack.Block, player.CurrentBlockSelection))
                         {
-                            return wiredBlock.GetAnchorPosInBlock(blockSel.SelectionBoxIndex);
+                            vec = blockSel.Position.ToVec3d().Sub(ws.startPos).Add(wiredBlock.GetAnchorPosInBlock(blockSel.SelectionBoxIndex));
                         }
                     }
                 }
             }
-            // if the block check above is invalid, return the vec in front of the player.
+
             return vec.ToVec3f();
         }
 
@@ -628,7 +630,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
             // get what the drops will be
             List<ItemStack> drops = new List<ItemStack>();
             if (con.Block == null) con.Block = sapi.World.BlockAccessor.GetBlock(con.BlockId);
-            drops.Add(new ItemStack(con.Block, (int)Math.Ceiling((double)con.NodeEnd.blockPos.DistanceTo(con.NodeStart.blockPos))));
+            drops.Add(new ItemStack(con.Block, (int)Math.Floor((double)con.NodeEnd.blockPos.DistanceTo(con.NodeStart.blockPos))));
 
             // Remove the connection
             // the WireConnection pos object tells us what block has the start and end

@@ -18,6 +18,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
         public int startIndex;
         public int endIndex;
         public float thickness;
+        public int maxlength;
         public MeshData currentMesh;
         public MeshRef currentMeshRef;
         public bool nowBuilding;

@@ -1,7 +1,7 @@
 {
 	"code": "veextruder",
-	"class": "VEMetalPress",
-	"entityClass": "VEBEMetalPress",
+	"class": "VEExtruder",
+	"entityClass": "VEBEExtruder",
 	"behaviors": [
 		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "veextruder-north" }}}
 	],

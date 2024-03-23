@@ -59,10 +59,11 @@
 	"vinteng:itemdesc-sawdust": "A byproduct of the sawmill, burns hot and fast and makes a good base for paper products.",
 
 	"vinteng:gui-mold-text": "Mold",
+	"vinteng:gui-diecast-text": "Gauge",
 	"vinteng:gui-turn-on": "Turn On",
 	"vinteng:gui-turn-off": "Turn Off",
 	"vinteng:gui-metal-press-mold": "Place a mold in the mold slot.",
-	"vinteng:gui-extruder-die": "Place a Die Cast in the Die Cast slot.",
+	"vinteng:gui-extruder-die": "Place a Die Cast in the Gauge slot.",
 	"vinteng:gui-word-crafting": "Crafting",
 	"vinteng:gui-word-sleeping": "Sleeping",
 	"vinteng:gui-word-burning": "Burning",
@@ -81,5 +82,6 @@
 
 	"vinteng:gui-title-metalpress": "Metal Press",
 	"vinteng:gui-title-lvgenerator": "LV Generator",
-	"vinteng:gui-title-logsplitter": "Log Splitter"
+	"vinteng:gui-title-logsplitter": "Log Splitter",
+	"vinteng:gui-title-extruder": "Extruder"
 }
