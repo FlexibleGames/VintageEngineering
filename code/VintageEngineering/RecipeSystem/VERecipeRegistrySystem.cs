@@ -74,6 +74,8 @@ namespace VintageEngineering.RecipeSystem
             this.SawMillRecipes = api.RegisterRecipeRegistry<RecipeRegistryGeneric<RecipeSawMill>>("vesawmillrecipes").Recipes;
 
             this.ExtruderRecipes = api.RegisterRecipeRegistry<RecipeRegistryGeneric<RecipeExtruder>>("veextruderrecipes").Recipes;
+
+            this.CrusherRecipes = api.RegisterRecipeRegistry<RecipeRegistryGeneric<RecipeCrusher>>("vecrusherrecipes").Recipes;
         }
 
         public override void AssetsLoaded(ICoreAPI api)

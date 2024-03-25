@@ -42,6 +42,7 @@ namespace VintageEngineering
             api.RegisterBlockClass("VELogSplitter", typeof(BlockLogSplitter));
             api.RegisterBlockClass("VEExtruder", typeof(BlockExtruder));
             api.RegisterBlockClass("VESawmill", typeof(BlockSawmill));
+            api.RegisterBlockClass("VECrusher", typeof(BlockCrusher));
         }
         public void RegisterBlockEntities(ICoreAPI api)
         {
@@ -52,6 +53,7 @@ namespace VintageEngineering
             api.RegisterBlockEntityClass("VEBELogSplitter", typeof(BELogSplitter));
             api.RegisterBlockEntityClass("VEBEExtruder", typeof(BEExtruder));
             api.RegisterBlockEntityClass("VEBESawmill", typeof(BESawmill));
+            api.RegisterBlockEntityClass("VEBECrusher", typeof(BECrusher));
         }
     }
 

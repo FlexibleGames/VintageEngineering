@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Reflection.Metadata.Ecma335;
 using VintageEngineering.RecipeSystem.Recipes;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -54,6 +55,11 @@ namespace VintageEngineering.RecipeSystem
             {
                 verrs.RegisterExtruderRecipe(r);
             });
+            this.LoadRecipes<RecipeCrusher>("ve crusher recipe", "recipes/vecrusher", delegate (RecipeCrusher r)
+            {
+               verrs.RegisterCrusherRecipe(r);
+            });
+
 
             sapi.World.Logger.StoryEvent(Lang.Get("vinteng:storyevent-recipes", Array.Empty<object>()));
         }

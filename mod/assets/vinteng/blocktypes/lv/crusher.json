@@ -1,7 +1,7 @@
 {
 	"code": "vecrusher",
-	"class": "VESawmill",
-	"entityClass": "VEBESawmill",
+	"class": "VECrusher",
+	"entityClass": "VEBECrusher",
 	"behaviors": [
 		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "vecrusher-north" }}}
 	],

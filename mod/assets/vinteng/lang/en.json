@@ -11,6 +11,8 @@
 
 	"vinteng:block-veextruder-*": "VE Extruder",
 	"vinteng:blockdesc-veextruder-*": "Crafts wires and rods far more efficiently than manual smithing.",
+	"vinteng:block-vecrusher-*": "VE Crusher",
+	"vinteng:blockdesc-vecrusher-*": "Crushes things.",
 
 	"vinteng:item-vepressmold-plate-*": "Plate mold for Metal Press.",
 	"vinteng:itemdesc-vepressmold-plate-*": "Use in a Metal Press to make plates. Mold will wear out over time, durability depends on material.",
@@ -69,9 +71,12 @@
 	"vinteng:gui-word-crafting": "Crafting",
 	"vinteng:gui-word-sleeping": "Sleeping",
 	"vinteng:gui-word-burning": "Burning",
+	"vinteng:gui-word-crush": "Crush",
+	"vinteng:gui-word-nugget": "Nugget",
 	"vinteng:gui-word-on": "On",
 	"vinteng:gui-word-off": "Off",
 	"vinteng:gui-word-power": "Power",
+	"vinteng:gui-word-mode": "Mode",
 	"vinteng:gui-word-seconds": "Seconds",
 	"vinteng:gui-machine-notcrafting": "Not Crafting",
 	"vinteng:gui-machine-off": "Machine is turned off.",
@@ -86,5 +91,6 @@
 	"vinteng:gui-title-lvgenerator": "LV Generator",
 	"vinteng:gui-title-logsplitter": "Log Splitter",
 	"vinteng:gui-title-extruder": "Extruder",
-	"vinteng:gui-title-sawmill": "Sawmill"
+	"vinteng:gui-title-sawmill": "Sawmill",
+	"vinteng:gui-title-crusher": "Crusher"
 }
