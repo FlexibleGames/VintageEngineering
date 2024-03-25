@@ -1,10 +1,7 @@
 ﻿using Newtonsoft.Json;
-using System;
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.Util;
@@ -70,9 +67,70 @@ namespace VintageEngineering.RecipeSystem.Recipes
             }
         }
 
+        public bool Matches(ItemSlot ingredient, ItemSlot requireslot = null)
+        {
+            if (ingredient.Empty) return false; // no ingredient to even check, bounce
+
+            if (Ingredients[0].ResolvedItemstack != null)
+            {
+                // Satisfies call ignores fields not needed to test for equality, like stacksize.
+                if (!ingredient.Itemstack.Satisfies(Ingredients[0].ResolvedItemstack)) return false;
+                // check stack sizes... 
+                if (ingredient.Itemstack.StackSize < Ingredients[0].ResolvedItemstack.StackSize) return false;
+            }
+            else
+            {
+                if (!Ingredients[0].SatisfiesAsIngredient(ingredient.Itemstack, true)) return false;
+            }
+
+            if (Requires != null) // if this recipe requires something, we need to check for it in the requires slot
+            {
+                if (requireslot.Empty) return false;
+                if (Requires.IsWildCard)
+                {
+                    // TODO check for variants
+                    if (RequiresVariants != null)
+                    {
+                        return WildcardUtil.MatchesVariants(Requires, requireslot.Itemstack.Collectible.Code, RequiresVariants);
+                    }
+                    return WildcardUtil.Match(Requires, requireslot.Itemstack.Collectible.Code);
+                }
+                else
+                {
+                    return Requires.Equals(requireslot.Itemstack.Collectible.Code);
+                }
+            }
+            else
+            {
+                return true;
+            }
+        }
+
         public RecipeCrusher Clone()
         {
-            throw new NotImplementedException();
+            CraftingRecipeIngredient[] cloned = new CraftingRecipeIngredient[Ingredients.Length];
+            for (int i = 0; i < Ingredients.Length; i++)
+            {
+                cloned[i] = Ingredients[i].Clone();
+            }
+            VERecipeVariableOutput[] outclone = new VERecipeVariableOutput[Outputs.Length];
+            for (int i = 0; i < Outputs.Length; i++)
+            {
+                outclone[i] = Outputs[i].Clone();
+            }
+            return new RecipeCrusher
+            {
+                RecipeID = this.RecipeID,
+                Name = this.Name,
+                Enabled = this.Enabled,
+                Requires = Requires != null ? this.Requires.Clone() : null,
+                RequiresVariants = this.RequiresVariants != null ? this.RequiresVariants.FastCopy(RequiresVariants.Length) : null,
+                Code = this.Code,
+                PowerPerCraft = this.PowerPerCraft,
+                Attributes = this.Attributes?.Clone(),
+                Ingredients = cloned,
+                Outputs = outclone
+            };
         }
 
         public Dictionary<string, string[]> GetNameToCodeMapping(IWorldAccessor world)
@@ -119,16 +177,97 @@ namespace VintageEngineering.RecipeSystem.Recipes
 
         public bool Resolve(IWorldAccessor world, string sourceForErrorLogging)
         {
-            throw new NotImplementedException();
+            for (int i = 0; i < this.Ingredients.Length; i++)
+            {
+                Ingredients[i].Resolve(world, sourceForErrorLogging);
+            }
+            for (int i = 0; i < this.Outputs.Length; i++)
+            {
+                Outputs[i].Resolve(world, sourceForErrorLogging);
+            }
+            if (Attributes != null)
+            {
+                if (Attributes["requires"].Exists)
+                {
+                    Requires = new AssetLocation(Attributes["requires"].AsString());
+                }
+                if (Attributes["requiresvariants"].Exists)
+                {
+                    if (Attributes["requiresvariants"].IsArray())
+                    {
+                        RequiresVariants = Attributes["requiresvariants"].AsArray<string>();
+                    }
+                    else
+                    {
+                        RequiresVariants = new string[1] { Attributes["requiresvariants"].AsString() };
+                    }
+                }
+                if (Attributes["requiresdurability"].Exists)
+                {
+                    RequiresDurability = Attributes["requiresdurability"].AsBool(false);
+                }
+            }
+
+            return true;
         }
         public void FromBytes(BinaryReader reader, IWorldAccessor resolver)
         {
-            throw new NotImplementedException();
+            RecipeID = reader.ReadInt32();
+            Name = new AssetLocation(reader.ReadString());
+            Code = reader.ReadBoolean() ? reader.ReadString() : null;
+            PowerPerCraft = reader.ReadInt64();
+            Attributes = reader.ReadBoolean() ? new JsonObject(JToken.Parse(reader.ReadString())) : null;
+            Ingredients = new CraftingRecipeIngredient[reader.ReadInt32()];
+            for (int i = 0; i < Ingredients.Length; i++)
+            {
+                Ingredients[i] = new CraftingRecipeIngredient();
+                Ingredients[i].FromBytes(reader, resolver);
+                Ingredients[i].Resolve(resolver, "VE SawMill Recipe (FromBytes)");
+            }
+            Outputs = new VERecipeVariableOutput[reader.ReadInt32()];
+            for (int i = 0; i < Outputs.Length; i++)
+            {
+                Outputs[i] = new VERecipeVariableOutput();
+                Outputs[i].FromBytes(reader, resolver.ClassRegistry);
+                Outputs[i].Resolve(resolver, "VE SawMill Recipe (FromBytes)");
+            }
+            if (Attributes != null)
+            {
+                if (Attributes["requires"].Exists) Requires = new AssetLocation(Attributes["requires"].AsString());
+
+                if (Attributes["requiresvariants"].Exists)
+                {
+                    if (Attributes["requiresvariants"].IsArray())
+                    {
+                        RequiresVariants = Attributes["requiresvariants"].AsArray<string>();
+                    }
+                    else
+                    {
+                        RequiresVariants = new string[1] { Attributes["requiresvariants"].AsString() };
+                    }
+                }
+            }
         }
 
         public void ToBytes(BinaryWriter writer)
         {
-            throw new NotImplementedException();
+            writer.Write(RecipeID);
+            writer.Write(Name.ToShortString());
+            writer.Write(Code != null);
+            if (Code != null) { writer.Write(Code); }
+            writer.Write(PowerPerCraft);
+            writer.Write(Attributes != null);
+            if (Attributes != null) { writer.Write(Attributes.Token.ToString()); }
+            writer.Write(Ingredients.Length);
+            for (int i = 0; i < Ingredients.Length; i++)
+            {
+                Ingredients[i].ToBytes(writer);
+            }
+            writer.Write(Outputs.Length);
+            for (int i = 0; i < Outputs.Length; i++)
+            {
+                Outputs[i].ToBytes(writer);
+            }
         }
     }
 }

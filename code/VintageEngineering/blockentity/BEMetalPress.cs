@@ -432,7 +432,7 @@ namespace VintageEngineering
                     else if (!IsCrafting) // machine isn't crafting
                     {
                         // enabled but not crafting means we have no valid recipe
-                        StateChange(EnumBEState.Sleeping); // go to sleep                        
+                        StateChange(EnumBEState.Sleeping); // go to sleep
                     }
                     if (RecipeProgress >= 1f)
                     {

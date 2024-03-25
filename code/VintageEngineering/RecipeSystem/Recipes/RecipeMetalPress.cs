@@ -144,7 +144,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
             }
             else
             {
-                return requireslot.Empty;
+                return true;
             }
         }
 
