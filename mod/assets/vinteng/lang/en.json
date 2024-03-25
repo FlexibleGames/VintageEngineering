@@ -60,10 +60,12 @@
 
 	"vinteng:gui-mold-text": "Mold",
 	"vinteng:gui-diecast-text": "Gauge",
+	"vinteng:gui-sawblade-text": "Blade",
 	"vinteng:gui-turn-on": "Turn On",
 	"vinteng:gui-turn-off": "Turn Off",
 	"vinteng:gui-metal-press-mold": "Place a mold in the mold slot.",
 	"vinteng:gui-extruder-die": "Place a Die Cast in the Gauge slot.",
+	"vinteng:gui-sawblade": "Place a Saw Blade in the Blade slot.",
 	"vinteng:gui-word-crafting": "Crafting",
 	"vinteng:gui-word-sleeping": "Sleeping",
 	"vinteng:gui-word-burning": "Burning",
@@ -83,5 +85,6 @@
 	"vinteng:gui-title-metalpress": "Metal Press",
 	"vinteng:gui-title-lvgenerator": "LV Generator",
 	"vinteng:gui-title-logsplitter": "Log Splitter",
-	"vinteng:gui-title-extruder": "Extruder"
+	"vinteng:gui-title-extruder": "Extruder",
+	"vinteng:gui-title-sawmill": "Sawmill"
 }

@@ -286,7 +286,7 @@ namespace VintageEngineering
             }
             else
             {
-                if (AnimUtil != null && AnimUtil.animator != null && AnimUtil.animator.ActiveAnimationCount > 0)
+                if (AnimUtil != null && AnimUtil.activeAnimationsByAnimCode.Count > 0)
                 {
                     AnimUtil.StopAnimation(base.Block.Attributes["craftinganimcode"].AsString());
                 }

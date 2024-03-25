@@ -1,38 +1,38 @@
-﻿using System;
-using Cairo;
+﻿using Cairo;
+using System;
+using VintageEngineering.RecipeSystem.Recipes;
 using Vintagestory.API.Client;
-using Vintagestory.API.MathTools;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
-using VintageEngineering.RecipeSystem.Recipes;
+using Vintagestory.API.MathTools;
 
 namespace VintageEngineering
 {
-    public class GUIMetalPress : GuiDialogBlockEntity
+    public class GUISawMill : GuiDialogBlockEntity
     {
-        private BEMetalPress betestmach;
-        private RecipeMetalPress currentRecipe;        
+        private BESawmill bemachine;
+        private RecipeSawMill currentRecipe;
         private ulong _currentPower;
         private ulong _maxPower;
         private float _craftProgress;
 
-        
-        public GUIMetalPress(string dialogTitle, InventoryBase inventory, BlockPos blockEntityPos, ICoreClientAPI capi, BEMetalPress bentity) : base(dialogTitle, inventory, blockEntityPos, capi)
-        {            
+
+        public GUISawMill(string dialogTitle, InventoryBase inventory, BlockPos blockEntityPos, ICoreClientAPI capi, BESawmill bentity) : base(dialogTitle, inventory, blockEntityPos, capi)
+        {
             if (base.IsDuplicate)
             {
                 return;
             }
             capi.World.Player.InventoryManager.OpenInventory(inventory);
-            betestmach = bentity;
-            _craftProgress = betestmach.RecipeProgress;
-            _currentPower = betestmach.CurrentPower;
-            _maxPower = betestmach.MaxPower; // set this once as it doesn't/shouldn't change (for now)
+            bemachine = bentity;
+            _craftProgress = bemachine.RecipeProgress;
+            _currentPower = bemachine.CurrentPower;
+            _maxPower = bemachine.MaxPower; // set this once as it doesn't/shouldn't change (for now)
             this.SetupDialog();
         }
         private void OnSlotModified(int slotid)
         {
-            this.capi.Event.EnqueueMainThreadTask(new Action(this.SetupDialog), "setuptestmachdlg");
+            this.capi.Event.EnqueueMainThreadTask(new Action(this.SetupDialog), "setupsawmilldlg");
         }
 
         public void SetupDialog()
@@ -40,7 +40,7 @@ namespace VintageEngineering
             int titlebarheight = 31;
             double slotpadding = GuiElementItemSlotGridBase.unscaledSlotPadding; // typically 3
 
-            ElementBounds dialogBounds = ElementBounds.Fixed(315, 150 + titlebarheight);
+            ElementBounds dialogBounds = ElementBounds.Fixed(365, 150 + titlebarheight);
             ElementBounds dialog = ElementBounds.Fill.WithFixedPadding(0);
             dialog.BothSizing = ElementSizing.FitToChildren;
 
@@ -51,25 +51,22 @@ namespace VintageEngineering
 
             // NEW:
             ElementBounds moldinset = ElementBounds.Fixed(117, 8 + titlebarheight, 74, 74);
-            ElementBounds moldtext = ElementBounds.Fixed(117, 10 + titlebarheight, 70, 16 );
+            ElementBounds moldtext = ElementBounds.Fixed(117, 10 + titlebarheight, 70, 16);
             ElementBounds moldslot = ElementStdBounds.SlotGrid(EnumDialogArea.None, 130, 29 + titlebarheight, 1, 1);
-
 
             ElementBounds progressBar = ElementBounds.Fixed(109, 88 + titlebarheight, 90, 23);
 
             // NEW:
-            ElementBounds progressinset = ElementBounds.Fixed(117, 117 + titlebarheight, 74, 21); 
+            ElementBounds progressinset = ElementBounds.Fixed(117, 117 + titlebarheight, 74, 21);
 
             ElementBounds progressText = ElementBounds.Fixed(117, 117 + titlebarheight, 74, 21);
 
             ElementBounds enableBtn = ElementStdBounds.ToggleButton(10, 117 + titlebarheight, 92, 21);
             ElementBounds enableBtnText = ElementBounds.Fixed(10, 118 + titlebarheight, 92, 20);
 
-            ElementBounds outputGrid = ElementStdBounds.SlotGrid(EnumDialogArea.None, 206, 8 + titlebarheight, 2, 1);
-            ElementBounds outputtxtinset = ElementBounds.Fixed(206, 62 + titlebarheight, 99, 76);
-            ElementBounds outputtextbnds = ElementBounds.Fixed(208, 60 + titlebarheight, 97, 74);
-
-
+            ElementBounds outputGrid = ElementStdBounds.SlotGrid(EnumDialogArea.None, 206, 8 + titlebarheight, 3, 1);
+            ElementBounds outputtxtinset = ElementBounds.Fixed(206, 62 + titlebarheight, 147, 76);
+            ElementBounds outputtextbnds = ElementBounds.Fixed(208, 60 + titlebarheight, 143, 74);
 
             dialog.WithChildren(new ElementBounds[]
             {
@@ -105,14 +102,14 @@ namespace VintageEngineering
             CairoFont centerwhite = CairoFont.WhiteSmallText().WithWeight(FontWeight.Normal).WithOrientation(EnumTextOrientation.Center);
             double[] yellow = new double[3] { 1, 1, 0 }; // Yellow?
             outputFont.WithColor(yellow);
-            string enablebuttontext = this.betestmach.IsEnabled ? Lang.Get("vinteng:gui-turn-off") : Lang.Get("vinteng:gui-turn-on");
+            string enablebuttontext = this.bemachine.IsEnabled ? Lang.Get("vinteng:gui-turn-off") : Lang.Get("vinteng:gui-turn-on");
 
             CairoFont outputfont = CairoFont.WhiteDetailText().WithWeight(FontWeight.Normal).WithOrientation(EnumTextOrientation.Left);
 
 
-            this.SingleComposer = capi.Gui.CreateCompo("vetestgendlg" + (blockPos?.ToString()), window)
+            this.SingleComposer = capi.Gui.CreateCompo("vesawmilldlg" + (blockPos?.ToString()), window)
                 .AddShadedDialogBG(dialog, true, 5)
-                .AddDialogTitleBar(Lang.Get("vinteng:gui-title-metalpress"), new Action(OnTitleBarClose), null, null)
+                .AddDialogTitleBar(Lang.Get("vinteng:gui-title-sawmill"), new Action(OnTitleBarClose), null, null)
                 .BeginChildElements(dialog)
 
                 .AddInset(powerInset, 2, 0.85f)
@@ -121,8 +118,8 @@ namespace VintageEngineering
                 .AddItemSlotGrid(Inventory, new Action<object>(SendInvPacket), 1, new int[] { 0 }, inputGrid, "inputSlot")
 
                 .AddInset(moldinset, 2, 0f)
-                .AddStaticText(Lang.Get("vinteng:gui-mold-text"), centerwhite, EnumTextOrientation.Center, moldtext)
-                .AddItemSlotGrid(Inventory, new Action<object>(SendInvPacket), 1, new int[] { 3 }, moldslot, "moldSlot")
+                .AddStaticText(Lang.Get("vinteng:gui-sawblade-text"), centerwhite, EnumTextOrientation.Center, moldtext)
+                .AddItemSlotGrid(Inventory, new Action<object>(SendInvPacket), 1, new int[] { 1 }, moldslot, "moldSlot")
 
                 .AddDynamicCustomDraw(progressBar, new DrawDelegateWithBounds(OnProgressDraw), "progressBar")
 
@@ -132,12 +129,12 @@ namespace VintageEngineering
                 .AddSmallButton("", new ActionConsumable(EnableButtonClick), enableBtn, EnumButtonStyle.Small, "enableButton")
                 .AddDynamicText(enablebuttontext, centerwhite, enableBtnText, "enableBtnText")
 
-                .AddItemSlotGrid(Inventory, new Action<object>(SendInvPacket), 2, new int[] { 1, 2 }, outputGrid, "outputSlot")
+                .AddItemSlotGrid(Inventory, new Action<object>(SendInvPacket), 3, new int[] { 2, 3, 4 }, outputGrid, "outputSlot")
                 .AddInset(outputtxtinset, 2, 0f)
                 .AddDynamicText(GetHelpText(), outputfont, outputtextbnds, "outputText")
 
                 .EndChildElements()
-                .Compose(true);            
+                .Compose(true);
         }
 
         private string GetHelpText()
@@ -154,7 +151,7 @@ namespace VintageEngineering
             }
             else
             {
-                if (betestmach.IsSleeping || currentRecipe == null)
+                if (bemachine.IsSleeping || currentRecipe == null)
                 {
                     outputhelptext = Lang.Get("vinteng:gui-no-valid-recipe");    // third is a VALID recipe
                 }
@@ -162,16 +159,16 @@ namespace VintageEngineering
                 {
                     outputhelptext = Lang.Get("vinteng:gui-machine-ingredients");// second priority is an ingredient
                 }
-                if (!betestmach.HasRoomInOutput(0) || !betestmach.HasRoomInOutput(1))
+                if (!bemachine.HasRoomInOutput(2) || !bemachine.HasRoomInOutput(3) || !bemachine.HasRoomInOutput(4))
                 {
                     outputhelptext = Lang.Get("vinteng:gui-machine-isfull");   // an output is full...                    
                 }
-                if (Inventory[3].Empty)
+                if (Inventory[1].Empty)
                 {
-                    outputhelptext = Lang.Get("vinteng:gui-metal-press-mold");   // first priority is a mold                    
+                    outputhelptext = Lang.Get("vinteng:gui-sawblade");   // first priority is a blade                    
                 }
             }
-            if (!betestmach.IsEnabled)
+            if (!bemachine.IsEnabled)
             {
                 outputhelptext = Lang.Get("vinteng:gui-machine-off");
             }
@@ -181,8 +178,8 @@ namespace VintageEngineering
         private string GetProgressText()
         {
             string outputstring = "";
-            float craftPercent = _craftProgress * 100;            
-            if (betestmach.IsSleeping) // machine is sleeping if on and not crafting
+            float craftPercent = _craftProgress * 100;
+            if (bemachine.IsSleeping) // machine is sleeping if on and not crafting
             {
                 outputstring = Lang.Get("vinteng:gui-is-sleeping-short");
             }
@@ -190,11 +187,11 @@ namespace VintageEngineering
             {
                 outputstring = $"{craftPercent:N1}%";
             }
-            if (!betestmach.IsSleeping && !betestmach.IsCrafting) // these SHOULD be mutually exclusive
+            if (!bemachine.IsSleeping && !bemachine.IsCrafting) // these SHOULD be mutually exclusive
             {
                 outputstring = $"Error";
             }
-            if (!betestmach.IsEnabled)
+            if (!bemachine.IsEnabled)
             {
                 outputstring = Lang.Get("vinteng:gui-word-off");
             }
@@ -203,7 +200,7 @@ namespace VintageEngineering
 
         private bool EnableButtonClick()
         {
-            capi.Network.SendBlockEntityPacket(base.BlockEntityPosition, 1002, null);            
+            capi.Network.SendBlockEntityPacket(base.BlockEntityPosition, 1002, null);
             return true;
         }
 
@@ -217,14 +214,10 @@ namespace VintageEngineering
             //if (_craftProgress == 0) return;
 
             ctx.Save();
-            Matrix i = ctx.Matrix;                      
+            Matrix i = ctx.Matrix;
 
             float width = 90;
             float height = 23;
-
-
-            //ctx.Matrix = i; // uncomment if scaling on GuiElement.scaled
-
 
             VintageEngineering.GUI.IconHelper.NewHorizontalBar(ctx, 0, 0, new double[] { 0, 0, 0, 1 }, 2, true, true, width, height);
 
@@ -242,7 +235,7 @@ namespace VintageEngineering
             VintageEngineering.GUI.IconHelper.NewHorizontalBar(ctx, 0, 0, new double[] { 0, 0, 0, 1 }, 2, false, false, width, height);
             gradient.Dispose();
             ctx.Restore();
-//            ctx.Save();
+            //            ctx.Save();
         }
 
         private void OnPowerDraw(Context ctx, ImageSurface surface, ElementBounds currentBounds)
@@ -269,10 +262,10 @@ namespace VintageEngineering
             VintageEngineering.GUI.IconHelper.VerticalBar(ctx, 30, 100, 0, false, false);
             gradient.Dispose();
             ctx.Restore();
- //           ctx.Save();
+            //           ctx.Save();
         }
 
-        public void Update(float craftProgress, ulong curPower, RecipeMetalPress mprecipe = null)
+        public void Update(float craftProgress, ulong curPower, RecipeSawMill mprecipe = null)
         {
             this._craftProgress = craftProgress;
             this._currentPower = curPower;
@@ -283,10 +276,10 @@ namespace VintageEngineering
                 base.SingleComposer.GetDynamicText("progressText").SetNewText(GetProgressText());
                 base.SingleComposer.GetCustomDraw("powerDrawer").Redraw();
                 base.SingleComposer.GetCustomDraw("progressBar").Redraw();
-                base.SingleComposer.GetDynamicText("enableBtnText").SetNewText(betestmach.IsEnabled ? Lang.Get("vinteng:gui-turn-off") : Lang.Get("vinteng:gui-turn-on"));
+                base.SingleComposer.GetDynamicText("enableBtnText").SetNewText(bemachine.IsEnabled ? Lang.Get("vinteng:gui-turn-off") : Lang.Get("vinteng:gui-turn-on"));
                 currentRecipe = mprecipe;
                 base.SingleComposer.GetDynamicText("outputText").SetNewText(GetHelpText());
-            }            
+            }
         }
 
         private void OnTitleBarClose()

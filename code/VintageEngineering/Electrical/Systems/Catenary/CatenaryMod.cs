@@ -168,8 +168,11 @@ namespace VintageEngineering.Electrical.Systems.Catenary
                 }
                 if (packet.opcode == WireConnectionOpCode.Cancel)
                 {
-                    EntityAgent agent = api.World.PlayerByUid(packet.playerUID).Entity;
-                    CancelPlace(null, agent);
+                    if (packet.playerUID != string.Empty)
+                    {
+                        EntityAgent agent = api.World.PlayerByUid(packet.playerUID).Entity;
+                        CancelPlace(null, agent);
+                    }
                 }
             }
         }
@@ -432,10 +435,15 @@ namespace VintageEngineering.Electrical.Systems.Catenary
                 startnode, endnode, block);
 
             // send a packet to the server notifying it of a new connection
-            clientChannel.SendPacket<WireConnectionData>(new WireConnectionData() { 
-                                                    connection = newconnection, 
-                                                    playerUID = (byEntity as EntityPlayer).PlayerUID, 
-                                                    opcode = WireConnectionOpCode.Add });            
+            if (api.Side == EnumAppSide.Client)
+            {
+                clientChannel.SendPacket<WireConnectionData>(new WireConnectionData()
+                {
+                    connection = newconnection,
+                    playerUID = (byEntity as EntityPlayer).PlayerUID,
+                    opcode = WireConnectionOpCode.Add
+                });
+            }
         }
         
         public void OnRenderFrame(float deltatime, EnumRenderStage stage)

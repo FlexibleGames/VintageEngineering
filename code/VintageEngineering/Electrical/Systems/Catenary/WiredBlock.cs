@@ -110,10 +110,11 @@ namespace VintageEngineering.Electrical.Systems.Catenary
 
             if (cm != null && this.api.Side == EnumAppSide.Client)
             {
+                string playerid = byPlayer != null ? byPlayer.PlayerUID : string.Empty;
                 WireConnectionData wcd = new WireConnectionData()
                 {
                     _pos = pos,
-                    playerUID = byPlayer.PlayerUID,
+                    playerUID = playerid,
                     opcode = WireConnectionOpCode.RemoveAll
                 };
                 // tell the server to process connections at this position, will push data back to client.

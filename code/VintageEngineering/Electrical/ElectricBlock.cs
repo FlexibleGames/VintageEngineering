@@ -66,7 +66,8 @@ namespace VintageEngineering.Electrical
             if (blockSel != null && !world.Claims.TryAccess(byPlayer, blockSel.Position, EnumBlockAccessFlags.Use))
             {
                 return false; // only block if we can't interact via permissions with this block
-            }            
+            }
+            blockSel.Block = this;            
             if (base.OnWireInteractionStart(world, byPlayer, blockSel)) return true;
             BlockEntity machEntity = world.BlockAccessor.GetBlockEntity(blockSel.Position);
             if (machEntity != null)

@@ -79,12 +79,18 @@ namespace VintageEngineering.RecipeSystem.Recipes
         public bool Matches(ItemSlot _ingredient)
         {
             if (_ingredient.Empty) return false; // no ingredient to even check, bounce
-
-            // Satisfies call ignores fields not needed to test for equality, like attributes.
-            if (!_ingredient.Itemstack.Satisfies(Ingredients[0].ResolvedItemstack)) return false;
-            // check stack sizes... 
-            if (_ingredient.Itemstack.StackSize < Ingredients[0].ResolvedItemstack.StackSize) return false;
-
+            
+            if (Ingredients[0].ResolvedItemstack != null)
+            {
+                // Satisfies call ignores fields not needed to test for equality, like stacksize.
+                if (!_ingredient.Itemstack.Satisfies(Ingredients[0].ResolvedItemstack)) return false;
+                // check stack sizes... 
+                if (_ingredient.Itemstack.StackSize < Ingredients[0].ResolvedItemstack.StackSize) return false;
+            }
+            else
+            {
+                if (!Ingredients[0].SatisfiesAsIngredient(_ingredient.Itemstack, true)) return false;
+            }
             return true;
         }
 

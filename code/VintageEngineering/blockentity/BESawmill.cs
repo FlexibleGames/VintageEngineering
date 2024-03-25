@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using VintageEngineering.Electrical;
 using VintageEngineering.GUI;
 using VintageEngineering.RecipeSystem.Recipes;
@@ -13,29 +10,28 @@ using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
-using Vintagestory.API.Util;
-using Vintagestory.GameContent;
+using VintageEngineering.inventory;
 
 namespace VintageEngineering
 {
-    public class BEExtruder : ElectricBE, ITexPositionSource
+    public class BESawmill : ElectricBE
     {
         private ICoreClientAPI capi;
         private ICoreServerAPI sapi;
         private float updateBouncer = 0f;
-        private GUIExtruder clientDialog;
+        private GUISawMill clientDialog;
 
         public string DialogTitle
         {
             get
             {
-                return Lang.Get("vinteng:gui-title-extruder");
+                return Lang.Get("vinteng:gui-title-sawmill");
             }
         }
 
-        public BEExtruder()
+        public BESawmill()
         {
-            inv = new InvExtruder(null, null);
+            inv = new InvSawmill(null, null);
             inv.SlotModified += OnSlotModified;
         }
 
@@ -52,17 +48,16 @@ namespace VintageEngineering
                 capi = api as ICoreClientAPI;
                 if (AnimUtil != null)
                 {
-                    AnimUtil.InitializeAnimator("veextruder", null, null, new Vec3f(0, GetRotation(), 0f));
+                    AnimUtil.InitializeAnimator("vesawmill", null, null, new Vec3f(0, GetRotation(), 0f));
                 }
-                UpdateMesh(2);
             }
             inv.Pos = this.Pos;
             inv.LateInitialize($"{InventoryClassName}-{this.Pos.X}/{this.Pos.Y}/{this.Pos.Z}", api);
         }
 
         #region RecipeAndInventoryStuff
-        private InvExtruder inv;
-        private RecipeExtruder currentRecipe;
+        private InvSawmill inv;
+        private RecipeSawMill currentRecipe;
         private ulong recipePowerApplied;
         private bool isCrafting = false;
         public float RecipeProgress
@@ -77,10 +72,22 @@ namespace VintageEngineering
         public bool IsCrafting { get { return isCrafting; } }
 
         public ItemSlot InputSlot { get { return inv[0]; } }
-        public ItemSlot OutputSlot { get { return inv[1]; } }
-        public ItemSlot RequiresSlot { get { return inv[2]; } }
 
-        public override string InventoryClassName { get { return "VEExtruderInv"; } }
+        public ItemSlot RequiresSlot { get { return inv[1]; } }
+
+        public ItemSlot OutputSlot { get { return inv[2]; } }
+        /// <summary>
+        /// Slotid's 3 and 4 are both ExtraOutputSlots
+        /// </summary>
+        /// <param name="slotid">3 or 4</param>
+        /// <returns>ItemSlot</returns>
+        public ItemSlot ExtraOutputSlot(int slotid)
+        { 
+            if (slotid < 3 || slotid > 4) return null;
+            return inv[slotid];
+        }
+
+        public override string InventoryClassName { get { return "InvSawmill"; } }
 
         public override InventoryBase Inventory { get { return inv; } }
 
@@ -106,24 +113,23 @@ namespace VintageEngineering
                     clientDialog.Update(RecipeProgress, CurrentPower, currentRecipe);
                 }
             }
-            if (slotid == 2)
-            {
-                if (Api.Side == EnumAppSide.Client)
-                {
-                    UpdateMesh(slotid);
-                }
-            }
         }
 
         /// <summary>
-        /// Output slots IDs is just slotid 1 for this machine.
+        /// Output slots IDs are slotid 2 for primary and 3 and 4 for secondary
         /// </summary>
         /// <param name="slotid">Index of ItemSlot inventory</param>
         /// <returns>True if there is room.</returns>
         public bool HasRoomInOutput(int slotid)
         {
-            if (slotid != 1) return false;
+            if (slotid < 2 || slotid > 4) return false;
             if (inv[slotid].Empty) return true;
+            if (currentRecipe != null)
+            {
+                if (currentRecipe.Outputs[slotid-2].ResolvedItemstack != null)
+                { if (inv[slotid].Itemstack.Collectible.Code != currentRecipe.Outputs[slotid - 2].ResolvedItemstack.Collectible.Code) return false; }
+                // ResolvedItemstack is null?! That should never happen!
+            }
             if (inv[slotid].StackSize < inv[slotid].Itemstack.Collectible.MaxStackSize) return true;
 
             return false;
@@ -149,11 +155,11 @@ namespace VintageEngineering
             }
 
             currentRecipe = null;
-            List<RecipeExtruder> mprecipes = Api?.ModLoader?.GetModSystem<VERecipeRegistrySystem>(true)?.ExtruderRecipes;
+            List<RecipeSawMill> mprecipes = Api?.ModLoader?.GetModSystem<VERecipeRegistrySystem>(true)?.SawMillRecipes;
 
             if (mprecipes == null) return false;
 
-            foreach (RecipeExtruder mprecipe in mprecipes)
+            foreach (RecipeSawMill mprecipe in mprecipes)
             {
                 if (mprecipe.Enabled && mprecipe.Matches(InputSlot, RequiresSlot))
                 {
@@ -186,7 +192,7 @@ namespace VintageEngineering
                 if (isCrafting && RecipeProgress < 1f)
                 {
                     if (CurrentPower == 0 || CurrentPower < (MaxPPS * dt)) return; // we don't have any power to progress.
-                    if (!HasRoomInOutput(1) && !HasRoomInOutput(2)) return; // no room in output slots, stop
+                    if (!HasRoomInOutput(2) && !HasRoomInOutput(3) && !HasRoomInOutput(4)) return; // no room in output slots, stop
                     if (currentRecipe == null) return; // how the heck did this happen?
 
                     float powerpertick = MaxPPS * dt;
@@ -203,16 +209,16 @@ namespace VintageEngineering
                 {
                     // recipe crafting complete
                     ItemStack outputprimary = currentRecipe.Outputs[0].ResolvedItemstack.Clone();
-                    if (HasRoomInOutput(1))
+                    if (HasRoomInOutput(2))
                     {
                         // primary output is empty, set the stack.
-                        if (OutputSlot.Empty) inv[1].Itemstack = outputprimary;
+                        if (OutputSlot.Empty) inv[2].Itemstack = outputprimary;
                         else
                         {
                             // how much space is left in primary?
-                            int capleft = inv[1].Itemstack.Collectible.MaxStackSize - inv[1].Itemstack.StackSize;
+                            int capleft = inv[2].Itemstack.Collectible.MaxStackSize - inv[2].Itemstack.StackSize;
                             if (capleft <= 0) Api.World.SpawnItemEntity(outputprimary, Pos.UpCopy(1).ToVec3d()); // should never fire
-                            else if (capleft >= outputprimary.StackSize) inv[1].Itemstack.StackSize += outputprimary.StackSize;
+                            else if (capleft >= outputprimary.StackSize) inv[2].Itemstack.StackSize += outputprimary.StackSize;
                             else
                             {
                                 inv[1].Itemstack.StackSize += capleft;
@@ -226,10 +232,73 @@ namespace VintageEngineering
                     {
                         Api.World.SpawnItemEntity(outputprimary, Pos.UpCopy(1).ToVec3d());
                     }
-
+                    if (currentRecipe.Outputs.Length > 1)
+                    {
+                        // recipe has secondary output(s)
+                        int variableoutput = currentRecipe.Outputs[1].VariableResolve(Api.World, "VintEng: Sawmill Craft output");
+                        if (variableoutput > 0)
+                        {
+                            ItemStack secondOuput = currentRecipe.Outputs[1].ResolvedItemstack.Clone();
+                            secondOuput.StackSize = variableoutput;
+                            if (HasRoomInOutput(3))
+                            {
+                                if (ExtraOutputSlot(3).Empty) ExtraOutputSlot(3).Itemstack = secondOuput;
+                                else
+                                {
+                                    // deja vu
+                                    int capleft = inv[3].Itemstack.Collectible.MaxStackSize - inv[3].Itemstack.StackSize;
+                                    if (capleft <= 0) Api.World.SpawnItemEntity(secondOuput, Pos.UpCopy(1).ToVec3d());
+                                    else if (capleft >= secondOuput.StackSize) inv[3].Itemstack.StackSize += secondOuput.StackSize;
+                                    else
+                                    {
+                                        inv[3].Itemstack.StackSize += capleft;
+                                        secondOuput.StackSize -= capleft;
+                                        Api.World.SpawnItemEntity(secondOuput, Pos.UpCopy(1).ToVec3d());
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                Api.World.SpawnItemEntity(secondOuput, Pos.UpCopy(1).ToVec3d());
+                            }
+                            ExtraOutputSlot(3).MarkDirty();
+                        }
+                    }
+                    if (currentRecipe.Outputs.Length > 2)
+                    {
+                        // recipe has secondary output(s)
+                        int variableoutput = currentRecipe.Outputs[2].VariableResolve(Api.World, "VintEng: Sawmill Craft output");
+                        if (variableoutput > 0)
+                        {
+                            ItemStack secondOuput = currentRecipe.Outputs[2].ResolvedItemstack.Clone();
+                            secondOuput.StackSize = variableoutput;
+                            if (HasRoomInOutput(4))
+                            {
+                                if (ExtraOutputSlot(4).Empty) ExtraOutputSlot(4).Itemstack = secondOuput;
+                                else
+                                {
+                                    // deja vu
+                                    int capleft = inv[4].Itemstack.Collectible.MaxStackSize - inv[4].Itemstack.StackSize;
+                                    if (capleft <= 0) Api.World.SpawnItemEntity(secondOuput, Pos.UpCopy(1).ToVec3d());
+                                    else if (capleft >= secondOuput.StackSize) inv[4].Itemstack.StackSize += secondOuput.StackSize;
+                                    else
+                                    {
+                                        inv[4].Itemstack.StackSize += capleft;
+                                        secondOuput.StackSize -= capleft;
+                                        Api.World.SpawnItemEntity(secondOuput, Pos.UpCopy(1).ToVec3d());
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                Api.World.SpawnItemEntity(secondOuput, Pos.UpCopy(1).ToVec3d());
+                            }
+                            ExtraOutputSlot(4).MarkDirty();
+                        }
+                    }
                     if (!RequiresSlot.Empty && currentRecipe.RequiresDurability)
                     {
-                        string diemetal = "game:metalbit-" + RequiresSlot.Itemstack.Collectible.LastCodePart();
+                        string sawmetal = "game:metalbit-" + RequiresSlot.Itemstack.Collectible.LastCodePart();
                         int molddur = RequiresSlot.Itemstack.Collectible.GetRemainingDurability(RequiresSlot.Itemstack);
                         molddur -= 1;
                         RequiresSlot.Itemstack.Attributes.SetInt("durability", molddur);
@@ -237,20 +306,21 @@ namespace VintageEngineering
                         {
                             if (Api.Side == EnumAppSide.Server)
                             {
-                                AssetLocation thebits = new AssetLocation(diemetal);
+                                AssetLocation thebits = new AssetLocation(sawmetal);
                                 int newstack = Api.World.Rand.Next(5, 16);
                                 ItemStack bitstack = new ItemStack(Api.World.GetItem(thebits), newstack);
                                 Api.World.SpawnItemEntity(bitstack, Pos.UpCopy(1).ToVec3d(), null);
 
                                 RequiresSlot.Itemstack = null;
                                 Api.World.PlaySoundAt(new AssetLocation("game:sounds/effect/toolbreak"),
-                                    Pos.X, Pos.Y, Pos.Z, null, 1f, 16f, 1f);                                
+                                    Pos.X, Pos.Y, Pos.Z, null, 1f, 16f, 1f);
                             }
                         }
                         RequiresSlot.MarkDirty();
                     }
                     InputSlot.TakeOut(currentRecipe.Ingredients[0].Quantity);
                     InputSlot.MarkDirty();
+
                     if (InputSlot.Empty || !FindMatchingRecipe())
                     {
                         StateChange(EnumBEState.Sleeping);
@@ -303,7 +373,7 @@ namespace VintageEngineering
             {
                 base.toggleInventoryDialogClient(byPlayer, delegate
                 {
-                    clientDialog = new GUIExtruder(DialogTitle, Inventory, this.Pos, capi, this);
+                    clientDialog = new GUISawMill(DialogTitle, Inventory, this.Pos, capi, this);
                     clientDialog.Update(RecipeProgress, CurrentPower, currentRecipe);
                     return this.clientDialog;
                 });
@@ -317,7 +387,7 @@ namespace VintageEngineering
             if (clientDialog != null)
             {
                 clientDialog.TryClose();
-                GUIExtruder gUILog = clientDialog;
+                GUISawMill gUILog = clientDialog;
                 if (gUILog != null) { gUILog.Dispose(); }
                 clientDialog = null;
             }
@@ -338,149 +408,6 @@ namespace VintageEngineering
 
             return $"{crafting} | {onOff} | {Lang.Get("vinteng:gui-word-power")}: {CurrentPower:N0}/{MaxPower:N0}";
         }
-
-        #region MoldMeshStuff
-        protected Shape nowTesselatingShape;
-        protected CollectibleObject nowTesselatingObj;
-        protected MeshData moldMesh;
-        private Vec3f bottomcenter = new Vec3f(0.5f, 0, 0.5f);
-        private Vec3f blockcenter = new Vec3f(0.5f, 0.5f, 0.5f);
-
-        public Size2i AtlasSize
-        {
-            get { return this.capi.BlockTextureAtlas.Size; }
-        }
-        public void UpdateMesh(int slotid)
-        {
-            if (Api.Side != EnumAppSide.Server)
-            {
-                if (inv[slotid].Empty)
-                {
-                    if (moldMesh != null) moldMesh.Dispose();
-                    moldMesh = null;
-                    MarkDirty(true, null);
-                    return;
-                }
-                MeshData meshData = GenMesh(inv[slotid].Itemstack);
-                if (meshData != null)
-                {
-                    TranslateMesh(meshData, 1f);
-                    moldMesh = meshData;
-                }
-            }
-        }
-
-        public void TranslateMesh(MeshData meshData, float scale)
-        {
-            //meshData.Scale(bottomcenter, scale, scale, scale);                        
-            meshData.Rotate(blockcenter, 0, (float)(GetRotation() * (Math.PI / 180)), (float)1.5708);
-            meshData.Translate(0, (float)0.1875, 0);
-        }
-
-        public MeshData GenMesh(ItemStack stack)
-        {
-            IContainedMeshSource meshSource = stack.Collectible as IContainedMeshSource;
-            MeshData meshData;
-
-            if (meshSource != null)
-            {
-                meshData = meshSource.GenMesh(stack, capi.BlockTextureAtlas, Pos);
-                meshData.Rotate(new Vec3f(0.5f, 0.5f, 0.5f), 0f, base.Block.Shape.rotateY * 0.0174532924f, 0f);
-            }
-            else
-            {
-                if (stack.Class == EnumItemClass.Block)
-                {
-                    meshData = capi.TesselatorManager.GetDefaultBlockMesh(stack.Block).Clone();
-                }
-                else
-                {
-                    nowTesselatingObj = stack.Collectible;
-                    nowTesselatingShape = null;
-                    if (stack.Item.Shape != null)
-                    {
-                        nowTesselatingShape = capi.TesselatorManager.GetCachedShape(stack.Item.Shape.Base);
-                    }
-                    capi.Tesselator.TesselateItem(stack.Item, out meshData, this);
-                    meshData.RenderPassesAndExtraBits.Fill((short)2);
-                }
-            }
-            return meshData;
-        }
-
-        public override bool OnTesselation(ITerrainMeshPool mesher, ITesselatorAPI tessThreadTesselator)
-        {
-            base.OnTesselation(mesher, tessThreadTesselator); // renders an ACTIVE animation
-
-            if (moldMesh != null)
-            {
-                mesher.AddMeshData(moldMesh, 1); // add a mold if we have one
-            }
-            if (AnimUtil.activeAnimationsByAnimCode.Count == 0 &&
-                (AnimUtil.animator != null && AnimUtil.animator.ActiveAnimationCount == 0))
-            {
-                return false; // add base-machine mesh if we're NOT animating
-            }
-            return true; // do not add base mesh if we're animating
-        }
-
-        public TextureAtlasPosition this[string textureCode]
-        {
-            get
-            {
-                Item item = nowTesselatingObj as Item;
-                Dictionary<string, CompositeTexture> dictionary = (Dictionary<string, CompositeTexture>)((item != null) ? item.Textures : (nowTesselatingObj as Block).Textures);
-                AssetLocation assetLocation = null;
-                CompositeTexture compositeTexture;
-                if (dictionary.TryGetValue(textureCode, out compositeTexture))
-                {
-                    assetLocation = compositeTexture.Baked.BakedName;
-                }
-                if (assetLocation == null && dictionary.TryGetValue("all", out compositeTexture))
-                {
-                    assetLocation = compositeTexture.Baked.BakedName;
-                }
-                if (assetLocation == null)
-                {
-                    Shape shape = this.nowTesselatingShape;
-                    if (shape != null)
-                    {
-                        shape.Textures.TryGetValue(textureCode, out assetLocation);
-                    }
-                }
-                if (assetLocation == null)
-                {
-                    assetLocation = new AssetLocation(textureCode);
-                }
-                return this.getOrCreateTexPos(assetLocation);
-            }
-        }
-
-        private TextureAtlasPosition getOrCreateTexPos(AssetLocation texturePath)
-        {
-            TextureAtlasPosition textureAtlasPosition = this.capi.BlockTextureAtlas[texturePath];
-            if (textureAtlasPosition == null)
-            {
-                IAsset asset = this.capi.Assets.TryGet(texturePath.Clone().WithPathPrefixOnce("textures/").WithPathAppendixOnce(".png"), true);
-                if (asset != null)
-                {
-                    BitmapRef bmp = asset.ToBitmap(this.capi);
-                    int num;
-                    //this.capi.BlockTextureAtlas.InsertTextureCached(texturePath, bmp, out num, out textureAtlasPosition, 0.005f);
-                    this.capi.BlockTextureAtlas.GetOrInsertTexture(texturePath, out num, out textureAtlasPosition, null, 0.005f);
-                }
-                else
-                {
-                    ILogger logger = this.capi.World.Logger;
-                    AssetLocation code = base.Block.Code;
-                    logger.Warning($"For render in block {((code != null) ? code.ToString() : "null")}, item {this.nowTesselatingObj.Code} defined texture {texturePath}, no such texture found.");
-                }
-            }
-            return textureAtlasPosition;
-        }
-
-        #endregion
-
 
         #region ServerClientStuff
         public override void OnReceivedClientPacket(IPlayer player, int packetid, byte[] data)
@@ -517,20 +444,16 @@ namespace VintageEngineering
         {
             base.FromTreeAttributes(tree, worldForResolving);
             inv.FromTreeAttributes(tree.GetTreeAttribute("inventory"));
-            if (Api != null) Inventory.AfterBlocksLoaded(Api.World);
+            if (Api != null) inv.AfterBlocksLoaded(Api.World);
             recipePowerApplied = (ulong)tree.GetLong("recipepowerapplied");
             isCrafting = tree.GetBool("iscrafting", false);
-            if (!Inventory[0].Empty) FindMatchingRecipe();
+            if (!inv[0].Empty) FindMatchingRecipe();
 
-            if (Api != null && Api.Side == EnumAppSide.Client)
+            if (clientDialog != null)
             {
-                if (clientDialog != null)
-                {
-                    clientDialog.Update(RecipeProgress, CurrentPower, currentRecipe);
-                }
-                UpdateMesh(2);
-                MarkDirty(true, null);
+                clientDialog.Update(RecipeProgress, CurrentPower, currentRecipe);
             }
+            //if (Api != null && Api.Side == EnumAppSide.Client) MarkDirty(true, null);
         }
 
         #endregion
