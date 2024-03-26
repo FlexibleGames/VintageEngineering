@@ -1,5 +1,6 @@
 {
 	"editor": {
+		"collapsedPaths": "Root/Frame Master/Bar N,Root/Frame Master/Bar S",
 		"allAngles": false,
 		"entityTextureMode": false
 	},
@@ -419,20 +420,6 @@
 					}
 				},
 				{
-					"name": "Output",
-					"from": [ 5.0, 2.0, -1.0 ],
-					"to": [ 10.0, 7.0, 4.0 ],
-					"rotationOrigin": [ 5.0, 2.0, -1.0 ],
-					"faces": {
-						"north": { "texture": "#machinery-border-small", "uv": [ 8.0, 6.0, 16.0, 13.0 ], "autoUv": false },
-						"east": { "texture": "#machinery", "uv": [ 6.0, 5.5, 11.0, 10.5 ], "rotation": 90 },
-						"south": { "texture": "#machinery-border-small", "uv": [ 8.0, 6.0, 16.0, 13.0 ], "autoUv": false },
-						"west": { "texture": "#machinery", "uv": [ 6.0, 7.5, 11.0, 12.5 ], "rotation": 90 },
-						"up": { "texture": "#machinery", "uv": [ 4.5, 7.0, 9.5, 12.0 ] },
-						"down": { "texture": "#machinery", "uv": [ 4.0, 5.0, 9.0, 10.0 ] }
-					}
-				},
-				{
 					"name": "Ram",
 					"from": [ 2.5, 1.0, 3.0 ],
 					"to": [ 13.5, 1.5, 15.0 ],
@@ -469,7 +456,7 @@
 			"name": "craft",
 			"code": "craft",
 			"quantityframes": 60,
-			"onActivityStopped": "Rewind",
+			"onActivityStopped": "EaseOut",
 			"onAnimationEnd": "Repeat",
 			"keyframes": [
 				{

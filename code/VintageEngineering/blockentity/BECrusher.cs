@@ -12,6 +12,7 @@ using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
+using Vintagestory.GameContent;
 
 namespace VintageEngineering
 {
@@ -42,32 +43,58 @@ namespace VintageEngineering
             if (api.Side == EnumAppSide.Server)
             {
                 sapi = api as ICoreServerAPI;
-                RegisterGameTickListener(new Action<float>(OnSimTick), 100, 0);
+                RegisterGameTickListener(new Action<float>(OnSimTick), 100, 0);                
             }
             else
             {
                 capi = api as ICoreClientAPI;
                 if (AnimUtil != null)
                 {
-                    AnimUtil.InitializeAnimator("vesawmill", null, null, new Vec3f(0, GetRotation(), 0f));
+                    AnimUtil.InitializeAnimator("vecrusher", null, null, new Vec3f(0, GetRotation(), 0f));
                 }
             }
+            crushingPowerCost = this.Block.Attributes["crushpowercost"].AsInt();
             inv.Pos = this.Pos;
             inv.LateInitialize($"{InventoryClassName}-{this.Pos.X}/{this.Pos.Y}/{this.Pos.Z}", api);
         }
 
         #region RecipeAndInventoryStuff
         private InvCrusher inv;
+
         private RecipeCrusher currentRecipe;
+        private CrushingProperties crushingProperties;
+        private ItemStack nuggetType;
+        /// <summary>
+        /// Baseline vanilla power cost to crush or extract nuggets. Set in JSON.<br/>
+        /// Value is multiplied by the hardness value to get crushPowerCostTotal for each crafting cycle.
+        /// </summary>
+        private int crushingPowerCost;
+
+        private ulong crushPowerCostTotal;
         private ulong recipePowerApplied;
         private bool isCrafting = false;
-        private string craftMode = "crush";
+        public string craftMode = "crush";
         public float RecipeProgress
         {
             get
             {
-                if (currentRecipe == null) return 0f;
-                return (float)recipePowerApplied / (float)currentRecipe.PowerPerCraft;
+                if (craftMode == "recipe")
+                {
+                    if (currentRecipe == null) return 0f;
+                    return (float)recipePowerApplied / (float)currentRecipe.PowerPerCraft;
+                }
+                else if (craftMode == "crush")
+                {
+                    if (crushingProperties == null) return 0f;
+                    return (float)recipePowerApplied / (float)crushPowerCostTotal;
+                }
+                else
+                {
+                    // craftmode == nugget
+                    if (nuggetType == null) return 0f;
+                    return (float)recipePowerApplied / (float)crushPowerCostTotal;
+                }
+
             }
         }
 
@@ -75,9 +102,9 @@ namespace VintageEngineering
 
         public ItemSlot InputSlot { get { return inv[0]; } }
 
-        public ItemSlot RequiresSlot { get { return inv[1]; } }
+        //public ItemSlot RequiresSlot { get { return null; } }
 
-        public ItemSlot OutputSlot { get { return inv[2]; } }
+        public ItemSlot OutputSlot { get { return inv[1]; } }
         /// <summary>
         /// Slotid's 2 - 4 are ExtraOutputSlots
         /// </summary>
@@ -118,24 +145,37 @@ namespace VintageEngineering
         }
 
         /// <summary>
-        /// Output slots IDs are slotid 2 for primary and 3 and 4 for secondary
+        /// Output slots IDs are slotid 1 for primary and 2, 3, and 4 for secondary
         /// </summary>
         /// <param name="slotid">Index of ItemSlot inventory</param>
         /// <returns>True if there is room.</returns>
-        public bool HasRoomInOutput(int slotid)
+        public bool HasRoomInOutput(int slotid, ItemStack forStack)
         {
-            // TODO CHECK CRUSHING PROPS
-            if (slotid < 1 || slotid > 4) return false;
-            if (inv[slotid].Empty) return true;
-            if (currentRecipe != null)
+            if (slotid == 0 && forStack == null)
             {
-                if (currentRecipe.Outputs[slotid - 2].ResolvedItemstack != null)
-                { if (inv[slotid].Itemstack.Collectible.Code != currentRecipe.Outputs[slotid - 2].ResolvedItemstack.Collectible.Code) return false; }
-                // ResolvedItemstack is null?! That should never happen!
+                // a special case to check if any output is full
+                bool[] hasspace = new bool[4];
+                for (int i = 1; i < 5; i++)
+                {
+                    if (inv[i].Empty) hasspace[i-1] = true;
+                    else
+                    {
+                        if (inv[i].Itemstack.StackSize < inv[i].Itemstack.Collectible.MaxStackSize) hasspace[i-1] = true;
+                    }
+                }
+                return hasspace[0] || hasspace[1] || hasspace[2] || hasspace[3];
             }
-            if (inv[slotid].StackSize < inv[slotid].Itemstack.Collectible.MaxStackSize) return true;
+            if (slotid < 1 || slotid > 4) return false; // not output slots
+            if (inv[slotid].Empty) return true;
 
-            return false;
+            // check equality by code
+            if (inv[slotid].Itemstack.Collectible.Code != forStack.Collectible.Code) return false;
+
+            // check stack size held versus max
+            int numinslot = inv[slotid].StackSize;
+            if (numinslot >= forStack.Collectible.MaxStackSize) return false;
+            
+            return true;
         }
 
         /// <summary>
@@ -153,27 +193,78 @@ namespace VintageEngineering
             if (InputSlot.Empty)
             {
                 currentRecipe = null;
+                crushingProperties = null;
+                nuggetType = null;
                 isCrafting = false;
                 StateChange(EnumBEState.Sleeping);
                 return false;
             }
 
-            currentRecipe = null;
-            List<RecipeCrusher> mprecipes = Api?.ModLoader?.GetModSystem<VERecipeRegistrySystem>(true)?.CrusherRecipes;
-
-            if (mprecipes == null) return false;
-
-            foreach (RecipeCrusher mprecipe in mprecipes)
+            if (craftMode == "nugget")
             {
-                if (mprecipe.Enabled && mprecipe.Matches(InputSlot, RequiresSlot))
+                currentRecipe = null;
+                crushingProperties = null;
+                if (InputSlot.Itemstack.Collectible is ItemOre &&
+                    InputSlot.Itemstack.ItemAttributes["metalUnits"].Exists)
                 {
-                    currentRecipe = mprecipe;
+                    int units = InputSlot.Itemstack.ItemAttributes["metalUnits"].AsInt(5);
+                    string type = InputSlot.Itemstack.Collectible.Variant["ore"].Replace("quartz_", "").Replace("galena_", "");
+                    nuggetType = new ItemStack(this.Api.World.GetItem(new AssetLocation("nugget-" + type)), 1)
+                    {
+                        StackSize = Math.Max(1, units / 5)
+                    };
+                    if (crushPowerCostTotal == 0)
+                    {
+                        crushPowerCostTotal = (ulong)(crushingPowerCost * 2);
+                    }
                     isCrafting = true;
                     StateChange(EnumBEState.On);
                     return true;
                 }
+                else
+                {
+                    crushPowerCostTotal = 0;
+                }
+                nuggetType = null;
             }
-            currentRecipe = null;
+            else if (craftMode == "crush")
+            {
+                currentRecipe = null;
+                nuggetType = null;
+                if (InputSlot.Itemstack.Collectible.CrushingProps != null)
+                {
+                    crushingProperties = InputSlot.Itemstack.Collectible.CrushingProps.Clone();
+                    if (crushPowerCostTotal == 0)
+                    { 
+                        crushPowerCostTotal = (ulong)(crushingPowerCost * (crushingProperties.HardnessTier == 0 ? 1 : crushingProperties.HardnessTier)); 
+                    }
+                    isCrafting = true;
+                    StateChange(EnumBEState.On);
+                    return true;
+                }
+                crushPowerCostTotal = 0;
+                crushingProperties = null;
+            }
+            else if (craftMode == "recipe")
+            {
+                currentRecipe = null;
+                crushingProperties = null;
+                nuggetType = null;
+
+                List<RecipeCrusher> mprecipes = Api?.ModLoader?.GetModSystem<VERecipeRegistrySystem>(true)?.CrusherRecipes;
+                if (mprecipes == null) return false;
+
+                foreach (RecipeCrusher mprecipe in mprecipes)
+                {
+                    if (mprecipe.Enabled && mprecipe.Matches(InputSlot))
+                    {
+                        currentRecipe = mprecipe;
+                        isCrafting = true;
+                        StateChange(EnumBEState.On);
+                        return true;
+                    }
+                }
+            }            
             isCrafting = false;
             recipePowerApplied = 0;
             StateChange(EnumBEState.Sleeping);
@@ -195,12 +286,34 @@ namespace VintageEngineering
             {
                 if (isCrafting && RecipeProgress < 1f)
                 {
-                    if (CurrentPower == 0 || CurrentPower < (MaxPPS * dt)) return; // we don't have any power to progress.
-                    if (!HasRoomInOutput(2) && !HasRoomInOutput(3) && !HasRoomInOutput(4)) return; // no room in output slots, stop
-                    if (currentRecipe == null) return; // how the heck did this happen?
+                    if (CurrentPower == 0 || CurrentPower < (MaxPPS * dt)) return; // we don't have any power to progress.                    
 
-                    float powerpertick = MaxPPS * dt;
-                    float percentprogress = powerpertick / currentRecipe.PowerPerCraft; // power to apply this tick
+                    if (craftMode == "recipe")
+                    {
+                        if (currentRecipe == null) return;
+                        for (int x=0;x<currentRecipe.Outputs.Length;x++)
+                        {
+                            if (!HasRoomInOutput(x + 1, currentRecipe.Outputs[x].ResolvedItemstack)) return;
+                        }
+                    }
+                    else if (craftMode == "crush")
+                    {
+                        if (crushingProperties == null) return;
+                        for (int x = 1;x<5;x++)
+                        {
+                            if (!HasRoomInOutput(x, crushingProperties.CrushedStack.ResolvedItemstack)) return;
+                        }
+                    }
+                    else
+                    {
+                        if (nuggetType == null) return;
+                        for (int x = 1; x < 5; x++)
+                        {
+                            if (!HasRoomInOutput(x, nuggetType)) return;
+                        }
+                    }                    
+
+                    float powerpertick = MaxPPS * dt;                    
 
                     if (CurrentPower < powerpertick) return; // last check for our power requirements.
 
@@ -212,118 +325,84 @@ namespace VintageEngineering
                 else if (RecipeProgress >= 1f)
                 {
                     // recipe crafting complete
-                    ItemStack outputprimary = currentRecipe.Outputs[0].ResolvedItemstack.Clone();
-                    if (HasRoomInOutput(2))
+                    if (craftMode == "recipe")
                     {
-                        // primary output is empty, set the stack.
-                        if (OutputSlot.Empty) inv[2].Itemstack = outputprimary;
-                        else
+                        for (int x = 0; x < currentRecipe.Outputs.Length; x++)
                         {
-                            // how much space is left in primary?
-                            int capleft = inv[2].Itemstack.Collectible.MaxStackSize - inv[2].Itemstack.StackSize;
-                            if (capleft <= 0) Api.World.SpawnItemEntity(outputprimary, Pos.UpCopy(1).ToVec3d()); // should never fire
-                            else if (capleft >= outputprimary.StackSize) inv[2].Itemstack.StackSize += outputprimary.StackSize;
-                            else
+                            ItemStack output = currentRecipe.Outputs[x].ResolvedItemstack.Clone();
+                            output.StackSize = currentRecipe.Outputs[x].VariableResolve(Api.World, "Crusher Recipe Output");
+                            if (output.StackSize == 0) continue;
+                            if (HasRoomInOutput(x+1, output))
                             {
-                                inv[1].Itemstack.StackSize += capleft;
-                                outputprimary.StackSize -= capleft;
-                                Api.World.SpawnItemEntity(outputprimary, Pos.UpCopy(1).ToVec3d());
-                            }
-                        }
-                        OutputSlot.MarkDirty();
-                    }
-                    else
-                    {
-                        Api.World.SpawnItemEntity(outputprimary, Pos.UpCopy(1).ToVec3d());
-                    }
-                    if (currentRecipe.Outputs.Length > 1)
-                    {
-                        // recipe has secondary output(s)
-                        int variableoutput = currentRecipe.Outputs[1].VariableResolve(Api.World, "VintEng: Crusher Craft output");
-                        if (variableoutput > 0)
-                        {
-                            ItemStack secondOuput = currentRecipe.Outputs[1].ResolvedItemstack.Clone();
-                            secondOuput.StackSize = variableoutput;
-                            if (HasRoomInOutput(3))
-                            {
-                                if (ExtraOutputSlot(3).Empty) ExtraOutputSlot(3).Itemstack = secondOuput;
+                                if (inv[x + 1].Empty) inv[x + 1].Itemstack = output;
                                 else
                                 {
-                                    // deja vu
-                                    int capleft = inv[3].Itemstack.Collectible.MaxStackSize - inv[3].Itemstack.StackSize;
-                                    if (capleft <= 0) Api.World.SpawnItemEntity(secondOuput, Pos.UpCopy(1).ToVec3d());
-                                    else if (capleft >= secondOuput.StackSize) inv[3].Itemstack.StackSize += secondOuput.StackSize;
+                                    int capleft = inv[x + 1].Itemstack.Collectible.MaxStackSize - inv[x + 1].Itemstack.StackSize;
+                                    if (capleft <= 0) Api.World.SpawnItemEntity(output, Pos.UpCopy(1).ToVec3d()); // this should never fire
+                                    else if (capleft >= output.StackSize) inv[x + 1].Itemstack.StackSize += output.StackSize;
                                     else
                                     {
-                                        inv[3].Itemstack.StackSize += capleft;
-                                        secondOuput.StackSize -= capleft;
-                                        Api.World.SpawnItemEntity(secondOuput, Pos.UpCopy(1).ToVec3d());
+                                        inv[x + 1].Itemstack.StackSize += capleft;
+                                        output.StackSize -= capleft;
+                                        Api.World.SpawnItemEntity(output, Pos.UpCopy(1).ToVec3d());
                                     }
                                 }
                             }
+                        }
+                        InputSlot.TakeOut(currentRecipe.Ingredients[0].Quantity);
+                        InputSlot.MarkDirty();
+                    }
+                    if (craftMode == "crush" || craftMode == "nugget")
+                    {
+                        ItemStack output = craftMode == "crush" ? crushingProperties?.CrushedStack?.ResolvedItemstack?.Clone() : nuggetType?.Clone();
+                        if (output != null)
+                        {
+                            if (craftMode == "crush")
+                            {
+                                output.StackSize = GameMath.RoundRandom(Api.World.Rand, crushingProperties.Quantity.nextFloat((float)output.StackSize, Api.World.Rand));
+                            }
+                            if (output.StackSize <= 0)
+                            {
+                                // I guess this might be possible?
+                                recipePowerApplied = 0;
+                            }
                             else
                             {
-                                Api.World.SpawnItemEntity(secondOuput, Pos.UpCopy(1).ToVec3d());
-                            }
-                            ExtraOutputSlot(3).MarkDirty();
-                        }
-                    }
-                    if (currentRecipe.Outputs.Length > 2)
-                    {
-                        // recipe has secondary output(s)
-                        int variableoutput = currentRecipe.Outputs[2].VariableResolve(Api.World, "VintEng: Crusher Craft output");
-                        if (variableoutput > 0)
-                        {
-                            ItemStack secondOuput = currentRecipe.Outputs[2].ResolvedItemstack.Clone();
-                            secondOuput.StackSize = variableoutput;
-                            if (HasRoomInOutput(4))
-                            {
-                                if (ExtraOutputSlot(4).Empty) ExtraOutputSlot(4).Itemstack = secondOuput;
-                                else
+                                int itemstopush = output.StackSize;
+                                // since this only ever produces 1 thing, we can try to use all the output slots...
+                                for (int x = 0; x < 4; x++)
                                 {
-                                    // deja vu
-                                    int capleft = inv[4].Itemstack.Collectible.MaxStackSize - inv[4].Itemstack.StackSize;
-                                    if (capleft <= 0) Api.World.SpawnItemEntity(secondOuput, Pos.UpCopy(1).ToVec3d());
-                                    else if (capleft >= secondOuput.StackSize) inv[4].Itemstack.StackSize += secondOuput.StackSize;
-                                    else
+                                    if (itemstopush == 0) break;
+                                    if (HasRoomInOutput(x+1, output))
                                     {
-                                        inv[4].Itemstack.StackSize += capleft;
-                                        secondOuput.StackSize -= capleft;
-                                        Api.World.SpawnItemEntity(secondOuput, Pos.UpCopy(1).ToVec3d());
+                                        if (inv[x + 1].Empty)
+                                        {
+                                            itemstopush = 0;
+                                            inv[x + 1].Itemstack = output; 
+                                        }
+                                        else
+                                        {
+                                            int capleft = inv[x + 1].Itemstack.Collectible.MaxStackSize - inv[x + 1].Itemstack.StackSize;
+                                            if (capleft >= output.StackSize)
+                                            {
+                                                inv[x + 1].Itemstack.StackSize += output.StackSize;
+                                                itemstopush = 0;
+                                            }
+                                            else
+                                            {
+                                                inv[x + 1].Itemstack.StackSize += capleft;
+                                                output.StackSize -= capleft;
+                                                itemstopush -= capleft;                                                
+                                            }
+                                        }
                                     }
                                 }
+                                if (itemstopush > 0) Api.World.SpawnItemEntity(output, Pos.UpCopy(1).ToVec3d()); // this should never fire
                             }
-                            else
-                            {
-                                Api.World.SpawnItemEntity(secondOuput, Pos.UpCopy(1).ToVec3d());
-                            }
-                            ExtraOutputSlot(4).MarkDirty();
+                            InputSlot.TakeOut(1); // triggers onslotchanged
+                            InputSlot.MarkDirty();
                         }
                     }
-                    if (!RequiresSlot.Empty && currentRecipe.RequiresDurability)
-                    {
-                        string sawmetal = "game:metalbit-" + RequiresSlot.Itemstack.Collectible.LastCodePart();
-                        int molddur = RequiresSlot.Itemstack.Collectible.GetRemainingDurability(RequiresSlot.Itemstack);
-                        molddur -= 1;
-                        RequiresSlot.Itemstack.Attributes.SetInt("durability", molddur);
-                        if (molddur == 0)
-                        {
-                            if (Api.Side == EnumAppSide.Server)
-                            {
-                                AssetLocation thebits = new AssetLocation(sawmetal);
-                                int newstack = Api.World.Rand.Next(5, 16);
-                                ItemStack bitstack = new ItemStack(Api.World.GetItem(thebits), newstack);
-                                Api.World.SpawnItemEntity(bitstack, Pos.UpCopy(1).ToVec3d(), null);
-
-                                RequiresSlot.Itemstack = null;
-                                Api.World.PlaySoundAt(new AssetLocation("game:sounds/effect/toolbreak"),
-                                    Pos.X, Pos.Y, Pos.Z, null, 1f, 16f, 1f);
-                            }
-                        }
-                        RequiresSlot.MarkDirty();
-                    }
-                    InputSlot.TakeOut(currentRecipe.Ingredients[0].Quantity);
-                    InputSlot.MarkDirty();
 
                     if (InputSlot.Empty || !FindMatchingRecipe())
                     {
@@ -453,6 +532,8 @@ namespace VintageEngineering
             tree.SetLong("recipepowerapplied", (long)recipePowerApplied);
             tree.SetBool("iscrafting", isCrafting);
             tree.SetString("craftmode", craftMode);
+            tree.SetLong("crushrecipepowertotal", (long)crushPowerCostTotal);
+//            tree.SetItemstack("nuggettype", nuggetType);
         }
 
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldForResolving)
@@ -462,12 +543,16 @@ namespace VintageEngineering
             if (Api != null) inv.AfterBlocksLoaded(Api.World);
             recipePowerApplied = (ulong)tree.GetLong("recipepowerapplied");
             isCrafting = tree.GetBool("iscrafting", false);
+            if (!isCrafting) StateChange(EnumBEState.Sleeping);
+            if (!IsEnabled) StateChange(EnumBEState.Off);
             craftMode = tree.GetString("craftmode", "crush");
-            if (!inv[0].Empty) FindMatchingRecipe();
+            crushPowerCostTotal = (ulong)(tree.GetLong("crushrecipepowertotal"));
+//            nuggetType = tree.GetItemstack("nuggettype");
+            FindMatchingRecipe();
 
-            if (clientDialog != null)
+            if (clientDialog != null && clientDialog.IsOpened())
             {
-                clientDialog.Update(RecipeProgress, CurrentPower, currentRecipe);
+                clientDialog.Update(RecipeProgress, CurrentPower, currentRecipe, crushingProperties, nuggetType);
             }            
         }
 

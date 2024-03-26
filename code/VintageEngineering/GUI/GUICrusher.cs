@@ -18,7 +18,9 @@ namespace VintageEngineering
 
         private RecipeCrusher _recipecrusher;
 
-        private CrushingProperties crushingproperties;
+        private CrushingProperties _crushingproperties;
+
+        private ItemStack _nuggetType;
 
         private ulong _currentPower;
         private ulong _maxPower;
@@ -73,7 +75,7 @@ namespace VintageEngineering
             ElementBounds outputtextbnds = ElementBounds.Fixed(56, 74 + titlebarheight, 141, 40);
 
             ElementBounds dropdownmodetext = ElementBounds.Fixed(10, 123 + titlebarheight, 42, 21);
-            ElementBounds dropdownbounds = ElementBounds.Fixed(54, 121 + titlebarheight, 145, 21);
+            ElementBounds dropdownbounds = ElementBounds.Fixed(54, 121 + titlebarheight, 145, 25);
 
             dialog.WithChildren(new ElementBounds[] 
             {
@@ -134,9 +136,9 @@ namespace VintageEngineering
                 // NEW DROP DOWN OPTION THINGY
                 .AddStaticText(Lang.Get("vinteng:gui-word-mode") + ":", rightwhite, dropdownmodetext, "crushMode")
                 .AddDropDown(
-                            new string[] { "crush", "nugget"},
-                            new string[] { Lang.Get("vinteng:gui-word-crush"), Lang.Get("vinteng:gui-word-nugget") },
-                            0, OnSelectionChanged, dropdownbounds, "crushmode")
+                            new string[] { "crush", "nugget", "recipe"},
+                            new string[] { Lang.Get("vinteng:gui-word-crush"), Lang.Get("vinteng:gui-word-nugget"), Lang.Get("vinteng:gui-word-recipe") },
+                            GetCrushModeIndex(), OnSelectionChanged, dropdownbounds, "crushmode")
 
                 .EndChildElements()
                 .Compose(true);
@@ -148,12 +150,16 @@ namespace VintageEngineering
             capi.Network.SendBlockEntityPacket(base.BlockEntityPosition, 1003, testbytes);
         }
 
-        public void Update(float craftProgress, ulong curPower, RecipeCrusher recipeCrusher, CrushingProperties crushingProperties = null)
+        public void Update(float craftProgress, ulong curPower, RecipeCrusher recipeCrusher = null, 
+                            CrushingProperties crushingProperties = null, ItemStack nugget = null)
         {
             // TODO THINGS IN HERE
             _craftProgress = craftProgress;
             _currentPower = curPower;
             _recipecrusher = recipeCrusher;
+            _crushingproperties = crushingProperties;
+            _nuggetType = nugget;
+
             if (!IsOpened()) return;
 
             if (base.SingleComposer != null)
@@ -163,6 +169,18 @@ namespace VintageEngineering
                 SingleComposer.GetCustomDraw("progressBar").Redraw();
                 SingleComposer.GetDynamicText("enableBtnText").SetNewText(becrusher.IsEnabled ? Lang.Get("vinteng:gui-turn-off") : Lang.Get("vinteng:gui-turn-on"));
                 SingleComposer.GetDynamicText("outputText").SetNewText(GetHelpText());
+            }
+        }
+
+        private int GetCrushModeIndex()
+        {
+            string mode = becrusher.craftMode;
+            switch (mode)
+            {
+                case "crush": return 0;
+                case "nugget": return 1;
+                case "recipe": return 2;
+                default: return 0;
             }
         }
 
@@ -222,8 +240,7 @@ namespace VintageEngineering
         }
 
         private string GetHelpText()
-        {
-            // TODO STUFF IN HERE
+        {            
             string outputhelptext = "";
             if (_recipecrusher != null)
             {
@@ -231,12 +248,28 @@ namespace VintageEngineering
                 string langcode = outputstack.Collectible.Code.Domain != null ? outputstack.Collectible.Code.Domain : "";
                 langcode += ":" + outputstack.Collectible.ItemClass.ToString().ToLowerInvariant();
                 langcode += "-" + outputstack.Collectible.Code.Path;
-                outputhelptext = $"{Lang.Get("vinteng:gui-word-crafting")} {outputstack.StackSize} {outputstack.Collectible.GetHeldItemName(outputstack)}";
+                outputhelptext = $"{Lang.Get("vinteng:gui-word-crafting")} {outputstack.Collectible.GetHeldItemName(outputstack)}";
 
+            }
+            else if (_crushingproperties != null)
+            {
+                ItemStack outputstack = _crushingproperties.CrushedStack.ResolvedItemstack;
+                string langcode = outputstack.Collectible.Code.Domain != null ? outputstack.Collectible.Code.Domain : "";
+                langcode += ":" + outputstack.Collectible.ItemClass.ToString().ToLowerInvariant();
+                langcode += "-" + outputstack.Collectible.Code.Path;
+                outputhelptext = $"{Lang.Get("vinteng:gui-word-crafting")} {outputstack.Collectible.GetHeldItemName(outputstack)}";
+            }
+            else if (_nuggetType != null)
+            {
+                ItemStack outputstack = _nuggetType;
+                string langcode = outputstack.Collectible.Code.Domain != null ? outputstack.Collectible.Code.Domain : "";
+                langcode += ":" + outputstack.Collectible.ItemClass.ToString().ToLowerInvariant();
+                langcode += "-" + outputstack.Collectible.Code.Path;
+                outputhelptext = $"{Lang.Get("vinteng:gui-word-crafting")} {outputstack.StackSize} {outputstack.Collectible.GetHeldItemName(outputstack)}";
             }
             else
             {
-                if (becrusher.IsSleeping || _recipecrusher == null)
+                if (becrusher.IsSleeping)
                 {
                     outputhelptext = Lang.Get("vinteng:gui-no-valid-recipe");    // third is a VALID recipe
                 }
@@ -244,7 +277,7 @@ namespace VintageEngineering
                 {
                     outputhelptext = Lang.Get("vinteng:gui-machine-ingredients");// second priority is an ingredient
                 }
-                if (!becrusher.HasRoomInOutput(1) || !becrusher.HasRoomInOutput(2))
+                if (!becrusher.HasRoomInOutput(0, null))
                 {
                     outputhelptext = Lang.Get("vinteng:gui-machine-isfull");   // an output is full...                    
                 }

@@ -23,8 +23,8 @@ Conveyor belts for moving goods around. At least I hope this won't crush FPS.
 ## Help Is Welcome
 Immersive Engineering has had over 80 contributers, I know a project like this is just overwhelming for one person. So I will be more then welcoming of other contributions.
 
-# Contributers 
-QuentinQP, Mister Andy Dandy, Rinly
+# Contributers
+QuentinQP, Mister Andy Dandy, Rinly, DeathxxRenegade
 
 **What can you help with?**
 - Models
@@ -36,7 +36,7 @@ QuentinQP, Mister Andy Dandy, Rinly
 - Recipes
 - Bug Fixing
 
-Ideas are not on that list right now as I have a LOT of work to do before I'll be open to MORE to do. If you want to contribute please reach out to me (Buggi) on the VS discord, I'm in the "Modder" group. Or just submit a pull request. I'll try to post 'Issues' on specific items needed. 
+Ideas are not on that list right now as I have a LOT of work to do before I'll be open to MORE to do. If you want to contribute please reach out to me (Buggi) on the VS discord, I'm in the "Modder" group. Or just submit a pull request. I'll try to post 'Issues' on specific items needed.
 
 ## Pull Request Rules
 Please keep pull request changes simple and single-issue. Please include a description outlining the change. The faster I can merge the faster the project gets awesome.

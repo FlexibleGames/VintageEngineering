@@ -1,0 +1,28 @@
+[
+	{
+		"code": "sawdust-from-logs",
+		"enabled": true,
+		"attributes": {
+		},
+		"powerpercraft": 512,
+		"ingredients": [
+			{ "type": "block", "code": "game:log-placed-*-ud", "quantity": 1 }
+		],
+		"outputs": [
+			{ "type": "item", "code": "vinteng:sawdust", "stacksize": 32, "variable": 8 }
+		]
+	},
+	{
+		"code": "sawdust-from-logsection",
+		"enabled": true,
+		"attributes": {
+		},
+		"powerpercraft": 512,
+		"ingredients": [
+			{ "type": "block", "code": "game:logsection-placed-*-ne-ud", "quantity": 1 }
+		],
+		"outputs": [
+			{ "type": "item", "code": "vinteng:sawdust", "stacksize": 32, "variable": 8 }
+		]
+	}
+]

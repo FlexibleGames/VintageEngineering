@@ -18,6 +18,7 @@
 			}
 		},
 		"craftinganimcode": "craft",
+		"crushpowercost": 128,
 		"entitytype": "Consumer",
 		"priority": 5,
 		"maxpower": 1024,
