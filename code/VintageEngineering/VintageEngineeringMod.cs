@@ -4,6 +4,7 @@ using Vintagestory.Common;
 using Vintagestory.API.Client;
 using Vintagestory.API.Server;
 using VintageEngineering.Electrical;
+using Vintagestory.GameContent;
 
 [assembly: ModInfo("VintageEngineering",
                     Authors = new string[] { "Flexible Games" },
@@ -43,6 +44,7 @@ namespace VintageEngineering
             api.RegisterBlockClass("VEExtruder", typeof(BlockExtruder));
             api.RegisterBlockClass("VESawmill", typeof(BlockSawmill));
             api.RegisterBlockClass("VECrusher", typeof(BlockCrusher));
+            api.RegisterBlockClass("VEKiln", typeof(BlockKiln));
         }
         public void RegisterBlockEntities(ICoreAPI api)
         {
@@ -54,6 +56,7 @@ namespace VintageEngineering
             api.RegisterBlockEntityClass("VEBEExtruder", typeof(BEExtruder));
             api.RegisterBlockEntityClass("VEBESawmill", typeof(BESawmill));
             api.RegisterBlockEntityClass("VEBECrusher", typeof(BECrusher));
+            api.RegisterBlockEntityClass("VEBEKiln", typeof(BEKiln));
         }
     }
 

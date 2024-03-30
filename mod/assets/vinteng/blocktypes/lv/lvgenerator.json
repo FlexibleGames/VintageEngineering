@@ -8,6 +8,7 @@
 	"variantgroups": [
 		{ "code":"side", "loadFromProperties": "abstract/horizontalorientation" }
 	],
+	"entityBehaviorsByType": { "*": [{ "name": "Animatable" }] },
 	"attributes": {
 		"handbook": {
 			"groupBy": ["velvgenerator-*"],
@@ -16,6 +17,7 @@
 				"*": true
 			}
 		},
+		"craftinganimcode": "craft",
 		"entitytype": "Producer",
 		"priority": 5,
 		"maxpower": 1024,

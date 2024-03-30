@@ -22,6 +22,10 @@ namespace VintageEngineering
         /// <summary>
         /// Machine is On and NOT Crafting.
         /// </summary>
-        Sleeping
+        Sleeping,
+        /// <summary>
+        /// Machine is On, it wants to craft, but something is wrong and has to pause.
+        /// </summary>
+        Paused
     }
 }

@@ -1,0 +1,37 @@
+[
+	{
+		"code": "basic-nailsandstrips",
+		"enabled": true,
+		"attributes": {
+			"requires": "vinteng:vepressmold-nails-tinbronze",
+			"requiresdurability": true,
+			"requirestemp": 800
+		},
+		"powerpercraft": 512,
+		"ingredients": [
+			{ "type": "item", "code": "game:metalplate-*", "quantity": 1, "name": "metal", "allowedVariants": ["copper", "tinbronze", "bismuthbronze", "blackbronze", "silver", "gold"] }
+		],
+		"outputs": [
+			{ "type": "item", "code": "game:metalnailsandstrips-{metal}", "stacksize": 10 },
+			{ "type": "item", "code": "game:metalnailsandstrips-{metal}", "stacksize": 4, "variable": 2 }
+		]
+	},
+	{
+		"code": "advanced-nailsandstrips",
+		"enabled": true,
+		"attributes": {
+			"requires": "vinteng:vepressmold-nails-*",
+			"requiresvariants": ["iron", "meteoriciron", "steel", "titanium"],
+			"requiresdurability": true,
+			"requirestemp": 1100
+		},
+		"powerpercraft": 512,
+		"ingredients": [
+			{ "type": "item", "code": "game:metalplate-*", "quantity": 1, "name": "metal", "allowedVariants": ["copper", "cupronickel", "tinbronze", "bismuthbronze", "blackbronze", "silver", "gold", "iron", "meteoriciron", "steel"] }
+		],
+		"outputs": [
+			{ "type": "item", "code": "game:metalnailsandstrips-{metal}", "stacksize": 10 },
+			{ "type": "item", "code": "game:metalnailsandstrips-{metal}", "stacksize": 4, "variable": 2 }
+		]
+	}
+]

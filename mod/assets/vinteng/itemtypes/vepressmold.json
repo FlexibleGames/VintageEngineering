@@ -1,40 +1,41 @@
 {
-	"code": "vepressmold",	
+	"code": "vepressmold",
 	"storageFlags": 4097,
 	"attributes": {
-		"rackable": true,		
+		"rackable": true,
 		"toolrackTransform": {
 			"translation": { "x": -0.06, "y": 0.48, "z": 0 },
 			"rotation": { "x": -20, "y": -15, "z": 0 },
 			"origin": { "x": 0.5, "y": 0, "z": 0.5 },
 			"scale": 0.75
-		},		
+		},
 		"groundStorageTransform": {
 				"translation": { "x": 0.02, "y": -0.17, "z": -0.02 },
 				"rotation": { "x": 90, "y": 90, "z": -90 },
 				"scale": 0.67
-		},		
+		},
 		"handbook": {
 			"groupBy": ["vepressmold-*"]
 		}
 	},
-	"behaviors": [{ 
+	"behaviors": [{
 		"name": "GroundStorable",
 		"properties": {
-			"layout": "Quadrants",			
+			"layout": "Quadrants",
 			"selectionBox": { "x1": 0, "y1": 0, "z1": 0, "x2": 1, "y2": 0.1, "z2": 1 },
 			"collisionBox": { "x1": 0, "y1": 0, "z1": 0, "x2": 0, "y2": 0.1, "z2": 0 }
 		}
 	}],
 	"variantgroups": [
-        { "code": "type", "states": ["plate", "gear"] },
+        { "code": "type", "states": ["plate", "gear", "nails"] },
 		{ "code": "metal", "states": ["tinbronze", "iron", "meteoriciron", "steel", "titanium"] }
-	],		
+	],
     "maxstacksize": 1,
 	"heldTpHitAnimation": "smithing",
-	"shapeByType": { 
+	"shapeByType": {
 		"*-plate-*": { "base": "vinteng:item/metalpress-platemold" },
-        "*-gear-*": { "base": "vinteng:item/metalpress-gearmold" }
+        "*-gear-*": { "base": "vinteng:item/metalpress-gearmold" },
+		"*-nails-*": { "base": "vinteng:item/metalpress-nailsmold" }
 	},
 	"texturesByType": {
 		"*": {
@@ -42,8 +43,8 @@
 			"null": { "base": "game:block/metal/plate/{metal}" }
 		}
 	},
-	"durabilitybytype": {		
-		"*-tinbronze": 400,	
+	"durabilitybytype": {
+		"*-tinbronze": 400,
 		"*-iron": 800,
 		"*-meteoriciron": 2000,
 		"*-steel": 4500,

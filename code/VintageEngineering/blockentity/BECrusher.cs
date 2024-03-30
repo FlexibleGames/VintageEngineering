@@ -145,7 +145,8 @@ namespace VintageEngineering
         }
 
         /// <summary>
-        /// Output slots IDs are slotid 1 for primary and 2, 3, and 4 for secondary
+        /// Output slots IDs are slotid 1, 2, 3, and 4<br/>
+        /// 
         /// </summary>
         /// <param name="slotid">Index of ItemSlot inventory</param>
         /// <returns>True if there is room.</returns>
@@ -153,17 +154,16 @@ namespace VintageEngineering
         {
             if (slotid == 0 && forStack == null)
             {
-                // a special case to check if any output is full
-                bool[] hasspace = new bool[4];
+                // a special case to check if any output has room                
                 for (int i = 1; i < 5; i++)
                 {
-                    if (inv[i].Empty) hasspace[i-1] = true;
+                    if (inv[i].Empty) return true;
                     else
                     {
-                        if (inv[i].Itemstack.StackSize < inv[i].Itemstack.Collectible.MaxStackSize) hasspace[i-1] = true;
+                        if (inv[i].Itemstack.StackSize < inv[i].Itemstack.Collectible.MaxStackSize) return true;
                     }
                 }
-                return hasspace[0] || hasspace[1] || hasspace[2] || hasspace[3];
+                return false;
             }
             if (slotid < 1 || slotid > 4) return false; // not output slots
             if (inv[slotid].Empty) return true;
@@ -327,27 +327,43 @@ namespace VintageEngineering
                     // recipe crafting complete
                     if (craftMode == "recipe")
                     {
+                        // recipe crafting complete
                         for (int x = 0; x < currentRecipe.Outputs.Length; x++)
                         {
                             ItemStack output = currentRecipe.Outputs[x].ResolvedItemstack.Clone();
-                            output.StackSize = currentRecipe.Outputs[x].VariableResolve(Api.World, "Crusher Recipe Output");
-                            if (output.StackSize == 0) continue;
-                            if (HasRoomInOutput(x+1, output))
+                            output.StackSize = currentRecipe.Outputs[x].VariableResolve(Api.World, "Kiln Recipe Output");
+                            if (output.StackSize == 0) continue; // variable output put out 0, bounce
+
+                            for (int o = 1; o < inv.Count - 1; o++) // should go from 1 to 4
                             {
-                                if (inv[x + 1].Empty) inv[x + 1].Itemstack = output;
-                                else
+                                if (HasRoomInOutput(o, output))
                                 {
-                                    int capleft = inv[x + 1].Itemstack.Collectible.MaxStackSize - inv[x + 1].Itemstack.StackSize;
-                                    if (capleft <= 0) Api.World.SpawnItemEntity(output, Pos.UpCopy(1).ToVec3d()); // this should never fire
-                                    else if (capleft >= output.StackSize) inv[x + 1].Itemstack.StackSize += output.StackSize;
+                                    if (inv[o].Empty)
+                                    {
+                                        inv[o].Itemstack = output.Clone();
+                                        output.StackSize = 0;
+                                        break;
+                                    }
                                     else
                                     {
-                                        inv[x + 1].Itemstack.StackSize += capleft;
-                                        output.StackSize -= capleft;
-                                        Api.World.SpawnItemEntity(output, Pos.UpCopy(1).ToVec3d());
+                                        int capleft = inv[o].Itemstack.Collectible.MaxStackSize - inv[o].Itemstack.StackSize;
+                                        if (capleft >= output.StackSize)
+                                        {
+                                            inv[o].Itemstack.StackSize += output.StackSize;
+                                            output.StackSize = 0;
+                                            break;
+                                        }
+                                        else
+                                        {
+                                            inv[o].Itemstack.StackSize += capleft;
+                                            output.StackSize -= capleft;
+                                            if (output.StackSize == 0) break;
+                                        }
                                     }
+                                    inv[o].MarkDirty();
                                 }
                             }
+                            if (output.StackSize > 0) Api.World.SpawnItemEntity(output, Pos.UpCopy(1).ToVec3d());
                         }
                         InputSlot.TakeOut(currentRecipe.Ingredients[0].Quantity);
                         InputSlot.MarkDirty();

@@ -59,7 +59,10 @@ namespace VintageEngineering.RecipeSystem
             {
                verrs.RegisterCrusherRecipe(r);
             });
-
+            this.LoadRecipes<RecipeKiln>("ve kiln recipe", "recipes/vekiln", delegate (RecipeKiln r)
+            {
+                verrs.RegisterKilnRecipe(r);
+            });
 
             sapi.World.Logger.StoryEvent(Lang.Get("vinteng:storyevent-recipes", Array.Empty<object>()));
         }

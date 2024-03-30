@@ -75,7 +75,7 @@ namespace VintageEngineering
             double[] rgb = new double[3] { 1, 1, 0 }; // Yellow?
             outputText.WithColor(rgb);
 
-            this.SingleComposer = capi.Gui.CreateCompo("vetestgendlg" + (blockPos?.ToString()), window)
+            this.SingleComposer = capi.Gui.CreateCompo("velvgendlg" + (blockPos?.ToString()), window)
                 .AddShadedDialogBG(dialog, true, 5)
                 .AddDialogTitleBar(Lang.Get("vinteng:gui-title-lvgenerator"), new Action(OnTitleBarClose), null, null)
                 .BeginChildElements(dialog)
@@ -89,8 +89,7 @@ namespace VintageEngineering
                 .AddDynamicText("", outputText, textBounds, "outputText")
                 
                 .EndChildElements()
-                .Compose(true);
-            lastRedrawMS = capi.ElapsedMilliseconds-501;
+                .Compose(true);            
         }
 
         private void SendInvPacket(object packet)

@@ -321,7 +321,7 @@ namespace VintageEngineering.Electrical.Systems
                     if (totalpowerused == 0) break;
                     totalpowerused = entity.ExtractPower(totalpowerused, deltaTime);
                 }
-                if (totalpowerused > 1) // 0 just didn't cut it due to rounding issues.
+                if (totalpowerused > (ulong)this.allNodes.Count) // 0 just didn't cut it due to rounding issues.
                 {
                     throw new Exception("VintEng: Did not consume all power used.");
                 }

@@ -1,0 +1,19 @@
+[
+	{
+		"code": "kiln-ironbloom",
+		"enabled": true,
+		"attributes": {
+			"requirestemp": 1100,
+			"requirestime": 30,
+			"_comment": "requirestime overrides powerpercraft and is a duration in seconds after the kiln reaches requirestemp temperature."
+		},
+		"powerpercraft": 256,
+		"ingredients": [
+			{ "type": "item", "code": "game:ironbloom", "quantity": 1 }
+		],
+		"outputs": [
+			{ "type": "item", "code": "game:ingot-iron", "stacksize": 1 },
+			{ "type": "item", "code": "game:metalbit-iron", "stacksize": 4, "variable": 3 }
+		]
+	}
+]

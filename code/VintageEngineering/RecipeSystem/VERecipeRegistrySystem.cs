@@ -76,6 +76,7 @@ namespace VintageEngineering.RecipeSystem
             this.ExtruderRecipes = api.RegisterRecipeRegistry<RecipeRegistryGeneric<RecipeExtruder>>("veextruderrecipes").Recipes;
 
             this.CrusherRecipes = api.RegisterRecipeRegistry<RecipeRegistryGeneric<RecipeCrusher>>("vecrusherrecipes").Recipes;
+            this.KilnRecipes = api.RegisterRecipeRegistry<RecipeRegistryGeneric<RecipeKiln>>("vekilnrecipes").Recipes;
         }
 
         public override void AssetsLoaded(ICoreAPI api)
@@ -167,7 +168,7 @@ namespace VintageEngineering.RecipeSystem
             this.CNCRecipes.Add(recipeCNC);
         }
 
-        public void RegisterKilnRecipes(RecipeKiln recipeKilnRecipes)
+        public void RegisterKilnRecipe(RecipeKiln recipeKilnRecipes)
         {
             if (!VERecipeRegistrySystem.canRegister)
             {

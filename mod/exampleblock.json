@@ -1,81 +1,67 @@
 {
-    "entityclass": "ElectricalBlockEntity",  // MUST be a BE that inherits from ElectricalBlockEntity
 
+    "class": "ElectricBlock", // MUST be a block that inherits from ElectricBlock
+    "entityclass": "ElectricalBlockEntity",  // MUST be a BE that inherits from ElectricBE or ElectricBENoGUI
+	"behaviors": [
+		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "vecrusher-north" }}} // required to place the block in the direction the player is facing
+	],
+	"variantgroups": [
+		{ "code":"side", "loadFromProperties": "abstract/horizontalorientation" } // see behavior above
+	],
+	"entityBehaviorsByType": { "*": [{ "name": "Animatable" }] }, // enables block to show an animation (set in attributes below) while it's crafting
     "attributes": {
 		"entitytype": "Producer", // valid types: Producer, Consumer, Storage, Transformer, Toggle, Relay, Other
-		"priority": 5,			  // set order to receive or give power, in-game UI should be able to set this
-		"maxpower": 1024,		  // What is the max power this block can store? 
-		"maxpps": 128,			  // What is the max power per second this block can move?
-		
-        "wireNodes": [ // All nodes, regardless of PURPOSE. Can have custom tags for more specific definitions read by other mods.
+		"priority": 5,			  // set order to receive or give power, in-game UI should be able to set this, 1 is highest
+		"maxpower": 1024,		  // What is the max power this block can store?
+		"maxpps": 128,			  // What is the max power per second this block can accept and apply to recipes?
+        "craftinganimcode": "craft", // animation CODE and name of the animation to play while the machine is crafting
+
+        "wireNodes": [ // ALL nodes, regardless of PURPOSE. Can have custom tags for more specific definitions read by other mods.
             {
                 "index": 0,
-                "wirefunction": "Power", // from EnumWireFunction: Signal, Power, Communication, Other, All				
+                "wirefunction": "Power", // from EnumWireFunction: Signal, Power, Communication, Other, All
 				"maxconnections": 1, // max connections (incoming + outgoing) of this node
 				"powertier": "LV", // the power tier of this specfic node
-                "networkid": 0,   // node-specific network ID saved and used by Electric Network (or other network types)
+                "networkid": 0,   // currently not used as it is specific to the block entity not the block
                 "x1": 0.36,
                 "y1": 0.1,
                 "z1": 0.36, // these define a cube that is the selection box of the wire node, the wire connects to the CENTER of this cube
                 "x2": 0.64,
                 "y2": 0.4,
                 "z2": 0.64,
-                "rotateXbytype": {
+                "rotateYbytype": { // rotates the selection box above around the Y axis depending on the direction this block is placed.
 					"*-north": 0,
-					"*-east": 270,
-                    "*-south": 180,
-                    "*-west": 90
-                },
-                "rotateZbytype": {
-                    "*-north": 0,
 					"*-east": 270,
                     "*-south": 180,
                     "*-west": 90
                 }
             }
         ]
-    }
+    },
+    "shapeByType": {
+		"*-north": 	{ "base": "vinteng:block/lv/crusher", "rotateY":0 }, // rotates the block automatically when placed according to how the player is facing
+		"*-east": 	{ "base": "vinteng:block/lv/crusher", "rotateY":270 },
+		"*-south": 	{ "base": "vinteng:block/lv/crusher", "rotateY":180 },
+		"*-west": 	{ "base": "vinteng:block/lv/crusher", "rotateY":90 }
+	},
 }
 
+
 {
-    "variantgroups": [ // wire types
+    "variantgroups": [ // Catenary mod wire types
         {
             "code": "type",
             "states": [ "lvpower", "mvpower", "hvpower", "evpower", "allpower", "signalred", "signalgreen", "communication" ]
         }
     ],
-    "shapeByType": {
-        "*-lvpower": { "base": "vinteng:block/wire/{type}"},
-        "*-mvpower": { "base": "vinteng:block/wire/{type}"},
-        "*-hvpower": { "base": "vinteng:block/wire/{type}"},
-        "*-evpower": { "base": "vinteng:block/wire/{type}"},
-        "*-allpower": { "base": "vinteng:block/wire/{type}"},
-        "*-signalred": { "base": "vinteng:block/wire/{type}"},
-        "*-signalgreen": { "base": "vinteng:block/wire/{type}"},
-        "*-communication": { "base": "vinteng:block/wire/{type}"}
+	"shapeByType": {
+        "*-lvpower": { "base": "game:block/wires/barecopper"},
+        "*-mvpower": { "base": "game:block/wires/barecopper"},
+        "*-hvpower": { "base": "game:block/wires/insulated"},
+        "*-evpower": { "base": "game:block/wires/insulated"},
+        "*-allpower": { "base": "game:block/wires/insulated"},
+        "*-signalred": { "base": "game:block/wires/signalred"},
+        "*-signalgreen": { "base": "game:block/wires/signalgreen"},
+        "*-communication": { "base": "game:block/wires/insulated"}
     },
-}
-
-
-// for machines
-"behaviors": [{"name": "HorizontalOrientable"}], 
-"entityBehaviorsByType": { "*-active-*": [{ "name": "Animatable" }] }, // maybe?
-"entityBehaviors": [{"name": "VEBEBehaviorWire"}],	
-"variantgroups": [
-    { "code":"state", "states": ["normal", "active", "sleeping"] },
-    { "code":"side", "loadFromProperties": "abstract/horizontalorientation" }
-],
-"drawtype": "json",
-"faceCullMode": "NeverCull",
-"blockmaterial": "Metal",
-"shapeByType": {
-    "*-north": { "base": "vinteng:block/machine/machinename/{state}", "rotateY":0 },
-    "*-east": { "base": "vinteng:block/machine/machinename/{state}", "rotateY":270 },
-    "*-south": { "base": "vinteng:block/machine/machinename/{state}", "rotateY":180 },
-    "*-west": { "base": "vinteng:block/machine/machinename/{state}", "rotateY":90 },
-},
-
-
-"attributesByType": {
-    "*-variant-*":{ }
 }

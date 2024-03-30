@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,7 +15,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
     /// <summary>
     /// Recipe isn't needed for basic firing of clay objects, but this exists for anything ELSE you want to bake at really high temps.<br/>
     /// Recipe can have a temperature setting under attributes=>requires.<br/>
-    /// Having different slots for input/output makes automation FAR easier and efficient.
+    /// Having 1 input slot and 9 output slots. Many pottery items do not stack.
     /// </summary>
     public class RecipeKiln : IByteSerializable, IVEMachineRecipeBase<RecipeKiln>
     {
@@ -28,20 +29,15 @@ namespace VintageEngineering.RecipeSystem.Recipes
         public bool Enabled { get; set; } = true;
 
         /// <summary>
-        /// Set in attributes => requires, what temperature the machine must be for this recipe to progress?<br/>        
+        /// What temperature does the Kiln need to heat up to to start crafting this recipe.
         /// </summary>
-        public AssetLocation Requires { get; set; }
-
+        public int RequiresTemp {  get; set; }
+        
         /// <summary>
-        /// Set in attributes => requirevariants, what variants, if any, are allowed of this type for this recipe.<br/>
-        /// For example, for the metal press to make Titanium Plate, only the steel and titanium plate mold could be allowed.
+        /// How many seconds must this object be at RequiresTemp to finish crafting.<br/>
+        /// If set, overrides PowerPerCraft
         /// </summary>
-        public string[] RequiresVariants { get; set; }
-
-        /// <summary>
-        /// Specifies whether the item this recipe requires consumes durability every craft.
-        /// </summary>
-        public bool RequiresDurability { get; set; }
+        public float RequiresTime { get; set; }
 
         public string Code { get; set; }
 
@@ -74,7 +70,29 @@ namespace VintageEngineering.RecipeSystem.Recipes
 
         public RecipeKiln Clone()
         {
-            throw new NotImplementedException();
+            CraftingRecipeIngredient[] cloned = new CraftingRecipeIngredient[Ingredients.Length];
+            for (int i = 0; i < Ingredients.Length; i++)
+            {
+                cloned[i] = Ingredients[i].Clone();
+            }
+            VERecipeVariableOutput[] outclone = new VERecipeVariableOutput[Outputs.Length];
+            for (int i = 0; i < Outputs.Length; i++)
+            {
+                outclone[i] = Outputs[i].Clone();
+            }
+            return new RecipeKiln
+            {
+                RecipeID = this.RecipeID,
+                Name = this.Name,
+                Enabled = this.Enabled,                
+                RequiresTemp = this.RequiresTemp,
+                RequiresTime = this.RequiresTime,
+                Code = this.Code,
+                PowerPerCraft = this.PowerPerCraft,
+                Attributes = this.Attributes?.Clone(),
+                Ingredients = cloned,
+                Outputs = outclone
+            };
         }
 
         public Dictionary<string, string[]> GetNameToCodeMapping(IWorldAccessor world)
@@ -119,18 +137,99 @@ namespace VintageEngineering.RecipeSystem.Recipes
             return mappings;
         }
 
+        /// <summary>
+        /// Checks the validity of given ingredient to this recipe.<br/>        
+        /// </summary>        
+        /// <param name="ingredient">ItemSlot input ingredient</param>        
+        /// <returns>True if valid.</returns>
+        public bool Matches(ItemSlot ingredient)
+        {
+            if (ingredient.Empty) return false; // no ingredient to even check, bounce
+
+            if (Ingredients[0].ResolvedItemstack != null)
+            {
+                // Satisfies call ignores fields not needed to test for equality, like stacksize.
+                if (!ingredient.Itemstack.Satisfies(Ingredients[0].ResolvedItemstack)) return false;
+                // check stack sizes... 
+                if (ingredient.Itemstack.StackSize < Ingredients[0].ResolvedItemstack.StackSize) return false;
+            }
+            else
+            {
+                if (!Ingredients[0].SatisfiesAsIngredient(ingredient.Itemstack, true)) return false;
+            }
+            return true;
+        }
         public bool Resolve(IWorldAccessor world, string sourceForErrorLogging)
         {
-            throw new NotImplementedException();
+            for (int i = 0; i < this.Ingredients.Length; i++)
+            {
+                Ingredients[i].Resolve(world, sourceForErrorLogging);
+            }
+            for (int i = 0; i < this.Outputs.Length; i++)
+            {
+                Outputs[i].Resolve(world, sourceForErrorLogging);
+            }
+            if (Attributes != null)
+            {
+                if (Attributes["requirestemp"].Exists)
+                {
+                    RequiresTemp = Attributes["requirestemp"].AsInt();
+                }
+                if (Attributes["requirestime"].Exists)
+                {
+                    RequiresTime = Attributes["requirestime"].AsFloat();
+                }
+            }
+
+            return true;
         }
         public void FromBytes(BinaryReader reader, IWorldAccessor resolver)
         {
-            throw new NotImplementedException();
+            RecipeID = reader.ReadInt32();
+            Name = new AssetLocation(reader.ReadString());
+            Code = reader.ReadBoolean() ? reader.ReadString() : null;
+            PowerPerCraft = reader.ReadInt64();
+            Attributes = reader.ReadBoolean() ? new JsonObject(JToken.Parse(reader.ReadString())) : null;
+            Ingredients = new CraftingRecipeIngredient[reader.ReadInt32()];
+            for (int i = 0; i < Ingredients.Length; i++)
+            {
+                Ingredients[i] = new CraftingRecipeIngredient();
+                Ingredients[i].FromBytes(reader, resolver);
+                Ingredients[i].Resolve(resolver, "Kiln Recipe (FromBytes)");
+            }
+            Outputs = new VERecipeVariableOutput[reader.ReadInt32()];
+            for (int i = 0; i < Outputs.Length; i++)
+            {
+                Outputs[i] = new VERecipeVariableOutput();
+                Outputs[i].FromBytes(reader, resolver.ClassRegistry);
+                Outputs[i].Resolve(resolver, "Kiln Recipe (FromBytes)");
+            }
+            if (Attributes != null)
+            {
+                if (Attributes["requirestemp"].Exists) RequiresTemp = Attributes["requirestemp"].AsInt(0);
+                if (Attributes["requirestime"].Exists) RequiresTime = Attributes["requirestime"].AsFloat(0);
+            }
         }
 
         public void ToBytes(BinaryWriter writer)
         {
-            throw new NotImplementedException();
+            writer.Write(RecipeID);
+            writer.Write(Name.ToShortString());
+            writer.Write(Code != null);
+            if (Code != null) { writer.Write(Code); }
+            writer.Write(PowerPerCraft);
+            writer.Write(Attributes != null);
+            if (Attributes != null) { writer.Write(Attributes.Token.ToString()); }
+            writer.Write(Ingredients.Length);
+            for (int i = 0; i < Ingredients.Length; i++)
+            {
+                Ingredients[i].ToBytes(writer);
+            }
+            writer.Write(Outputs.Length);
+            for (int i = 0; i < Outputs.Length; i++)
+            {
+                Outputs[i].ToBytes(writer);
+            }
         }
     }
 }
