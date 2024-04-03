@@ -66,9 +66,11 @@ namespace VintageEngineering.Electrical.Systems
 
             // we have networks, lets tick them
             foreach (IElectricNetwork net in networks.Values)
-            {          
+            {
+
                 net.UpdateTick(deltatime);
             }
+
         }
 
         /// <summary>
@@ -96,7 +98,7 @@ namespace VintageEngineering.Electrical.Systems
             IWireNetwork startnet = sapi.World.BlockAccessor.GetBlockEntity(start.blockPos) as IWireNetwork;
             IWireNetwork endnet = sapi.World.BlockAccessor.GetBlockEntity(end.blockPos) as IWireNetwork;
 
-            if (startentity == null || endentity == null)
+            if (startnet == null || endnet == null)
             {
                 sapi.Logger.Error($"VintEng: Error removing Electric connection, start or end entity was not an IElectricNetwork");
                 return;
@@ -107,8 +109,7 @@ namespace VintageEngineering.Electrical.Systems
 
             if (startid != endid)
             {
-                sapi.Logger.Error($"VintEng: Somehow removing a connection with different networksid's. Should not be possible.");
-                return;
+                sapi.Logger.Error($"VintEng: Somehow removing a connection with different networksid's. Should not be possible.");                
             }
 
             int numconstart = startentity.NumConnections(start.index); // how many connections does the start node have? should never be 0
@@ -352,6 +353,16 @@ namespace VintageEngineering.Electrical.Systems
             return network.NetworkID;
         }
 
+        public void CreateNetwork(long networkID, WireNode node)
+        {
+            if (!networks.ContainsKey(networkID))
+            {
+                // network with this id doesnt exist...
+                networks.Add(networkID, new ElectricNetwork(networkID, sapi));
+            }
+            networks[networkID].AddNode(node, sapi.World.BlockAccessor, false);
+        }
+
         /// <summary>
         /// Creates a new network from a list of nodes and returns the network ID.
         /// </summary>
@@ -379,7 +390,7 @@ namespace VintageEngineering.Electrical.Systems
             return CreateNetwork(nodes.ToList<WireNode>());
         }
 
-        /// Initializes the electrical networks from a tree attribute object that was saved to disk.
+        /// Initializes the electrical networks from a Serialized object that was saved to disk.
         /// <br>Will only be called by the server when loading a save-game</br>
         /// <param name="networkbytes">Byte Array from Saved (Serialized) network data.</param>
         /// <param name="idbytes">Byte Array from Saved (Serialized) nextnetworkid data.</param>
@@ -392,12 +403,24 @@ namespace VintageEngineering.Electrical.Systems
             if (networkbytes != null)
             {                
                 List<long> netstodelete = new List<long>();
-                networks = SerializerUtil.Deserialize<Dictionary<long, ElectricNetwork>>(networkbytes);
+                try
+                {
+                    List<ElectricNetwork> netlist = SerializerUtil.Deserialize<List<ElectricNetwork>>(networkbytes);
+                    foreach (ElectricNetwork net in netlist)
+                    {
+                        networks.Add(net.NetworkID, net);
+                    }
+                }
+                catch (Exception)
+                {
+                    networks = SerializerUtil.Deserialize<Dictionary<long, ElectricNetwork>>(networkbytes);
+                }
                 nextNetworkID = SerializerUtil.Deserialize<long>(idbytes);
                 foreach (KeyValuePair<long, ElectricNetwork> net in networks)
                 {
                     if (net.Value.api == null) net.Value.api = this.sapi;
-                    if (net.Value.allNodes.Count < 2) netstodelete.Add(net.Key); // delete any dangling 1 node networks
+                    if (net.Value.NetworkID == 0) netstodelete.Add(net.Key);
+                    //if (net.Value.allNodes.Count < 2) netstodelete.Add(net.Key); // delete any dangling 1 node networks
                 }
                 if (netstodelete.Count > 0)
                 {
@@ -407,6 +430,21 @@ namespace VintageEngineering.Electrical.Systems
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Package networks for saving to disk, converts from Dictionary to Byte[]
+        /// </summary>
+        /// <returns></returns>
+        public byte[] NetworkBytes()
+        {
+            byte[] networkbytes = null;
+            foreach (KeyValuePair<long, ElectricNetwork> nets in networks)
+            {
+                nets.Value.NetworkID = nets.Key; // DOUBLEY MAKING SURE THIS IS SET
+            }
+            networkbytes = SerializerUtil.Serialize(networks.Values.ToList<ElectricNetwork>());
+            return networkbytes;
         }
     }
 }

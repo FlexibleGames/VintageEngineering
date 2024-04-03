@@ -365,38 +365,37 @@ namespace VintageEngineering
         }
 
         /// <summary>
-        /// Check whether the output inventory is full. Index of 0 is main output, index of 1 is the optional additional output.
+        /// Output slots IDs are slotid 1 and 2<br/>
+        /// Pass in slotid = 0 and forStack = null to return if ANY slot has room.
         /// </summary>
-        /// <param name="outputslotid">0 or 1, any other values might cause a blackhole and ruin the universe.</param>
-        /// <returns>True if there is room in that inventory slot.</returns>
-        public bool HasRoomInOutput(int outputslotid = 0)
+        /// <param name="slotid">Index of ItemSlot inventory</param>
+        /// <returns>True if there is room.</returns>
+        public bool HasRoomInOutput(int slotid, ItemStack forStack)
         {
-            if (currentPressRecipe != null && !InputSlot.Empty) // active recipe
+            if (slotid == 0 && forStack == null)
             {
-                if (InputSlot.Itemstack.Satisfies(currentPressRecipe.Ingredients[0].ResolvedItemstack) )
+                // a special case to check if any output is full                
+                for (int i = 1; i < 3; i++)
                 {
-                    // input stack is valid for active recipe, the recipe might be valid, but the outputs are from another recipe
-                    // machine needs to be emptied for new recipe to start
-                    if (!Inventory[outputslotid+1].Empty)
-                    {
-                        // if the output slot has something in it, is it the same thing we make?
-                        if (Inventory[outputslotid+1].Itemstack.Collectible.Code == currentPressRecipe.Outputs[outputslotid].ResolvedItemstack.Collectible.Code)
-                        {
-                            // the same thing is in the output as we make, so can make more...?
-                            if (Inventory[outputslotid + 1].Itemstack.StackSize < Inventory[outputslotid+1].Itemstack.Collectible.MaxStackSize)
-                            {
-                                return true;
-                            }
-                        }
-
-                    }
+                    if (inventory[i].Empty) return true;
                     else
                     {
-                        return true;
+                        if (inventory[i].Itemstack.StackSize < inventory[i].Itemstack.Collectible.MaxStackSize) return true;
                     }
                 }
+                return false;
             }
-            return false;
+            if (slotid < 1 || slotid > 2) return false; // not output slots
+            if (inventory[slotid].Empty) return true;
+
+            // check equality by code
+            if (inventory[slotid].Itemstack.Collectible.Code != forStack.Collectible.Code) return false;
+
+            // check stack size held versus max
+            int numinslot = inventory[slotid].StackSize;
+            if (numinslot >= forStack.Collectible.MaxStackSize) return false;
+
+            return true;
         }
         public void OnSimTick(float deltatime)
         {
@@ -416,7 +415,7 @@ namespace VintageEngineering
                     if (isCrafting && RecipeProgress < 1f) // machine is activly crafting and recipe isn't done
                     {
                         if (CurrentPower == 0) return; // we have no power, there's no point in trying. bounce
-                        if (!HasRoomInOutput(0)) return; // output is full... bounce
+                        if (!HasRoomInOutput(0, null)) return; // output is full... bounce
 
                         // scale power to apply to recipe by how much time has passed
                         float powerToApply = MaxPPS * deltatime;
@@ -438,7 +437,7 @@ namespace VintageEngineering
                     {
                         // progress finished!
                         ItemStack outputstack = currentPressRecipe.Outputs[0].ResolvedItemstack.Clone();
-                        if (HasRoomInOutput(0))
+                        if (HasRoomInOutput(1, outputstack))
                         {
                             // output is empty! need a new stack
                             // Api.World.GetItem(craftingCode)
@@ -476,7 +475,7 @@ namespace VintageEngineering
                                 // depending on Variable set in output stacksize COULD be 0.
                                 ItemStack extraoutputstack = new ItemStack(Api.World.GetItem(currentPressRecipe.Outputs[1].ResolvedItemstack.Collectible.Code),
                                                                            varoutput);
-                                if (extraoutputstack.StackSize > 0 && HasRoomInOutput(1))
+                                if (extraoutputstack.StackSize > 0 && HasRoomInOutput(2, extraoutputstack))
                                 {
                                     if (ExtraOutputSlot.Empty)
                                     {
@@ -665,7 +664,8 @@ namespace VintageEngineering
             FindMatchingRecipe();
             if (Api != null && Api.Side == EnumAppSide.Client)
             {
-                if (this.clientDialog != null)
+                StateChange(MachineState);
+                if (this.clientDialog != null && clientDialog.IsOpened())
                 {
                     clientDialog.Update(RecipeProgress, CurrentPower, currentPressRecipe);
                 }

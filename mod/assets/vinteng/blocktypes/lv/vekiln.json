@@ -20,7 +20,7 @@
 		"entitytype": "Consumer",
 		"priority": 5,
 		"maxpower": 1024,
-		"maxpps": 64,
+		"maxpps": 128,
         "wireNodes": [
             {
                 "index": 0,

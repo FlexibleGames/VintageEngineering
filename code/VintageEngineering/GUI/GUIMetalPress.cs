@@ -162,7 +162,7 @@ namespace VintageEngineering
                 {
                     outputhelptext = Lang.Get("vinteng:gui-machine-ingredients");// second priority is an ingredient
                 }
-                if (!betestmach.HasRoomInOutput(0) || !betestmach.HasRoomInOutput(1))
+                if (!betestmach.HasRoomInOutput(0, null))
                 {
                     outputhelptext = Lang.Get("vinteng:gui-machine-isfull");   // an output is full...                    
                 }

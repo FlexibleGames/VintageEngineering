@@ -6,7 +6,17 @@
 		{ "code": "type", "states": [ "lvpower", "mvpower", "hvpower", "evpower", "allpower", "signalred", "signalgreen", "communication"] },
 		{ "code":"position", "states": ["up", "down"], "loadFromProperties": "abstract/horizontalorientation" }
 	],
-	"behaviors": [{"name": "OmniAttachable", "properties": { "facingCode": "position" }}],
+	"behaviors": [{"name": "OmniAttachable", "properties": {
+					"facingCode": "position",
+					"attachmentAreas": {
+						"down": { "x1": 7, "y1": 15, "z1": 7, "x2": 8, "y2": 15, "z2": 8 },
+						"up": { "x1": 7, "y1": 0, "z1": 7, "x2": 8, "y2": 0, "z2": 8 },
+						"north": { "x1": 7, "y1": 7, "z1": 0, "x2": 8, "y2": 8, "z2": 1 },
+						"east": { "x1": 7, "y1": 7, "z1": 0, "x2": 8, "y2": 8, "z2": 1, "rotateY": 90 },
+						"south": { "x1": 7, "y1": 7, "z1": 0, "x2": 8, "y2": 8, "z2": 1, "rotateY": 180 },
+						"west": { "x1": 7, "y1": 7, "z1": 0, "x2": 8, "y2": 8, "z2": 1, "rotateY": 270 }
+					}
+					}}],
 	"creativeinventory": { "general": ["*"], "construction": ["*"] },
 	"shapeByType": {
         "*-north":  { "base": "game:block/relays/{type}", "rotateX": 270 },
@@ -31,7 +41,7 @@
 		"maxpps": 0
 	},
 	"attributesByType": {
-		"*-lvpower-*":{			
+		"*-lvpower-*":{
 			"wireNodes": [
 				{
 					"index": 0,
@@ -41,7 +51,7 @@
 					"networkid": 0,
 					"x1": 0.375,
 					"y1": 0.0625,
-					"z1": 0.375, 
+					"z1": 0.375,
 					"x2": 0.625,
 					"y2": 0.25,
 					"z2": 0.625,
@@ -74,7 +84,7 @@
 					"networkid": 0,
 					"x1": 0.375,
 					"y1": 0.1875,
-					"z1": 0.375, 
+					"z1": 0.375,
 					"x2": 0.625,
 					"y2": 0.4375,
 					"z2": 0.625,
@@ -107,7 +117,7 @@
 					"networkid": 0,
 					"x1": 0.375,
 					"y1": 0.3125,
-					"z1": 0.375, 
+					"z1": 0.375,
 					"x2": 0.625,
 					"y2": 0.5,
 					"z2": 0.625,
@@ -140,7 +150,7 @@
 					"networkid": 0,
 					"x1": 0.375,
 					"y1": 0.375,
-					"z1": 0.375, 
+					"z1": 0.375,
 					"x2": 0.625,
 					"y2": 0.5,
 					"z2": 0.625,
@@ -173,7 +183,7 @@
 					"networkid": 0,
 					"x1": 0.375,
 					"y1": 0.1875,
-					"z1": 0.375, 
+					"z1": 0.375,
 					"x2": 0.625,
 					"y2": 0.4375,
 					"z2": 0.625,
@@ -201,11 +211,11 @@
 				{
 					"index": 0,
 					"wirefunction": "Signal",
-					"maxconnections": 3,					
+					"maxconnections": 3,
 					"networkid": 0,
 					"x1": 0.375,
 					"y1": 0.125,
-					"z1": 0.375, 
+					"z1": 0.375,
 					"x2": 0.625,
 					"y2": 0.3125,
 					"z2": 0.625,
@@ -233,11 +243,11 @@
 				{
 					"index": 0,
 					"wirefunction": "Signal",
-					"maxconnections": 3,					
+					"maxconnections": 3,
 					"networkid": 0,
 					"x1": 0.375,
 					"y1": 0.125,
-					"z1": 0.375, 
+					"z1": 0.375,
 					"x2": 0.625,
 					"y2": 0.3125,
 					"z2": 0.625,
@@ -265,11 +275,11 @@
 				{
 					"index": 0,
 					"wirefunction": "Communication",
-					"maxconnections": 5,					
+					"maxconnections": 5,
 					"networkid": 0,
 					"x1": 0.375,
 					"y1": 0.1875,
-					"z1": 0.375, 
+					"z1": 0.375,
 					"x2": 0.625,
 					"y2": 0.4375,
 					"z2": 0.625,
@@ -292,7 +302,7 @@
 				}
 			]
 		}
-	},	
+	},
 	"collisionSelectionBoxByType": {
 		"*-up":    { "x1": 0.375, "y1": 0, "z1": 0.375, "x2": 0.625, "y2": 0.4375, "z2": 0.625 },
 		"*-down":  { "x1": 0.375, "y1": 0, "z1": 0.375, "x2": 0.625, "y2": 0.4375, "z2": 0.625, "rotateX": 180 },
@@ -330,7 +340,7 @@
             "all": false,
             "south": true
         }
-    },	
+    },
 	"emitSideAo": { "all": false },
 	"lightAbsorption": 0,
 	"rainPermeable": true,
@@ -353,7 +363,7 @@
 		"translation": { "x": 0, "y": -17, "z": 0 },
 		"rotation": { "x": -19, "y": -37, "z": -1 },
 		"scale": 2.49
-	},	
+	},
 	"drops": [
 		{
 			"type": "block",

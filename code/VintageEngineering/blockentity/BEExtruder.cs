@@ -524,6 +524,7 @@ namespace VintageEngineering
 
             if (Api != null && Api.Side == EnumAppSide.Client)
             {
+                StateChange(MachineState);
                 if (clientDialog != null)
                 {
                     clientDialog.Update(RecipeProgress, CurrentPower, currentRecipe);

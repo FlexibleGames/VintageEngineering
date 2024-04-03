@@ -12,8 +12,7 @@ namespace VintageEngineering
 {
     public class GUILVGenerator : GuiDialogBlockEntity
     {
-        private BELVGenerator betestgen;
-        private long lastRedrawMS;
+        private BELVGenerator betestgen;        
         private ulong _currentPower;
         private ulong _maxPower;
 

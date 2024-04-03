@@ -55,7 +55,7 @@ namespace VintageEngineering.Electrical
             manager = new ElectricalNetworkManager(sapi, this);
             manager.InitializeManger();
             api.Event.SaveGameLoaded += this.Event_SaveGameLoaded;
-            api.Event.GameWorldSave += this.Event_GameWorldSave;            
+            api.Event.GameWorldSave += this.Event_GameWorldSave;                  
         }
 
         private void Event_GameWorldSave()
@@ -63,7 +63,7 @@ namespace VintageEngineering.Electrical
             // This is only run server-side.
             if (manager.networks.Count > 0)
             {
-                this.sapi.WorldManager.SaveGame.StoreData("electricalnetworks", SerializerUtil.Serialize<Dictionary<long, ElectricNetwork>>(manager.networks));
+                this.sapi.WorldManager.SaveGame.StoreData("electricalnetworks", manager.NetworkBytes());
                 this.sapi.WorldManager.SaveGame.StoreData("electricalnetworknextid", SerializerUtil.Serialize<long>(manager.nextNetworkID));
             }
         }

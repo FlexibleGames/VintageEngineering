@@ -160,6 +160,7 @@ namespace VintageEngineering
                     if (inv[i].Empty) return true;
                     else
                     {
+                        // is it the same item?
                         if (inv[i].Itemstack.StackSize < inv[i].Itemstack.Collectible.MaxStackSize) return true;
                     }
                 }
@@ -565,7 +566,7 @@ namespace VintageEngineering
             crushPowerCostTotal = (ulong)(tree.GetLong("crushrecipepowertotal"));
 //            nuggetType = tree.GetItemstack("nuggettype");
             FindMatchingRecipe();
-
+            if (Api != null && Api.Side == EnumAppSide.Client) { StateChange(MachineState); }
             if (clientDialog != null && clientDialog.IsOpened())
             {
                 clientDialog.Update(RecipeProgress, CurrentPower, currentRecipe, crushingProperties, nuggetType);

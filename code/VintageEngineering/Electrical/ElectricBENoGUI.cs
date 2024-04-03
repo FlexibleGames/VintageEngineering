@@ -78,6 +78,33 @@ namespace VintageEngineering.Electrical
             base.Initialize(api);
             if (electricConnections == null) electricConnections = new Dictionary<int, List<WireNode>>();
             if (NetworkIDs == null) NetworkIDs = new Dictionary<int, long>();
+            if (NetworkIDs.Count > 0 && electricConnections.Count > 0 && api.Side == EnumAppSide.Server)
+            {
+                // lets try to add ourselves to the proper network
+                ElectricalNetworkManager nm = api.ModLoader.GetModSystem<ElectricalNetworkMod>(true).manager;
+                if (nm != null)
+                {
+                    foreach (KeyValuePair<int, long> networkpair in NetworkIDs)
+                    {
+                        if (base.Block is WiredBlock wiredBlock)
+                        {
+                            if (wiredBlock.WireAnchors == null) continue;
+                            WireNode node = wiredBlock.WireAnchors[networkpair.Key];
+                            if (node == null) continue;
+                            node.blockPos = this.Pos; // extremely important that we add Block Position to this.
+                            if (networkpair.Value == 0) continue; // part of a network but with id = 0 means a corrupted BE
+                            if (!nm.networks.ContainsKey(networkpair.Value))
+                            {
+                                nm.CreateNetwork(networkpair.Value, node);
+                            }
+                            else
+                            {
+                                nm.networks[networkpair.Value].AddNode(node, api.World.BlockAccessor, false);
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -106,6 +133,27 @@ namespace VintageEngineering.Electrical
                 return true;
             }
             return false;
+        }
+
+        public override void OnBlockUnloaded()
+        {
+            if (Api.Side == EnumAppSide.Server)
+            {
+                ElectricalNetworkManager nm = Api.ModLoader.GetModSystem<ElectricalNetworkMod>(true).manager;
+                if (nm == null) return;
+                foreach (KeyValuePair<int, long> networkpair in NetworkIDs)
+                {
+                    if (base.Block is WiredBlock wiredBlock)
+                    {
+                        if (wiredBlock.WireAnchors == null) continue;
+                        WireNode node = wiredBlock.WireAnchors[networkpair.Key];
+                        if (node == null) continue;
+                        node.blockPos = this.Pos;  // extremely important that we add Block Position to this.
+                        nm.networks[NetworkIDs[networkpair.Key]].DoUnload(node, this);
+                    }
+                }
+            }
+            base.OnBlockUnloaded();
         }
 
         /// <summary>
@@ -205,7 +253,7 @@ namespace VintageEngineering.Electrical
             if (electricpower == 0) return powerWanted; // we have no power to give
 
             // what is the max power transfer of this machine for this DeltaTime update tick?
-            ulong pps = (ulong)(base.Block.Attributes["maxpps"].AsDouble(0) * dt); // rounding issues abound
+            ulong pps = (ulong)Math.Round(MaxPPS * dt); // rounding issues abound
             // pps at this point is the PPS from JSON multiplied by DeltaTime (fractional second timing).
             // NOT going to deal with fractinal amounts of power. So Rounding errors are expected.
 
@@ -236,9 +284,10 @@ namespace VintageEngineering.Electrical
             if (CurrentPower == MaxPower) return powerOffered; // we're full, bounce fast
 
             // what is the max power transfer of this machine for this DeltaTime update tick?
-            ulong pps = (ulong)(base.Block.Attributes["maxpps"].AsDouble(0) * dt); // rounding issues abound
+            ulong pps = (ulong)Math.Round(MaxPPS * dt); // rounding issues abound
 
             if (pps == 0) pps = ulong.MaxValue; // PPS of 0 means NO LIMIT ***This would break recipes***
+            else pps += 2;
 
             ulong capacityempty = MaxPower - CurrentPower;
 

@@ -18,6 +18,8 @@ namespace VintageEngineering.Electrical.Systems.Catenary
         /// </summary>
         protected WireNode[] wireAnchors;
 
+        public WireNode[] WireAnchors { get { return wireAnchors; } }        
+
         protected CatenaryMod cm;
 
         public WiredBlock(): base()
@@ -26,9 +28,9 @@ namespace VintageEngineering.Electrical.Systems.Catenary
 
         public override void OnLoaded(ICoreAPI api)
         {
-            base.OnLoaded(api);            
+            base.OnLoaded(api);
             JsonObject[] wirenodes = Attributes?["wireNodes"]?.AsArray();
-            cm = api.ModLoader.GetModSystem<CatenaryMod>();
+            cm = api.ModLoader.GetModSystem<CatenaryMod>(true);
             if (wirenodes != null)
             {
                 try
@@ -37,7 +39,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
                     
                     for (int i = 0; i < wirenodes.Length; i++)
                     {
-                        wireAnchors[i] = new WireNode(wirenodes[i]); 
+                        wireAnchors[i] = new WireNode(wirenodes[i]);                               
                     }
                     return;
                 }

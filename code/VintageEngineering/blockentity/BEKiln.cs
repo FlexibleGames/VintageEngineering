@@ -254,8 +254,9 @@ namespace VintageEngineering
             }
             if (fromTemp > toTemp) basechange = -basechange;
             if (Math.Abs(fromTemp - toTemp) < 1f) return toTemp;
-
-            return fromTemp + basechange;
+            float newtemp = fromTemp + basechange;
+            if (newtemp < -273) return toTemp; // something odd happened, can't go below absolute 0.
+            return newtemp;
         }
 
 
@@ -555,8 +556,8 @@ namespace VintageEngineering
             _burntimeelapsed = tree.GetFloat("combustedtime", 0);
             environmentTemp = tree.GetFloat("worldtemp", 20);
             currentTemp = tree.GetFloat("currenttemp", environmentTemp);
-           
 
+            if (Api != null && Api.Side == EnumAppSide.Client) { StateChange(MachineState); }
             if (clientDialog != null)
             {
                 clientDialog.Update(RecipeProgress, CurrentPower, currentTemp, currentRecipe, _cproperties);

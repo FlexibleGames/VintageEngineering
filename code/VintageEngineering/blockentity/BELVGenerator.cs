@@ -411,6 +411,7 @@ namespace VintageEngineering
             fuelBurnTime = tree.GetFloat("fuelBurnTime", 0);
             if (Api != null && Api.Side == EnumAppSide.Client)
             {
+                StateChange(MachineState); 
                 if (this.clientDialog != null) clientDialog.Update(genTemp, fuelBurnTime, CurrentPower);
                 MarkDirty(true, null);
             }

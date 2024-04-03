@@ -381,7 +381,8 @@ namespace VintageEngineering
             isCrafting = tree.GetBool("iscrafting", false);
             if (!inv[0].Empty) FindMatchingRecipe();
 
-            if (clientDialog != null)
+            if (Api != null && Api.Side == EnumAppSide.Client) { StateChange(MachineState); }
+            if (clientDialog != null && clientDialog.IsOpened())
             {
                 clientDialog.Update(RecipeProgress, CurrentPower, currentRecipe);
             }            

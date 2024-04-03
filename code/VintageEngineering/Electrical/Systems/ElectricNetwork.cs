@@ -20,7 +20,7 @@ namespace VintageEngineering.Electrical.Systems
         /// <summary>
         /// NetworkID assigned to this network.
         /// </summary>
-        long NetworkID { get; }
+        long NetworkID { get; set; }
 
         /// <summary>
         /// Marks the Network dirty
@@ -33,21 +33,25 @@ namespace VintageEngineering.Electrical.Systems
         bool IsSleeping { get; }
 
         /// <summary>
-        /// Add a node to this Network.
-        /// <br>Automatically sorts internal Lists by node priority for network ticking.</br>
-        /// <br>Also sets the new nodes NetworkID to the this networks ID.</br>
+        /// Add a WireNode to this Network.<br/>
+        /// Automatically sorts internal Lists by node priority for network ticking.<br/>
+        /// Optionally sets the new nodes NetworkID to the this networks ID.<br/>
+        /// It is vital the given WireNode contain a BlockPos.
         /// </summary>
         /// <param name="node">WireNode to add</param>
         /// <param name="blockAccessor">BlockAccessor</param>
-        void AddNode(WireNode node, IBlockAccessor blockAccessor);
+        /// <param name="updateEntity">Set to false to not change the Network data saved by the Enity.</param>
+        void AddNode(WireNode node, IBlockAccessor blockAccessor, bool updateEntity = true);
 
         /// <summary>
-        /// Remove Node From this Network
-        /// <br>Resets to 0 the NetworkID of the node if no other connections exist.</br>
+        /// Remove a WireNode From this Network<br/>
+        /// Optionally resets to 0 the NetworkID of the node if no other connections exist.<br/>
+        /// It is vital the given WireNode contain a BlockPos
         /// </summary>
         /// <param name="node">WireNode to remove</param>
         /// <param name="blockAccessor">BlockAccessor</param>
-        void RemoveNode(WireNode node, IBlockAccessor blockAccessor);
+        /// <param name="updateEntity">Set to false to not change the Network data saved by the Enity.</param>
+        void RemoveNode(WireNode node, IBlockAccessor blockAccessor, bool updateEntity = true);
 
         /// <summary>
         /// Tick (Update) this network
@@ -65,7 +69,7 @@ namespace VintageEngineering.Electrical.Systems
     /// <summary>
     /// A single Electric Network
     /// </summary>
-    [ProtoContract()]
+    [ProtoContract]
     public class ElectricNetwork : IElectricNetwork
     {
         /// <summary>
@@ -90,37 +94,38 @@ namespace VintageEngineering.Electrical.Systems
         private List<IElectricalBlockEntity> storageNodes = new List<IElectricalBlockEntity>();
 
         //internal ElectricalNetworkMod enm;
-
-        /// <summary>
-        /// A valid network id should never be 0 or negative.
-        /// </summary>
-        [ProtoMember(2)]
-        private long networkID;
-
         public ICoreServerAPI api;        
-        private bool isDirty;        
+        private bool isDirty;
+        private bool isPartialUnloaded;
         private bool isSleeping;
         private float sleepTimer;
+        private long _networkID;
 
-        public long NetworkID { get { return networkID; } }
+        [ProtoMember(2)]
+        public long NetworkID { get => _networkID; set => _networkID = value; }
         public bool IsDirty { get => isDirty; set => isDirty = value; }
 
+        public int NodeCount { get => allNodes.Count; }
+
+        /// <summary>
+        /// Is part (or all) of this network unloaded due to chunks unloading.
+        /// </summary>
+        public bool IsPartialUnloaded { get => isPartialUnloaded; }
         public bool IsSleeping => isSleeping;
 
         public ElectricNetwork()
         {
         }
-        public ElectricNetwork(long networkid, ICoreServerAPI _api)
+        public ElectricNetwork(long _networkid, ICoreServerAPI _api)
         {
-//            enm = mod;
             api = _api;
-            this.networkID = networkid;
+            this.NetworkID = _networkid;
             this.isSleeping = false;
             sleepTimer = 0;
             
         }
-        
-        public void AddNode(WireNode node, IBlockAccessor blockAccessor)
+
+        public void AddNode(WireNode node, IBlockAccessor blockAccessor, bool updateEntity = true)
         {
             if (allNodes.Contains(node))
             {
@@ -135,9 +140,9 @@ namespace VintageEngineering.Electrical.Systems
             if (electricalBlockEntity ==  null) { throw new Exception("Attempting to add Electrical Node that is NOT an ElectricalBlockEntity!"); }
 
             IWireNetwork wirenet = blockAccessor.GetBlockEntity(node.blockPos) as IWireNetwork;
-            if (wirenet != null)
+            if (wirenet != null && updateEntity)
             {
-                wirenet.SetNetworkID(networkID);
+                wirenet.SetNetworkID(NetworkID);
             }
 
             allNodes.Add(node);
@@ -166,13 +171,41 @@ namespace VintageEngineering.Electrical.Systems
             blockAccessor.GetBlockEntity(node.blockPos).MarkDirty();
         }
 
-        public void RemoveNode(WireNode node, IBlockAccessor blockAccessor)
+        public void DoUnload(WireNode node, IElectricalBlockEntity unloadEntity)
+        {
+            if (unloadEntity == null || node == null) return;
+            if (!allNodes.Remove(node))
+            {
+                throw new Exception("Electric Network: Unload Node not found to remove.");
+            }
+            switch (unloadEntity.ElectricalEntityType)
+            {
+                case EnumElectricalEntityType.Consumer:
+                    consumerNodes.Remove(unloadEntity);
+                    break;
+                case EnumElectricalEntityType.Producer:
+                    producerNodes.Remove(unloadEntity);
+                    break;
+                case EnumElectricalEntityType.Toggle:
+                case EnumElectricalEntityType.Storage:
+                case EnumElectricalEntityType.Transformer:
+                    storageNodes.Remove(unloadEntity);
+                    break;
+                default: break;
+            }
+            isPartialUnloaded = true;
+        }
+
+        public void RemoveNode(WireNode node, IBlockAccessor blockAccessor, bool updateEntity = true)
         {
             if (allNodes.Contains(node))
             {
                 IElectricalBlockEntity electricalBlockEntity = blockAccessor.GetBlockEntity(node.blockPos) as IElectricalBlockEntity;
 
-                if (electricalBlockEntity == null) { throw new Exception("Attempting to remove Electrical Node that is NOT an IElectricalBlockEntity!"); }
+                if (electricalBlockEntity == null) 
+                { 
+                    throw new Exception("Attempting to remove Electrical Node that is NOT an IElectricalBlockEntity!"); 
+                }
 
                 IWireNetwork wirenet = blockAccessor.GetBlockEntity(node.blockPos) as IWireNetwork;
                 if (wirenet != null) 
@@ -189,7 +222,8 @@ namespace VintageEngineering.Electrical.Systems
                     case EnumElectricalEntityType.Producer:
                         producerNodes.Remove(electricalBlockEntity);
                         break;
-                    case EnumElectricalEntityType.Storage:
+                    case EnumElectricalEntityType.Toggle:
+                    case EnumElectricalEntityType.Storage:                    
                     case EnumElectricalEntityType.Transformer:
                         storageNodes.Remove(electricalBlockEntity);
                         break;
@@ -208,7 +242,7 @@ namespace VintageEngineering.Electrical.Systems
             consumerNodes.Clear();
             producerNodes.Clear();
             storageNodes.Clear();
-            networkID = 0;
+            //networkID = 0;
         }
 
         /// <summary>
@@ -231,11 +265,13 @@ namespace VintageEngineering.Electrical.Systems
             ulong totalexcesspower = 0;
             ulong totalstorageused = 0;
 
+            if (allNodes.Count == 1) return; // one node, no need to tick it.
+
             if (producerNodes.Count == 0 &&
                 storageNodes.Count == 0 &&
                 consumerNodes.Count == 0)
             {
-                if (!UpdateNetwork(api.World.BlockAccessor)) return;
+                UpdateNetwork(api.World.BlockAccessor);
             }
 
             if (isSleeping)
@@ -387,11 +423,12 @@ namespace VintageEngineering.Electrical.Systems
         }
 
         /// <summary>
-        /// Call to re-process allNodes into their respective list buckets        
+        /// Call to re-process allNodes into their respective list buckets
         /// </summary>
         /// <returns>False if chunk not loaded.</returns>
         public bool UpdateNetwork(IBlockAccessor blockAccessor)
         {
+            isPartialUnloaded = false;
             if (allNodes.Count > 0)
             {                
                 // if we have nodes, then reset and rebuild our lists
@@ -408,9 +445,10 @@ namespace VintageEngineering.Electrical.Systems
 
                 foreach (WireNode node in allNodes)
                 {
-                    if (!api.World.IsFullyLoadedChunk(node.blockPos))
-                    {
-                        return false;
+                    if (!api.World.IsFullyLoadedChunk(node.blockPos)) // this fires when the world first loads.
+                    {                        
+                        // chunk node is in is not loaded, remove the node
+                        continue;
                     }
                     IElectricalBlockEntity entity = blockAccessor.GetBlockEntity(node.blockPos) as IElectricalBlockEntity;
                     if (entity == null) 
@@ -432,7 +470,6 @@ namespace VintageEngineering.Electrical.Systems
                         case EnumElectricalEntityType.Storage:
                         case EnumElectricalEntityType.Transformer:
                             storageNodes.Add(entity);
-
                             break;
                         default: break;
                     }
@@ -443,7 +480,11 @@ namespace VintageEngineering.Electrical.Systems
                     if (nodestoremove.Count == allNodes.Count)
                     {
                         Clear(); // if there are zero valid nodes, clear the lot of them
-                        api.ModLoader.GetModSystem<ElectricalNetworkMod>(true).manager.DeleteNetwork(NetworkID); // delete me!
+                        if (!isPartialUnloaded)
+                        {
+                            api.ModLoader.GetModSystem<ElectricalNetworkMod>(true).manager.DeleteNetwork(NetworkID); // delete me!
+                        }
+                        else return false;
                     }
                     else DeleteNodes(nodestoremove); // delete the nodes we don't need
                 }
@@ -454,7 +495,7 @@ namespace VintageEngineering.Electrical.Systems
             else
             {
                 // delete empty networks to avoid a 'memory leak' in save-game files.
-                api.ModLoader.GetModSystem<ElectricalNetworkMod>().manager.DeleteNetwork(NetworkID);
+                api.ModLoader.GetModSystem<ElectricalNetworkMod>(true).manager.DeleteNetwork(NetworkID);
             }
             return true;
         }
@@ -467,7 +508,7 @@ namespace VintageEngineering.Electrical.Systems
         {
             // Need to store:
             // NetworkID, Nodes:[BlockPos, AnchorIndex]
-            tree.SetLong("networkid", networkID);
+            tree.SetLong("networkid", NetworkID);
             tree.SetInt("numnodes", allNodes.Count);
 
             tree.SetBytes("allnodes", SerializerUtil.Serialize(allNodes.ToArray()));
@@ -482,7 +523,7 @@ namespace VintageEngineering.Electrical.Systems
         /// <param name="world">BlockAccessor</param>
         public void FromTreeAttributes(ITreeAttribute tree, IBlockAccessor world)
         {
-            networkID = tree.GetLong("networkid", 0);
+            NetworkID = tree.GetLong("networkid", 0);
             int numnodes = tree.GetInt("numnodes", 0);
             
             if (allNodes != null) allNodes.Clear();

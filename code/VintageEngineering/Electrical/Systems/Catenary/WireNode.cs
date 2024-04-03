@@ -12,7 +12,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
     /// <br>Defined in JSON Attributes/wireNodes</br>
     /// <br>Cube defines the selection box of this Node, rotatable with RotatedCopy.</br>
     /// </summary>
-    [ProtoContract()]
+    [ProtoContract]
     public class WireNode : RotatableCube, IEquatable<WireNode>
     {
         /// <summary>
