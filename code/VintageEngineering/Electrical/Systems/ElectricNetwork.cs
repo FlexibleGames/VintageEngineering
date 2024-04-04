@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using ProtoBuf;
 using VintageEngineering.Electrical.Systems.Catenary;
 using Vintagestory;
@@ -294,7 +295,7 @@ namespace VintageEngineering.Electrical.Systems
             {
                 foreach (IElectricalBlockEntity entity in producerNodes)
                 {
-                    //totalpoweringen += entity.CurrentPower;
+                    if (!entity.CanExtractPower) continue;
                     totalpoweringen += entity.RatedPower(deltaTime, false);
                 }
             }
@@ -302,8 +303,8 @@ namespace VintageEngineering.Electrical.Systems
             {
                 foreach (IElectricalBlockEntity entity in storageNodes)
                 {
-                    totalinstorage += entity.RatedPower(deltaTime, false); // how much to extract
-                    totalstorageavailable += entity.RatedPower(deltaTime, true); // how much to insert, if available
+                    if (entity.CanExtractPower) totalinstorage += entity.RatedPower(deltaTime, false); // how much to extract
+                    if (entity.CanReceivePower) totalstorageavailable += entity.RatedPower(deltaTime, true); // how much to insert, if available
                 }
             }
             totalpoweroffered = totalpoweringen + totalinstorage;

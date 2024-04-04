@@ -5,6 +5,7 @@ using System.Text;
 using VintageEngineering.Electrical.Systems;
 using VintageEngineering.Electrical.Systems.Catenary;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent;
@@ -225,7 +226,7 @@ namespace VintageEngineering.Electrical
             {
                 electricpower = 0;
             }
-            this.MarkDirty();
+            this.MarkDirty(true);
         }
 
         public virtual ulong RatedPower(float dt, bool isInsert = false)
@@ -249,7 +250,7 @@ namespace VintageEngineering.Electrical
 
         public virtual ulong ExtractPower(ulong powerWanted, float dt, bool simulate = false)
         {
-            if (MachineState == EnumBEState.Off) return powerWanted; // machine is off, bounce.
+            if (MachineState == EnumBEState.Off || !CanExtractPower) return powerWanted; // machine is off, bounce.
             if (electricpower == 0) return powerWanted; // we have no power to give
 
             // what is the max power transfer of this machine for this DeltaTime update tick?
@@ -267,20 +268,20 @@ namespace VintageEngineering.Electrical
             {
                 // PPS meets or exceeds power wanted, this machine can cover all power needs.
                 if (!simulate) electricpower -= powerWanted;                
-                this.MarkDirty();
+                this.MarkDirty(true);
                 return 0; // all power wanted was supplied
             }
             else
             {
                 // powerWanted exceeds how much we can supply
                 if (!simulate) electricpower -= pps; // simulation mode doesn't change machines power total.                                
-                this.MarkDirty();
+                this.MarkDirty(true);
                 return powerWanted - pps; // return powerWanted reduced by our PPS.
             }
         }
         public virtual ulong ReceivePower(ulong powerOffered, float dt, bool simulate = false)
         {
-            if (MachineState == EnumBEState.Off) return powerOffered; // machine is off, bounce.
+            if (MachineState == EnumBEState.Off || !CanReceivePower) return powerOffered; // machine is off, bounce.
             if (CurrentPower == MaxPower) return powerOffered; // we're full, bounce fast
 
             // what is the max power transfer of this machine for this DeltaTime update tick?
@@ -299,14 +300,14 @@ namespace VintageEngineering.Electrical
             {
                 // meaning we can take it all.
                 if (!simulate) electricpower += powerOffered;
-                this.MarkDirty();
+                this.MarkDirty(true);
                 return 0;
             }
             else
             {
                 // far more common, powerOffered exceeds PPS
                 if (!simulate) electricpower += pps;
-                this.MarkDirty();
+                this.MarkDirty(true);
                 return powerOffered - pps;
             }
         }
@@ -347,7 +348,7 @@ namespace VintageEngineering.Electrical
             {
                 electricConnections[wirenodeindex].Add(newconnection);
             }
-            this.MarkDirty();
+            this.MarkDirty(true);
         }
 
         public void RemoveConnection(int wirenodeindex, WireNode oldconnection)
@@ -363,7 +364,7 @@ namespace VintageEngineering.Electrical
                 electricConnections.Remove(wirenodeindex);
                 NetworkIDs.Remove(wirenodeindex);
             }
-            this.MarkDirty();
+            this.MarkDirty(true);
         }
 
         public long GetNetworkID(int selectionIndex = 0)
@@ -380,6 +381,21 @@ namespace VintageEngineering.Electrical
             return 0;
         }
 
+        public virtual string GetMachineHUDText()
+        {
+            string onOff;
+            switch (MachineState)
+            {
+                case EnumBEState.On: onOff = Lang.Get("vinteng:gui-word-on"); break;
+                case EnumBEState.Off: onOff = Lang.Get("vinteng:gui-word-off"); break;
+                case EnumBEState.Sleeping: onOff = Lang.Get("vinteng:gui-word-sleeping"); break;
+                case EnumBEState.Paused: onOff = Lang.Get("vinteng:gui-word-paused"); break;
+                default: onOff = "Error"; break;
+            }
+
+            return $"{onOff} | {Lang.Get("vinteng:gui-word-power")}: {CurrentPower:N0}/{MaxPower:N0}{System.Environment.NewLine}{Lang.Get("vinteng:gui-machine-pps")}{MaxPPS}";
+        }
+
         public bool SetNetworkID(long networkID, int selectionIndex = 0)
         {
             if (NetworkIDs == null) NetworkIDs = new Dictionary<int, long>();
@@ -389,7 +405,7 @@ namespace VintageEngineering.Electrical
                 return true;
             }
             NetworkIDs.Add(selectionIndex, networkID);
-            this.MarkDirty();
+            this.MarkDirty(true);
             return true;
         }
         #endregion

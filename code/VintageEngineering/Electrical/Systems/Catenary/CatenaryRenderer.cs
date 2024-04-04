@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 
 namespace VintageEngineering.Electrical.Systems.Catenary
@@ -23,7 +25,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
         {
             cm = catenaryMod;
             capi = c_api;
-            chunksize = capi.World.BlockAccessor.ChunkSize;
+            chunksize = GlobalConstants.ChunkSize;
             capi.Event.RegisterRenderer(this, EnumRenderStage.Opaque, "catenarynetwork");
         }
 
@@ -53,19 +55,25 @@ namespace VintageEngineering.Electrical.Systems.Catenary
 
             rpi.GlEnableCullFace();
             rpi.GLEnableDepthTest();
-
-            IStandardShaderProgram prog = rpi.PreparedStandardShader(0, 0, 0);
-            prog.Use();
-
+            
+            // will use the light values at the players position for all rendered wires...
+            IStandardShaderProgram prog = rpi.PreparedStandardShader(worldAccess.Player.Entity.Pos.AsBlockPos.X, 
+                                                                worldAccess.Player.Entity.Pos.AsBlockPos.Y,
+                                                                worldAccess.Player.Entity.Pos.AsBlockPos.Z);
+            //prog.Use();            
             prog.ProjectionMatrix = rpi.CurrentProjectionMatrix;
             prog.ViewMatrix = rpi.CameraMatrixOriginf;
             prog.ModelMatrix = ModelMat.Values;
+
+            Stopwatch sw = Stopwatch.StartNew();
 
             foreach (KeyValuePair<Vec3i, List<WireConnection>> conns in ConnectionsPerChunk)
             {
                 Vec3d offset = new Vec3d(conns.Key.X * chunksize, conns.Key.Y * chunksize, conns.Key.Z * chunksize);
                 foreach (WireConnection con in conns.Value)
                 {
+                    Vec4f lightrgbs = capi.World.BlockAccessor.GetLightRGBs(((int)offset.X), ((int)offset.Y), ((int)offset.Z));
+                    prog.RgbaLightIn = lightrgbs;
                     AssetLocation wiretexture = new AssetLocation(capi.World.GetBlock(con.BlockId).Attributes["texture"].ToString());
                     int textureid = rpi.GetOrLoadTexture(wiretexture);
                     rpi.BindTexture2d(textureid);
@@ -75,6 +83,12 @@ namespace VintageEngineering.Electrical.Systems.Catenary
                 }
             }
             prog.Stop();
+
+            sw.Stop();
+            if (sw.ElapsedMilliseconds > 500) // more than a second to render the wires is insane...
+            {
+                this.capi.Logger.Warning($"Catenary Renderer Overloaded! Took {sw.ElapsedMilliseconds} to render {ConnectionsPerChunk.Values.Count} wires.");
+            }
         }
 
         /// <summary>

@@ -45,17 +45,5 @@ namespace VintageEngineering
             }
         }
 
-        public override string GetPlacedBlockInfo(IWorldAccessor world, BlockPos pos, IPlayer forPlayer)
-        {
-            BELVGenerator bETestGen = world.BlockAccessor.GetBlockEntity(pos) as BELVGenerator;
-            if (bETestGen != null)
-            {
-                return bETestGen.GetOutputText() + base.GetPlacedBlockInfo(world, pos, forPlayer);
-            }
-            else
-            {
-                return base.GetPlacedBlockInfo(world, pos, forPlayer);
-            }
-        }
     }
 }

@@ -86,6 +86,7 @@
 	"vinteng:gui-word-power": "Power",
 	"vinteng:gui-word-mode": "Mode",
 	"vinteng:gui-word-seconds": "Seconds",
+	"vinteng:gui-machine-pps": "Power Per Second",
 	"vinteng:gui-machine-notcrafting": "Not Crafting",
 	"vinteng:gui-machine-paused": "Paused, likely out of power.",
 	"vinteng:gui-machine-off": "Machine is turned off.",

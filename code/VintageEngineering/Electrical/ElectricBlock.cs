@@ -1,4 +1,5 @@
 ﻿using System;
+using VintageEngineering.Electrical.Systems;
 using VintageEngineering.Electrical.Systems.Catenary;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
@@ -57,8 +58,18 @@ namespace VintageEngineering.Electrical
         public override string GetPlacedBlockInfo(IWorldAccessor world, BlockPos pos, IPlayer forPlayer)
         {
             IWireNetwork wiredblock = world.BlockAccessor.GetBlockEntity(pos) as IWireNetwork;
-            if (wiredblock != null) { return Environment.NewLine + this.Code.ToString() + Environment.NewLine + wiredblock.GetNetworkInfo(); }
-            return base.GetPlacedBlockInfo(world, pos, forPlayer);
+            IElectricalConnection conentity = world.BlockAccessor.GetBlockEntity(pos) as IElectricalConnection;
+            string outtext = "";
+            if (conentity != null)
+            {
+                outtext = Environment.NewLine + conentity.GetMachineHUDText();
+            }
+
+            if (wiredblock != null) // DEBUG information, TODO set a config value
+            { 
+                return outtext + Environment.NewLine + "Code: " + this.Code.ToString() + Environment.NewLine + wiredblock.GetNetworkInfo(); 
+            }
+            return base.GetPlacedBlockInfo(world, pos, forPlayer) + outtext;
         }
 
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)

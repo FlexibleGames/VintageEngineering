@@ -25,17 +25,5 @@ namespace VintageEngineering
             }
         }
 
-        public override string GetPlacedBlockInfo(IWorldAccessor world, BlockPos pos, IPlayer forPlayer)
-        {
-            BEMetalPress bETestMach = world.BlockAccessor.GetBlockEntity(pos) as BEMetalPress;
-            if (bETestMach != null)
-            {
-                return bETestMach.GetOutputText() + base.GetPlacedBlockInfo(world, pos, forPlayer);
-            }
-            else
-            {
-                return base.GetPlacedBlockInfo(world, pos, forPlayer);
-            }
-        }
     }
 }

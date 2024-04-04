@@ -480,7 +480,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
             int textureid = capi.Render.GetOrLoadTexture(wireTexture);
 
             rpi.BindTexture2d(textureid);
-            IStandardShaderProgram shader = rpi.PreparedStandardShader(0, 0, 0);
+            IStandardShaderProgram shader = rpi.PreparedStandardShader(camPos.XInt, camPos.YInt, camPos.ZInt);
             shader.Use();
             shader.ProjectionMatrix = rpi.CurrentProjectionMatrix;
             shader.ViewMatrix = rpi.CameraMatrixOriginf;

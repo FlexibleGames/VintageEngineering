@@ -22,17 +22,5 @@ namespace VintageEngineering
                 capi = api as ICoreClientAPI;
             }
         }
-        public override string GetPlacedBlockInfo(IWorldAccessor world, BlockPos pos, IPlayer forPlayer)
-        {
-            BELogSplitter bETestMach = world.BlockAccessor.GetBlockEntity(pos) as BELogSplitter;
-            if (bETestMach != null)
-            {
-                return bETestMach.GetOutputText() + base.GetPlacedBlockInfo(world, pos, forPlayer);
-            }
-            else
-            {
-                return base.GetPlacedBlockInfo(world, pos, forPlayer);
-            }            
-        }
     }
 }

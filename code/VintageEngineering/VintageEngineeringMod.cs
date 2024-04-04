@@ -36,7 +36,8 @@ namespace VintageEngineering
 
         public void RegisterBlocks(ICoreAPI api)
         {
-            api.RegisterBlockClass("VEElectricBlock", typeof(ElectricBlock)); // generic electric block
+            // generic electric block, can be used for most machines
+            api.RegisterBlockClass("VEElectricBlock", typeof(ElectricBlock)); 
 
             api.RegisterBlockClass("VELVGenerator", typeof(BlockLVGenerator));
             api.RegisterBlockClass("VEMetalPress", typeof(BlockMetalPress));
