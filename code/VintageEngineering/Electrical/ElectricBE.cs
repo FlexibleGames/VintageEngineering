@@ -361,7 +361,7 @@ namespace VintageEngineering.Electrical
                 default: onOff = "Error"; break;
             }            
 
-            return $"{onOff} | {Lang.Get("vinteng:gui-word-power")}: {CurrentPower:N0}/{MaxPower:N0}{System.Environment.NewLine}{Lang.Get("vinteng:gui-machine-pps")}{MaxPPS}";
+            return $"{onOff} | {Lang.Get("vinteng:gui-word-power")}: {CurrentPower:N0}/{MaxPower:N0}{System.Environment.NewLine}{Lang.Get("vinteng:gui-machine-pps")} : {MaxPPS}";
         }
 
         public virtual string GetNetworkInfo()

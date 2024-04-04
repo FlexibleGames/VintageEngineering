@@ -133,21 +133,13 @@ namespace VintageEngineering
             chunkatPos.MarkModified();
         }
 
-        public string GetOutputText()
+        public override string GetMachineHUDText()
         {
-            // NetworkInfo inclusion could be locked behind a config flag or something in the future
-            
-            string onOff;
-            switch (MachineState)
-            {
-                case EnumBEState.On: onOff = Lang.Get("vinteng:gui-word-burning"); break;
-                case EnumBEState.Off: onOff = Lang.Get("vinteng:gui-word-off"); break;
-                case EnumBEState.Sleeping: onOff = Lang.Get("vinteng:gui-word-sleeping"); ; break;
-                default: onOff = "Error"; break;
-            }
+            string outtext = base.GetMachineHUDText() + System.Environment.NewLine;            
+
             string crafting = $"{GenTemp:N1}°C {FuelBurnTime:N1} {Lang.Get("vinteng:gui-word-seconds")}";
 
-            return $"{crafting} | {onOff}{System.Environment.NewLine}{Lang.Get("vinteng:gui-word-power")}: {CurrentPower:N0}/{MaxPower:N0}";            
+            return outtext + crafting;
         }
 
         public override void StateChange(EnumBEState newstate)

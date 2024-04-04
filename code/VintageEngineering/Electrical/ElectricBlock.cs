@@ -50,6 +50,7 @@ namespace VintageEngineering.Electrical
                 return (ulong)this.Attributes["maxpps"].AsDouble();
             }
         }
+
         public override void OnLoaded(ICoreAPI api)
         {
             base.OnLoaded(api); // IMPORTANT base call sets wire anchors and functions

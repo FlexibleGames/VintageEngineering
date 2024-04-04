@@ -493,20 +493,15 @@ namespace VintageEngineering
             }
         }
 
-        public string GetOutputText()
+        public override string GetMachineHUDText()
         {
+            string outtext = base.GetMachineHUDText() + System.Environment.NewLine;
+
             float recipeProgressPercent = RecipeProgress * 100;
-            string onOff;
-            switch (MachineState)
-            {
-                case EnumBEState.On: onOff = Lang.Get("vinteng:gui-word-on"); break;
-                case EnumBEState.Off: onOff = Lang.Get("vinteng:gui-word-off"); break;
-                case EnumBEState.Sleeping: onOff = Lang.Get("vinteng:gui-word-sleeping"); ; break;
-                default: onOff = "Error"; break;
-            }
+
             string crafting = isCrafting ? $"{Lang.Get("vinteng:gui-word-crafting")}: {recipeProgressPercent:N1}%" : $"{Lang.Get("vinteng:gui-machine-notcrafting")}";
 
-            return $"{crafting} | {onOff} | {Lang.Get("vinteng:gui-word-power")}: {CurrentPower:N0}/{MaxPower:N0}";
+            return outtext + crafting;
         }
 
         #region ServerClientStuff
