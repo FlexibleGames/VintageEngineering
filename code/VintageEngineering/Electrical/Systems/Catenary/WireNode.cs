@@ -43,12 +43,6 @@ namespace VintageEngineering.Electrical.Systems.Catenary
         /// </summary>
         public int maxconnections;
 
-        /// <summary>
-        /// Network ID associated with this Node, only set via Mod-added networks. Saved in Attributes["wireNodes"][index]["networkid"]
-        /// <br>Catenary Mod ignores this value.</br>
-        /// </summary>
-        public long networkid;
-
         public WireNode() { }
         public WireNode(BlockPos pos, int ind, int maxcon, EnumWireFunction funct, Vec3f conpoint)
         {
@@ -56,12 +50,11 @@ namespace VintageEngineering.Electrical.Systems.Catenary
             {
                 throw new ArgumentNullException(nameof(pos));
             }
-            this.blockPos = pos;
+            this.blockPos = pos.Copy();
             this.index = ind;
-            maxconnections = maxcon;
-            networkid = 0;
+            maxconnections = maxcon;            
             wirefunction = funct;
-            anchorPos = conpoint;
+            anchorPos = conpoint.Clone();
         }
 
         public WireNode(JsonObject anchor)
@@ -71,8 +64,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
             string wfunct = anchor["wirefunction"].AsString()?.ToLower();
             
             wirefunction = Enum.Parse<EnumWireFunction>(wfunct, true);
-            maxconnections = anchor["maxconnections"].AsInt(1);
-            networkid = anchor["networkid"].AsObject<long>(0);
+            maxconnections = anchor["maxconnections"].AsInt(1);            
             base.Set(anchor["x1"].AsFloat(0.4f),
                     anchor["y1"].AsFloat(0.4f),
                     anchor["z1"].AsFloat(0.4f),
@@ -83,6 +75,28 @@ namespace VintageEngineering.Electrical.Systems.Catenary
             base.RotateZ = anchor["rotateZ"].AsFloat(0f);
             base.RotateY = anchor["rotateY"].AsFloat(0f);
             anchorPos = new Vec3f(MidX, MidY, MidZ);
+        }
+
+        public WireNode Copy()
+        {
+            WireNode output = new WireNode()
+            {
+                index = this.index,
+                wirefunction = this.wirefunction,
+                maxconnections = this.maxconnections,
+                blockPos = this.blockPos != null ? this.blockPos.Copy() : null,                
+                X1 = this.X1,
+                Y1 = this.Y1,
+                Z1 = this.Z1,
+                X2 = this.X2,
+                Y2 = this.Y2,
+                Z2 = this.Z2,
+                RotateX = this.RotateX,
+                RotateY = this.RotateY,
+                RotateZ = this.RotateZ
+            };            
+            output.anchorPos = new Vec3f(output.MidX, output.MidY, output.MidZ);
+            return output;
         }
 
         public override int GetHashCode()

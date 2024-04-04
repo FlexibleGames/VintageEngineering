@@ -1,6 +1,6 @@
 {
 	"code": "vecrusher",
-	"class": "VECrusher",
+	"class": "VEElectricBlock",
 	"entityClass": "VEBECrusher",
 	"behaviors": [
 		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "vecrusher-north" }}}
@@ -29,7 +29,6 @@
                 "wirefunction": "Power",
 				"powertier": "LV",
 				"maxconnections": 1,
-				"networkid": 0,
                 "x1": 0.40625,
                 "y1": 0.78125,
                 "z1": 0,

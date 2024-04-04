@@ -1,6 +1,7 @@
 ﻿using ProtoBuf;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using VintageEngineering.Electrical.Systems.Catenary;
 using Vintagestory.API.Common;
@@ -65,12 +66,56 @@ namespace VintageEngineering.Electrical.Systems
             if (networks.Count == 0) { return; }
 
             // we have networks, lets tick them
+            Stopwatch sw = Stopwatch.StartNew();
             foreach (IElectricNetwork net in networks.Values)
             {
 
-                net.UpdateTick(deltatime);
+                if (!net.UpdateTick(deltatime))
+                {
+                    networks.Remove(net.NetworkID);
+                }
             }
+            sw.Stop();
+            if (sw.ElapsedMilliseconds >= 500L)
+            {
+                sapi.Logger.Warning($"Electric Networks took {sw.ElapsedMilliseconds} to update!");
+            }
+        }
 
+        /// <summary>
+        /// Join a network outside of Catenary wire events.<br/>
+        /// Typically because a nodes chunk was unloaded and then reloaded.<br/>
+        /// Or during world load.
+        /// </summary>
+        /// <param name="netID">NetworkID to join</param>
+        /// <param name="node">WireNode (MUST include a BlockPos)</param>
+        /// <param name="entity">Entity joining</param>
+        public void JoinNetwork(long netID, WireNode node, IElectricalBlockEntity entity)
+        {
+            if (!networks.ContainsKey(netID))
+            {
+                networks.Add(netID, new ElectricNetwork(netID, sapi));
+            }
+            networks[netID].Join(node, entity);
+        }
+
+        /// <summary>
+        /// Leave a network outside of Catenary wire events.<br/>
+        /// Typically because a nodes chunk was unloaded.
+        /// </summary>
+        /// <param name="netID">NetworkID to leave</param>
+        /// <param name="node">WireNode leaving (MUST include a BlockPos)</param>
+        /// <param name="entity">Entity leaving</param>
+        public void LeaveNetwork(long netID, WireNode node, IElectricalBlockEntity entity)
+        {
+            if (networks.ContainsKey(netID))
+            {
+                networks[netID].Leave(node, entity);
+            }
+            if (networks[netID].NodeCount == 0)
+            {
+                networks.Remove(netID);
+            }
         }
 
         /// <summary>
@@ -388,7 +433,7 @@ namespace VintageEngineering.Electrical.Systems
         public long CreateNetwork(WireNode[] nodes)
         {
             return CreateNetwork(nodes.ToList<WireNode>());
-        }
+        }        
 
         /// Initializes the electrical networks from a Serialized object that was saved to disk.
         /// <br>Will only be called by the server when loading a save-game</br>
@@ -419,8 +464,7 @@ namespace VintageEngineering.Electrical.Systems
                 foreach (KeyValuePair<long, ElectricNetwork> net in networks)
                 {
                     if (net.Value.api == null) net.Value.api = this.sapi;
-                    if (net.Value.NetworkID == 0) netstodelete.Add(net.Key);
-                    //if (net.Value.allNodes.Count < 2) netstodelete.Add(net.Key); // delete any dangling 1 node networks
+                    if (net.Value.NetworkID == 0) netstodelete.Add(net.Key);                    
                 }
                 if (netstodelete.Count > 0)
                 {

@@ -1,6 +1,6 @@
 {
 	"code": "vemetalpress",
-	"class": "VEMetalPress",
+	"class": "VEElectricBlock",
 	"entityClass": "VEBEMetalPress",
 	"behaviors": [
 		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "vemetalpress-north" }}}
@@ -28,7 +28,6 @@
                 "wirefunction": "Power",
 				"powertier": "LV",
 				"maxconnections": 1,
-				"networkid": 0,
 				"x1": 0.8125,
 				"y1": 0.5625,
 				"z1": -0.0625,

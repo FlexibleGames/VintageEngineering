@@ -294,6 +294,11 @@ namespace VintageEngineering.Electrical
                 {
                     foreach (KeyValuePair<int, long> networkpair in NetworkIDs)
                     {
+                        if (networkpair.Value == 0)
+                        {
+                            NetworkIDs.Remove(networkpair.Key);
+                            continue; // part of a network but with id = 0 means a corrupted BE
+                        }
                         if (base.Block is WiredBlock wiredBlock)
                         {
                             /* //Example code to CHUNK LOAD the chunk column at this block position...
@@ -306,18 +311,10 @@ namespace VintageEngineering.Electrical
                             */
 
                             if (wiredBlock.WireAnchors == null) continue;
-                            WireNode node = wiredBlock.WireAnchors[networkpair.Key];
+                            WireNode node = wiredBlock.GetWireNodeInBlock(networkpair.Key).Copy();
                             if (node == null) continue;
                             node.blockPos = this.Pos; // extremely important that we add Block Position to this.
-                            if (networkpair.Value == 0) continue; // part of a network but with id = 0 means a corrupted BE
-                            if (!nm.networks.ContainsKey(networkpair.Value))
-                            {
-                                nm.CreateNetwork(networkpair.Value, node);
-                            }
-                            else
-                            { 
-                                nm.networks[networkpair.Value].AddNode(node, api.World.BlockAccessor, false); 
-                            }
+                            nm.JoinNetwork(networkpair.Value, node, this);
                         }
                     }
                 }
@@ -400,10 +397,10 @@ namespace VintageEngineering.Electrical
                     if (base.Block is WiredBlock wiredBlock)
                     {
                         if (wiredBlock.WireAnchors == null) continue;
-                        WireNode node = wiredBlock.WireAnchors[networkpair.Key];
+                        WireNode node = wiredBlock.GetWireNodeInBlock(networkpair.Key).Copy();
                         if (node == null) continue;
                         node.blockPos = this.Pos;  // extremely important that we add Block Position to this.
-                        nm.networks[NetworkIDs[networkpair.Key]].DoUnload(node, this);
+                        nm.LeaveNetwork(networkpair.Value, node, this);
                     }
                 }
             }

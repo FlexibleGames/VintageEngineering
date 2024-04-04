@@ -560,12 +560,12 @@ namespace VintageEngineering
                 UpdateMesh(3);
             }
             this.inventory.Pos = this.Pos;
-            this.inventory.LateInitialize($"{InventoryClassName}-{this.Pos.X}/{this.Pos.Y}/{this.Pos.Z}", api);            
+            this.inventory.LateInitialize($"{InventoryClassName}-{this.Pos.X}/{this.Pos.Y}/{this.Pos.Z}", api);
+            if (!inventory[0].Empty) FindMatchingRecipe();
         }
 
         public override void StateChange(EnumBEState newstate)
-        {
-            if (MachineState == newstate) return; // no change, nothing to see here.            
+        {                  
             MachineState = newstate;
 
             if (MachineState == EnumBEState.On)

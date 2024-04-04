@@ -8,6 +8,7 @@ using Vintagestory.GameContent;
 using Vintagestory.API.Datastructures;
 using VintageEngineering.Electrical;
 using Vintagestory.API.Config;
+using Vintagestory.API.MathTools;
 
 namespace VintageEngineering
 {
@@ -143,9 +144,33 @@ namespace VintageEngineering
         }
 
         public override void StateChange(EnumBEState newstate)
-        {
-            if (MachineState == newstate) return; // no change, nothing to see here.            
+        {              
             MachineState = newstate;
+
+            if (MachineState == EnumBEState.On)
+            {
+                if (AnimUtil != null)
+                {
+                    if (base.Block.Attributes["craftinganimcode"].Exists)
+                    {
+                        AnimUtil.StartAnimation(new AnimationMetaData
+                        {
+                            Animation = base.Block.Attributes["craftinganimcode"].AsString(),
+                            Code = base.Block.Attributes["craftinganimcode"].AsString(),
+                            AnimationSpeed = 1f,
+                            EaseOutSpeed = 4f,
+                            EaseInSpeed = 1f
+                        });
+                    }
+                }
+            }
+            else
+            {
+                if (AnimUtil != null && AnimUtil.activeAnimationsByAnimCode.Count > 0)
+                {
+                    AnimUtil.StopAnimation(base.Block.Attributes["craftinganimcode"].AsString());
+                }
+            }
 
             if (Api != null && Api.Side == EnumAppSide.Client && clientDialog != null && clientDialog.IsOpened())
             {
@@ -218,9 +243,10 @@ namespace VintageEngineering
         }
 
         public void CanDoBurn()
-        {
+        {            
             CombustibleProperties fuelProps = FuelSlot.Itemstack?.Collectible.CombustibleProps;
             if (fuelProps == null) return;
+            if (fuelBurnTime > 0) return; // we're already burning
             if (fuelProps.BurnTemperature > 0f && fuelProps.BurnDuration > 0f)
             {
                 maxBurnTime = fuelBurnTime = fuelProps.BurnDuration;
@@ -257,42 +283,46 @@ namespace VintageEngineering
                                 beElectricalMachine = this.Api.World.BlockAccessor.GetBlockEntity(this.Pos.NorthCopy()) as IElectricalBlockEntity;
                                 if (beElectricalMachine != null)
                                 {
+                                    if (!beElectricalMachine.CanReceivePower) break;
                                     ratedpower = beElectricalMachine.ReceivePower(ratedpower, dt);
-                                    if (ratedpower == 0) continue;
+                                    if (ratedpower == 0) break;
                                 }
                                 break;
                             case 1:
                                 beElectricalMachine = this.Api.World.BlockAccessor.GetBlockEntity(this.Pos.EastCopy()) as IElectricalBlockEntity;
                                 if (beElectricalMachine != null)
                                 {
+                                    if (!beElectricalMachine.CanReceivePower) break;
                                     ratedpower = beElectricalMachine.ReceivePower(ratedpower, dt);
-                                    if (ratedpower == 0) continue;
+                                    if (ratedpower == 0) break;
                                 }
                                 break;
                             case 2:
                                 beElectricalMachine = this.Api.World.BlockAccessor.GetBlockEntity(this.Pos.SouthCopy()) as IElectricalBlockEntity;
                                 if (beElectricalMachine != null)
                                 {
+                                    if (!beElectricalMachine.CanReceivePower) break;
                                     ratedpower = beElectricalMachine.ReceivePower(ratedpower, dt);
-                                    if (ratedpower == 0) continue;
+                                    if (ratedpower == 0) break;
                                 }
                                 break;
                             case 3:
                                 beElectricalMachine = this.Api.World.BlockAccessor.GetBlockEntity(this.Pos.WestCopy()) as IElectricalBlockEntity;
                                 if (beElectricalMachine != null)
                                 {
+                                    if (!beElectricalMachine.CanReceivePower) break;
                                     ratedpower = beElectricalMachine.ReceivePower(ratedpower, dt);
-                                    if (ratedpower == 0) continue;
+                                    if (ratedpower == 0) break;
                                 }
                                 break;
                         }
-                        ulong usedpower = ratedpowerbackup - ratedpower;
-                        if (usedpower > 0)
-                        {
-                            electricpower -= usedpower;
-                        }
                     }
                 }
+            }
+            ulong usedpower = ratedpowerbackup - ratedpower;
+            if (usedpower > 0)
+            {
+                electricpower -= usedpower;
             }
         }
 
@@ -356,10 +386,15 @@ namespace VintageEngineering
             else
             {
                 capi = api as ICoreClientAPI;
+                if (AnimUtil != null)
+                {
+                    AnimUtil.InitializeAnimator("velvgenerator", null, null, new Vec3f(0f, GetRotation(), 0f));
+                }
             }
             this.inventory.Pos = this.Pos;
             this.inventory.LateInitialize($"{InventoryClassName}-{this.Pos.X}/{this.Pos.Y}/{this.Pos.Z}", api);
             this.RegisterGameTickListener(new Action<float>(OnBurnTick), 100, 0);
+            CanDoBurn();
         }
 
         public override bool OnPlayerRightClick(IPlayer byPlayer, BlockSelection blockSel)

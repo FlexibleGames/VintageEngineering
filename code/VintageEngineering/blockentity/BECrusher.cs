@@ -36,6 +36,8 @@ namespace VintageEngineering
             inv = new InvCrusher(null, null);
             inv.SlotModified += OnSlotModified;
         }
+        public override bool CanExtractPower => false;
+        public override bool CanReceivePower => true;
 
         public override void Initialize(ICoreAPI api)
         {
@@ -56,6 +58,7 @@ namespace VintageEngineering
             crushingPowerCost = this.Block.Attributes["crushpowercost"].AsInt();
             inv.Pos = this.Pos;
             inv.LateInitialize($"{InventoryClassName}-{this.Pos.X}/{this.Pos.Y}/{this.Pos.Z}", api);
+            if (!inv[0].Empty) FindMatchingRecipe();
         }
 
         #region RecipeAndInventoryStuff
@@ -180,7 +183,7 @@ namespace VintageEngineering
         }
 
         /// <summary>
-        /// Find a matching Log Splitter Recipe given the Blocks inventory.
+        /// Find a matching Crusher Recipe given the Blocks inventory and mode.
         /// </summary>
         /// <returns>True if recipe found that matches ingredient.</returns>
         public bool FindMatchingRecipe()
@@ -434,8 +437,7 @@ namespace VintageEngineering
         }
 
         public override void StateChange(EnumBEState newstate)
-        {
-            if (MachineState == newstate) return; // no change, nothing to see here.            
+        {                  
             MachineState = newstate;
 
             if (MachineState == EnumBEState.On)

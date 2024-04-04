@@ -1,6 +1,6 @@
 {
 	"code": "vesawmill",
-	"class": "VESawmill",
+	"class": "VEElectricBlock",
 	"entityClass": "VEBESawmill",
 	"behaviors": [
 		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "vesawmill-north" }}}
@@ -28,7 +28,6 @@
                 "wirefunction": "Power",
 				"powertier": "LV",
 				"maxconnections": 1,
-				"networkid": 0,
                 "x1": 0.125,
                 "y1": 0.3125,
                 "z1": 0,

@@ -1,6 +1,6 @@
 {
 	"code": "veextruder",
-	"class": "VEExtruder",
+	"class": "VEElectricBlock",
 	"entityClass": "VEBEExtruder",
 	"behaviors": [
 		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "veextruder-north" }}}
@@ -28,7 +28,6 @@
                 "wirefunction": "Power",
 				"powertier": "LV",
 				"maxconnections": 1,
-				"networkid": 0,
                 "x1": 0.375,
                 "y1": 0.1875,
                 "z1": 0,

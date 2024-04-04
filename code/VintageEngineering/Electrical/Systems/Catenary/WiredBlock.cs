@@ -35,11 +35,11 @@ namespace VintageEngineering.Electrical.Systems.Catenary
             {
                 try
                 {
-                    wireAnchors = new WireNode[wirenodes.Length];
+                    wireAnchors = new WireNode[wirenodes.Length];                    
                     
                     for (int i = 0; i < wirenodes.Length; i++)
                     {
-                        wireAnchors[i] = new WireNode(wirenodes[i]);                               
+                        wireAnchors[i] = new WireNode(wirenodes[i]);
                     }
                     return;
                 }
@@ -150,7 +150,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
 
         public virtual WireNode GetWireNodeInBlock(int selectionIndex)
         {
-            if (selectionIndex >= wireAnchors.Length) return null;
+            if (selectionIndex >= wireAnchors.Length) return null;            
             return wireAnchors[selectionIndex];
         }
 

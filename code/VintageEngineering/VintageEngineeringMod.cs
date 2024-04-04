@@ -39,13 +39,8 @@ namespace VintageEngineering
             // generic electric block, can be used for most machines
             api.RegisterBlockClass("VEElectricBlock", typeof(ElectricBlock)); 
 
+            // LVGenerator has neighbor side power distribution
             api.RegisterBlockClass("VELVGenerator", typeof(BlockLVGenerator));
-            api.RegisterBlockClass("VEMetalPress", typeof(BlockMetalPress));
-            api.RegisterBlockClass("VELogSplitter", typeof(BlockLogSplitter));
-            api.RegisterBlockClass("VEExtruder", typeof(BlockExtruder));
-            api.RegisterBlockClass("VESawmill", typeof(BlockSawmill));
-            api.RegisterBlockClass("VECrusher", typeof(BlockCrusher));
-            api.RegisterBlockClass("VEKiln", typeof(BlockKiln));
         }
         public void RegisterBlockEntities(ICoreAPI api)
         {

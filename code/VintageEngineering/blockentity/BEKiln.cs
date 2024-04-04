@@ -36,14 +36,17 @@ namespace VintageEngineering
         {
             inv = new InvKiln(null, null);
             inv.SlotModified += OnSlotModified;
-        }        
-        
+        }
+
+        public override bool CanExtractPower => false;
+        public override bool CanReceivePower => true;
+
         public override void Initialize(ICoreAPI api)
         {
             base.Initialize(api);
             if (api.Side == EnumAppSide.Server)
             {
-                sapi = api as ICoreServerAPI;                
+                sapi = api as ICoreServerAPI;
                 RegisterGameTickListener(new Action<float>(OnSimTick), 100, 0);
                 HeatPerSecondBase = base.Block.Attributes["heatpersecond"].AsInt(0);
                 if (environmentTemp == 0f)
@@ -61,6 +64,7 @@ namespace VintageEngineering
             }
             inv.Pos = this.Pos;
             inv.LateInitialize($"{InventoryClassName}-{this.Pos.X}/{this.Pos.Y}/{this.Pos.Z}", api);
+            if (!inv[0].Empty) FindMatchingRecipe();
         }
 
         #region RecipeAndInventoryStuff
@@ -170,7 +174,7 @@ namespace VintageEngineering
         }
 
         /// <summary>
-        /// Find a matching Log Splitter Recipe given the Blocks inventory.
+        /// Find a matching Kiln Recipe or CombustableProps given the Blocks inventory.
         /// </summary>
         /// <returns>True if recipe found that matches ingredient.</returns>
         public bool FindMatchingRecipe()
@@ -309,6 +313,11 @@ namespace VintageEngineering
                         currentTemp = ChangeTemperature(currentTemp, _cproperties.MeltingPoint, dt);
                         if (currentTemp >= _cproperties.MeltingPoint) { isCrafting = true; isHeating = false; }
                     }
+                    else
+                    {
+                        // Something odd happened, we're heating but our recipes are null...
+                        if (!inv[0].Empty) FindMatchingRecipe();
+                    }
                     electricpower -= (ulong)Math.Round(powerpertick); // consume power when heating up
                 }
 
@@ -434,7 +443,7 @@ namespace VintageEngineering
 
         public override void StateChange(EnumBEState newstate)
         {
-            if (MachineState == newstate) return; // no change, nothing to see here.            
+            //if (MachineState == newstate) return; // no change, nothing to see here.            
             MachineState = newstate;
 
             if (MachineState == EnumBEState.On)

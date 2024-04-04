@@ -63,7 +63,7 @@ namespace VintageEngineering.Electrical
             string outtext = "";
             if (conentity != null)
             {
-                outtext = Environment.NewLine + conentity.GetMachineHUDText();
+                outtext = conentity.GetMachineHUDText();
             }
 
             if (wiredblock != null) // DEBUG information, TODO set a config value

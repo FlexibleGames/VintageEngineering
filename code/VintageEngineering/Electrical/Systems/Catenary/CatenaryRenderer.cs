@@ -72,8 +72,6 @@ namespace VintageEngineering.Electrical.Systems.Catenary
                 Vec3d offset = new Vec3d(conns.Key.X * chunksize, conns.Key.Y * chunksize, conns.Key.Z * chunksize);
                 foreach (WireConnection con in conns.Value)
                 {
-                    Vec4f lightrgbs = capi.World.BlockAccessor.GetLightRGBs(((int)offset.X), ((int)offset.Y), ((int)offset.Z));
-                    prog.RgbaLightIn = lightrgbs;
                     AssetLocation wiretexture = new AssetLocation(capi.World.GetBlock(con.BlockId).Attributes["texture"].ToString());
                     int textureid = rpi.GetOrLoadTexture(wiretexture);
                     rpi.BindTexture2d(textureid);
