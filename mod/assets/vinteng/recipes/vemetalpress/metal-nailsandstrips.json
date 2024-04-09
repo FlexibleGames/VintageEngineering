@@ -5,7 +5,7 @@
 		"attributes": {
 			"requires": "vinteng:vepressmold-nails-tinbronze",
 			"requiresdurability": true,
-			"requirestemp": 800
+			"requirestemp": -1
 		},
 		"powerpercraft": 512,
 		"ingredients": [
@@ -23,7 +23,7 @@
 			"requires": "vinteng:vepressmold-nails-*",
 			"requiresvariants": ["iron", "meteoriciron", "steel", "titanium"],
 			"requiresdurability": true,
-			"requirestemp": 1100
+			"requirestemp": -1
 		},
 		"powerpercraft": 512,
 		"ingredients": [

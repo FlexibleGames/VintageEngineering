@@ -5,14 +5,14 @@
 		"attributes": {
 			"requires": "vinteng:vediecast-lv-*",
 			"requiresdurability": true,
-			"requirestemp": 1100
+			"requirestemp": -1
 		},
 		"powerpercraft": 512,
 		"ingredients": [
 			{ "type": "item", "code": "vinteng:metalrod-*", "quantity": 1, "allowedVariants": ["copper"] }
 		],
-		"outputs": [ 
-			{ "type": "block", "code": "game:catenary-lvpower", "stacksize": 12 }	
+		"outputs": [
+			{ "type": "block", "code": "game:catenary-lvpower", "stacksize": 12 }
 		]
 	},
     {
@@ -21,14 +21,14 @@
 		"attributes": {
 			"requires": "vinteng:vediecast-mv-*",
 			"requiresdurability": true,
-			"requirestemp": 1100
+			"requirestemp": -1
 		},
 		"powerpercraft": 512,
 		"ingredients": [
 			{ "type": "item", "code": "vinteng:metalrod-*", "quantity": 1, "allowedVariants": ["copper"] }
 		],
-		"outputs": [ 
-			{ "type": "block", "code": "game:catenary-mvpower", "stacksize": 6 }	
+		"outputs": [
+			{ "type": "block", "code": "game:catenary-mvpower", "stacksize": 6 }
 		]
 	},
     {
@@ -37,14 +37,14 @@
 		"attributes": {
 			"requires": "vinteng:vediecast-hv-*",
 			"requiresdurability": true,
-			"requirestemp": 1300
+			"requirestemp": -1
 		},
 		"powerpercraft": 1024,
 		"ingredients": [
 			{ "type": "item", "code": "vinteng:metalrod-*", "quantity": 1, "allowedVariants": ["steel"] }
 		],
-		"outputs": [ 
-			{ "type": "block", "code": "game:catenary-hvpower", "stacksize": 4 }	
+		"outputs": [
+			{ "type": "block", "code": "game:catenary-hvpower", "stacksize": 4 }
 		]
-	}   	    	    
+	}
 ]

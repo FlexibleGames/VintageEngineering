@@ -89,7 +89,14 @@ namespace VintageEngineering.RecipeSystem.Recipes
             if (Ingredients[0].ResolvedItemstack != null)
             {
                 // Satisfies call ignores fields not needed to test for equality, like stacksize.
-                if (!ingredient.Itemstack.Satisfies(Ingredients[0].ResolvedItemstack)) return false;
+                if (!Ingredients[0].ResolvedItemstack.Satisfies(ingredient.Itemstack))
+                {
+                    if (!Ingredients[0].SatisfiesAsIngredient(ingredient.Itemstack, true))
+                    {
+                        return false;
+                    }
+                    return false;
+                }
                 // check stack sizes... 
                 if (ingredient.Itemstack.StackSize < Ingredients[0].ResolvedItemstack.StackSize) return false;
             }

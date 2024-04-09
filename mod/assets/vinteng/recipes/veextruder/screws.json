@@ -5,13 +5,13 @@
 		"attributes": {
 			"requires": "vinteng:vediecast-screw-*",
 			"requiresdurability": true,
-			"requirestemp": 1100
+			"requirestemp": -1
 		},
 		"powerpercraft": 2048,
 		"ingredients": [
 			{ "type": "item", "code": "vinteng:metalrod-*", "quantity": 1, "name":"metal", "allowedVariants": ["brass", "steel", "iron"] }
 		],
-		"outputs": [ 
+		"outputs": [
 			{ "type": "item", "code": "vinteng:screw-{metal}", "stacksize": 32 }
 		]
 	}

@@ -26,6 +26,38 @@
 			}
     }
   },
+  "combustiblePropsByType": {
+	"metalrod-copper": {
+		"meltingPoint": 1084,
+		"meltingDuration": 30,
+		"smeltedRatio": 4,
+		"smeltedStack": { "type": "item", "code": "game:ingot-copper" }
+	},
+	"metalrod-brass": {
+		"meltingPoint": 920,
+		"meltingDuration": 30,
+		"smeltedRatio": 4,
+		"smeltedStack": { "type": "item", "code": "game:ingot-brass" }
+	},
+	"metalrod-tinbronze": {
+		"meltingPoint": 950,
+		"meltingDuration": 30,
+		"smeltedRatio": 4,
+		"smeltedStack": { "type": "item", "code": "game:ingot-tinbronze" }
+	},
+	"metalrod-iron": {
+		"meltingPoint": 1538,
+		"meltingDuration": 30,
+		"smeltedRatio": 4,
+		"smeltedStack": { "type": "item", "code": "game:ingot-iron" }
+	},
+	"metalrod-steel": {
+		"meltingPoint": 1502,
+		"meltingDuration": 30,
+		"smeltedRatio": 4,
+		"smeltedStack": { "type": "item", "code": "game:ingot-steel" }
+	}
+  },
   "behaviors": [
     {
       "name": "GroundStorable",

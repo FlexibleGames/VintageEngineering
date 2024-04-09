@@ -190,11 +190,11 @@ namespace VintageEngineering
                     sleepTimer += deltatime;
                     if (sleepTimer < 2f) return;
                     else sleepTimer = 0;
-                }                
+                }
 
                 if (CurrentPower != MaxPower)
                 {
-                    if (fuelBurnTime > 0f || genTemp > tempToGen) // now will generate additional power as long as it's hot enough.
+                    if (fuelBurnTime > 0f || genTemp >= tempToGen) // now will generate additional power as long as it's hot enough.
                     {
                         // we have space for power AND we have fuel
                         StateChange(EnumBEState.On); // turn it on!
@@ -219,6 +219,7 @@ namespace VintageEngineering
                     {
                         // we have space for power and no burn time
                         if (genTemp != 20f) genTemp = ChangeTemperature(genTemp, 20f, deltatime);
+                        StateChange(EnumBEState.Sleeping); // go to sleep... zzzz
                         CanDoBurn(); // check for fuel for the next tick
                     }
                 }
@@ -231,8 +232,7 @@ namespace VintageEngineering
                 prevGenTemp = genTemp;
                 if ((faceHasMachine[0] || faceHasMachine[1] || faceHasMachine[2] || faceHasMachine[3]) && CurrentPower > 0)
                 {
-                    GiveNeighborsPower(deltatime);
-                    StateChange(EnumBEState.On);
+                    if (GiveNeighborsPower(deltatime)) StateChange(EnumBEState.On);
                 }
                 MarkDirty(true, null);
             }
@@ -262,7 +262,7 @@ namespace VintageEngineering
             }
         }
 
-        public void GiveNeighborsPower(float dt)
+        public bool GiveNeighborsPower(float dt)
         {
             // a temporary routine to push power into a machine, will be an electric network eventually
             IElectricalBlockEntity beElectricalMachine;
@@ -323,7 +323,9 @@ namespace VintageEngineering
             if (usedpower > 0)
             {
                 electricpower -= usedpower;
+                return true;
             }
+            else return false;
         }
 
         public void NeighborUpdate(IWorldAccessor world)

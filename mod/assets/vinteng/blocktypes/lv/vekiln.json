@@ -16,7 +16,7 @@
 				"*": true
 			}
 		},
-		"heatpersecond": 50,
+		"heatpersecond": 80,
 		"entitytype": "Consumer",
 		"priority": 5,
 		"maxpower": 1024,

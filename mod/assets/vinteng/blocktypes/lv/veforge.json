@@ -1,7 +1,7 @@
 {
 	"code": "veforge",
 	"class": "VEElectricBlock",
-	"entityClass": "VEBECrusher",
+	"entityClass": "VEBEForge",
 	"behaviors": [
 		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "veforge-north" }}}
 	],
@@ -16,7 +16,7 @@
 				"*": true
 			}
 		},
-		"heatpersecond": 100,
+		"heatpersecond": 160,
 		"entitytype": "Consumer",
 		"priority": 5,
 		"maxpower": 1024,

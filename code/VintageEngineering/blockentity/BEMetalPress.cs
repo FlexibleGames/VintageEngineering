@@ -329,7 +329,7 @@ namespace VintageEngineering
             this.currentPressRecipe = null;
             if (Api == null) return false;
             List<RecipeMetalPress> mprecipes = Api?.ModLoader?.GetModSystem<VERecipeRegistrySystem>(true)?.MetalPressRecipes;
-
+            
             if (mprecipes == null) return false;
 
             foreach (RecipeMetalPress mprecipe in mprecipes)
@@ -338,7 +338,7 @@ namespace VintageEngineering
                 {
                     currentPressRecipe = mprecipe;
                     isCrafting = true;
-                    StateChange(EnumBEState.On);                    
+                    StateChange(EnumBEState.On);
                     return true;
                 }
             }
