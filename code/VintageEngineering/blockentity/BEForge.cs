@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using VintageEngineering.Electrical;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -7,10 +8,11 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.API.Util;
+using Vintagestory.GameContent;
 
 namespace VintageEngineering
 {
-    public class BEForge : ElectricBE
+    public class BEForge : ElectricBE, IRenderer, IDisposable, ITexPositionSource
     {
         private ICoreClientAPI capi;
         private ICoreServerAPI sapi;
@@ -50,6 +52,7 @@ namespace VintageEngineering
             else
             {
                 capi = api as ICoreClientAPI;
+                capi.Event.RegisterRenderer(this, EnumRenderStage.Opaque, "veforge");
                 if (AnimUtil != null)
                 {
                     AnimUtil.InitializeAnimator("veforge", null, null, new Vec3f(0, GetRotation(), 0f));
@@ -127,6 +130,7 @@ namespace VintageEngineering
             if (slotid == 0)
             {
                 // something changed with the input slot
+                UpdateMesh(0);
                 FindMatchingRecipe();
                 MarkDirty(true, null);
 
@@ -408,6 +412,9 @@ namespace VintageEngineering
         public override void OnBlockRemoved()
         {
             base.OnBlockRemoved();
+
+            this.Dispose();
+
             if (clientDialog != null)
             {
                 clientDialog.TryClose();
@@ -415,6 +422,12 @@ namespace VintageEngineering
                 if (gUILog != null) { gUILog.Dispose(); }
                 clientDialog = null;
             }
+        }
+
+        public override void OnBlockUnloaded()
+        {
+            base.OnBlockUnloaded();
+            this.Dispose();
         }
 
         public override string GetMachineHUDText()
@@ -429,6 +442,214 @@ namespace VintageEngineering
 
             return outtext + Environment.NewLine + heating;
         }
+
+
+        #region MoldMeshAndRenderingStuff
+        protected Shape nowTesselatingShape;
+        protected CollectibleObject nowTesselatingObj;
+        protected MeshData heatableMesh;
+        protected MeshRef heatableMeshRef;
+        protected Matrixf ModelMat = new Matrixf();
+        protected int textureId;
+        private Vec3f center = new Vec3f(0.5f, 0, 0.5f);
+
+        public double RenderOrder { get => 0.5; }
+        public int RenderRange { get => 24; }
+
+        public void Dispose()
+        {
+            if (capi != null) 
+            {
+                capi.Event.UnregisterRenderer(this, EnumRenderStage.Opaque);
+                if (heatableMesh != null) heatableMesh.Dispose();
+                if (heatableMeshRef != null) heatableMeshRef.Dispose();
+            }
+        }
+
+        public void OnRenderFrame(float delta, EnumRenderStage stage)
+        {
+            if (InputSlot.Empty) return; // do nothing if we're not heating an object
+            IRenderAPI rpi = capi.Render;
+            Vec3d camPos = this.capi.World.Player.Entity.CameraPos;
+            rpi.GlDisableCullFace();
+            IStandardShaderProgram prog = rpi.StandardShader;
+            prog.Use();
+            prog.RgbaAmbientIn = rpi.AmbientColor;
+            prog.RgbaFogIn = rpi.FogColor;
+            prog.FogMinIn = rpi.FogMin;
+            prog.FogDensityIn = rpi.FogDensity;
+            prog.RgbaTint = ColorUtil.WhiteArgbVec;
+            prog.DontWarpVertices = 0;
+            prog.AddRenderFlags = 0;
+            prog.ExtraGodray = 0f;
+            prog.OverlayOpacity = 0f;
+            if (!InputSlot.Empty && heatableMeshRef != null)
+            {
+                int num = (int)InputSlot.Itemstack.Collectible.GetTemperature(this.capi.World, InputSlot.Itemstack);
+                Vec4f lightrgbs = this.capi.World.BlockAccessor.GetLightRGBs(this.Pos.X, this.Pos.Y, this.Pos.Z);
+                float[] glowColor = ColorUtil.GetIncandescenceColorAsColor4f(num);
+                int extraGlow = GameMath.Clamp((num - 550) / 2, 0, 255);
+                prog.NormalShaded = 1;
+                prog.RgbaLightIn = lightrgbs;
+                prog.RgbaGlowIn = new Vec4f(glowColor[0], glowColor[1], glowColor[2], (float)extraGlow / 255f);
+                prog.ExtraGlow = extraGlow;
+                prog.Tex2D = capi.BlockTextureAtlas.AtlasTextures[0].TextureId;
+                prog.ModelMatrix = this.ModelMat.Identity().Translate((double)this.Pos.X - camPos.X, (double)this.Pos.Y - camPos.Y, (double)this.Pos.Z - camPos.Z).Values;
+                prog.ViewMatrix = rpi.CameraMatrixOriginf;
+                prog.ProjectionMatrix = rpi.CurrentProjectionMatrix;
+                rpi.RenderMesh(this.heatableMeshRef);
+            }
+            prog.Stop();
+        }
+
+        public Size2i AtlasSize
+        {
+            get { return this.capi.BlockTextureAtlas.Size; }
+        }
+        public void UpdateMesh(int slotid)
+        {
+            if (Api.Side != EnumAppSide.Server)
+            {
+                if (inv[slotid].Empty)
+                {
+                    if (heatableMeshRef != null) heatableMeshRef.Dispose();
+                    if (heatableMesh != null) heatableMesh.Dispose();
+                    heatableMeshRef = null;
+                    heatableMesh = null;
+                    MarkDirty(true, null);
+                    return;
+                }
+                MeshData meshData = GenMesh(inv[slotid].Itemstack);
+                if (meshData != null)
+                {
+                    if (inv[slotid].Itemstack.Class == EnumItemClass.Block)
+                    {
+                        TranslateMesh(meshData, 0.5f); // shrink a block down to half size
+                    }
+                    else
+                    {
+                        TranslateMesh(meshData, 1f);
+                    }
+                    heatableMesh = meshData;
+                    heatableMeshRef = capi.Render.UploadMesh(meshData);
+                }
+            }
+        }
+
+        public void TranslateMesh(MeshData meshData, float scale)
+        {
+            meshData.Scale(center, scale, scale, scale);
+            meshData.Translate(0, 0.6875f, 0);
+        }
+
+        public MeshData GenMesh(ItemStack stack)
+        {
+            IContainedMeshSource meshSource = stack.Collectible as IContainedMeshSource;
+            MeshData meshData;
+
+            if (heatableMeshRef != null) heatableMeshRef.Dispose();
+            heatableMeshRef = null;
+
+            if (meshSource != null)
+            {
+                meshData = meshSource.GenMesh(stack, capi.BlockTextureAtlas, Pos);
+                meshData.Rotate(new Vec3f(0.5f, 0.5f, 0.5f), 0f, base.Block.Shape.rotateY * 0.0174532924f, 0f);
+            }
+            else
+            {
+                if (stack.Class == EnumItemClass.Block)
+                {
+                    meshData = capi.TesselatorManager.GetDefaultBlockMesh(stack.Block).Clone();
+                }
+                else
+                {
+                    nowTesselatingObj = stack.Collectible;
+                    nowTesselatingShape = null;
+                    if (stack.Item.Shape != null)
+                    {
+                        nowTesselatingShape = capi.TesselatorManager.GetCachedShape(stack.Item.Shape.Base);
+                    }
+                    capi.Tesselator.TesselateItem(stack.Item, out meshData, this);
+                    meshData.RenderPassesAndExtraBits.Fill((short)2);
+                }
+            }
+            return meshData;
+        }
+
+        //public override bool OnTesselation(ITerrainMeshPool mesher, ITesselatorAPI tessThreadTesselator)
+        //{
+        //    base.OnTesselation(mesher, tessThreadTesselator); // renders an ACTIVE animation
+
+        //    if (heatableMesh != null)
+        //    {
+        //        mesher.AddMeshData(heatableMesh, 1); // add item if we have one
+        //    }
+        //    if (AnimUtil == null) return false;
+        //    if (AnimUtil.activeAnimationsByAnimCode.Count == 0 &&
+        //        (AnimUtil.animator != null && AnimUtil.animator.ActiveAnimationCount == 0))
+        //    {
+        //        return false; // add base-machine mesh if we're NOT animating
+        //    }
+        //    return true; // do not add base mesh if we're animating
+        //}
+
+        public TextureAtlasPosition this[string textureCode]
+        {
+            get
+            {
+                Item item = nowTesselatingObj as Item;
+                Dictionary<string, CompositeTexture> dictionary = (Dictionary<string, CompositeTexture>)((item != null) ? item.Textures : (nowTesselatingObj as Block).Textures);
+                AssetLocation assetLocation = null;
+                CompositeTexture compositeTexture;
+                if (dictionary.TryGetValue(textureCode, out compositeTexture))
+                {
+                    assetLocation = compositeTexture.Baked.BakedName;
+                }
+                if (assetLocation == null && dictionary.TryGetValue("all", out compositeTexture))
+                {
+                    assetLocation = compositeTexture.Baked.BakedName;
+                }
+                if (assetLocation == null)
+                {
+                    Shape shape = this.nowTesselatingShape;
+                    if (shape != null)
+                    {
+                        shape.Textures.TryGetValue(textureCode, out assetLocation);
+                    }
+                }
+                if (assetLocation == null)
+                {
+                    assetLocation = new AssetLocation(textureCode);
+                }
+                return this.getOrCreateTexPos(assetLocation);
+            }
+        }
+
+        private TextureAtlasPosition getOrCreateTexPos(AssetLocation texturePath)
+        {
+            TextureAtlasPosition textureAtlasPosition = this.capi.BlockTextureAtlas[texturePath];
+            if (textureAtlasPosition == null)
+            {
+                IAsset asset = this.capi.Assets.TryGet(texturePath.Clone().WithPathPrefixOnce("textures/").WithPathAppendixOnce(".png"), true);
+                if (asset != null)
+                {
+                    BitmapRef bmp = asset.ToBitmap(this.capi);
+                    int num;
+                    //this.capi.BlockTextureAtlas.InsertTextureCached(texturePath, bmp, out num, out textureAtlasPosition, 0.005f);
+                    this.capi.BlockTextureAtlas.GetOrInsertTexture(texturePath, out num, out textureAtlasPosition, null, 0.005f);
+                }
+                else
+                {
+                    ILogger logger = this.capi.World.Logger;
+                    AssetLocation code = base.Block.Code;
+                    logger.Warning($"For render in block {((code != null) ? code.ToString() : "null")}, item {this.nowTesselatingObj.Code} defined texture {texturePath}, no such texture found.");
+                }
+            }
+            return textureAtlasPosition;
+        }
+
+        #endregion
+
 
         #region ServerClientStuff
         public override void OnReceivedClientPacket(IPlayer player, int packetid, byte[] data)
@@ -483,7 +704,7 @@ namespace VintageEngineering
             environmentTemp = tree.GetFloat("worldtemp", 20);
             float currentItemTemp = tree.GetFloat("currenttemp");
             if (!inv[0].Empty) FindMatchingRecipe();
-            if (!InputSlot.Empty)
+            if (!InputSlot.Empty && Api != null)
             {
                 InputSlot.Itemstack.Collectible.SetTemperature(worldForResolving,
                     InputSlot.Itemstack, currentItemTemp, true);
