@@ -1,0 +1,88 @@
+How to make your own machine using Vintage Engineering.
+
+Create your project and make sure to add VintageEngineering DLL to the references (copy local = false)
+
+Depending on how complex your machine is steps can vary, I'll cover the basics.
+
+Most of my simple machines use block class VEElectricBlock. In JSON,  "class": "VEElectricBlock",
+
+Your custom BlockEntity needs to inherit from ElectricBE or ElectricBENoGUI.
+- ElectricBE is for those machines/blocks WITH a GUI and inventory.
+- ElectricBENoGUI is for more generic blocks (like the Relays) that don't require GUI's or inventories.
+
+In your block entities you have access to many variables from the base class described above.
+CurrentPower, MachineState, MaxPower, MaxPPS, are among the important ones.
+
+Setting the defaults for a machine happens in JSON attributes.
+Check any machine JSON attributes for examples, I'll cover the standard values below:
+
+"craftinganimcode" : This is a built-in system I added for defining what code to use when animating during 'crafting'.
+    Animation code is defined in the shape file, use the name as the code value to ensure no confusion.
+    If using a crafting animation, be sure to add the entityBehavior "Animatable"
+
+"entitytype" : This value defines what general purpose this machine has.
+    "Consumer", "Producer", and "Relay" are the only values tested and working. Others will follow soon.
+
+"maxpower": What is the max power this machine can hold? Power is stored as a ULong,
+    meaning its max value is 18,446,744,073,709,551,615
+    Do not use , in defining this value. "1024" is my standard value for this.
+
+"maxpps": What is the Power Per Second rating of this machine? Meaning how much power is this
+    machine capable of putting toward a recipe? Or if it's a generator, how much power can it produce per second at max efficiency?
+
+The next section defines the WireNodes of the block, i.e. Which type of wires connect, and where they connect to this block.
+"wireNodes": This is a very important tag that is used by the Catenary mod for wiring up the machine.
+    "index": what is the index of this node? Starts at 0 for the first node.
+    "wirefunction": The general function of this node, "Power" is the only one my mod currently supports.
+        Other function types are possible, but currently untested or not fully implemented.
+    "powertier": What tier of wire can connect to this block, currently only LV tier is functional.
+    "maxconnections": How many connections does this node support?
+    "xyz values": This defines the selection box of the node. It's what defines that little box you see when holding wire over the gold wire node of a machine.
+        This uses the same type of system as the base games Collision and Selection boxes.
+        Same with the rotateY values, which are used if you allow your machine to face different directions when placed using the "HorizontalOrientable" behavior.
+        Again, see my machines as examples.
+    Important, currently only single-node blocks are tested, multinode "Transformers" will be added and tested soon.
+
+---------------------------------------------------------------------------------------------------------
+-------- Client Server Stuff
+---------------------------------------------------------------------------------------------------------
+EVERYTHING that happens with machine simulation does so on the server only. The client does not simulate anything.
+This is to ensure server security and minimize cheating. The clients are mearly updated on the status OF
+a machine and needs to inform the server of machine inventory slot changes.
+
+The Power and recipe crafting process should only ever happen server side.
+
+Animations, rendering, and GUI Renderings are CLIENT only, so take those FromTreeAttributes updates seriously as that's
+    usually the server telling you how the machine is doing.
+
+All of my BlockEntity simualation ticks only happen on the server. The Electric Network update ticks only
+    happen on the server.
+
+---------------------------------------------------------------------------------------------------------
+Other important things:
+
+MachineState has 4 options, On, Off, Sleeping, and Paused. There are important distinctions on how these should be used:
+    On = A machine is Enabled and is actively crafting/processing/burning something. Animation (if set) is running.
+    Off = A machine is Disabled, this stops the machine from doing anything including accepting/giving power.
+    Sleeping = A machine is Enabled but NOT actively crafting/processing anything.
+    Paused = A machine is ON and Wants to craft, but is out of power or output is full.
+
+A Sleepinng or Paused machine will tick at a slower rate to save update time!
+    Override and use StateChange(EnumBEState) as a central function to manage the state and trigger/stop animations.
+
+Ensure your ToTreeAttributes and FromTreeAttributes function call the base and are done well as the game uses these for
+    saving the world as well as Client/Server syncing.
+
+It is vital that your machine BE (Block Entity) override CanReceivePower and CanExtractPower and set them appropriately.
+
+Override GetMachineHUDText in your block entity to add information to the popup data you see when looking at your machine.
+    Be sure to call base to get power information first.
+
+You do NOT need to do anything with the Electric Network power, all that is handled for you by the base classes.
+
+
+Please, Be kind, this framework took 9 months to build. So don't copy it. As I add features to my mod, hopefully it
+    opens more opportunities for others to build upon it.
+
+If you have further questions please hit me up on a Stream or my discord.
+My channel is : https://www.youtube.com/c/FlexibleGames

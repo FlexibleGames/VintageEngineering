@@ -66,10 +66,12 @@ namespace VintageEngineering
 
         private RecipeCrusher currentRecipe;
         private CrushingProperties crushingProperties;
+        private GrindingProperties grindingProperties;
         private ItemStack nuggetType;
         /// <summary>
         /// Baseline vanilla power cost to crush or extract nuggets. Set in JSON.<br/>
-        /// Value is multiplied by the hardness value to get crushPowerCostTotal for each crafting cycle.
+        /// Value is multiplied by the hardness value to get crushPowerCostTotal for each crafting cycle.<br/>
+        /// Is also the cost to Grind materials.
         /// </summary>
         private int crushingPowerCost;
 
@@ -91,10 +93,16 @@ namespace VintageEngineering
                     if (crushingProperties == null) return 0f;
                     return (float)recipePowerApplied / (float)crushPowerCostTotal;
                 }
-                else
+                else if (craftMode == "nugget")
                 {
                     // craftmode == nugget
                     if (nuggetType == null) return 0f;
+                    return (float)recipePowerApplied / (float)crushPowerCostTotal;
+                }
+                else
+                {
+                    // craftmode == grind
+                    if (grindingProperties == null) return 0f;
                     return (float)recipePowerApplied / (float)crushPowerCostTotal;
                 }
 
@@ -268,7 +276,23 @@ namespace VintageEngineering
                         return true;
                     }
                 }
-            }            
+            }
+            else if (craftMode == "grind")
+            {
+                currentRecipe = null;
+                crushingProperties = null;
+                nuggetType = null;
+                if (InputSlot.Itemstack.Collectible.GrindingProps != null)
+                {
+                    grindingProperties = InputSlot.Itemstack.Collectible.GrindingProps.Clone();
+                    if (crushPowerCostTotal == 0) crushPowerCostTotal = ((ulong)crushingPowerCost);
+                    isCrafting = true;
+                    StateChange(EnumBEState.On);
+                    return true;
+                }
+                crushPowerCostTotal = 0;
+                grindingProperties = null;
+            }
             isCrafting = false;
             recipePowerApplied = 0;
             StateChange(EnumBEState.Sleeping);
@@ -308,14 +332,23 @@ namespace VintageEngineering
                             if (!HasRoomInOutput(x, crushingProperties.CrushedStack.ResolvedItemstack)) return;
                         }
                     }
-                    else
+                    else if (craftMode == "nugget")
                     {
                         if (nuggetType == null) return;
                         for (int x = 1; x < 5; x++)
                         {
                             if (!HasRoomInOutput(x, nuggetType)) return;
                         }
-                    }                    
+                    }
+                    else
+                    {
+                        // craftmode == "grind"
+                        if (grindingProperties == null) return;
+                        for (int x = 1; x<5;x++)
+                        {
+                            if (!HasRoomInOutput(x, grindingProperties.GroundStack.ResolvedItemstack)) return;
+                        }
+                    }
 
                     float powerpertick = MaxPPS * dt;                    
 
@@ -372,9 +405,13 @@ namespace VintageEngineering
                         InputSlot.TakeOut(currentRecipe.Ingredients[0].Quantity);
                         InputSlot.MarkDirty();
                     }
-                    if (craftMode == "crush" || craftMode == "nugget")
+                    if (craftMode == "crush" || craftMode == "nugget" || craftMode == "grind")
                     {
-                        ItemStack output = craftMode == "crush" ? crushingProperties?.CrushedStack?.ResolvedItemstack?.Clone() : nuggetType?.Clone();
+                        ItemStack output;
+                        if (craftMode == "crush") output = crushingProperties?.CrushedStack?.ResolvedItemstack?.Clone();
+                        else if (craftMode == "nugget") output = nuggetType?.Clone();
+                        else output = grindingProperties?.GroundStack?.ResolvedItemstack?.Clone();
+
                         if (output != null)
                         {
                             if (craftMode == "crush")

@@ -1,0 +1,164 @@
+{
+  "code": "ingot",
+  "class": "ItemIngot",
+  "maxstacksize": 64,
+  "behaviors": [
+    {
+      "name": "GroundStorable",
+      "properties": {
+        "layout": "Stacking",
+        "placeRemoveSound": "game:sounds/block/ingot",
+        "stackingModel": "game:block/metal/ingotpile",
+        "stackingTexturesByType": {
+          "*-temporalsteel": { "metal": "vinteng:block/{metal}" },
+          "*-chargedtemporalsteel": { "metal": "vinteng:block/{metal}" }
+        },
+        "tessQuantityElements": 1,
+        "stackingCapacity": 64,
+        "transferQuantity": 1,
+        "bulkTransferQuantity": 4,
+        "collisionBox": {
+          "x1": 0,
+          "y1": 0,
+          "z1": 0,
+          "x2": 1,
+          "y2": 0.125,
+          "z2": 1
+        },
+        "cbScaleYByLayer": 0.125
+      }
+    }
+  ],
+  "behaviorsByType": {
+  },
+  "attributes": {
+    "reinforcementStrengthByType": {
+      "*-temporalsteel": 5000,
+      "*-chargedtemporalsteel": 6000
+    },
+    "requiresAnvilTierByType": {
+      "ingot-temporalsteel": 4,
+      "ingot-chargedtemporalsteel": 5
+    },
+    "displaycaseable": true,
+    "shelvable": true
+  },
+  "attributesByType": {
+    "*-temporalsteel": {
+    }
+  },
+  "variantgroups": [
+    {
+      "code": "metal",
+      "states": [ "temporalsteel", "chargedtemporalsteel" ]
+    }
+  ],
+  "storageFlags": 5,
+	"shapeByType": {
+		"*-chargedtemporalsteel": { "base": "game:item/ingotshiny" },
+		"*-temporalsteel": { "base": "game:item/ingot" }
+	},
+  "textures": {
+    "metal": { "base": "vinteng:block/{metal}" }
+  },
+  "creativeinventory": {
+    "vinteng": [ "*" ]
+
+  },
+  "materialDensityByType": {
+    "*-temporalsteel": 4000,
+    "*-chargedtemporalsteel": 8000
+  },
+  "combustiblePropsByType": {
+    "ingot-temporalsteel": {
+      "meltingPoint": 1400,
+      "meltingDuration": 30,
+      "smeltedRatio": 1,
+      "smeltedStack": {
+        "type": "item",
+        "code": "ingot-temporalsteel"
+      }
+    },
+    "ingot-chargedtemporalsteel": {
+      "meltingPoint": 2500,
+      "meltingDuration": 30,
+      "smeltedRatio": 1,
+      "smeltedStack": {
+        "type": "item",
+        "code": "ingot-temporalsteel"
+      }
+    }
+  },
+  "guiTransform": {
+    "translation": {
+      "x": 2,
+      "y": 0,
+      "z": 0
+    },
+    "rotation": {
+      "x": 149,
+      "y": -36,
+      "z": 0
+    },
+    "origin": {
+      "x": 0.5,
+      "y": 0.1,
+      "z": 0.5
+    },
+    "scale": 3.5
+  },
+  "fpHandTransform": {
+    "translation": {
+      "x": 0,
+      "y": 0.1,
+      "z": 0
+    },
+    "rotation": {
+      "x": 65,
+      "y": 21,
+      "z": -6
+    },
+    "origin": {
+      "x": 0.5,
+      "y": 0.1,
+      "z": 0.5
+    },
+    "scale": 2.15
+  },
+  "tpHandTransform": {
+    "translation": {
+      "x": -0.77,
+      "y": -0.15,
+      "z": -0.64
+    },
+    "rotation": {
+      "x": 0,
+      "y": -71,
+      "z": 18
+    },
+    "origin": {
+      "x": 0.5,
+      "y": 0.1,
+      "z": 0.5
+    },
+    "scale": 0.75
+  },
+  "groundTransform": {
+    "translation": {
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "rotation": {
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "origin": {
+      "x": 0.5,
+      "y": 0,
+      "z": 0.5
+    },
+    "scale": 4.8
+  }
+}

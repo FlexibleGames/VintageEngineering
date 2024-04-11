@@ -1,0 +1,18 @@
+{
+	"ingredient": { "type": "item", "code": "game:ingot-*", "name": "metal", "allowedVariants": ["copper"] },
+	"name": "lvpowerwire",
+	"pattern": [
+		[
+			"# # # #",
+			"# # # #",
+			"# # # #",
+			"# # # #",
+			"       ",
+			"# # # #",
+			"# # # #",
+			"# # # #",
+			"# # # #"
+		]
+	],
+	"output": { "type": "block", "code": "game:catenary-lvpower", "stacksize": 8  }
+}

@@ -1,0 +1,16 @@
+{
+	"ingredient": { "type": "item", "code": "game:metalplate-*", "name": "metal", "allowedVariants": ["brass","steel","iron"] },
+	"name": "plate",
+	"pattern": [[
+		"##_##_##",
+		"________",
+		"##_##_##",
+		"________",
+		"##_##_##",
+		"________",
+		"##_##_##",
+		"________",
+		"##_##_##"
+	]],
+	"output": { "type": "item", "code": "vinteng:screw-{metal}", "quantity":16  }
+}

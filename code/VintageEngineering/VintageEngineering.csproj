@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <Version>0.0.10</Version>
+    <Version>0.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

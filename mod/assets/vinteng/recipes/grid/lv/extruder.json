@@ -1,0 +1,13 @@
+{
+	"ingredientPattern": "XDX,MS_,XCX",
+	"ingredients": {
+		"X": { "type": "item", "code": "vinteng:screw-steel", "quantity": 1 },
+		"D": { "type": "item", "code": "game:wiretool-*", "isTool": true },
+		"M": { "type": "item", "code": "vinteng:motor-mv", "quantity": 1 },
+		"S": { "type": "block", "code": "vinteng:machineryblock-steel", "quantity": 1 },
+		"C": { "type": "item", "code": "vinteng:braidedwire-copper", "quantity": 2 }
+	},
+	"width": 3,
+	"height": 3,
+	"output": { "type": "block", "code": "vinteng:veextruder-north", "quantity": 1 }
+}

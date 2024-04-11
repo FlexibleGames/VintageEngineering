@@ -1,0 +1,14 @@
+{
+	"ingredientPattern": "XDX,SMR,XCX",
+	"ingredients": {
+		"X": { "type": "item", "code": "vinteng:screw-*", "allowedVariants": ["iron",  "steel"], "quantity": 1 },
+		"D": { "type": "item", "code": "game:wiretool-*", "isTool": true },
+		"M": { "type": "item", "code": "vinteng:motor-mv", "quantity": 1 },
+		"S": { "type": "block", "code": "vinteng:machineryblock-*", "allowedVariants": ["iron",  "steel"], "quantity": 1 },
+		"R": { "type": "item", "code": "game:poundercap-*", "allowedVariants": ["iron",  "steel"], "quantity": 2 },
+		"C": { "type": "item", "code": "vinteng:braidedwire-copper", "quantity": 2 }
+	},
+	"width": 3,
+	"height": 3,
+	"output": { "type": "block", "code": "vinteng:vecrusher-north", "quantity": 1  }
+}

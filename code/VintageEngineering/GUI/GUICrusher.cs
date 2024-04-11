@@ -17,9 +17,8 @@ namespace VintageEngineering
         private BECrusher becrusher;
 
         private RecipeCrusher _recipecrusher;
-
         private CrushingProperties _crushingproperties;
-
+        private GrindingProperties _grindingproperties;
         private ItemStack _nuggetType;
 
         private ulong _currentPower;
@@ -136,8 +135,8 @@ namespace VintageEngineering
                 // NEW DROP DOWN OPTION THINGY
                 .AddStaticText(Lang.Get("vinteng:gui-word-mode") + ":", rightwhite, dropdownmodetext, "crushMode")
                 .AddDropDown(
-                            new string[] { "crush", "nugget", "recipe"},
-                            new string[] { Lang.Get("vinteng:gui-word-crush"), Lang.Get("vinteng:gui-word-nugget"), Lang.Get("vinteng:gui-word-recipe") },
+                            new string[] { "crush", "nugget", "recipe", "grind"},
+                            new string[] { Lang.Get("vinteng:gui-word-crush"), Lang.Get("vinteng:gui-word-nugget"), Lang.Get("vinteng:gui-word-recipe"), Lang.Get("vinteng:gui-word-grind") },
                             GetCrushModeIndex(), OnSelectionChanged, dropdownbounds, "crushmode")
 
                 .EndChildElements()
@@ -151,13 +150,15 @@ namespace VintageEngineering
         }
 
         public void Update(float craftProgress, ulong curPower, RecipeCrusher recipeCrusher = null, 
-                            CrushingProperties crushingProperties = null, ItemStack nugget = null)
+                            CrushingProperties crushingProperties = null, ItemStack nugget = null,
+                            GrindingProperties grindingProperties = null)
         {
             // TODO THINGS IN HERE
             _craftProgress = craftProgress;
             _currentPower = curPower;
             _recipecrusher = recipeCrusher;
             _crushingproperties = crushingProperties;
+            _grindingproperties = grindingProperties;
             _nuggetType = nugget;
 
             if (!IsOpened()) return;
@@ -180,6 +181,7 @@ namespace VintageEngineering
                 case "crush": return 0;
                 case "nugget": return 1;
                 case "recipe": return 2;
+                case "grind": return 3;
                 default: return 0;
             }
         }
@@ -245,27 +247,35 @@ namespace VintageEngineering
             if (_recipecrusher != null)
             {
                 ItemStack outputstack = _recipecrusher.Outputs[0].ResolvedItemstack;
-                string langcode = outputstack.Collectible.Code.Domain != null ? outputstack.Collectible.Code.Domain : "";
-                langcode += ":" + outputstack.Collectible.ItemClass.ToString().ToLowerInvariant();
-                langcode += "-" + outputstack.Collectible.Code.Path;
+                //string langcode = outputstack.Collectible.Code.Domain != null ? outputstack.Collectible.Code.Domain : "";
+                //langcode += ":" + outputstack.Collectible.ItemClass.ToString().ToLowerInvariant();
+                //langcode += "-" + outputstack.Collectible.Code.Path;
                 outputhelptext = $"{Lang.Get("vinteng:gui-word-crafting")} {outputstack.Collectible.GetHeldItemName(outputstack)}";
 
             }
             else if (_crushingproperties != null)
             {
                 ItemStack outputstack = _crushingproperties.CrushedStack.ResolvedItemstack;
-                string langcode = outputstack.Collectible.Code.Domain != null ? outputstack.Collectible.Code.Domain : "";
-                langcode += ":" + outputstack.Collectible.ItemClass.ToString().ToLowerInvariant();
-                langcode += "-" + outputstack.Collectible.Code.Path;
+                //string langcode = outputstack.Collectible.Code.Domain != null ? outputstack.Collectible.Code.Domain : "";
+                //langcode += ":" + outputstack.Collectible.ItemClass.ToString().ToLowerInvariant();
+                //langcode += "-" + outputstack.Collectible.Code.Path;
                 outputhelptext = $"{Lang.Get("vinteng:gui-word-crafting")} {outputstack.Collectible.GetHeldItemName(outputstack)}";
             }
             else if (_nuggetType != null)
             {
                 ItemStack outputstack = _nuggetType;
-                string langcode = outputstack.Collectible.Code.Domain != null ? outputstack.Collectible.Code.Domain : "";
-                langcode += ":" + outputstack.Collectible.ItemClass.ToString().ToLowerInvariant();
-                langcode += "-" + outputstack.Collectible.Code.Path;
+                //string langcode = outputstack.Collectible.Code.Domain != null ? outputstack.Collectible.Code.Domain : "";
+                //langcode += ":" + outputstack.Collectible.ItemClass.ToString().ToLowerInvariant();
+                //langcode += "-" + outputstack.Collectible.Code.Path;
                 outputhelptext = $"{Lang.Get("vinteng:gui-word-crafting")} {outputstack.StackSize} {outputstack.Collectible.GetHeldItemName(outputstack)}";
+            }
+            else if (_grindingproperties != null)
+            {
+                ItemStack outputstack = _grindingproperties.GroundStack.ResolvedItemstack;
+                //string langcode = outputstack.Collectible.Code.Domain != null ? outputstack.Collectible.Code.Domain : "";
+                //langcode += ":" + outputstack.Collectible.ItemClass.ToString().ToLowerInvariant();
+                //langcode += "-" + outputstack.Collectible.Code.Path;
+                outputhelptext = $"{Lang.Get("vinteng:gui-word-crafting")} {outputstack.Collectible.GetHeldItemName(outputstack)}";
             }
             else
             {

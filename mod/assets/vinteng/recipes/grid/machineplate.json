@@ -1,0 +1,32 @@
+[
+    {
+        "ingredientPattern": "S_S,_B_,S_S",
+        "ingredients": {
+            "B": { "type": "item", "code": "game:metalplate-tinbronze", "quantity": 1 },
+            "S": { "type": "item", "code": "vinteng:screw-*", "quantity": 1 }
+        },
+        "width": 3,
+        "height": 3,
+        "output": { "type": "item", "code": "vinteng:machineplate-tinbronze", "quantity": 1  }
+    },
+    {
+        "ingredientPattern": "S_S,_B_,S_S",
+        "ingredients": {
+            "B": { "type": "item", "code": "game:metalplate-iron", "quantity": 1 },
+            "S": { "type": "item", "code": "vinteng:screw-*", "quantity": 1 }
+        },
+        "width": 3,
+        "height": 3,
+        "output": { "type": "item", "code": "vinteng:machineplate-iron", "quantity": 1  }
+    },
+    {
+        "ingredientPattern": "S_S,_B_,S_S",
+        "ingredients": {
+            "B": { "type": "item", "code": "game:metalplate-steel", "quantity": 1 },
+            "S": { "type": "item", "code": "vinteng:screw-steel", "quantity": 1 }
+        },
+        "width": 3,
+        "height": 3,
+        "output": { "type": "item", "code": "vinteng:machineplate-steel", "quantity": 1  }
+    }
+]

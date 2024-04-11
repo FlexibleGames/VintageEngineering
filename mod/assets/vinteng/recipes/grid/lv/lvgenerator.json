@@ -1,0 +1,13 @@
+{
+	"ingredientPattern": "STS,PBM,S_S",
+	"ingredients": {
+		"T": { "type": "item", "code": "game:wiretool-*", "isTool": true },
+		"P": { "type": "item", "code": "game:catenary-lvpower", "quantity": 3},
+		"B": { "type": "block", "code": "vinteng:machineryblock-tinbronze", "quantity": 1},
+		"M": { "type": "item", "code": "vinteng:motor-lv", "quantity": 1},
+		"S": { "type": "item", "code": "vinteng:screw-*", "quantity": 1}
+	},
+	"width": 3,
+	"height": 3,
+	"output": { "type": "block", "code": "vinteng:velvgenerator-north", "quantity": 1  }
+}

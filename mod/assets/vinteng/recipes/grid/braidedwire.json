@@ -1,0 +1,10 @@
+{
+	"ingredientPattern": "_S_,SRS,_S_",
+	"ingredients": {
+		"R": { "type": "block", "code": "game:catenary-lvpower", "quantity": 2 },
+		"S": { "type": "block", "code": "game:catenary-lvpower", "quantity": 1 }
+	},
+	"width": 3,
+	"height": 3,
+	"output": { "type": "item", "code": "vinteng:braidedwire-copper", "quantity": 1  }
+}

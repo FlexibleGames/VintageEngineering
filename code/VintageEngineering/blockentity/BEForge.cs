@@ -443,7 +443,6 @@ namespace VintageEngineering
             return outtext + Environment.NewLine + heating;
         }
 
-
         #region MoldMeshAndRenderingStuff
         protected Shape nowTesselatingShape;
         protected CollectibleObject nowTesselatingObj;

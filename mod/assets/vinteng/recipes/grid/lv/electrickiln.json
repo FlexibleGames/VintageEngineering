@@ -1,0 +1,11 @@
+{
+	"ingredientPattern": "SPS,P_P,SFS",
+	"ingredients": {
+		"S": { "type": "item", "code": "vinteng:screw-*", "allowedVariants": ["iron", "steel"], "quantity": 1},
+		"P": { "type": "item", "code": "vinteng:machineplate-*", "allowedVariants": ["iron", "steel"], "quantity": 1},
+		"F": { "type": "block", "code": "vinteng:veforge-north", "quantity": 1}
+	},
+	"width": 3,
+	"height": 3,
+	"output": { "type": "block", "code": "vinteng:vekiln-north", "quantity": 1  }
+}

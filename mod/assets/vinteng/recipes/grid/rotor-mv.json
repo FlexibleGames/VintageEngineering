@@ -1,0 +1,19 @@
+{
+	"ingredientPattern": "_W_,WRW,_W_",
+	"ingredients": {
+		"R": {
+			"type": "item",
+			"code": "vinteng:metalrod-*",
+			"allowedVariants": ["iron", "steel"],
+			"quantity": 2
+		},
+		"W": {
+			"type": "item",
+			"code": "vinteng:braidedwire-copper",
+			"quantity": 1
+		}
+	},
+	"width": 3,
+	"height": 3,
+	"output": { "type": "item", "code": "vinteng:rotor-mv", "quantity": 1  }
+}

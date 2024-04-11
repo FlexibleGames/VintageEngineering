@@ -1,0 +1,18 @@
+{
+	"ingredientPattern": "_W_,WRW,_W_",
+	"ingredients": {
+		"R": {
+			"type": "item",
+			"code": "game:metalplate-iron",
+			"quantity": 1
+		},
+		"W": {
+			"type": "item",
+			"code": "vinteng:braidedwire-copper",
+			"quantity": 1
+		}
+	},
+	"width": 3,
+	"height": 3,
+	"output": { "type": "item", "code": "vinteng:stator-mv", "quantity": 1  }
+}

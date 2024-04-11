@@ -1,0 +1,18 @@
+{
+	"ingredient": { "type": "item", "code": "game:ingot-*", "name": "metal", "allowedVariants": ["tinbronze", "iron","steel","meteoriciron", "titanium"] },
+	"name": "plate",
+	"pattern": [
+		[
+			"#######",
+			"# # # #",
+			"# # # #",
+			"# # # #",
+			"# # # #",
+			"# # # #",
+			"# # # #",
+			"# # # #",
+			"#######"
+		]
+	],
+	"output": { "type": "item", "code": "vinteng:vepressmold-nails-{metal}"  }
+}

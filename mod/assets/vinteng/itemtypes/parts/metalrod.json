@@ -1,7 +1,7 @@
 {
 	"code": "metalrod",
 	"creativeinventory": {
-		"items": [ "*" ]
+		"vinteng": [ "*" ]
 	},
 	"drawtype": "json",
 	"shape": { "base": "vinteng:item/parts/rod" },

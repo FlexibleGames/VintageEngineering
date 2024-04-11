@@ -1,0 +1,33 @@
+{
+	"code": "machineryblock",
+	"class": "Block",
+	"creativeinventory": {
+		"general": [ "*" ],
+		"vinteng": [ "*" ]
+	},
+	"variantgroups": [
+		{
+			"code": "metal",
+			"states": [ "tinbronze", "iron", "steel", "temporalsteel" ]
+		}
+	],
+	"blockmaterial": "Metal",
+	"drawtype": "cube",
+	"sidesolid": { "all": true },
+	"sideopaque": { "all": true },
+	"maxStackSize": 8,
+	"texturesByType": {
+		"*-tinbronze": { "all": { "base": "vinteng:block/machinery" }},
+		"*-iron": { "all": { "base": "vinteng:block/darkiron" }},
+		"*-steel": { "all": { "base": "vinteng:block/wornsteelplate" }},
+		"*-temporalsteel": { "all": { "base": "vinteng:block/temporalsteel" }}
+	},
+	"resistance": 2,
+	"lightAbsorption": 1,
+	"sounds": {
+		"place": "game:block/chute",
+		"break": "game:block/anvil",
+		"hit": "game:block/anvil",
+		"walk": "game:walk/stone"
+	}
+}

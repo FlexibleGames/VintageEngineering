@@ -1,0 +1,19 @@
+{
+	"ingredient": { "type": "item", "code": "game:metalplate-*", "name": "metal", "allowedVariants": ["tinbronze", "iron","steel","meteoriciron", "titanium"] },
+	"name": "plate",
+	"pattern": [
+		[
+			"    #    ",
+			"   ###   ",
+			"  #####  ",
+			" ####### ",
+			"#########",
+			" ####### ",
+			"  #####  ",
+			"   ###   ",
+			"    #    "
+
+		]
+	],
+	"output": { "type": "item", "code": "vinteng:vesawblade-{metal}"  }
+}

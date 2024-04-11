@@ -1,0 +1,34 @@
+{
+	"ingredientPattern": "X_X,MSR,XCX",
+	"ingredients": {
+		"X": {
+			"type": "item",
+			"code": "vinteng:screw-*",
+			"allowedVariants": ["iron", "steel"],
+			"quantity": 1
+		},
+		"M": {
+			"type": "item",
+			"code": "vinteng:machineplate-iron",
+			"quantity": 1
+		},
+		"S": {
+			"type": "item",
+			"code": "vinteng:stator-mv",
+			"quantity": 1
+		},
+		"R": {
+			"type": "item",
+			"code": "vinteng:rotor-mv",
+			"quantity": 1
+		},
+		"C": {
+			"type": "item",
+			"code": "vinteng:braidedwire-copper",
+			"quantity": 2
+		}
+	},
+	"width": 3,
+	"height": 3,
+	"output": { "type": "item", "code": "vinteng:motor-mv", "quantity": 1  }
+}

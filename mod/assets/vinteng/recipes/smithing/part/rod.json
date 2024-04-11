@@ -1,0 +1,10 @@
+{
+	"ingredient": { "type": "item", "code": "game:ingot-*", "name": "metal", "allowedVariants": ["copper","brass","tinbronze","iron","steel"] },
+	"name": "metalrod",
+	"pattern": [[
+		"####_####",
+		"_________",
+		"####_####"
+	]],
+	"output": { "type": "item", "code": "vinteng:metalrod-{metal}", "quantity":4  }
+}

@@ -1,0 +1,92 @@
+{
+	"code": "motor",
+	"creativeinventory": {
+		"items": [ "*" ]
+	},
+	"variantgroups": [
+		{
+			"code": "tier",
+			"states": [ "lv", "mv", "hv", "ev" ]
+		}
+	],
+	"attributes": {
+		"groundStorageTransform": {
+			"rotation": { "x": 0, "y": 3, "z": 0 },
+			"origin": { "x": 0.5, "y": 0, "z": 0.5 },
+			"scale": 0.46
+		}
+	},
+	"behaviors": [
+		{
+		"name": "GroundStorable",
+		"properties": {
+			"layout": "Quadrants",
+			"collisionBox": { "x1": 0, "y1": 0, "z1": 0, "x2": 1, "y2": 0.25, "z2": 1 }
+		}
+		}
+	],
+	"drawtype": "json",
+	"shape": { "base": "item/parts/motor-{tier}" },
+	"maxstacksize": 8,
+	"guiTransform": {
+		"translation": { "x": 0, "y": 0, "z": 0 },
+		"rotation": { "x": 157, "y": 122, "z": -11 },
+		"origin": { "x": 0.15, "y": 0.4, "z": 0.3 },
+		"scale": 0.94
+	},
+	"fpHandTransform": {
+		"translation": {
+			"x": -0.1,
+			"y": 0.2,
+			"z": 0
+		},
+		"rotation": {
+			"x": 8,
+			"y": 1,
+			"z": -42
+		},
+		"origin": {
+			"x": 0.5,
+			"y": 0,
+			"z": 0.5
+		},
+		"scale": 2.15
+	},
+	"groundTransform": {
+		"translation": {
+			"x": 0,
+			"y": 0,
+			"z": 0
+		},
+		"rotation": {
+			"x": 0,
+			"y": 0,
+			"z": 0
+		},
+		"origin": {
+			"x": 0.5,
+			"y": 0,
+			"z": 0.5
+		},
+		"scale": 4.31
+	},
+	"tpHandTransform": {
+		"translation": {
+			"x": -0.78,
+			"y": -0.09,
+			"z": -0.67
+		},
+		"rotation": {
+			"x": 9,
+			"y": -1,
+			"z": -16
+		},
+		"origin": {
+			"x": 0.5,
+			"y": 0,
+			"z": 0.5
+		},
+		"scale": 0.76
+	}
+
+}

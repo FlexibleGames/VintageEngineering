@@ -1,0 +1,147 @@
+{
+	"editor": {
+		"allAngles": false,
+		"entityTextureMode": false
+	},
+	"textureWidth": 16,
+	"textureHeight": 16,
+	"textureSizes": {
+	},
+	"textures": {
+		"shinybrass": "block/shinybrass",
+		"machinery": "block/machinery"
+	},
+	"elements": [
+		{
+			"name": "Base",
+			"from": [ 5.0, 0.0, 5.0 ], 
+			"to": [ 11.0, 1.0, 11.0 ], 
+			"rotationOrigin": [ 5.0, 0.0, 5.0 ],
+			"faces": {
+				"north": { "texture": "#machinery", "uv": [ 0.0, 0.0, 16.0, 1.0 ], "autoUv": false },
+				"east": { "texture": "#machinery", "uv": [ 0.0, 0.0, 16.0, 1.0 ], "autoUv": false },
+				"south": { "texture": "#machinery", "uv": [ 0.0, 0.0, 16.0, 1.0 ], "autoUv": false },
+				"west": { "texture": "#machinery", "uv": [ 0.0, 0.0, 16.0, 1.0 ], "autoUv": false },
+				"up": { "texture": "#machinery", "uv": [ 0.0, 0.0, 16.0, 16.0 ], "autoUv": false },
+				"down": { "texture": "#machinery", "uv": [ 0.0, 0.0, 16.0, 16.0 ], "autoUv": false }
+			}
+		},
+		{
+			"name": "shaftorigin",
+			"from": [ 8.0, 2.0, 5.75 ], 
+			"to": [ 8.0, 2.0, 5.75 ], 
+			"rotationOrigin": [ 8.0, 3.0, 4.0 ],
+			"faces": {
+				"north": { "texture": "#shinybrass", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"east": { "texture": "#shinybrass", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"south": { "texture": "#shinybrass", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"west": { "texture": "#shinybrass", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"up": { "texture": "#shinybrass", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"down": { "texture": "#shinybrass", "uv": [ 0.0, 0.0, 0.5, 0.5 ] }
+			},
+			"children": [
+				{
+					"name": "shaft",
+					"from": [ -0.5, 0.375, -0.5 ], 
+					"to": [ 0.0, 0.875, 6.5 ], 
+					"rotationOrigin": [ 0.0, 0.875, -1.0 ],
+					"rotationZ": 44.99999632180179,
+					"faces": {
+						"north": { "texture": "#shinybrass", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+						"east": { "texture": "#shinybrass", "uv": [ 0.0, 0.0, 7.0, 0.5 ] },
+						"south": { "texture": "#shinybrass", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+						"west": { "texture": "#shinybrass", "uv": [ 0.0, 0.0, 7.0, 0.5 ] },
+						"up": { "texture": "#shinybrass", "uv": [ 0.0, 0.0, 0.5, 7.0 ] },
+						"down": { "texture": "#shinybrass", "uv": [ 0.0, 0.0, 0.5, 7.0 ] }
+					},
+					"children": [
+						{
+							"name": "Winding",
+							"from": [ -0.75, 0.0, 1.0 ], 
+							"to": [ 1.25, 0.5, 4.0 ], 
+							"rotationOrigin": [ -0.75, 0.25, 0.5 ],
+							"faces": {
+								"north": { "texture": "#machinery", "uv": [ 7.0, 8.0, 9.0, 8.5 ] },
+								"east": { "texture": "#machinery", "uv": [ 6.0, 8.0, 9.0, 8.5 ] },
+								"south": { "texture": "#machinery", "uv": [ 5.0, 10.0, 7.0, 10.5 ] },
+								"west": { "texture": "#machinery", "uv": [ 6.5, 7.0, 9.5, 7.5 ] },
+								"up": { "texture": "#machinery", "uv": [ 6.0, 7.5, 8.0, 10.5 ] },
+								"down": { "texture": "#machinery", "uv": [ 6.5, 8.0, 8.5, 11.0 ] }
+							}
+						},
+						{
+							"name": "Winding8",
+							"from": [ 0.25, -1.0, 1.0 ], 
+							"to": [ 2.25, -0.5, 4.0 ], 
+							"rotationOrigin": [ 0.25, -0.75, 0.5 ],
+							"rotationZ": 90.0,
+							"faces": {
+								"north": { "texture": "#machinery", "uv": [ 6.0, 6.5, 8.0, 7.0 ] },
+								"east": { "texture": "#machinery", "uv": [ 8.5, 8.0, 11.5, 8.5 ] },
+								"south": { "texture": "#machinery", "uv": [ 7.0, 9.5, 9.0, 10.0 ] },
+								"west": { "texture": "#machinery", "uv": [ 8.0, 8.0, 11.0, 8.5 ] },
+								"up": { "texture": "#machinery", "uv": [ 8.0, 6.5, 10.0, 9.5 ] },
+								"down": { "texture": "#machinery", "uv": [ 8.5, 7.0, 10.5, 10.0 ] }
+							}
+						}
+					]
+				},
+				{
+					"name": "Base9",
+					"from": [ -1.5, -1.0, -1.0 ], 
+					"to": [ 1.5, -0.5, 5.5 ], 
+					"rotationOrigin": [ -2.0, -1.0, -1.0 ],
+					"faces": {
+						"north": { "texture": "#machinery", "uv": [ 0.0, 0.0, 16.0, 1.0 ], "autoUv": false },
+						"east": { "texture": "#machinery", "uv": [ 0.0, 0.0, 16.0, 1.0 ], "autoUv": false },
+						"south": { "texture": "#machinery", "uv": [ 0.0, 0.0, 16.0, 1.0 ], "autoUv": false },
+						"west": { "texture": "#machinery", "uv": [ 0.0, 0.0, 16.0, 1.0 ], "autoUv": false },
+						"up": { "texture": "#machinery", "uv": [ 0.0, 0.0, 16.0, 16.0 ], "autoUv": false },
+						"down": { "texture": "#machinery", "uv": [ 0.0, 0.0, 16.0, 16.0 ], "autoUv": false }
+					}
+				},
+				{
+					"name": "Base8",
+					"from": [ -1.5, 1.5, -1.0 ], 
+					"to": [ 1.5, 2.0, 5.5 ], 
+					"rotationOrigin": [ -2.0, 1.0, -1.0 ],
+					"faces": {
+						"north": { "texture": "#machinery", "uv": [ 0.0, 0.0, 16.0, 1.0 ], "autoUv": false },
+						"east": { "texture": "#machinery", "uv": [ 0.0, 0.0, 16.0, 1.0 ], "autoUv": false },
+						"south": { "texture": "#machinery", "uv": [ 0.0, 0.0, 16.0, 1.0 ], "autoUv": false },
+						"west": { "texture": "#machinery", "uv": [ 0.0, 0.0, 16.0, 1.0 ], "autoUv": false },
+						"up": { "texture": "#machinery", "uv": [ 0.0, 0.0, 16.0, 16.0 ], "autoUv": false },
+						"down": { "texture": "#machinery", "uv": [ 0.0, 0.0, 16.0, 16.0 ], "autoUv": false }
+					}
+				},
+				{
+					"name": "ShaftCap",
+					"from": [ -1.0, -0.5, 4.5 ], 
+					"to": [ 1.0, 1.5, 5.5 ], 
+					"rotationOrigin": [ -1.0, 0.0, 4.0 ],
+					"faces": {
+						"north": { "texture": "#shinybrass", "uv": [ 0.0, 0.0, 2.0, 2.0 ] },
+						"east": { "texture": "#shinybrass", "uv": [ 0.0, 0.0, 1.0, 2.0 ] },
+						"south": { "texture": "#shinybrass", "uv": [ 0.0, 0.0, 2.0, 2.0 ] },
+						"west": { "texture": "#shinybrass", "uv": [ 0.0, 0.0, 1.0, 2.0 ] },
+						"up": { "texture": "#shinybrass", "uv": [ 0.0, 0.0, 2.0, 1.0 ] },
+						"down": { "texture": "#shinybrass", "uv": [ 0.0, 0.0, 2.0, 1.0 ] }
+					}
+				},
+				{
+					"name": "shaft end",
+					"from": [ -1.0, -0.5, -1.0 ], 
+					"to": [ 1.0, 1.5, 0.0 ], 
+					"rotationOrigin": [ -1.0, 0.0, -2.0 ],
+					"faces": {
+						"north": { "texture": "#shinybrass", "uv": [ 0.0, 0.0, 2.0, 2.0 ] },
+						"east": { "texture": "#shinybrass", "uv": [ 0.0, 0.0, 1.0, 2.0 ] },
+						"south": { "texture": "#shinybrass", "uv": [ 0.0, 0.0, 2.0, 2.0 ] },
+						"west": { "texture": "#shinybrass", "uv": [ 0.0, 0.0, 1.0, 2.0 ] },
+						"up": { "texture": "#shinybrass", "uv": [ 0.0, 0.0, 2.0, 1.0 ] },
+						"down": { "texture": "#shinybrass", "uv": [ 0.0, 0.0, 2.0, 1.0 ] }
+					}
+				}
+			]
+		}
+	]}
