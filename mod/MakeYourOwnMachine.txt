@@ -64,11 +64,11 @@ Other important things:
 MachineState has 4 options, On, Off, Sleeping, and Paused. There are important distinctions on how these should be used:
     On = A machine is Enabled and is actively crafting/processing/burning something. Animation (if set) is running.
     Off = A machine is Disabled, this stops the machine from doing anything including accepting/giving power.
-    Sleeping = A machine is Enabled but NOT actively crafting/processing anything.
+    Sleeping = A machine is Enabled but NOT actively crafting/processing anything. Able to send/receive power.
     Paused = A machine is ON and Wants to craft, but is out of power or output is full.
 
 A Sleepinng or Paused machine will tick at a slower rate to save update time!
-    Override and use StateChange(EnumBEState) as a central function to manage the state and trigger/stop animations.
+    Override and use StateChange(EnumBEState) as a central function to manage the state and trigger/stop animations, particles, etc.
 
 Ensure your ToTreeAttributes and FromTreeAttributes function call the base and are done well as the game uses these for
     saving the world as well as Client/Server syncing.
@@ -79,7 +79,6 @@ Override GetMachineHUDText in your block entity to add information to the popup 
     Be sure to call base to get power information first.
 
 You do NOT need to do anything with the Electric Network power, all that is handled for you by the base classes.
-
 
 Please, Be kind, this framework took 9 months to build. So don't copy it. As I add features to my mod, hopefully it
     opens more opportunities for others to build upon it.
