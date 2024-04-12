@@ -6,6 +6,12 @@ using Vintagestory.API.Util;
 
 namespace VintageEngineering.Electrical.Systems.Catenary
 {
+    /// <summary>
+    /// Many Thanks to the Signals mod for help with the task of generating wire meshes.<br/>
+    /// I could not find a better algorithm/implementation of this process.<br/>
+    /// They won't say where they picked it up, but thank you. I had to unwind most of that mod<br/>
+    /// and rebuild it from the ground up to ensure it could be used for any purpose.
+    /// </summary>
     public class WireMesh
     {
         /// <summary>

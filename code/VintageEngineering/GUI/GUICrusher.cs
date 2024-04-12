@@ -39,7 +39,7 @@ namespace VintageEngineering
 
         private void OnSlotModified(int slotid)
         {
-            capi.Event.EnqueueMainThreadTask(new Action(SetupDialog), "setuplogsplitdlg");
+            capi.Event.EnqueueMainThreadTask(new Action(SetupDialog), "setupcrusherdlg");
         }
 
         public void SetupDialog()

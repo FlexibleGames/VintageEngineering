@@ -1,0 +1,58 @@
+{
+	"code": "lvrelaybase",
+	"maxstacksize": 64,
+	"variantgroups": [
+		{ "code": "state", "states": ["raw", "burned" ] }
+	],
+	"behaviors": [
+        { "name": "GroundStorable", "properties": { "layout": "Quadrants", "collisionBox": { "x1": 0, "y1": 0, "z1": 0, "x2": 1, "y2": 0.125, "z2": 1 } } }
+	],
+	"attributes": {
+		"displaycaseable": true,
+		"shelvable": true
+	},
+	"shape": { "base": "vinteng:item/parts/lvrelaybase" },
+	"texturesByType": {
+		"*-raw": {
+			"ceramic-dark": { "base": "game:block/clay/blueclay" }
+		},
+		"*-burned": {
+			"ceramic-dark": { "base": "game:block/clay/ceramic-dark" }
+		}
+	},
+	"creativeinventory": { "general": ["*"], "vinteng": ["*"] },
+	"combustiblePropsByType": {
+		"lvrelaybase-raw": {
+			"meltingPoint": 850,
+			"meltingDuration": 7.5,
+			"smeltingType": "fire",
+			"smeltedStack": { "type": "item", "code": "lvrelaybase-burned" },
+			"requiresContainer": false
+		}
+	},
+	"materialDensity": 2600,
+	"fpHandTransform": {
+		"translation": { "x": 0, "y": 0.2, "z": 0 },
+		"rotation": { "x": 19, "y": 16, "z": 5 },
+		"origin": { "x": 0.5, "y": 0.1, "z": 0.5 },
+		"scale": 1.94
+	},
+	"guiTransform": {
+		"translation": { "x": 0, "y": 0, "z": 0 },
+		"rotation": { "x": -37, "y": -40, "z": -180 },
+		"origin": { "x": 0.5, "y": 0.02, "z": 0.5 },
+		"scale": 4.6
+	},
+	"groundTransform": {
+		"translation": { "x": 0, "y": 0, "z": 0 },
+		"rotation": { "x": 0, "y": 0, "z": 0 },
+		"origin": { "x": 0.5, "y": 0, "z": 0.5 },
+		"scale": 4.65
+	},
+	"tpHandTransform": {
+		"translation": { "x": -0.67, "y": -0.06, "z": -0.6 },
+		"rotation": { "x": 0, "y": 74, "z": 18 },
+		"origin": { "x": 0.5, "y": 0.1, "z": 0.5 },
+		"scale": 0.81
+	}
+}

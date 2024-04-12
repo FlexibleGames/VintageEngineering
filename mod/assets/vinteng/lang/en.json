@@ -40,6 +40,11 @@
 	"vinteng:item-vesawblade-*": "Saw Blade",
 	"vinteng:itemdesc-vesawblade-*": "Use in a Sawmill to make planks from logs. Will wear out over time, durability depends on material.<br><br>Can also convert plank blocks, stairs, and slabs back into raw planks.",
 
+	"vinteng:item-lvrelaybase-raw": "LV Wire Relay Base (Raw)",
+	"vinteng:itemdesc-lvrelaybase-raw": "Fire this in a PitKiln (or Electric Kiln) to use.",
+	"vinteng:item-lvrelaybase-burned": "LV Wire Relay Base (Fired)",
+	"vinteng:itemdesc-lvrelaybase-burned": "A component to craft an LV Relay for running LV wires around your base. Craft with a glass slab to make a relay.",
+
 	"vinteng:item-metalrod-copper": "Metal Rod (Copper)",
 	"vinteng:itemdesc-metalrod-copper": "Copper Rod used in crafting and in the Extruder to make Wires.",
 	"vinteng:item-metalrod-brass": "Metal Rod (Brass)",

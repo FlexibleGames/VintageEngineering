@@ -141,7 +141,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
                     // TODO check for variants
                     if (RequiresVariants != null)
                     {
-                        return WildcardUtil.MatchesVariants(Requires, requireslot.Itemstack.Collectible.Code, RequiresVariants);
+                        return WildcardUtil.Match(Requires, requireslot.Itemstack.Collectible.Code, RequiresVariants);
                     }
                     return WildcardUtil.Match(Requires, requireslot.Itemstack.Collectible.Code);
                 }

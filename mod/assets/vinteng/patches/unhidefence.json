@@ -1,0 +1,13 @@
+[
+    {  "side": "Server", "op": "remove", "path": "/attributes/handbook", "file": "game:blocktypes/metal/ironfence.json" },
+    {  "side": "Server", "op": "add", "path": "/attributes/",
+        "value": {
+            "handbook":{
+                "excludeByType": {
+                    "*-ew": false,
+                    "*": true
+                }
+            }
+        },
+        "file": "game:blocktypes/metal/ironfence.json" }
+]

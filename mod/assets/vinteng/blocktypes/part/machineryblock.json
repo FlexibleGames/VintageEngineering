@@ -18,7 +18,7 @@
 	"maxStackSize": 8,
 	"texturesByType": {
 		"*-tinbronze": { "all": { "base": "vinteng:block/machinery" }},
-		"*-iron": { "all": { "base": "vinteng:block/darkiron" }},
+		"*-iron": { "all": { "base": "vinteng:block/castiron" }},
 		"*-steel": { "all": { "base": "vinteng:block/wornsteelplate" }},
 		"*-temporalsteel": { "all": { "base": "vinteng:block/temporalsteel" }}
 	},

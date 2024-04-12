@@ -1,0 +1,20 @@
+[
+    {
+        "ingredientPattern": "SSS,SSS",
+        "ingredients": {
+            "S": { "type": "item", "code": "vinteng:metalrod-iron", "quantity": 1 }
+        },
+        "width": 3,
+        "height": 2,
+        "output": { "type": "block", "code": "game:ironfence-base-ew", "quantity": 6  }
+    },
+    {
+        "ingredientPattern": "S_S,SSS",
+        "ingredients": {
+            "S": { "type": "item", "code": "vinteng:metalrod-iron", "quantity": 1 }
+        },
+        "width": 3,
+        "height": 2,
+        "output": { "type": "block", "code": "game:ironfence-top-ew", "quantity": 6  }
+    }
+]

@@ -150,7 +150,7 @@ namespace VintageEngineering
                 }
                 if (clientDialog != null && clientDialog.IsOpened())
                 {
-                    clientDialog.Update(RecipeProgress, CurrentPower, currentRecipe);
+                    clientDialog.Update(RecipeProgress, CurrentPower, currentRecipe, crushingProperties, nuggetType, grindingProperties);
                 }
             }
         }
@@ -500,7 +500,7 @@ namespace VintageEngineering
             }
             if (Api != null && Api.Side == EnumAppSide.Client && clientDialog != null && clientDialog.IsOpened())
             {
-                clientDialog.Update(RecipeProgress, CurrentPower, currentRecipe);
+                clientDialog.Update(RecipeProgress, CurrentPower, currentRecipe, crushingProperties, nuggetType, grindingProperties);
             }
             MarkDirty(true);
         }
@@ -513,7 +513,7 @@ namespace VintageEngineering
                 base.toggleInventoryDialogClient(byPlayer, delegate
                 {
                     clientDialog = new GUICrusher(DialogTitle, Inventory, this.Pos, capi, this);
-                    clientDialog.Update(RecipeProgress, CurrentPower, currentRecipe);
+                    clientDialog.Update(RecipeProgress, CurrentPower, currentRecipe, crushingProperties, nuggetType, grindingProperties);
                     return this.clientDialog;
                 });
             }
@@ -603,7 +603,7 @@ namespace VintageEngineering
             if (Api != null && Api.Side == EnumAppSide.Client) { StateChange(MachineState); }
             if (clientDialog != null && clientDialog.IsOpened())
             {
-                clientDialog.Update(RecipeProgress, CurrentPower, currentRecipe, crushingProperties, nuggetType);
+                clientDialog.Update(RecipeProgress, CurrentPower, currentRecipe, crushingProperties, nuggetType, grindingProperties);
             }            
         }
 
