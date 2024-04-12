@@ -1,0 +1,12 @@
+[
+    {  "side": "Server", "op": "addmerge", "path": "/combustiblePropsByType",
+    "value": {
+        "metalplate-steel": {
+			"meltingPoint": 1502,
+			"meltingDuration": 30,
+			"smeltedRatio": 1,
+			"smeltedStack": { "type": "item", "code": "ingot-steel", "stacksize": 2 }
+        }
+    },
+    "file": "game:itemtypes/resource/metalplate.json" }
+]

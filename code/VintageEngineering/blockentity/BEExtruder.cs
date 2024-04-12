@@ -90,7 +90,7 @@ namespace VintageEngineering
 
         public void OnSlotModified(int slotid)
         {
-            if (slotid == 0)
+            if (slotid == 0 || slotid == 2)
             {
                 // something changed with the input slot
                 if (InputSlot.Empty)

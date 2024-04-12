@@ -1,6 +1,6 @@
 {
-	"ingredient": { "type": "item", "code": "game:metalplate-*", "name": "metal", "allowedVariants": ["brass","steel","iron"] },
-	"name": "plate",
+	"ingredient": { "type": "item", "code": "game:ingot-*", "name": "metal", "allowedVariants": ["brass","steel","iron"] },
+	"name": "screws",
 	"pattern": [[
 		"##_##_##",
 		"________",
