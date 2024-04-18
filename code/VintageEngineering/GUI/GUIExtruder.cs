@@ -155,6 +155,8 @@ namespace VintageEngineering
                 langcode += "-" + outputstack.Collectible.Code.Path;
                 outputhelptext = $"{Lang.Get("vinteng:gui-word-crafting")} {Lang.Get(langcode)}";
 
+                if (betestmach.CurrentPower < 10) outputhelptext = Lang.Get("vinteng:gui-machine-lowpower");
+                if (!betestmach.ValidateTemp()) outputhelptext = Lang.Get("vinteng:gui-input-hot-enough");
             }
             else
             {
@@ -168,11 +170,11 @@ namespace VintageEngineering
                 }
                 if (!betestmach.HasRoomInOutput(1))
                 {
-                    outputhelptext = Lang.Get("vinteng:gui-machine-isfull");   // an output is full...                    
+                    outputhelptext = Lang.Get("vinteng:gui-machine-isfull");   // an output is full...
                 }
                 if (Inventory[2].Empty)
                 {
-                    outputhelptext = Lang.Get("vinteng:gui-extruder-die");   // first priority is a mold                    
+                    outputhelptext = Lang.Get("vinteng:gui-extruder-die");   // first priority is a mold
                 }
             }
             if (!betestmach.IsEnabled)

@@ -43,7 +43,8 @@ namespace VintageEngineering.RecipeSystem.Recipes
 
         /// <summary>
         /// If set, what temp does the input have to be for the recipe to progress?<br/>
-        /// If this isn't set it will default to 0.
+        /// If this isn't set it will default to 0.<br/>
+        /// A value of -1 indicates using the vanilla MeltingPoint/2 method for "workable temp"
         /// </summary>
         public int RequiresTemp { get; set; }
 

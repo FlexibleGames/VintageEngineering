@@ -175,6 +175,37 @@ namespace VintageEngineering
         }
         #endregion
 
+        /// <summary>
+        /// Validates the InputStacks Temperature to the Current recipe requirements.
+        /// </summary>
+        /// <returns>True if Temperature meets requirements.</returns>
+        public bool ValidateTemp()
+        {
+            if (currentRecipe == null || InputSlot.Empty) return false;
+            // Validate Temperature if required
+            if (currentRecipe.RequiresTemp != 0)
+            {
+                if (!InputSlot.Itemstack.Collectible.HasTemperature(InputSlot.Itemstack)) return false;
+                float itemtemp = InputSlot.Itemstack.Collectible.GetTemperature(Api.World, InputSlot.Itemstack);
+                if (currentRecipe.RequiresTemp == -1)
+                {
+                    // meltingpoint / 2, but what if melting point doesn't exist?
+                    // sanity check then
+                    CombustibleProperties cprops = InputSlot.Itemstack.Collectible.CombustibleProps.Clone();
+                    if (cprops != null)
+                    {
+                        if (itemtemp < (cprops.MeltingPoint / 2)) return false;
+                    }
+                    else return false; // it should not be possible to be here
+                }
+                else
+                {
+                    // requirestemp is > 0...
+                    if (itemtemp < currentRecipe.RequiresTemp) return false;
+                }
+            }
+            return true;
+        }
         public void OnSimTick(float dt)
         {
             if (Api.Side == EnumAppSide.Client) return; // only tick on the server
@@ -193,6 +224,8 @@ namespace VintageEngineering
                     if (!HasRoomInOutput(1) && !HasRoomInOutput(2)) return; // no room in output slots, stop
                     if (currentRecipe == null) return; // how the heck did this happen?
 
+                    if (!ValidateTemp()) return; // Validate the temperature, if required
+
                     float powerpertick = MaxPPS * dt;
                     float percentprogress = powerpertick / currentRecipe.PowerPerCraft; // power to apply this tick
 
@@ -206,7 +239,10 @@ namespace VintageEngineering
                 else if (RecipeProgress >= 1f)
                 {
                     // recipe crafting complete
+                    float itemtemp = InputSlot.Itemstack.Collectible.GetTemperature(Api.World, InputSlot.Itemstack);
                     ItemStack outputprimary = currentRecipe.Outputs[0].ResolvedItemstack.Clone();
+                    outputprimary.Collectible.SetTemperature(Api.World, outputprimary, itemtemp, false);
+
                     if (HasRoomInOutput(1))
                     {
                         // primary output is empty, set the stack.
@@ -216,11 +252,28 @@ namespace VintageEngineering
                             // how much space is left in primary?
                             int capleft = inv[1].Itemstack.Collectible.MaxStackSize - inv[1].Itemstack.StackSize;
                             if (capleft <= 0) Api.World.SpawnItemEntity(outputprimary, Pos.UpCopy(1).ToVec3d()); // should never fire
-                            else if (capleft >= outputprimary.StackSize) inv[1].Itemstack.StackSize += outputprimary.StackSize;
+                            else if (capleft >= outputprimary.StackSize)
+                            {
+                                ItemStackMergeOperation merge = new ItemStackMergeOperation(Api.World, EnumMouseButton.Left, (EnumModifierKey)0,
+                                    EnumMergePriority.ConfirmedMerge, outputprimary.StackSize);
+                                merge.SourceSlot = new DummySlot(outputprimary);
+                                merge.SinkSlot = inv[1];
+
+                                inv[1].Itemstack.Collectible.TryMergeStacks(merge);
+                                //inv[1].Itemstack.StackSize += outputprimary.StackSize; 
+                            }
                             else
                             {
-                                inv[1].Itemstack.StackSize += capleft;
-                                outputprimary.StackSize -= capleft;
+                                ItemStackMergeOperation merge = new ItemStackMergeOperation(Api.World, EnumMouseButton.Left, (EnumModifierKey)0,
+                                    EnumMergePriority.ConfirmedMerge, capleft);
+                                int toSpawn = outputprimary.StackSize - capleft;
+                                outputprimary.StackSize -= toSpawn;
+                                merge.SourceSlot = new DummySlot(outputprimary);
+                                merge.SinkSlot = inv[1];
+                                inv[1].Itemstack.Collectible.TryMergeStacks(merge);
+                                //inv[1].Itemstack.StackSize += capleft;
+
+                                outputprimary.StackSize = toSpawn;
                                 Api.World.SpawnItemEntity(outputprimary, Pos.UpCopy(1).ToVec3d());
                             }
                         }

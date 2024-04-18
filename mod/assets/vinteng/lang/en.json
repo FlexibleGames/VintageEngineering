@@ -143,10 +143,12 @@
 	"vinteng:gui-machine-off": "Machine is turned off.",
 	"vinteng:gui-machine-sleeping": "Machine is sleeping.",
 	"vinteng:gui-machine-heating": "Machine is heating up.",
+	"vinteng:gui-machine-lowpower":"Machine power low.",
 	"vinteng:gui-is-sleeping-short": "Zzzz",
 	"vinteng:gui-machine-ingredients": "Recipe ingredients needed!",
 	"vinteng:gui-machine-isfull": "An Output Slot is full.",
 	"vinteng:gui-no-valid-recipe": "No valid recipe found.",
+	"vinteng:gui-input-hot-enough": "Input not hot enough.",
 	"vinteng:storyevent-recipes": "Mysterious Constructs...",
 
 	"vinteng:gui-title-metalpress": "Metal Press",

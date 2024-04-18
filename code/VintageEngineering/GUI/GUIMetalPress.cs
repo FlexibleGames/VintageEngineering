@@ -149,8 +149,11 @@ namespace VintageEngineering
                 string langcode = outputstack.Collectible.Code.Domain != null ? outputstack.Collectible.Code.Domain : "";
                 langcode += ":" + outputstack.Collectible.ItemClass.ToString().ToLowerInvariant();
                 langcode += "-" + outputstack.Collectible.Code.Path;
-                outputhelptext = $"{Lang.Get("vinteng:gui-word-crafting")} {Lang.Get(langcode)}";
+                outputhelptext = $"{Lang.Get("vinteng:gui-word-crafting")} {currentRecipe.Outputs[0].ResolvedItemstack.StackSize} {Lang.Get(langcode)}";
 
+                // Now lets give some feedback on potential issues.
+                if (betestmach.CurrentPower < 10) outputhelptext = Lang.Get("vinteng:gui-machine-lowpower");
+                if (!betestmach.ValidateTemp()) outputhelptext = Lang.Get("vinteng:gui-input-hot-enough");
             }
             else
             {

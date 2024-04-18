@@ -1,0 +1,21 @@
+[
+	{
+		ingredientPattern: "_G_,G_G,_G_",
+		ingredients: {
+			"G": { type: "item", code: "game:metalplate-*", name: "metal", allowedVariants: ["copper", "tinbronze", "bismuthbronze", "blackbronze", "silver", "gold", "iron", "lead", "steel"] }
+		},
+		width: 3,
+		height: 3,
+		output: { type: "block", code: "game:metalblock-new-plain-{metal}", quantity: 1  }
+	},
+	{
+		ingredientPattern: "C,B",
+		ingredients: {
+			"C": { type: "item", code: "game:chisel-*", isTool: true},
+			"B": { type: "item", code: "game:metalblock-new-plain-*",  name: "metal", allowedVariants: ["copper", "tinbronze", "bismuthbronze", "blackbronze", "silver", "gold", "iron", "lead", "steel"] }
+		},
+		width: 1,
+		height: 2,
+		output: { type: "item", code: "game:ingot-{metal}", quantity: 8 }
+	}
+]

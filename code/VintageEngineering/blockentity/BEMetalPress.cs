@@ -344,7 +344,7 @@ namespace VintageEngineering
             }
             currentPressRecipe = null;
             isCrafting = false;
-            StateChange(EnumBEState.Sleeping);            
+            StateChange(EnumBEState.Sleeping);
             return false;
         }
 
@@ -392,6 +392,38 @@ namespace VintageEngineering
 
             return true;
         }
+
+        /// <summary>
+        /// Validates the InputStacks Temperature to the Current recipe requirements.
+        /// </summary>
+        /// <returns>True if Temperature meets requirements.</returns>
+        public bool ValidateTemp()
+        {
+            if (currentPressRecipe == null || InputSlot.Empty) return false;
+            // Validate Temperature if required
+            if (currentPressRecipe.RequiresTemp != 0)
+            {
+                if (!InputStack.Collectible.HasTemperature(InputStack)) return false;
+                float itemtemp = InputStack.Collectible.GetTemperature(Api.World, InputStack);
+                if (currentPressRecipe.RequiresTemp == -1)
+                {
+                    // meltingpoint / 2, but what if melting point doesn't exist?
+                    // sanity check then
+                    CombustibleProperties cprops = InputStack.Collectible.CombustibleProps.Clone();
+                    if (cprops != null)
+                    {
+                        if (itemtemp < (cprops.MeltingPoint / 2)) return false;
+                    }
+                    else return false; // it should not be possible to be here
+                }
+                else
+                {
+                    // requirestemp is > 0...
+                    if (itemtemp < currentPressRecipe.RequiresTemp) return false;
+                }
+            }
+            return true;
+        }
         public void OnSimTick(float deltatime)
         {
             if (this.Api is ICoreServerAPI) // only simulates on the server!
@@ -412,6 +444,8 @@ namespace VintageEngineering
                         if (CurrentPower == 0) return; // we have no power, there's no point in trying. bounce
                         if (!HasRoomInOutput(0, null)) return; // output is full... bounce
 
+                        if (!ValidateTemp()) return;
+
                         // scale power to apply to recipe by how much time has passed
                         float powerToApply = MaxPPS * deltatime;
 
@@ -431,7 +465,9 @@ namespace VintageEngineering
                     if (RecipeProgress >= 1f)
                     {
                         // progress finished!
+                        float itemtemp = InputStack.Collectible.GetTemperature(Api.World, InputStack);
                         ItemStack outputstack = currentPressRecipe.Outputs[0].ResolvedItemstack.Clone();
+                        outputstack.Collectible.SetTemperature(Api.World, outputstack, itemtemp, false);
                         if (HasRoomInOutput(1, outputstack))
                         {
                             // output is empty! need a new stack
@@ -443,13 +479,32 @@ namespace VintageEngineering
                             else
                             {
                                 int capleft = Inventory[1].Itemstack.Collectible.MaxStackSize - Inventory[1].Itemstack.StackSize;
-
                                 if (capleft <= 0) Api.World.SpawnItemEntity(outputstack, Pos.UpCopy(1).ToVec3d());
-                                else if (capleft >= outputstack.StackSize) Inventory[1].Itemstack.StackSize += outputstack.StackSize;
+                                else if (capleft >= outputstack.StackSize)
+                                {
+                                    // we have enough space for the entire new stack
+                                    ItemStackMergeOperation merge = new ItemStackMergeOperation(Api.World, EnumMouseButton.Left, (EnumModifierKey)0,
+                                        EnumMergePriority.ConfirmedMerge, outputstack.StackSize);
+                                    merge.SourceSlot = new DummySlot(outputstack);
+                                    merge.SinkSlot = Inventory[1];
+
+                                    // calling this will "merge" the temperatures
+                                    Inventory[1].Itemstack.Collectible.TryMergeStacks(merge);
+//                                    Inventory[1].Itemstack.StackSize += outputstack.StackSize;
+                                }
                                 else
                                 {
-                                    Inventory[1].Itemstack.StackSize += capleft;
-                                    outputstack.StackSize -= capleft;
+                                    ItemStackMergeOperation merge = new ItemStackMergeOperation(Api.World, EnumMouseButton.Left, (EnumModifierKey)0,
+                                        EnumMergePriority.ConfirmedMerge, capleft);
+                                    int toSpawn = outputstack.StackSize - capleft;
+                                    outputstack.StackSize -= toSpawn;
+                                    merge.SourceSlot = new DummySlot(outputstack);
+                                    merge.SinkSlot = Inventory[1];
+                                    Inventory[1].Itemstack.Collectible.TryMergeStacks(merge);
+
+                                    //Inventory[1].Itemstack.StackSize += capleft;
+                                    // spawn what's left
+                                    outputstack.StackSize = toSpawn;
                                     Api.World.SpawnItemEntity(outputstack, Pos.UpCopy(1).ToVec3d());
                                 }
 
@@ -464,6 +519,8 @@ namespace VintageEngineering
                         if (currentPressRecipe.Outputs.Length > 1)
                         {
                             // this recipe has a second output
+                            // not going to mess with temperature with secondary outputs as can't rely
+                            // on them being metal/heatable.
                             int varoutput = currentPressRecipe.Outputs[1].VariableResolve(Api.World, "VintEng: Metal Press Craft output");
                             if (varoutput > 0)
                             {
