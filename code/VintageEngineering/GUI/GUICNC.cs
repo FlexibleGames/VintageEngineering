@@ -1,24 +1,29 @@
-﻿using System;
-using Cairo;
+﻿using Cairo;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using VintageEngineering.RecipeSystem.Recipes;
 using Vintagestory.API.Client;
-using Vintagestory.API.MathTools;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
-using VintageEngineering.RecipeSystem.Recipes;
+using Vintagestory.API.MathTools;
+using Vintagestory.GameContent;
 
 namespace VintageEngineering
 {
-    public class GUIMetalPress : GuiDialogBlockEntity
+    public class GUICNC : GuiDialogBlockEntity
     {
-        private BEMetalPress betestmach;
-        private RecipeMetalPress currentRecipe;        
+        private BECNC betestmach;
+        private ClayFormingRecipe currentRecipe;
         private ulong _currentPower;
         private ulong _maxPower;
         private float _craftProgress;
 
-        
-        public GUIMetalPress(string dialogTitle, InventoryBase inventory, BlockPos blockEntityPos, ICoreClientAPI capi, BEMetalPress bentity) : base(dialogTitle, inventory, blockEntityPos, capi)
-        {            
+
+        public GUICNC(string dialogTitle, InventoryBase inventory, BlockPos blockEntityPos, ICoreClientAPI capi, BECNC bentity) : base(dialogTitle, inventory, blockEntityPos, capi)
+        {
             if (base.IsDuplicate)
             {
                 return;
@@ -27,12 +32,13 @@ namespace VintageEngineering
             betestmach = bentity;
             _craftProgress = betestmach.RecipeProgress;
             _currentPower = betestmach.CurrentPower;
+            currentRecipe = betestmach.currentRecipe;
             _maxPower = betestmach.MaxPower; // set this once as it doesn't/shouldn't change (for now)
             this.SetupDialog();
         }
         private void OnSlotModified(int slotid)
         {
-            this.capi.Event.EnqueueMainThreadTask(new Action(this.SetupDialog), "setupmetalpressdlg");
+            this.capi.Event.EnqueueMainThreadTask(new Action(this.SetupDialog), "setupcncdlg");
         }
 
         public void SetupDialog()
@@ -47,20 +53,17 @@ namespace VintageEngineering
             ElementBounds powerInset = ElementBounds.Fixed(10, 8 + titlebarheight, 34, 104);
             ElementBounds powerBounds = ElementBounds.Fixed(12, 10 + titlebarheight, 30, 100);
 
-            ElementBounds inputGrid = ElementStdBounds.SlotGrid(EnumDialogArea.None, 54, 50 + titlebarheight, 1, 1);
+            ElementBounds inputGrid = ElementStdBounds.SlotGrid(EnumDialogArea.None, 54, 8 + titlebarheight, 1, 1);
 
             // NEW:
             ElementBounds moldinset = ElementBounds.Fixed(117, 8 + titlebarheight, 74, 74);
-            ElementBounds moldtext = ElementBounds.Fixed(117, 10 + titlebarheight, 70, 16 );
+            ElementBounds moldtext = ElementBounds.Fixed(117, 10 + titlebarheight, 70, 16);
             ElementBounds moldslot = ElementStdBounds.SlotGrid(EnumDialogArea.None, 130, 29 + titlebarheight, 1, 1);
 
 
             ElementBounds progressBar = ElementBounds.Fixed(109, 88 + titlebarheight, 90, 23);
-
-            // NEW:
-            ElementBounds progressinset = ElementBounds.Fixed(117, 117 + titlebarheight, 74, 21); 
-
-            ElementBounds progressText = ElementBounds.Fixed(117, 117 + titlebarheight, 74, 21);
+            //ElementBounds progressinset = ElementBounds.Fixed(117, 117 + titlebarheight, 74, 21);
+            ElementBounds progressText = ElementBounds.Fixed(111, 90 + titlebarheight, 88, 21);
 
             ElementBounds enableBtn = ElementStdBounds.ToggleButton(10, 117 + titlebarheight, 92, 21);
             ElementBounds enableBtnText = ElementBounds.Fixed(10, 118 + titlebarheight, 92, 20);
@@ -68,8 +71,6 @@ namespace VintageEngineering
             ElementBounds outputGrid = ElementStdBounds.SlotGrid(EnumDialogArea.None, 206, 8 + titlebarheight, 2, 1);
             ElementBounds outputtxtinset = ElementBounds.Fixed(206, 62 + titlebarheight, 99, 76);
             ElementBounds outputtextbnds = ElementBounds.Fixed(208, 60 + titlebarheight, 97, 74);
-
-
 
             dialog.WithChildren(new ElementBounds[]
             {
@@ -80,8 +81,7 @@ namespace VintageEngineering
                 moldinset,
                 moldtext,
                 moldslot,
-                progressBar,
-                progressinset,
+                progressBar,                
                 progressText,
                 enableBtn,
                 enableBtnText,
@@ -101,18 +101,18 @@ namespace VintageEngineering
             }
             BlockPos blockPos = base.BlockEntityPosition;
 
-            CairoFont outputFont = CairoFont.WhiteSmallText().WithWeight(FontWeight.Normal).WithOrientation(EnumTextOrientation.Center);
+            CairoFont yellowfont = CairoFont.WhiteSmallText().WithWeight(FontWeight.Normal).WithOrientation(EnumTextOrientation.Center);
             CairoFont centerwhite = CairoFont.WhiteSmallText().WithWeight(FontWeight.Normal).WithOrientation(EnumTextOrientation.Center);
             double[] yellow = new double[3] { 1, 1, 0 }; // Yellow?
-            outputFont.WithColor(yellow);
+            yellowfont.WithColor(yellow);
             string enablebuttontext = this.betestmach.IsEnabled ? Lang.Get("vinteng:gui-turn-off") : Lang.Get("vinteng:gui-turn-on");
 
             CairoFont outputfont = CairoFont.WhiteDetailText().WithWeight(FontWeight.Normal).WithOrientation(EnumTextOrientation.Left);
 
 
-            this.SingleComposer = capi.Gui.CreateCompo("vetestgendlg" + (blockPos?.ToString()), window)
+            this.SingleComposer = capi.Gui.CreateCompo("vecncdlg" + (blockPos?.ToString()), window)
                 .AddShadedDialogBG(dialog, true, 5)
-                .AddDialogTitleBar(Lang.Get("vinteng:gui-title-metalpress"), new Action(OnTitleBarClose), null, null)
+                .AddDialogTitleBar(Lang.Get("vinteng:gui-title-cnc"), new Action(OnTitleBarClose), null, null)
                 .BeginChildElements(dialog)
 
                 .AddInset(powerInset, 2, 0.85f)
@@ -121,23 +121,21 @@ namespace VintageEngineering
                 .AddItemSlotGrid(Inventory, new Action<object>(SendInvPacket), 1, new int[] { 0 }, inputGrid, "inputSlot")
 
                 .AddInset(moldinset, 2, 0f)
-                .AddStaticText(Lang.Get("vinteng:gui-mold-text"), centerwhite, EnumTextOrientation.Center, moldtext)
-                .AddItemSlotGrid(Inventory, new Action<object>(SendInvPacket), 1, new int[] { 3 }, moldslot, "moldSlot")
+                .AddStaticText(Lang.Get("vinteng:gui-program-text"), centerwhite, EnumTextOrientation.Center, moldtext)
+                .AddItemSlotGrid(Inventory, new Action<object>(SendInvPacket), 1, new int[] { 1 }, moldslot, "moldSlot")
 
-                .AddDynamicCustomDraw(progressBar, new DrawDelegateWithBounds(OnProgressDraw), "progressBar")
-
-                .AddInset(progressinset, 2, 0f)
-                .AddDynamicText(GetProgressText(), outputFont, progressText, "progressText")
+                .AddDynamicCustomDraw(progressBar, new DrawDelegateWithBounds(OnProgressDraw), "progressBar")                
+                .AddDynamicText(GetProgressText(), yellowfont, progressText, "progressText")
 
                 .AddSmallButton("", new ActionConsumable(EnableButtonClick), enableBtn, EnumButtonStyle.Small, "enableButton")
                 .AddDynamicText(enablebuttontext, centerwhite, enableBtnText, "enableBtnText")
 
-                .AddItemSlotGrid(Inventory, new Action<object>(SendInvPacket), 2, new int[] { 1, 2 }, outputGrid, "outputSlot")
+                .AddItemSlotGrid(Inventory, new Action<object>(SendInvPacket), 2, new int[] { 2, 3 }, outputGrid, "outputSlot")
                 .AddInset(outputtxtinset, 2, 0f)
                 .AddDynamicText(GetHelpText(), outputfont, outputtextbnds, "outputText")
 
                 .EndChildElements()
-                .Compose(true);            
+                .Compose(true);
         }
 
         private string GetHelpText()
@@ -145,15 +143,13 @@ namespace VintageEngineering
             string outputhelptext = "";
             if (currentRecipe != null)
             {
-                ItemStack outputstack = currentRecipe.Outputs[0].ResolvedItemstack;
-                string langcode = outputstack.Collectible.Code.Domain != null ? outputstack.Collectible.Code.Domain : "";
-                langcode += ":" + outputstack.Collectible.ItemClass.ToString().ToLowerInvariant();
-                langcode += "-" + outputstack.Collectible.Code.Path;
-                outputhelptext = $"{Lang.Get("vinteng:gui-word-crafting")} {currentRecipe.Outputs[0].ResolvedItemstack.StackSize} {Lang.Get(langcode)}";
+                ItemStack outputstack = currentRecipe.Output.ResolvedItemstack;
+                outputhelptext = $"{Lang.Get("vinteng:gui-word-crafting")} {outputstack.GetName()}";
 
                 // Now lets give some feedback on potential issues.
                 if (betestmach.CurrentPower < 10) outputhelptext = Lang.Get("vinteng:gui-machine-lowpower");
-                if (!betestmach.ValidateTemp()) outputhelptext = Lang.Get("vinteng:gui-input-hot-enough");
+
+                if (!betestmach.ValidateInput()) outputhelptext = betestmach.recipeClayNeeded + " " + currentRecipe.Ingredient.ResolvedItemstack.GetName() + " " + Lang.Get("vinteng:gui-word-needed");
             }
             else
             {
@@ -169,9 +165,9 @@ namespace VintageEngineering
                 {
                     outputhelptext = Lang.Get("vinteng:gui-machine-isfull");   // an output is full...                    
                 }
-                if (Inventory[3].Empty)
+                if (Inventory[1].Empty)
                 {
-                    outputhelptext = Lang.Get("vinteng:gui-metal-press-mold");   // first priority is a mold                    
+                    outputhelptext = Lang.Get("vinteng:gui-cnc-program");   // first priority is a program                   
                 }
             }
             if (!betestmach.IsEnabled)
@@ -184,7 +180,7 @@ namespace VintageEngineering
         private string GetProgressText()
         {
             string outputstring = "";
-            float craftPercent = _craftProgress * 100;            
+            float craftPercent = _craftProgress * 100;
             if (betestmach.IsSleeping) // machine is sleeping if on and not crafting
             {
                 outputstring = Lang.Get("vinteng:gui-is-sleeping-short");
@@ -220,7 +216,7 @@ namespace VintageEngineering
             //if (_craftProgress == 0) return;
 
             ctx.Save();
-            Matrix i = ctx.Matrix;                      
+            Matrix i = ctx.Matrix;
 
             float width = 90;
             float height = 23;
@@ -245,7 +241,7 @@ namespace VintageEngineering
             VintageEngineering.GUI.IconHelper.NewHorizontalBar(ctx, 0, 0, new double[] { 0, 0, 0, 1 }, 2, false, false, width, height);
             gradient.Dispose();
             ctx.Restore();
-//            ctx.Save();
+            //            ctx.Save();
         }
 
         private void OnPowerDraw(Context ctx, ImageSurface surface, ElementBounds currentBounds)
@@ -272,10 +268,10 @@ namespace VintageEngineering
             VintageEngineering.GUI.IconHelper.VerticalBar(ctx, 30, 100, 0, false, false);
             gradient.Dispose();
             ctx.Restore();
- //           ctx.Save();
+            //           ctx.Save();
         }
 
-        public void Update(float craftProgress, ulong curPower, RecipeMetalPress mprecipe = null)
+        public void Update(float craftProgress, ulong curPower, ClayFormingRecipe mprecipe = null)
         {
             this._craftProgress = craftProgress;
             this._currentPower = curPower;
@@ -289,7 +285,7 @@ namespace VintageEngineering
                 base.SingleComposer.GetDynamicText("enableBtnText").SetNewText(betestmach.IsEnabled ? Lang.Get("vinteng:gui-turn-off") : Lang.Get("vinteng:gui-turn-on"));
                 currentRecipe = mprecipe;
                 base.SingleComposer.GetDynamicText("outputText").SetNewText(GetHelpText());
-            }            
+            }
         }
 
         private void OnTitleBarClose()

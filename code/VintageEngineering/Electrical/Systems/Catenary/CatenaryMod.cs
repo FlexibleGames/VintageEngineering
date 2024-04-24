@@ -580,6 +580,8 @@ namespace VintageEngineering.Electrical.Systems.Catenary
                     if (blockSel.SelectionBoxIndex < wiredBlock.NumAnchorsInBlock(ws.wireFunction))
                     {
                         // Can the block (wire) type attach to selection index anchor?
+                        if (player.InventoryManager.ActiveHotbarSlot.Empty) return vec.ToVec3f(); // sanity check
+
                         if (wiredBlock.CanAttachWire(player.Entity.World, player.InventoryManager.ActiveHotbarSlot.Itemstack.Block, player.CurrentBlockSelection))
                         {
                             vec = blockSel.Position.ToVec3d().Sub(ws.startPos).Add(wiredBlock.GetAnchorPosInBlock(blockSel.SelectionBoxIndex));

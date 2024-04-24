@@ -336,7 +336,7 @@ namespace VintageEngineering
             {
                 if (mprecipe.Enabled && mprecipe.Matches(InputSlot, MoldSlot))
                 {
-                    currentPressRecipe = mprecipe;
+                    currentPressRecipe = mprecipe.Clone();
                     isCrafting = true;
                     StateChange(EnumBEState.On);
                     return true;

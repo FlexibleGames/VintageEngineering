@@ -54,6 +54,7 @@ namespace VintageEngineering
             api.RegisterBlockEntityClass("VEBECrusher", typeof(BECrusher));
             api.RegisterBlockEntityClass("VEBEKiln", typeof(BEKiln));
             api.RegisterBlockEntityClass("VEBEForge", typeof(BEForge));
+            api.RegisterBlockEntityClass("VEBECNC", typeof(BECNC));
         }
     }
 

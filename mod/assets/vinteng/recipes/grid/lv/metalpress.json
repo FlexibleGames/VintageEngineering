@@ -1,7 +1,7 @@
 {
 	"ingredientPattern": "STS,PBM,S_S",
 	"ingredients": {
-		"T": { "type": "block", "code": "game:metalblock-new-plain-iron", "isTool": true },
+		"T": { "type": "block", "code": "game:metalblock-new-plain-iron", "quantity": 1 },
 		"P": { "type": "item", "code": "vinteng:braidedwire-copper", "quantity": 2 },
 		"B": { "type": "block", "code": "vinteng:machineryblock-*", "allowedVariants": ["tinbronze", "iron", "steel"], "quantity": 1 },
 		"M": { "type": "item", "code": "vinteng:motor-lv", "quantity": 1 },

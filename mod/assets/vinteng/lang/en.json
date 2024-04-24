@@ -11,13 +11,15 @@
 	"vinteng:blockdesc-veextruder-*": "Crafts wires and rods far more efficiently than manual smithing.",
 	"vinteng:block-vecrusher-*": "VE Crusher",
 	"vinteng:blockdesc-vecrusher-*": "Crushes things. <br>Choose 'Crush' option for vanilla Crushing, 'Nugget' option to extract nuggets from ore, and 'Recipe' option will ONLY look at vecrusher recipes for matches, 'Grind' option will only look at vanilla Grinding Props.",
-
 	"vinteng:block-vekiln-*": "VE Electric Kiln",
 	"vinteng:blockdesc-vekiln-*": "The Electric Kiln can fire clay items as well as bake non-food items like lime into quicklime and quartz into glass.",
 	"vinteng:block-veforge-*": "VE Electric Forge",
 	"vinteng:blockdesc-veforge-*": "The Electric Forge heats up objects 1 at a time. Very Power Hungry.<br>Temperature can be selected or put into Auto mode with the slider at 0 degrees. Can also heat machines placed above it that impliment the IHeatable Block Entity interface (like the Mixer).",
 	"vinteng:block-vemixer-*": "VE Mixer [WIP]",
 	"vinteng:blockdesc-vemixer-*": "[Currently Not Finished] A giant blender for crafting with fluids. Can also craft Barrel recipes by using Recipe Power Needed = (SealHours * 2), this multiplier is editable in JSON attributes. Place above an Electric Forge to heat the bowl for more crafting options.",
+
+	"vinteng:block-vecnc-*": "VE CNC",
+	"vinteng:blockdesc-vecnc-*": "The CNC is an automatic crafter. It's a Clayformer, put in a raw clay object and clay and it will print duplicates of that.<br>This Tier 1 CNC can also use the CNC Program (Grid) to autocraft grid recipes with one input type.",
 
 	"vinteng:item-vepressmold-plate-*": "Plate Mold",
 	"vinteng:itemdesc-vepressmold-plate-*": "Use in a Metal Press to make plates. Harder metals require harder molds. Mold will wear out over time, durability depends on material.",
@@ -39,7 +41,8 @@
 
 	"vinteng:item-vesawblade-*": "Saw Blade",
 	"vinteng:itemdesc-vesawblade-*": "Use in a Sawmill to make planks from logs. Will wear out over time, durability depends on material.<br><br>Can also convert plank blocks, stairs, and slabs back into raw planks.",
-
+	"vinteng:item-vecncprogram-grid": "CNC Program (Grid)",
+	"vinteng:itemdesc-vecncprogram-grid": "The CNC Program (Grid) item gets programmed in the CNC bench with the desired grid recipe.<br>The CNC machine then reads this recipe, compiles all ingredients required and depending on the tier of the machine looks for those ingredients to craft the item.<br>Tier 1 machine can only handle recipes with 1 ingredient type.",
 	"vinteng:item-lvrelaybase-raw": "LV Wire Relay Base (Raw)",
 	"vinteng:itemdesc-lvrelaybase-raw": "Fire this in a PitKiln (or Electric Kiln) to use.",
 	"vinteng:item-lvrelaybase-burned": "LV Wire Relay Base (Fired)",
@@ -116,9 +119,11 @@
 	"vinteng:gui-mold-text": "Mold",
 	"vinteng:gui-diecast-text": "Gauge",
 	"vinteng:gui-sawblade-text": "Blade",
+	"vinteng:gui-program-text": "Program",
 	"vinteng:gui-turn-on": "Turn On",
 	"vinteng:gui-turn-off": "Turn Off",
 	"vinteng:gui-metal-press-mold": "Place a mold in the mold slot.",
+	"vinteng:gui-cnc-program": "Place a raw clay item or a program in program slot.",
 	"vinteng:gui-extruder-die": "Place a Die Cast in the Gauge slot.",
 	"vinteng:gui-sawblade": "Place a Saw Blade in the Blade slot.",
 	"vinteng:gui-word-crafting": "Crafting",
@@ -129,6 +134,7 @@
 	"vinteng:gui-word-nugget": "Nuggets",
 	"vinteng:gui-word-grind": "Grind",
 	"vinteng:gui-word-recipe": "Recipe",
+	"vinteng:gui-word-needed": "Needed",
 	"vinteng:gui-word-paused": "Waiting",
 	"vinteng:gui-word-auto": "Auto",
 	"vinteng:gui-word-on": "On",
@@ -159,5 +165,6 @@
 	"vinteng:gui-title-crusher": "Crusher",
 	"vinteng:gui-title-kiln": "Kiln",
 	"vinteng:gui-title-forge": "Electric Forge",
-	"vinteng:gui-title-mixer": "Industrial Mixer"
+	"vinteng:gui-title-mixer": "Industrial Mixer",
+	"vinteng:gui-title-cnc": "CNC"
 }
