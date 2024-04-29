@@ -41,8 +41,9 @@
 
 	"vinteng:item-vesawblade-*": "Saw Blade",
 	"vinteng:itemdesc-vesawblade-*": "Use in a Sawmill to make planks from logs. Will wear out over time, durability depends on material.<br><br>Can also convert plank blocks, stairs, and slabs back into raw planks.",
-	"vinteng:item-vecncprogram-grid": "CNC Program (Grid)",
-	"vinteng:itemdesc-vecncprogram-grid": "The CNC Program (Grid) item gets programmed in the CNC bench with the desired grid recipe.<br>The CNC machine then reads this recipe, compiles all ingredients required and depending on the tier of the machine looks for those ingredients to craft the item.<br>Tier 1 machine can only handle recipes with 1 ingredient type.",
+	"vinteng:item-vecncprogram-grid-blank": "Blank CNC Program (Grid)",
+	"vinteng:item-vecncprogram-grid-encoded": "Encoded CNC Program (Grid)",
+	"vinteng:itemdesc-vecncprogram-grid-*": "The CNC Program (Grid) item gets programmed in the CNC bench with the desired grid recipe.<br>The CNC machine then reads this recipe, compiles all ingredients required and depending on the tier of the machine looks for those ingredients to craft the item.<br>Tier 1 machine can only handle recipes with 1 ingredient type.",
 	"vinteng:item-lvrelaybase-raw": "LV Wire Relay Base (Raw)",
 	"vinteng:itemdesc-lvrelaybase-raw": "Fire this in a PitKiln (or Electric Kiln) to use.",
 	"vinteng:item-lvrelaybase-burned": "LV Wire Relay Base (Fired)",

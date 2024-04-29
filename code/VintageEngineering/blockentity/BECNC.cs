@@ -161,7 +161,7 @@ namespace VintageEngineering
             if (slotId == 0 || slotId == 1)
             {
                 // new thing in the input or mold slot!
-                if (InputSlot.Empty)
+                if (InputSlot.Empty || ProgramSlot.Empty)
                 {
                     isCrafting = false;
                     StateChange(EnumBEState.Sleeping);
@@ -204,7 +204,6 @@ namespace VintageEngineering
 
             if (!ProgramSlot.Itemstack.Collectible.Code.Path.Contains("vecncprogram"))
             {
-//                currentRecipe = null;
                 List<ClayFormingRecipe> clayrecipes = Api.GetClayformingRecipes();
                 foreach (ClayFormingRecipe cf in clayrecipes)
                 {
@@ -212,7 +211,7 @@ namespace VintageEngineering
                     {
                         currentRecipe = cf.Clone();
                         isCrafting = true;
-                        int voxels = CountClayVoxels();                        
+                        int voxels = CountClayVoxels();
                         recipeMaxPowerNeeded = voxels * recipePowerPerVoxel;
                         recipeClayNeeded = (int)(voxels / 25);
                         recipeClayNeeded = Math.Max(1, recipeClayNeeded);
@@ -229,10 +228,23 @@ namespace VintageEngineering
             else
             {
                 // we have a vecncprogram, but none of that is implemented yet.
-                currentRecipe = null;
-                isCrafting = false;
-                StateChange(EnumBEState.Sleeping);
-                return false;
+                if (!ProgramSlot.Itemstack.Collectible.Code.Path.Contains("encoded"))
+                {
+                    // cncprogram is blank
+                    currentRecipe = null;
+                    isCrafting = false;
+                    StateChange(EnumBEState.Sleeping);
+                    return false;
+                }
+                else
+                {
+                    // cncprogram is encoded, time to parse what it has... 
+                    // not yet implemented
+                    currentRecipe = null;
+                    isCrafting = false;
+                    StateChange(EnumBEState.Sleeping);
+                    return false;
+                }
             }
         }
 

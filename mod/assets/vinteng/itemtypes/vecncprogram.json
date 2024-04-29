@@ -27,9 +27,13 @@
 		}
 	}],
 	"variantgroups": [
-		{ "code": "type", "states": ["grid"] }
+		{ "code": "type", "states": ["grid"] },
+		{ "code": "status", "states": ["blank", "encoded"] }
 	],
-    "maxstacksize": 1,
+    "maxstacksizeByType": {
+		"*-blank": 64,
+		"*-encoded": 1
+	},
 	"heldTpHitAnimation": "smithing",
 	"shapeByType": {
 		"*": { "base": "vinteng:item/vecncprogram" }

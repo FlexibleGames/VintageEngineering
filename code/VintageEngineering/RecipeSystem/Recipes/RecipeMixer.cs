@@ -14,9 +14,10 @@ using Vintagestory.GameContent;
 namespace VintageEngineering.RecipeSystem.Recipes
 {
     /// <summary>
-    /// A Giant Blender... Mixer will have 4 item inputs, 2 fluid input, 1 item and 1 fluid output<br/>
+    /// A Giant Blender... Mixer will support 4 item inputs & 2 fluid input; 1 item and 1 fluid output<br/>
     /// Will also likely try to support Barrel Recipes...<br/>
-    /// More complex fluid-based crafting will exist in other machines in higher tiers.
+    /// More complex fluid-based crafting will exist in other machines in higher tiers.<br/>
+    /// Will support Temperature-based crafting as well using Attributes "requirestemp" tag.
     /// </summary>
     public class RecipeMixer : IByteSerializable, IVEMachineRecipeBase<RecipeMixer>
     {
@@ -81,7 +82,27 @@ namespace VintageEngineering.RecipeSystem.Recipes
 
         public RecipeMixer Clone()
         {
-            throw new NotImplementedException();
+            BarrelRecipeIngredient[] _ingredients = new BarrelRecipeIngredient[Ingredients.Length];
+            for (int i = 0; i < _ingredients.Length; i++)
+            {
+                _ingredients[i] = Ingredients[i].Clone();
+            }
+            BarrelOutputStack[] _outputs = new BarrelOutputStack[Outputs.Length];
+            for (int i = 0; i < Outputs.Length; i++)
+            {
+                _outputs[i] = Outputs[i].Clone();
+            }
+            return new RecipeMixer
+            {
+                Ingredients = _ingredients,
+                Outputs = _outputs,
+                Attributes = this.Attributes?.Clone(),
+                PowerPerCraft = this.PowerPerCraft,
+                Code = this.Code,
+                Enabled = this.Enabled,
+                Name = this.Name,
+                RecipeID = this.RecipeID
+            };
         }
 
         /// <summary>
@@ -96,9 +117,105 @@ namespace VintageEngineering.RecipeSystem.Recipes
             return itemAttributes != null ? itemAttributes["waterTightContainerProps"].Exists : false;
         }
 
+        /// <summary>
+        /// Determines if a given set of inputslots matches this recipe.<br/>
+        /// Will also return the stack sizes of the outputs of the recipe if valid.
+        /// </summary>
+        /// <param name="inputSlots">Set of InputSlots to check</param>
+        /// <param name="outputStackMul">Output Stack Size multiplier, can be 0</param>
+        /// <returns></returns>
+        public bool Matches(ItemSlot[] inputSlots, out int outputStackMul)
+        {
+            outputStackMul = 0;
+            List<KeyValuePair<ItemSlot, BarrelRecipeIngredient>> matched = PairInput(inputSlots);
+            if (matched == null) return false;
+
+            outputStackMul = GetOutputStackSizeMultiplier(matched);
+            return outputStackMul >= 0;
+        }
+
+        /// <summary>
+        /// Checks all inputSlots and compares to recipe Ingredients that match type.
+        /// </summary>
+        /// <param name="inputStacks">Input Slots to check</param>
+        /// <returns>Matched Pair List</returns>
+        public List<KeyValuePair<ItemSlot, BarrelRecipeIngredient>> PairInput(ItemSlot[] inputStacks)
+        {
+            List<BarrelRecipeIngredient> ingredientList = new List<BarrelRecipeIngredient>(this.Ingredients);
+            Queue<ItemSlot> inputSlotsList = new Queue<ItemSlot>();
+            foreach (ItemSlot val in inputStacks)
+            {
+                if (!val.Empty)
+                {
+                    inputSlotsList.Enqueue(val);
+                }
+            }
+            if (inputSlotsList.Count != this.Ingredients.Length)
+            {
+                return null;
+            }
+            List<KeyValuePair<ItemSlot, BarrelRecipeIngredient>> matched = new List<KeyValuePair<ItemSlot, BarrelRecipeIngredient>>();
+            while (inputSlotsList.Count > 0)
+            {
+                ItemSlot inputSlot = inputSlotsList.Dequeue();
+                bool found = false;
+                for (int i = 0; i < ingredientList.Count; i++)
+                {
+                    BarrelRecipeIngredient ingred = ingredientList[i];
+                    if (ingred.SatisfiesAsIngredient(inputSlot.Itemstack, true))
+                    {
+                        matched.Add(new KeyValuePair<ItemSlot, BarrelRecipeIngredient>(inputSlot, ingred));
+                        found = true;
+                        ingredientList.RemoveAt(i);
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    return null;
+                }
+            }
+            if (ingredientList.Count > 0)
+            {
+                return null;
+            }
+            return matched;
+        }
+
+        public int GetOutputStackSizeMultiplier(List<KeyValuePair<ItemSlot, BarrelRecipeIngredient>> matched)
+        {            
+            int outQuantityMul = -1;
+            foreach (KeyValuePair<ItemSlot, BarrelRecipeIngredient> valuePair  in matched)
+            {
+                ItemSlot inputslot = valuePair.Key;
+                BarrelRecipeIngredient ingred = valuePair.Value;
+                if (ingred.ConsumeQuantity == null)
+                {
+                    outQuantityMul = inputslot.StackSize / ingred.Quantity;
+                }
+            }
+            if (outQuantityMul == -1) return -1;
+            foreach (KeyValuePair<ItemSlot, BarrelRecipeIngredient> valuePair in matched)
+            {
+                ItemSlot inputslot = valuePair.Key;
+                BarrelRecipeIngredient ingred = valuePair.Value;
+                if (ingred.ConsumeQuantity == null)
+                {
+                    if (inputslot.StackSize % ingred.Quantity != 0) return -1;
+                    if (outQuantityMul != inputslot.StackSize / ingred.Quantity) return -1;
+                }
+                else if (inputslot.StackSize < ingred.Quantity * outQuantityMul)
+                {
+                    return -1;
+                }
+            }
+            return outQuantityMul;
+        }
+
         public Dictionary<string, string[]> GetNameToCodeMapping(IWorldAccessor world)
         {
             Dictionary<string, string[]> mappings = new Dictionary<string, string[]>();
+            if (Ingredients == null || Ingredients.Length == 0) return mappings;
             foreach (BarrelRecipeIngredient ingred in this.Ingredients)
             {
                 if (ingred.Code.Path.Contains("*"))
@@ -110,10 +227,10 @@ namespace VintageEngineering.RecipeSystem.Recipes
                     {
                         for (int i = 0; i < world.Blocks.Count; i++)
                         {
-                            Block block = world.Blocks[i];
-                            if (!(((block != null) ? block.Code : null) == null) && !block.IsMissing && (ingred.SkipVariants == null || !WildcardUtil.MatchesVariants(ingred.Code, block.Code, ingred.SkipVariants)) && WildcardUtil.Match(ingred.Code, block.Code, ingred.AllowedVariants))
+
+                            if (!(world.Blocks[i].Code == null) && !world.Blocks[i].IsMissing && WildcardUtil.Match(ingred.Code, world.Blocks[i].Code))
                             {
-                                string code = block.Code.Path.Substring(wildcardStartLen);
+                                string code = world.Blocks[i].Code.Path.Substring(wildcardStartLen);
                                 string codepart = code.Substring(0, code.Length - wildcardEndLen);
                                 if (ingred.AllowedVariants == null || ingred.AllowedVariants.Contains(codepart))
                                 {
@@ -125,11 +242,10 @@ namespace VintageEngineering.RecipeSystem.Recipes
                     else
                     {
                         for (int j = 0; j < world.Items.Count; j++)
-                        {
-                            Item item = world.Items[j];
-                            if (!(((item != null) ? item.Code : null) == null) && !item.IsMissing && (ingred.SkipVariants == null || !WildcardUtil.MatchesVariants(ingred.Code, item.Code, ingred.SkipVariants)) && WildcardUtil.Match(ingred.Code, item.Code, ingred.AllowedVariants))
+                        {                            
+                            if (!(world.Items[j].Code == null) && !world.Items[j].IsMissing && WildcardUtil.Match(ingred.Code, world.Items[j].Code))
                             {
-                                string code2 = item.Code.Path.Substring(wildcardStartLen);
+                                string code2 = world.Items[j].Code.Path.Substring(wildcardStartLen);
                                 string codepart2 = code2.Substring(0, code2.Length - wildcardEndLen);
                                 if (ingred.AllowedVariants == null || ingred.AllowedVariants.Contains(codepart2))
                                 { 
@@ -242,7 +358,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
                         RequiresVariants = new string[1] { Attributes["requiresvariants"].AsString() };
                     }
                 }
-                if (Attributes["requirestemp"].Exists) RequiresTemp = Attributes["requirestemp"].AsInt(0);                        
+                if (Attributes["requirestemp"].Exists) RequiresTemp = Attributes["requirestemp"].AsInt(0);
             }
         }
 
@@ -251,7 +367,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
             writer.Write(RecipeID);
             writer.Write(Name.ToShortString());
             writer.Write(Code != null);
-            writer.Write(this.Code);
+            if (Code != null) writer.Write(this.Code);
             writer.Write(PowerPerCraft);
             writer.Write(Attributes != null);
             if (Attributes != null) { writer.Write(Attributes.Token.ToString()); }
