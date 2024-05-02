@@ -1,40 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using VintageEngineering.Electrical;
-using VintageEngineering.GUI;
-using VintageEngineering.RecipeSystem;
 using VintageEngineering.RecipeSystem.Recipes;
+using VintageEngineering.RecipeSystem;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
-
+using Vintagestory.GameContent;
+using Vintagestory.Client.NoObf;
 
 namespace VintageEngineering
 {
-    public class BELogSplitter : ElectricBE
+    public class BEMixer : ElectricBE, IHeatable
     {
         private ICoreClientAPI capi;
         private ICoreServerAPI sapi;
         private float updateBouncer = 0f;
-        private GUILogSplitter clientDialog;
+        private GUIMixer clientDialog;
 
         public string DialogTitle
         {
             get
             {
-                return Lang.Get("vinteng:gui-title-logsplitter");
+                return Lang.Get("vinteng:gui-title-mixer");
             }
         }
 
-        public BELogSplitter()
+        public BEMixer()
         {
-            inv = new InvLogSplitter(null, null);
+            inv = new InvMixer(null, null);
             inv.SlotModified += OnSlotModified;
         }
-
         public override bool CanExtractPower => false;
         public override bool CanReceivePower => true;
 
@@ -51,55 +53,108 @@ namespace VintageEngineering
                 capi = api as ICoreClientAPI;
                 if (AnimUtil != null)
                 {
-                    AnimUtil.InitializeAnimator("velogsplitter", null, null, new Vec3f(0, GetRotation(), 0f));
+                    AnimUtil.InitializeAnimator("vemixer", null, null, new Vec3f(0, GetRotation(), 0f));
                 }
             }
+            sealHoursPowerMultiplier = this.Block.Attributes["sealpowermultiplier"].AsInt(1);
+            if (sealHoursPowerMultiplier < 1) sealHoursPowerMultiplier = 1; // sanity (and cheat) check
             inv.Pos = this.Pos;
             inv.LateInitialize($"{InventoryClassName}-{this.Pos.X}/{this.Pos.Y}/{this.Pos.Z}", api);
-            if (!inv[0].Empty) FindMatchingRecipe();
+            FindMatchingRecipe();
         }
 
         #region RecipeAndInventoryStuff
-        private InvLogSplitter inv;
-        private RecipeLogSplitter currentRecipe;
+        private InvMixer inv;
+
+        private RecipeMixer currentRecipe;        
+
+        public float basinTemperature;
+                
+        /// <summary>
+        /// Baseline vanilla power cost multiplier for barrel seal hour recipes. Set in JSON.<br/>
+        /// Default of 2, means seal hours for barrel recipe of 105 means it will require 210 power per craft.        
+        /// </summary>
+        private int sealHoursPowerMultiplier;
+        /// <summary>
+        /// When using a Barrel Recipe, what is the power requirement total.
+        /// </summary>
+        private ulong recipePowerCostTotal;
+
         private ulong recipePowerApplied;
         private bool isCrafting = false;
+        
         public float RecipeProgress
         {
             get
             {
-                if (currentRecipe == null) return 0f;
-                return (float)recipePowerApplied / (float)currentRecipe.PowerPerCraft;
+                if (currentRecipe != null)
+                {
+                    return (float)recipePowerApplied / (float)currentRecipe.PowerPerCraft;
+                }
+                return 0f;
             }
         }
 
         public bool IsCrafting { get { return isCrafting; } }
 
-        public ItemSlot InputSlot {  get { return inv[0]; } }
-        public ItemSlot OutputSlot { get { return inv[1]; } }
-        public ItemSlot ExtraOutputSlot { get { return inv[2]; } }
+        public ItemSlot[] InputSlots
+        { 
+            get 
+            {
+                return new ItemSlot[]
+                {
+                    inv[0],
+                    inv[1],
+                    inv[2],
+                    inv[3],
+                    inv[4] as ItemSlotLiquidOnly,
+                    inv[5] as ItemSlotLiquidOnly
+                };                
+            }
+        }
 
-        public override string InventoryClassName { get { return "VELogSplitterInv"; } }
+        public ItemSlot[] OutputSlots
+        {
+            get
+            {
+                return new ItemSlot[]
+                {
+                    inv[6],
+                    inv[7] as ItemSlotLiquidOnly
+                };
+            }
+        }
+
+        #region IHeatable
+        public float GetDesiredTemperature()
+        {
+            if (currentRecipe == null) return 0f;
+            else return currentRecipe.RequiresTemp;
+        }
+
+        public void SetTemperature(float temperature)
+        {
+            basinTemperature = temperature;
+        }
+
+        public float GetTemperature()
+        {
+            return basinTemperature;
+        }
+        #endregion
+        public ItemSlot OutputSlot { get { return inv[6]; } }
+
+        public override string InventoryClassName { get { return "InvMixer"; } }
 
         public override InventoryBase Inventory { get { return inv; } }
 
         public void OnSlotModified(int slotid)
         {
-            if (slotid == 0)
+            if (slotid >= 0 && slotid < 6)
             {
-                // something changed with the input slot
-                if (InputSlot.Empty)
-                {
-                    isCrafting = false;                    
-                    currentRecipe = null;
-                    recipePowerApplied = 0;
-                    StateChange(EnumBEState.Sleeping);
-                }
-                else
-                {
-                    FindMatchingRecipe();
-                    MarkDirty(true, null);
-                }
+                // something about the inputs changed...
+                FindMatchingRecipe();
+                MarkDirty(true);
                 if (clientDialog != null && clientDialog.IsOpened())
                 {
                     clientDialog.Update(RecipeProgress, CurrentPower, currentRecipe);
@@ -108,54 +163,85 @@ namespace VintageEngineering
         }
 
         /// <summary>
-        /// Output slots IDs are slotid 1 for primary and 2 for secondary
+        /// Output slots IDs are slotid 6 for item, 7 for fluid<br/>
+        /// Pass id = 0 and forStack = null to check both outputs.
         /// </summary>
         /// <param name="slotid">Index of ItemSlot inventory</param>
         /// <returns>True if there is room.</returns>
-        public bool HasRoomInOutput(int slotid)
+        public bool HasRoomInOutput(int slotid, ItemStack forStack)
         {
-            if (slotid < 1 || slotid > 2) return false;
-            if (inv[slotid].Empty) return true;
-            if (inv[slotid].StackSize < inv[slotid].Itemstack.Collectible.MaxStackSize) return true;
+            if (slotid == 0 && forStack == null)
+            {
+                if (inv[6].Empty && inv[7].Empty) return true;
+                int itemout = 0;
+                int fluidout = 0;
+                if (!inv[6].Empty)
+                {
+                    itemout = inv[6].Itemstack.Collectible.MaxStackSize - inv[6].Itemstack.StackSize;
+                }
+                else itemout = 64;
 
-            return false;
+                if (!inv[7].Empty)
+                {
+                    WaterTightContainableProps wprops = BlockLiquidContainerBase.GetContainableProps(inv[7].Itemstack);
+                    if (wprops == null) fluidout = 0;
+                    fluidout = (int)((inv[7] as ItemSlotLiquidOnly).CapacityLitres - (inv[7].Itemstack.StackSize/wprops.ItemsPerLitre));
+                }
+                else fluidout = 50;
+
+                return itemout > 0 && fluidout > 0;
+            }
+            else
+            {
+                if (slotid < 6 || slotid > 7) return false; // not an output slot
+                if (forStack == null) return false; // need to compare for an actual item
+                if (inv[slotid].Empty) return true; // slot is empty, good to go.
+                else
+                {
+                    return inv[slotid].GetRemainingSlotSpace(forStack) > 0;
+                }
+            }
         }
 
         /// <summary>
-        /// Find a matching Log Splitter Recipe given the Blocks inventory.
+        /// Find a matching Crusher Recipe given the Blocks inventory and mode.
         /// </summary>
         /// <returns>True if recipe found that matches ingredient.</returns>
         public bool FindMatchingRecipe()
-        {
+        {            
             if (Api == null) return false; // we're running this WAY too soon, bounce.
             if (MachineState == EnumBEState.Off) // if the machine is off, bounce.
             {
                 return false;
             }
-            if (InputSlot.Empty)
+            bool noinput = true;
+            foreach (ItemSlot slot in InputSlots)
             {
-                currentRecipe = null;
-                isCrafting = false;                
+                if (slot.Empty) noinput &= true;
+                else noinput = false;
+            }
+            if (noinput)
+            {
+                currentRecipe = null;                
+                isCrafting = false;
                 StateChange(EnumBEState.Sleeping);
                 return false;
             }
 
-            currentRecipe = null;            
-            List<RecipeLogSplitter> mprecipes = Api?.ModLoader?.GetModSystem<VERecipeRegistrySystem>(true)?.LogSplitterRecipes;
+            List<RecipeMixer> mrecipes = Api?.ModLoader?.GetModSystem<VERecipeRegistrySystem>(true)?.MixerRecipes;
+            if (mrecipes == null) return false;
 
-            if (mprecipes == null) return false;
-
-            foreach (RecipeLogSplitter mprecipe in mprecipes)
+            foreach (RecipeMixer mrecipe in mrecipes)
             {
-                if (mprecipe.Enabled && mprecipe.Matches(InputSlot))
+                if (mrecipe.Enabled && mrecipe.Matches(InputSlots))
                 {
-                    currentRecipe = mprecipe;
-                    isCrafting = true;                    
+                    currentRecipe = mrecipe;
+                    isCrafting = true;
                     StateChange(EnumBEState.On);
                     return true;
                 }
             }
-            currentRecipe = null;
+
             isCrafting = false;
             recipePowerApplied = 0;
             StateChange(EnumBEState.Sleeping);
@@ -177,83 +263,28 @@ namespace VintageEngineering
             {
                 if (isCrafting && RecipeProgress < 1f)
                 {
-                    if (CurrentPower == 0 || CurrentPower < (MaxPPS*dt)) return; // we don't have any power to progress.
-                    if (!HasRoomInOutput(1) && !HasRoomInOutput(2)) return; // no room in output slots, stop
-                    if (currentRecipe == null) return; // how the heck did this happen?
+                    if (CurrentPower == 0 || CurrentPower < (MaxPPS * dt)) return; // we don't have any power to progress.                    
+
+                    if (!HasRoomInOutput(0, null)) return;
 
                     float powerpertick = MaxPPS * dt;
-                    float percentprogress = powerpertick / currentRecipe.PowerPerCraft; // power to apply this tick
 
                     if (CurrentPower < powerpertick) return; // last check for our power requirements.
 
                     // round to the nearest whole number
                     recipePowerApplied += (ulong)Math.Round(powerpertick);
                     electricpower -= (ulong)Math.Round(powerpertick);
-                }
-                else if (!isCrafting) StateChange(EnumBEState.Sleeping);
+                }                
                 else if (RecipeProgress >= 1f)
-                {
-                    // recipe crafting complete
-                    ItemStack outputprimary = currentRecipe.Outputs[0].ResolvedItemstack.Clone();
-                    if (HasRoomInOutput(1))
+                {                  
+                    
+                    if (currentRecipe != null)
                     {
-                        // primary output is empty, set the stack.
-                        if (OutputSlot.Empty) inv[1].Itemstack = outputprimary;
-                        else
-                        {
-                            // how much space is left in primary?
-                            int capleft = inv[1].Itemstack.Collectible.MaxStackSize - inv[1].Itemstack.StackSize;
-                            if (capleft <= 0) Api.World.SpawnItemEntity(outputprimary, Pos.UpCopy(1).ToVec3d()); // should never fire
-                            else if (capleft >= outputprimary.StackSize) inv[1].Itemstack.StackSize += outputprimary.StackSize;
-                            else
-                            {
-                                inv[1].Itemstack.StackSize += capleft;
-                                outputprimary.StackSize -= capleft;
-                                Api.World.SpawnItemEntity(outputprimary, Pos.UpCopy(1).ToVec3d());
-                            }
-                        }
-                        OutputSlot.MarkDirty();
+                        // used a Mixer Recipe
+                        currentRecipe.TryCraftNow(Api, InputSlots, OutputSlots);
                     }
-                    else
-                    {
-                        Api.World.SpawnItemEntity(outputprimary, Pos.UpCopy(1).ToVec3d());
-                    }
-                    if (currentRecipe.Outputs.Length > 1)
-                    {
-                        // recipe has a secondary output
-                        int variableoutput = currentRecipe.Outputs[1].VariableResolve(Api.World, "VintEng: LogSplitter Craft output");
-                        if (variableoutput > 0)
-                        {
-                            ItemStack secondOuput = currentRecipe.Outputs[1].ResolvedItemstack.Clone();
-                            secondOuput.StackSize = variableoutput;
-                            if (HasRoomInOutput(2))
-                            {
-                                if (ExtraOutputSlot.Empty) ExtraOutputSlot.Itemstack = secondOuput;
-                                else
-                                {
-                                    // deja vu
-                                    int capleft = inv[2].Itemstack.Collectible.MaxStackSize - inv[2].Itemstack.StackSize;
-                                    if (capleft <= 0) Api.World.SpawnItemEntity(secondOuput, Pos.UpCopy(1).ToVec3d());
-                                    else if (capleft >= secondOuput.StackSize) inv[2].Itemstack.StackSize += secondOuput.StackSize;
-                                    else
-                                    {
-                                        inv[2].Itemstack.StackSize += capleft;
-                                        secondOuput.StackSize -= capleft;
-                                        Api.World.SpawnItemEntity(secondOuput, Pos.UpCopy(1).ToVec3d());
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                Api.World.SpawnItemEntity(secondOuput, Pos.UpCopy(1).ToVec3d());
-                            }
-                            ExtraOutputSlot.MarkDirty();
-                        }
-                    }
-                    InputSlot.TakeOut(currentRecipe.Ingredients[0].Quantity);
-                    InputSlot.MarkDirty();
-
-                    if (InputSlot.Empty || !FindMatchingRecipe())
+                    
+                    if (!FindMatchingRecipe())
                     {
                         StateChange(EnumBEState.Sleeping);
                         isCrafting = false;
@@ -266,9 +297,9 @@ namespace VintageEngineering
         }
 
         public override void StateChange(EnumBEState newstate)
-        {                    
+        {
             MachineState = newstate;
-            
+
             if (MachineState == EnumBEState.On)
             {
                 if (AnimUtil != null && base.Block.Attributes["craftinganimcode"].Exists)
@@ -304,7 +335,7 @@ namespace VintageEngineering
             {
                 base.toggleInventoryDialogClient(byPlayer, delegate
                 {
-                    clientDialog = new GUILogSplitter(DialogTitle, Inventory, this.Pos, capi, this);
+                    clientDialog = new GUIMixer(DialogTitle, Inventory, this.Pos, capi, this);
                     clientDialog.Update(RecipeProgress, CurrentPower, currentRecipe);
                     return this.clientDialog;
                 });
@@ -318,7 +349,7 @@ namespace VintageEngineering
             if (clientDialog != null)
             {
                 clientDialog.TryClose();
-                GUILogSplitter gUILog = clientDialog;
+                GUIMixer gUILog = clientDialog;
                 if (gUILog != null) { gUILog.Dispose(); }
                 clientDialog = null;
             }
@@ -363,7 +394,9 @@ namespace VintageEngineering
             inv.ToTreeAttributes(invtree);
             tree["inventory"] = invtree;
             tree.SetLong("recipepowerapplied", (long)recipePowerApplied);
-            tree.SetBool("iscrafting", isCrafting);
+            tree.SetBool("iscrafting", isCrafting);            
+            tree.SetLong("recipepowercosttotal", (long)recipePowerCostTotal);
+            //            tree.SetItemstack("nuggettype", nuggetType);
         }
 
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldForResolving)
@@ -372,15 +405,14 @@ namespace VintageEngineering
             inv.FromTreeAttributes(tree.GetTreeAttribute("inventory"));
             if (Api != null) inv.AfterBlocksLoaded(Api.World);
             recipePowerApplied = (ulong)tree.GetLong("recipepowerapplied");
-            isCrafting = tree.GetBool("iscrafting", false);
-            if (!inv[0].Empty) FindMatchingRecipe();
-
+            isCrafting = tree.GetBool("iscrafting", false);            
+            recipePowerCostTotal = (ulong)(tree.GetLong("recipepowercosttotal"));            
+            FindMatchingRecipe();
             if (Api != null && Api.Side == EnumAppSide.Client) { StateChange(MachineState); }
             if (clientDialog != null && clientDialog.IsOpened())
             {
                 clientDialog.Update(RecipeProgress, CurrentPower, currentRecipe);
-            }            
-            //if (Api != null && Api.Side == EnumAppSide.Client) MarkDirty(true, null);
+            }
         }
 
         #endregion

@@ -124,14 +124,71 @@ namespace VintageEngineering.RecipeSystem.Recipes
         /// <param name="inputSlots">Set of InputSlots to check</param>
         /// <param name="outputStackMul">Output Stack Size multiplier, can be 0</param>
         /// <returns></returns>
-        public bool Matches(ItemSlot[] inputSlots, out int outputStackMul)
+        public bool Matches(ItemSlot[] inputSlots)
         {
-            outputStackMul = 0;
+            //outputStackMul = 0;
             List<KeyValuePair<ItemSlot, BarrelRecipeIngredient>> matched = PairInput(inputSlots);
             if (matched == null) return false;
 
-            outputStackMul = GetOutputStackSizeMultiplier(matched);
-            return outputStackMul >= 0;
+            //outputStackMul = GetOutputStackSizeMultiplier(matched);
+            //return outputStackMul >= 0;
+            return true;
+        }
+
+        /// <summary>
+        /// Tries to craft the recipe based on input slots to push into output slots.
+        /// </summary>
+        /// <param name="api">Api</param>
+        /// <param name="inputslots">InputSlots</param>
+        /// <param name="outputslots">2 Output Slots, id= 0 item, 1 fluid</param>
+        /// <returns></returns>
+        public bool TryCraftNow(ICoreAPI api, ItemSlot[] inputslots, ItemSlot[] outputslots)
+        {
+            List<KeyValuePair<ItemSlot, BarrelRecipeIngredient>> matched = PairInput(inputslots);
+            if (matched == null) return false;
+
+            ItemStack mainoutput = Outputs[0].ResolvedItemstack.Clone();
+            ItemStack secondaryoutput = null;
+            if (Outputs.Length > 1)
+            {
+                secondaryoutput = Outputs[1].ResolvedItemstack.Clone();
+            }
+            if (secondaryoutput != null && mainoutput.Collectible.IsLiquid() && secondaryoutput.Collectible.IsLiquid())
+            {
+                // if we have a second output and both are liquid, it's a bad recipe
+                return false;
+            }
+            foreach (KeyValuePair<ItemSlot, BarrelRecipeIngredient> val in matched)
+            {
+                if (val.Value.ConsumeQuantity != null)
+                {
+                    val.Key.TakeOut(val.Value.ConsumeQuantity.Value);                    
+                }
+                else
+                {
+                    val.Key.TakeOut(val.Value.Quantity);                    
+                }
+            }
+            foreach (BarrelOutputStack output in Outputs)
+            {
+                if (ShouldBeInLiquidSlot(output.ResolvedItemstack))
+                {
+                    if (outputslots[1].Empty) outputslots[1].Itemstack = output.ResolvedItemstack.Clone();
+                    else outputslots[1].Itemstack.StackSize += output.ResolvedItemstack.StackSize;
+                    outputslots[1].MarkDirty();
+                }
+                else
+                {
+                    if (outputslots[0].Empty) outputslots[0].Itemstack = output.ResolvedItemstack.Clone();
+                    else outputslots[0].Itemstack.StackSize += output.ResolvedItemstack.StackSize;
+                    outputslots[0].MarkDirty();
+                }
+            }
+            foreach (ItemSlot input in inputslots)
+            {
+                if (input != null) input.MarkDirty();
+            }
+            return true;
         }
 
         /// <summary>
@@ -182,35 +239,35 @@ namespace VintageEngineering.RecipeSystem.Recipes
             return matched;
         }
 
-        public int GetOutputStackSizeMultiplier(List<KeyValuePair<ItemSlot, BarrelRecipeIngredient>> matched)
-        {            
-            int outQuantityMul = -1;
-            foreach (KeyValuePair<ItemSlot, BarrelRecipeIngredient> valuePair  in matched)
-            {
-                ItemSlot inputslot = valuePair.Key;
-                BarrelRecipeIngredient ingred = valuePair.Value;
-                if (ingred.ConsumeQuantity == null)
-                {
-                    outQuantityMul = inputslot.StackSize / ingred.Quantity;
-                }
-            }
-            if (outQuantityMul == -1) return -1;
-            foreach (KeyValuePair<ItemSlot, BarrelRecipeIngredient> valuePair in matched)
-            {
-                ItemSlot inputslot = valuePair.Key;
-                BarrelRecipeIngredient ingred = valuePair.Value;
-                if (ingred.ConsumeQuantity == null)
-                {
-                    if (inputslot.StackSize % ingred.Quantity != 0) return -1;
-                    if (outQuantityMul != inputslot.StackSize / ingred.Quantity) return -1;
-                }
-                else if (inputslot.StackSize < ingred.Quantity * outQuantityMul)
-                {
-                    return -1;
-                }
-            }
-            return outQuantityMul;
-        }
+        //public int GetOutputStackSizeMultiplier(List<KeyValuePair<ItemSlot, BarrelRecipeIngredient>> matched)
+        //{            
+        //    int outQuantityMul = -1;
+        //    foreach (KeyValuePair<ItemSlot, BarrelRecipeIngredient> valuePair  in matched)
+        //    {
+        //        ItemSlot inputslot = valuePair.Key;
+        //        BarrelRecipeIngredient ingred = valuePair.Value;
+        //        if (ingred.ConsumeQuantity == null)
+        //        {
+        //            outQuantityMul = inputslot.StackSize / ingred.Quantity;
+        //        }
+        //    }
+        //    if (outQuantityMul == -1) return -1;
+        //    foreach (KeyValuePair<ItemSlot, BarrelRecipeIngredient> valuePair in matched)
+        //    {
+        //        ItemSlot inputslot = valuePair.Key;
+        //        BarrelRecipeIngredient ingred = valuePair.Value;
+        //        if (ingred.ConsumeQuantity == null)
+        //        {
+        //            if (inputslot.StackSize % ingred.Quantity != 0) return -1;
+        //            if (outQuantityMul != inputslot.StackSize / ingred.Quantity) return -1;
+        //        }
+        //        else if (inputslot.StackSize < ingred.Quantity * outQuantityMul)
+        //        {
+        //            return -1;
+        //        }
+        //    }
+        //    return outQuantityMul;
+        //}
 
         public Dictionary<string, string[]> GetNameToCodeMapping(IWorldAccessor world)
         {

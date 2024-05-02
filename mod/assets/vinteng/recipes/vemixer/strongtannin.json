@@ -1,0 +1,20 @@
+[
+	{
+		"code": "strongtannin_oak",
+		"powerpercraft": 64,
+		"ingredients": [
+			{ "type": "block", "code": "log-placed-oak-ud",  "quantity": 2 },
+			{ "type": "item", "code": "waterportion",  "litres": 10 }
+		],
+		"output": { "type": "item", "code": "strongtanninportion", "litres": 10 }
+	},
+	{
+		"code": "strongtannin_acacia",
+		"powerpercraft": 64,
+		"ingredients": [
+			{ "type": "block", "code": "log-placed-acacia-ud",  "quantity": 2 },
+			{ "type": "item", "code": "waterportion",  "litres": 10 }
+		],
+		"output": { "type": "item", "code": "strongtanninportion", "litres": 10 }
+	}
+]

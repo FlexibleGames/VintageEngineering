@@ -41,6 +41,9 @@ namespace VintageEngineering
 
             // LVGenerator has neighbor side power distribution
             api.RegisterBlockClass("VELVGenerator", typeof(BlockLVGenerator));
+
+            // mixer has fluids
+            api.RegisterBlockClass("VEMixer", typeof(BlockMixer));
         }
         public void RegisterBlockEntities(ICoreAPI api)
         {
@@ -55,6 +58,7 @@ namespace VintageEngineering
             api.RegisterBlockEntityClass("VEBEKiln", typeof(BEKiln));
             api.RegisterBlockEntityClass("VEBEForge", typeof(BEForge));
             api.RegisterBlockEntityClass("VEBECNC", typeof(BECNC));
+            api.RegisterBlockEntityClass("VEBEMixer", typeof(BEMixer));
         }
     }
 

@@ -135,6 +135,7 @@
 	"vinteng:gui-word-nugget": "Nuggets",
 	"vinteng:gui-word-grind": "Grind",
 	"vinteng:gui-word-recipe": "Recipe",
+	"vinteng:gui-word-output": "Output",
 	"vinteng:gui-word-needed": "Needed",
 	"vinteng:gui-word-paused": "Waiting",
 	"vinteng:gui-word-auto": "Auto",

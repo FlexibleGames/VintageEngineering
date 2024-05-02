@@ -42,6 +42,9 @@ namespace VintageEngineering
         public override bool CanContain(ItemSlot sinkSlot, ItemSlot sourceSlot)
         {
             int slotid = GetSlotId(sinkSlot);
+
+            if (slotid == -1) return false;
+
             bool fluid = sourceSlot.Itemstack.Collectible.IsLiquid();
             // liquid slot ids are 4,5, and 7
             if (fluid)

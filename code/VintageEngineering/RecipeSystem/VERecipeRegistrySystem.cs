@@ -77,6 +77,7 @@ namespace VintageEngineering.RecipeSystem
 
             this.CrusherRecipes = api.RegisterRecipeRegistry<RecipeRegistryGeneric<RecipeCrusher>>("vecrusherrecipes").Recipes;
             this.KilnRecipes = api.RegisterRecipeRegistry<RecipeRegistryGeneric<RecipeKiln>>("vekilnrecipes").Recipes;
+            this.MixerRecipes = api.RegisterRecipeRegistry<RecipeRegistryGeneric<RecipeMixer>>("vemixerrecipes").Recipes;
         }
 
         public override void AssetsLoaded(ICoreAPI api)

@@ -368,7 +368,7 @@ namespace VintageEngineering
                         for (int x = 0; x < currentRecipe.Outputs.Length; x++)
                         {
                             ItemStack output = currentRecipe.Outputs[x].ResolvedItemstack.Clone();
-                            output.StackSize = currentRecipe.Outputs[x].VariableResolve(Api.World, "Kiln Recipe Output");
+                            output.StackSize = currentRecipe.Outputs[x].VariableResolve(Api.World, "Crusher Recipe Output");
                             if (output.StackSize == 0) continue; // variable output put out 0, bounce
 
                             for (int o = 1; o < inv.Count - 1; o++) // should go from 1 to 4
