@@ -41,10 +41,6 @@ namespace VintageEngineering.RecipeSystem
         /// </summary>
         public List<RecipeExtruder>     ExtruderRecipes = new List<RecipeExtruder>();        
         /// <summary>
-        /// Automate complex things en masse.
-        /// </summary>
-        public List<RecipeCNC>          CNCRecipes = new List<RecipeCNC>();
-        /// <summary>
         /// Bake small things into other things.
         /// </summary>
         public List<RecipeKiln>         KilnRecipes = new List<RecipeKiln>();
@@ -157,16 +153,6 @@ namespace VintageEngineering.RecipeSystem
             }
             recipeExtruderRecipe.RecipeID = ExtruderRecipes.Count + 1;
             this.ExtruderRecipes.Add(recipeExtruderRecipe);
-        }
-
-        public void RegisterCNCRecipe(RecipeCNC recipeCNC)
-        {
-            if (!VERecipeRegistrySystem.canRegister)
-            {
-                throw new InvalidOperationException("VintEng | RecipeRegistrySystem: Can no longer register CNC recipes. Register during AssetsLoaded/AssetsFinalize and with ExecuteOrder < 99999");
-            }
-            recipeCNC.RecipeID = CNCRecipes.Count + 1;
-            this.CNCRecipes.Add(recipeCNC);
         }
 
         public void RegisterKilnRecipe(RecipeKiln recipeKilnRecipes)

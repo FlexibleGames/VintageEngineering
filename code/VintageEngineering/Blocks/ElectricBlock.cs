@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using VintageEngineering.Electrical.Systems;
 using VintageEngineering.Electrical.Systems.Catenary;
 using Vintagestory.API.Common;
@@ -55,6 +56,8 @@ namespace VintageEngineering.Electrical
         {
             base.OnLoaded(api); // IMPORTANT base call sets wire anchors and functions
         }
+
+        
 
         public override string GetPlacedBlockInfo(IWorldAccessor world, BlockPos pos, IPlayer forPlayer)
         {

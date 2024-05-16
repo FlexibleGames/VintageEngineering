@@ -1,20 +1,27 @@
 [
 	{
 		"code": "strongtannin_oak",
-		"powerpercraft": 64,
+		"powerpercraft": 128,
+		"attributes": {
+			"requirestemp": 200
+		},
 		"ingredients": [
-			{ "type": "block", "code": "log-placed-oak-ud",  "quantity": 2 },
-			{ "type": "item", "code": "waterportion",  "litres": 10 }
+			{ "type": "block", "code": "game:log-placed-oak-ud",  "quantity": 2 },
+			{ "type": "item", "code": "game:waterportion",  "litres": 10 }
 		],
-		"output": { "type": "item", "code": "strongtanninportion", "litres": 10 }
+		"outputs": [
+            { "type": "item", "code": "game:strongtanninportion", "litres": 10 }
+        ]
 	},
 	{
 		"code": "strongtannin_acacia",
-		"powerpercraft": 64,
+		"powerpercraft": 128,
 		"ingredients": [
-			{ "type": "block", "code": "log-placed-acacia-ud",  "quantity": 2 },
-			{ "type": "item", "code": "waterportion",  "litres": 10 }
+			{ "type": "block", "code": "game:log-placed-acacia-ud",  "quantity": 2 },
+			{ "type": "item", "code": "game:waterportion",  "litres": 10 }
 		],
-		"output": { "type": "item", "code": "strongtanninportion", "litres": 10 }
+		"outputs": [
+            { "type": "item", "code": "game:strongtanninportion", "litres": 10 }
+        ]
 	}
 ]

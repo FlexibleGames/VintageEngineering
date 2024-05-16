@@ -216,6 +216,9 @@ namespace VintageEngineering
                 SingleComposer.GetDynamicText("progressText").SetNewText(GetProgressText());
                 SingleComposer.GetCustomDraw("powerDrawer").Redraw();
                 SingleComposer.GetCustomDraw("progressBar").Redraw();
+                SingleComposer.GetCustomDraw("fluidtank1").Redraw();
+                SingleComposer.GetCustomDraw("fluidtank2").Redraw();
+                SingleComposer.GetCustomDraw("fluidtankoutput").Redraw();
                 SingleComposer.GetDynamicText("enableBtnText").SetNewText(bemixer.IsEnabled ? Lang.Get("vinteng:gui-turn-off") : Lang.Get("vinteng:gui-turn-on"));
                 SingleComposer.GetDynamicText("outputText").SetNewText(GetHelpText());
             }

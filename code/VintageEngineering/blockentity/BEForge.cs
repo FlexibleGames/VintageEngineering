@@ -695,7 +695,7 @@ namespace VintageEngineering
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldForResolving)
         {
             base.FromTreeAttributes(tree, worldForResolving);
-            inv.FromTreeAttributes(tree.GetTreeAttribute("inventory"));            
+            inv.FromTreeAttributes(tree.GetTreeAttribute("inventory"));
             if (Api != null) inv.AfterBlocksLoaded(Api.World);
             _currentTempGoal = tree.GetInt("currenttempgoal");
             tempGoal = tree.GetInt("tempgoal");

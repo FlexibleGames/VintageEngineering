@@ -22,14 +22,14 @@ namespace VintageEngineering
 
         public override float GetSuitability(ItemSlot sourceSlot, ItemSlot targetSlot, bool isMerge)
         {
-            if (targetSlot == _slots[_slots.Length - 1])
-            {
-                return 0f;
-            }
-            if (targetSlot == _slots[0])
-            {
-                return 4f;
-            }
+            //if (targetSlot == _slots[_slots.Length - 1])
+            //{
+            //    return 0f;
+            //}
+            //if (targetSlot == _slots[0])
+            //{
+            //    return 4f;
+            //}
             return base.GetSuitability(sourceSlot, targetSlot, isMerge);
         }
 
@@ -56,7 +56,7 @@ namespace VintageEngineering
             else
             {
                 // source is NOT a fluid
-                if ((slotid > 0 && slotid < 4) || slotid == 6) return true;
+                if ((slotid >= 0 && slotid < 4) || slotid == 6) return true;
                 return false;
             }
         }
@@ -107,14 +107,13 @@ namespace VintageEngineering
         public InvMixer(string inventoryID, ICoreAPI api) : base(inventoryID, api)
         {
             _slots = base.GenEmptySlots(8);
-            for (int i = 0; i < 4; i++)
-            {
-                _slots[i] = new ItemSlotBarrelInput(this);
-            }
+            //for (int i = 0; i < 4; i++)
+            //{
+            //    _slots[i] = new ItemSlotBarrelInput(this);
+            //}
             _slots[4] = new ItemSlotLiquidOnly(this, 50); // fluid input 1
             _slots[5] = new ItemSlotLiquidOnly(this, 50); // fluid input 2
-            _slots[7] = new ItemSlotLiquidOnly(this, 50); // fluid output 
-
+            _slots[7] = new ItemSlotLiquidOnly(this, 50); // fluid output             
         }
 
         public override void LateInitialize(string inventoryID, ICoreAPI api)

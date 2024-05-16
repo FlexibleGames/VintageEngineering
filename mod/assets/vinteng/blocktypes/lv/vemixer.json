@@ -1,7 +1,7 @@
 {
 	"code": "vemixer",
-	"class": "VEElectricBlock",
-	"entityClass": "VEBECrusher",
+	"class": "VEMixer",
+	"entityClass": "VEBEMixer",
 	"behaviors": [
 		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "vemixer-north" }}}
 	],
@@ -17,8 +17,9 @@
 				"*": true
 			}
 		},
+		"allowHeldLiquidTransfer": true,
+		"transferLitresPerSecond": 5,
 		"craftinganimcode": "craft",
-		"sealpowermultiplier": 2,
 		"entitytype": "Consumer",
 		"priority": 5,
 		"maxpower": 1024,

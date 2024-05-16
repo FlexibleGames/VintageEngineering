@@ -17,7 +17,7 @@ using Vintagestory.Client.NoObf;
 
 namespace VintageEngineering
 {
-    public class BEMixer : ElectricBE, IHeatable
+    public class BEMixer : ElectricBEWithFluid, IHeatable
     {
         private ICoreClientAPI capi;
         private ICoreServerAPI sapi;
@@ -56,12 +56,14 @@ namespace VintageEngineering
                     AnimUtil.InitializeAnimator("vemixer", null, null, new Vec3f(0, GetRotation(), 0f));
                 }
             }
-            sealHoursPowerMultiplier = this.Block.Attributes["sealpowermultiplier"].AsInt(1);
-            if (sealHoursPowerMultiplier < 1) sealHoursPowerMultiplier = 1; // sanity (and cheat) check
             inv.Pos = this.Pos;
             inv.LateInitialize($"{InventoryClassName}-{this.Pos.X}/{this.Pos.Y}/{this.Pos.Z}", api);
             FindMatchingRecipe();
         }
+        #region IVELiquidInterface
+        public override int[] InputLiquidContainerSlotIDs => new int[] { 4, 5 };
+        public override int[] OutputLiquidContainerSlotIDs => new int[] { 7 };
+        #endregion
 
         #region RecipeAndInventoryStuff
         private InvMixer inv;
@@ -70,11 +72,6 @@ namespace VintageEngineering
 
         public float basinTemperature;
                 
-        /// <summary>
-        /// Baseline vanilla power cost multiplier for barrel seal hour recipes. Set in JSON.<br/>
-        /// Default of 2, means seal hours for barrel recipe of 105 means it will require 210 power per craft.        
-        /// </summary>
-        private int sealHoursPowerMultiplier;
         /// <summary>
         /// When using a Barrel Recipe, what is the power requirement total.
         /// </summary>
@@ -208,7 +205,7 @@ namespace VintageEngineering
         /// </summary>
         /// <returns>True if recipe found that matches ingredient.</returns>
         public bool FindMatchingRecipe()
-        {            
+        {
             if (Api == null) return false; // we're running this WAY too soon, bounce.
             if (MachineState == EnumBEState.Off) // if the machine is off, bounce.
             {

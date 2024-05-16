@@ -411,7 +411,7 @@ namespace VintageEngineering.Electrical
         public override void ToTreeAttributes(ITreeAttribute tree)
         {
             base.ToTreeAttributes(tree);
-            ITreeAttribute invtree = new TreeAttribute();
+            //ITreeAttribute invtree = new TreeAttribute();
                                                 
             tree.SetString("machinestate", machineState.ToString());
             tree.SetInt("priority", priority);

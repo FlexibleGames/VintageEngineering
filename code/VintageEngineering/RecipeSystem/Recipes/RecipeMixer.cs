@@ -173,6 +173,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
             {
                 if (ShouldBeInLiquidSlot(output.ResolvedItemstack))
                 {
+                    output.ResolvedItemstack.StackSize = output.Quantity;
                     if (outputslots[1].Empty) outputslots[1].Itemstack = output.ResolvedItemstack.Clone();
                     else outputslots[1].Itemstack.StackSize += output.ResolvedItemstack.StackSize;
                     outputslots[1].MarkDirty();
@@ -238,36 +239,6 @@ namespace VintageEngineering.RecipeSystem.Recipes
             }
             return matched;
         }
-
-        //public int GetOutputStackSizeMultiplier(List<KeyValuePair<ItemSlot, BarrelRecipeIngredient>> matched)
-        //{            
-        //    int outQuantityMul = -1;
-        //    foreach (KeyValuePair<ItemSlot, BarrelRecipeIngredient> valuePair  in matched)
-        //    {
-        //        ItemSlot inputslot = valuePair.Key;
-        //        BarrelRecipeIngredient ingred = valuePair.Value;
-        //        if (ingred.ConsumeQuantity == null)
-        //        {
-        //            outQuantityMul = inputslot.StackSize / ingred.Quantity;
-        //        }
-        //    }
-        //    if (outQuantityMul == -1) return -1;
-        //    foreach (KeyValuePair<ItemSlot, BarrelRecipeIngredient> valuePair in matched)
-        //    {
-        //        ItemSlot inputslot = valuePair.Key;
-        //        BarrelRecipeIngredient ingred = valuePair.Value;
-        //        if (ingred.ConsumeQuantity == null)
-        //        {
-        //            if (inputslot.StackSize % ingred.Quantity != 0) return -1;
-        //            if (outQuantityMul != inputslot.StackSize / ingred.Quantity) return -1;
-        //        }
-        //        else if (inputslot.StackSize < ingred.Quantity * outQuantityMul)
-        //        {
-        //            return -1;
-        //        }
-        //    }
-        //    return outQuantityMul;
-        //}
 
         public Dictionary<string, string[]> GetNameToCodeMapping(IWorldAccessor world)
         {
