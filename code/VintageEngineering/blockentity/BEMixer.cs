@@ -13,7 +13,6 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
-using Vintagestory.Client.NoObf;
 
 namespace VintageEngineering
 {
@@ -264,6 +263,11 @@ namespace VintageEngineering
 
                     if (!HasRoomInOutput(0, null)) return;
 
+                    if (currentRecipe.RequiresTemp > 0)
+                    {
+                        if (basinTemperature < currentRecipe.RequiresTemp) return;
+                    }
+
                     float powerpertick = MaxPPS * dt;
 
                     if (CurrentPower < powerpertick) return; // last check for our power requirements.
@@ -360,7 +364,9 @@ namespace VintageEngineering
 
             string crafting = isCrafting ? $"{Lang.Get("vinteng:gui-word-crafting")}: {recipeProgressPercent:N1}%" : $"{Lang.Get("vinteng:gui-machine-notcrafting")}";
 
-            return outtext + crafting;
+            string heated = System.Environment.NewLine + $"{Lang.Get("vinteng:gui-word-temp")} {basinTemperature:N1}°";
+
+            return outtext + crafting + heated;
         }
 
         #region ServerClientStuff
@@ -393,6 +399,7 @@ namespace VintageEngineering
             tree.SetLong("recipepowerapplied", (long)recipePowerApplied);
             tree.SetBool("iscrafting", isCrafting);            
             tree.SetLong("recipepowercosttotal", (long)recipePowerCostTotal);
+            tree.SetFloat("basintemp", basinTemperature);
             //            tree.SetItemstack("nuggettype", nuggetType);
         }
 
@@ -402,7 +409,8 @@ namespace VintageEngineering
             inv.FromTreeAttributes(tree.GetTreeAttribute("inventory"));
             if (Api != null) inv.AfterBlocksLoaded(Api.World);
             recipePowerApplied = (ulong)tree.GetLong("recipepowerapplied");
-            isCrafting = tree.GetBool("iscrafting", false);            
+            isCrafting = tree.GetBool("iscrafting", false);
+            basinTemperature = tree.GetFloat("basintemp", 20f);
             recipePowerCostTotal = (ulong)(tree.GetLong("recipepowercosttotal"));            
             FindMatchingRecipe();
             if (Api != null && Api.Side == EnumAppSide.Client) { StateChange(MachineState); }

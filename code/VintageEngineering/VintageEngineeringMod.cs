@@ -42,6 +42,9 @@ namespace VintageEngineering
             // LVGenerator has neighbor side power distribution
             api.RegisterBlockClass("VELVGenerator", typeof(BlockLVGenerator));
 
+            // Needed for neighbor block change event
+            api.RegisterBlockClass("VEForge", typeof(BlockVEForge));
+
             // mixer has fluids
             api.RegisterBlockClass("VEMixer", typeof(BlockMixer));
         }

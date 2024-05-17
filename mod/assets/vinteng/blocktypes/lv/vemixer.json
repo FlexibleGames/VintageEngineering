@@ -18,6 +18,7 @@
 			}
 		},
 		"allowHeldLiquidTransfer": true,
+		"allowPipeLiquidTransfer": true,
 		"transferLitresPerSecond": 5,
 		"craftinganimcode": "craft",
 		"entitytype": "Consumer",

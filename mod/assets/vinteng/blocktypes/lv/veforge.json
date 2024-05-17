@@ -1,6 +1,6 @@
 {
 	"code": "veforge",
-	"class": "VEElectricBlock",
+	"class": "VEForge",
 	"entityClass": "VEBEForge",
 	"behaviors": [
 		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "veforge-north" }}}

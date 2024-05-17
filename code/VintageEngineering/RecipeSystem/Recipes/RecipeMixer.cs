@@ -97,6 +97,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
                 Ingredients = _ingredients,
                 Outputs = _outputs,
                 Attributes = this.Attributes?.Clone(),
+                RequiresTemp = this.RequiresTemp,
                 PowerPerCraft = this.PowerPerCraft,
                 Code = this.Code,
                 Enabled = this.Enabled,
@@ -347,7 +348,33 @@ namespace VintageEngineering.RecipeSystem.Recipes
                         this.Outputs[i].Quantity = (int)(lprops2.ItemsPerLitre * this.Outputs[i].Litres);
                     }
                 }
-            }                        
+            }
+            if (Attributes != null)
+            {
+                if (Attributes["requires"].Exists)
+                {
+                    Requires = new AssetLocation(Attributes["requires"].AsString());
+                }
+                if (Attributes["requiresvariants"].Exists)
+                {
+                    if (Attributes["requiresvariants"].IsArray())
+                    {
+                        RequiresVariants = Attributes["requiresvariants"].AsArray<string>();
+                    }
+                    else
+                    {
+                        RequiresVariants = new string[1] { Attributes["requiresvariants"].AsString() };
+                    }
+                }
+                if (Attributes["requiresdurability"].Exists)
+                {
+                    RequiresDurability = Attributes["requiresdurability"].AsBool(false);
+                }
+                if (Attributes["requirestemp"].Exists)
+                {
+                    RequiresTemp = Attributes["requirestemp"].AsInt();
+                }
+            }
             return ok;
         }
         public void FromBytes(BinaryReader reader, IWorldAccessor resolver)

@@ -68,9 +68,10 @@ namespace VintageEngineering
         //private RecipeForge currentRecipe;
         private CombustibleProperties _cproperties;
         private int _currentTempGoal;
-        
-        //private float _burntimeelapsed;
-        //private ulong recipePowerApplied;
+        /// <summary>
+        /// If true, the Forge is heating the machine above it, not an item in its inventory.
+        /// </summary>
+        private bool heatingBlock = false;
         private bool isHeating = false;
         //private bool isCrafting = false;
         private int HeatPerSecondBase;
@@ -107,6 +108,11 @@ namespace VintageEngineering
         /// </summary>
         public bool IsHeating { get { return isHeating; } }
 
+        /// <summary>
+        /// If true, Forge is heating the machine above it.
+        /// </summary>
+        public bool HeatingBlock { get { return heatingBlock; } }
+
         public ItemSlot InputSlot { get { return inv[0]; } }
         public ItemSlot OutputSlot { get { return inv[1]; } }
 
@@ -127,7 +133,7 @@ namespace VintageEngineering
 
         public void OnSlotModified(int slotid)
         {
-            if (slotid == 0)
+            if (slotid == 0 && !heatingBlock)
             {
                 // something changed with the input slot
                 UpdateMesh(0);
@@ -158,7 +164,7 @@ namespace VintageEngineering
             if (inv[slotid].Empty) return true;
             return false;
         }
-
+        
         /// <summary>
         /// If the input slot contains something we can heat, then return true.<br/>
         /// If a temp goal was set in GUI, will try to heat ANYTHING up to that temp.
@@ -172,10 +178,15 @@ namespace VintageEngineering
                 isHeating = false;
                 return false;
             }
+            if (heatingBlock)
+            {
+                isHeating = true;
+                StateChange(EnumBEState.On);
+                return true;
+            }
             if (InputSlot.Empty)
             {
                 isHeating = false;
-//                isCrafting = false;
                 StateChange(EnumBEState.Sleeping);
                 return false;
             }
@@ -278,8 +289,7 @@ namespace VintageEngineering
             float newtemp = fromTemp + basechange;
             if (newtemp < -273) return toTemp; // something odd happened, can't go below absolute 0.
             return newtemp;
-        }
-
+        }        
 
         //private float ChangeTemperature(float fromTemp, float toTemp, float deltatime)
         //{
@@ -329,7 +339,24 @@ namespace VintageEngineering
                 if (!OutputSlot.Empty) { return; } // something is in the output slot
                 if (isHeating) // we're heating
                 {
-                    if (!InputSlot.Empty)
+                    if (heatingBlock)
+                    {
+                        IHeatable heatable = Api.World.BlockAccessor.GetBlockEntity(this.Pos.UpCopy(1)) as IHeatable;
+                        float desired = heatable.GetDesiredTemperature();
+                        desired *= 1.1f; // bump desired temp 10%
+                        float basintemp = heatable.GetTemperature();
+                        if (desired > 0f)
+                        {                            
+                            heatable.SetTemperature(ChangeTemperature(basintemp, desired, dt));
+                        }
+                        else
+                        {
+                            if (basintemp > 20) heatable.SetTemperature(ChangeTemperature(basintemp, 20, dt));
+                            else heatable.SetTemperature(20);
+                            return;
+                        }
+                    }
+                    else if (!InputSlot.Empty)
                     {
                         if (InputSlot.Itemstack.Collectible.GetTemperature(Api.World, InputSlot.Itemstack) < _currentTempGoal)
                         {
@@ -359,6 +386,16 @@ namespace VintageEngineering
                 }
             }
             this.MarkDirty(true, null);
+        }
+
+        /// <summary>
+        /// Sets whether or not this Forge is supposed to heat a machine above it.
+        /// </summary>
+        /// <param name="heatableblock">True to heat block above this.</param>
+        public void SetHeatableBlock(bool heatableblock)
+        {
+            this.heatingBlock = heatableblock;
+            FindMatchingRecipe();
         }
 
         public override void StateChange(EnumBEState newstate)
@@ -688,6 +725,7 @@ namespace VintageEngineering
             tree.SetInt("tempgoal", tempGoal);
 //            tree.SetBool("iscrafting", isCrafting);
             tree.SetBool("isheating", isHeating);
+            tree.SetBool("heatingblock", heatingBlock);
             tree.SetFloat("currenttemp", CurrentTemp); // this is the INPUTSTACK's current temp
             tree.SetFloat("worldtemp", environmentTemp);
         }
@@ -699,10 +737,11 @@ namespace VintageEngineering
             if (Api != null) inv.AfterBlocksLoaded(Api.World);
             _currentTempGoal = tree.GetInt("currenttempgoal");
             tempGoal = tree.GetInt("tempgoal");
-            isHeating = tree.GetBool("isheating", false);            
+            isHeating = tree.GetBool("isheating", false);
+            heatingBlock = tree.GetBool("heatingblock", false);
             environmentTemp = tree.GetFloat("worldtemp", 20);
             float currentItemTemp = tree.GetFloat("currenttemp");
-            if (!inv[0].Empty) FindMatchingRecipe();
+            FindMatchingRecipe();
             if (!InputSlot.Empty && Api != null)
             {
                 InputSlot.Itemstack.Collectible.SetTemperature(worldForResolving,

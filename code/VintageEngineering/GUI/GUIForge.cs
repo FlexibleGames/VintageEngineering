@@ -194,6 +194,10 @@ namespace VintageEngineering
                     outputhelptext = Lang.Get("vinteng:gui-machine-isfull");   // an output is full...                    
                 }
             }
+            if (betestmach.HeatingBlock)
+            {
+                outputhelptext = Lang.Get("vinteng:gui-machine-heatingblock");
+            }
             if (!betestmach.IsEnabled)
             {
                 outputhelptext = Lang.Get("vinteng:gui-machine-off");
