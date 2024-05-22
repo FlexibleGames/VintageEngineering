@@ -1,0 +1,61 @@
+{
+	"code": "pipe",
+    "classByType": {
+        "*-item": ""
+    },
+    "entityClassByType": {
+        "*-item": ""
+    },
+	"variantgroups": [
+		{ "code": "purpose", "states": [ "item", "fluid"] }
+	],
+	"behaviors": [],
+	"creativeinventory": { "general": ["*"], "construction": ["*"] },
+	"shapeByType": {
+        "*":  { "base": "vinteng:block/pipes/pipe-center" }
+    },
+	"attributes": {
+		"handbook": {
+			"excludeByType": {
+				"*": false
+			}
+		}
+	},
+	"collisionSelectionBoxByType": {
+		"*":    { "x1": 0.375, "y1": 0.375, "z1": 0.375, "x2": 0.625, "y2": 0.625, "z2": 0.625 }
+	},
+	"blockmaterial": "Metal",
+	"drawtype": "json",
+	"faceCullMode": "NeverCull",
+	"sideOpaque": { "all": false },
+    "sidesolid": {
+            "all": true
+    },
+	"emitSideAo": { "all": false },
+	"lightAbsorption": 0,
+	"rainPermeable": true,
+	"resistance": 3.5,
+	"sounds": {
+		"place": "game:block/chute",
+		"break": "game:block/chute",
+		"hit": "game:block/chute",
+		"walk": "game:walk/stone"
+	},
+	"maxStackSize": 64,
+	"materialDensity": 600,
+	"heldTpIdleAnimation": "holdbothhandslarge", "heldTpUseAnimation": "twohandplaceblock",
+	"tpHandTransform": {
+		"translation": { "x": -1.23, "y": -0.91, "z": -0.8 },
+		"rotation": { "x": -2, "y": 25, "z": -78 },
+		"scale": 0.4
+	},
+	"guiTransform": {
+		"translation": { "x": 0, "y": -17, "z": 0 },
+		"rotation": { "x": -19, "y": -37, "z": -1 },
+		"scale": 2.49
+	},
+	"dropsByType": {
+        "*-item": [{ "type": "block", "code": "pipe-item", "quantity": 1 }],
+        "*-fluid": [{ "type": "block", "code": "pipe-fluid", "quantity": 1 }]
+    }
+}

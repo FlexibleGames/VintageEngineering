@@ -52,10 +52,6 @@
     </EmbeddedResource>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Transport\" />
-  </ItemGroup>
-
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="copy $(TargetDir)*.* C:\_Programming\Vintage\VintageEngineering\mod&#xD;&#xA;" />
   </Target>

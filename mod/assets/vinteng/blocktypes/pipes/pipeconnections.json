@@ -1,0 +1,73 @@
+{
+	"code": "pipeconnections",
+	"variantgroups": [
+		{ "code": "type", "states": [ "connection", "extraction"] },
+		{ "code":"position", "states": ["up", "down"], "loadFromProperties": "abstract/horizontalorientation" }
+	],
+	"behaviors": [{"name": "OmniAttachable", "properties": {
+					"facingCode": "position",
+					"attachmentAreas": {
+						"down": { "x1": 7, "y1": 15, "z1": 7, "x2": 8, "y2": 15, "z2": 8 },
+						"up": { "x1": 7, "y1": 0, "z1": 7, "x2": 8, "y2": 0, "z2": 8 },
+						"north": { "x1": 7, "y1": 7, "z1": 0, "x2": 8, "y2": 8, "z2": 1 },
+						"east": { "x1": 7, "y1": 7, "z1": 0, "x2": 8, "y2": 8, "z2": 1, "rotateY": 90 },
+						"south": { "x1": 7, "y1": 7, "z1": 0, "x2": 8, "y2": 8, "z2": 1, "rotateY": 180 },
+						"west": { "x1": 7, "y1": 7, "z1": 0, "x2": 8, "y2": 8, "z2": 1, "rotateY": 270 }
+					}
+					}}],
+	"creativeinventory": { "general": ["*"], "construction": ["*"] },
+	"shapeByType": {
+        "*-north":  { "base": "vinteng:block/pipes/{type}", "rotateX": 270 },
+		"*-east":   { "base": "vinteng:block/pipes/{type}", "rotateZ": 270 },
+		"*-south":  { "base": "vinteng:block/pipes/{type}", "rotateX": 90 },
+		"*-west":   { "base": "vinteng:block/pipes/{type}", "rotateZ": 90 },
+		"*-up":     { "base": "vinteng:block/pipes/{type}"},
+		"*-down":   { "base": "vinteng:block/pipes/{type}", "rotateX": 180 }
+    },
+	"attributes": {
+		"handbook": {
+			"excludeByType": {
+				"*": true
+			}
+		}
+	},
+	"collisionSelectionBoxByType": {
+		"*-up":    { "x1": 0.375, "y1": 0, "z1": 0.375, "x2": 0.625, "y2": 0.375, "z2": 0.625 },
+		"*-down":  { "x1": 0.375, "y1": 0, "z1": 0.375, "x2": 0.625, "y2": 0.375, "z2": 0.625, "rotateX": 180 },
+		"*-north": { "x1": 0.375, "y1": 0, "z1": 0.375, "x2": 0.625, "y2": 0.375, "z2": 0.625, "rotateX": 90, "rotateZ": 180 },
+		"*-east":  { "x1": 0.375, "y1": 0, "z1": 0.375, "x2": 0.625, "y2": 0.375, "z2": 0.625, "rotateX": 90, "rotateZ": 270 },
+		"*-south": { "x1": 0.375, "y1": 0, "z1": 0.375, "x2": 0.625, "y2": 0.375, "z2": 0.625, "rotateX": 90, "rotateZ": 0 },
+		"*-west":  { "x1": 0.375, "y1": 0, "z1": 0.375, "x2": 0.625, "y2": 0.375, "z2": 0.625, "rotateX": 90, "rotateZ": 90 }
+	},
+	"blockmaterial": "Metal",
+	"drawtype": "json",
+	"faceCullMode": "NeverCull",
+	"sideOpaque": { "all": false },
+    "sidesolid": {
+            "all": true
+    },
+	"emitSideAo": { "all": false },
+	"lightAbsorption": 0,
+	"rainPermeable": true,
+	"resistance": 3.5,
+	"sounds": {
+		"place": "game:block/chute",
+		"break": "game:block/chute",
+		"hit": "game:block/chute",
+		"walk": "game:walk/stone"
+	},
+	"maxStackSize": 64,
+	"materialDensity": 600,
+	"heldTpIdleAnimation": "holdbothhandslarge", "heldTpUseAnimation": "twohandplaceblock",
+	"tpHandTransform": {
+		"translation": { "x": -1.23, "y": -0.91, "z": -0.8 },
+		"rotation": { "x": -2, "y": 25, "z": -78 },
+		"scale": 0.4
+	},
+	"guiTransform": {
+		"translation": { "x": 0, "y": -17, "z": 0 },
+		"rotation": { "x": -19, "y": -37, "z": -1 },
+		"scale": 2.49
+	},
+	"drops": []
+}
