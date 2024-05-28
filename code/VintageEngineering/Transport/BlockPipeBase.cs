@@ -36,6 +36,11 @@ namespace VintageEngineering.Transport
             _pipeUse = Enum.Parse<EnumPipeUse>(this.LastCodePart());
         }
 
+        public override string GetPlacedBlockInfo(IWorldAccessor world, BlockPos pos, IPlayer forPlayer)
+        {
+            return base.GetPlacedBlockInfo(world, pos, forPlayer);
+        }
+
         public override bool DoParticalSelection(IWorldAccessor world, BlockPos pos)
         {
             return true;
@@ -84,8 +89,18 @@ namespace VintageEngineering.Transport
         {
             // BlockSelection includes the SelectionIndex which is the index of the selection box interacted
             // with as returned by GetSelectionBoxes(..) above. Need to convert that index into the actual direction
-            // player interacted with as any index could be any direction.
-            return null;
+            // player interacted with as any index could be any direction.            
+            switch (blockSelection.SelectionBoxIndex)
+            {
+                case 0: return BlockFacing.NORTH; 
+                case 1: return BlockFacing.EAST;
+                case 2: return BlockFacing.SOUTH;
+                case 3: return BlockFacing.WEST;
+                case 4: return BlockFacing.UP;
+                case 5: return BlockFacing.DOWN;
+                case 6: return null;
+                default: return null;
+            }
         }
 
     }
