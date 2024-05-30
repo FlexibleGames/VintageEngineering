@@ -3,16 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 
 namespace VintageEngineering.Transport
 {
+    /// <summary>
+    /// A Pipe Insertion connection.
+    /// </summary>
     public class PipeConnection
     {
         private BlockPos pos;
         private BlockFacing facing;
         private int distance;
         private bool isextraction;
+        //private ItemSlot filterslot;
 
         /// <summary>
         /// BlockPosition of the block connected to.<br/>

@@ -10,12 +10,14 @@ using Vintagestory.GameContent;
 
 namespace VintageEngineering.Transport
 {
-    public abstract class BEPipeBase : BlockEntityOpenableContainer
+    public abstract class BEPipeBase : BlockEntity
     {
         protected long _networkID;
-        protected MeshData _pipeMesh;
+        protected MeshData _meshData;
+        //protected MeshRef _meshRef;
 
         protected List<PipeConnection> pushConnections;
+        protected PipeExtractionNode[] extractionNodes;
         protected int numExtractionConnections;
         protected int numInsertionConnections;
 
@@ -38,6 +40,12 @@ namespace VintageEngineering.Transport
         /// </summary>
         public int NumExtractionConnections
         {  get { return numExtractionConnections; } }
+
+        /// <summary>
+        /// Number of insertion nodes for this pipe block.
+        /// </summary>
+        public int NumInsertionConnections
+        { get { return numInsertionConnections; } }
 
         /// <summary>
         /// NetworkID assigned to this pipe block. Should not be 0.
@@ -76,7 +84,8 @@ namespace VintageEngineering.Transport
         public override void Initialize(ICoreAPI api)
         {
             base.Initialize(api);
-            
+
+            extractionNodes ??= new PipeExtractionNode[6];
             connectionSides ??= new bool[6];
             if (extractionSides == null) { extractionSides = new bool[6]; }
             if (disconnectedSides == null) {  disconnectedSides = new bool[6]; }
@@ -95,6 +104,9 @@ namespace VintageEngineering.Transport
             {
                 Block dblock = world.BlockAccessor.GetBlock(this.Pos.AddCopy(BlockFacing.ALLFACES[f]), BlockLayersAccess.Solid);
                 BlockEntity dbe = world.BlockAccessor.GetBlockEntity(this.Pos.AddCopy(BlockFacing.ALLFACES[f]));
+
+                // NEED to track NetworkID's of all faces, merge networks, join networks as needed.
+
                 if (dblock.Id == 0) // face direction is air block
                 {
                     // block is air, not a valid block to connect to.
@@ -144,6 +156,11 @@ namespace VintageEngineering.Transport
 
         }
 
+        public override bool OnTesselation(ITerrainMeshPool mesher, ITesselatorAPI tessThreadTesselator)
+        {            
+            return base.OnTesselation(mesher, tessThreadTesselator);
+        }
+
         /// <summary>
         /// Rebuilds the shape based on the connection flags, should ONLY be called when a neighbor block changes
         /// or the player overrides a valid connection.<br/>
@@ -163,6 +180,25 @@ namespace VintageEngineering.Transport
         public virtual bool CanConnectTo(IWorldAccessor world, BlockPos pos)
         {
             return false;
+        }
+
+        /// <summary>
+        /// Adds an extraction tick event for a single extraction node for this block entity.
+        /// </summary>
+        /// <param name="delayms">Required Tick Delay</param>
+        /// <param name="tickEvent">Tick Handler Method</param>
+        /// <returns>listenerID</returns>
+        public long AddExtractionTickEvent(int delayms, Action<float> tickEvent)            
+        {
+            return this.RegisterGameTickListener(tickEvent, delayms);
+        }
+        /// <summary>
+        /// Removes a ExtractionNode tick event from the pool.
+        /// </summary>
+        /// <param name="lid">ListenerID to remove.</param>
+        public void RemoveExtractionTickEvent(long lid)
+        {
+            this.UnregisterGameTickListener(lid);
         }
     }
 }

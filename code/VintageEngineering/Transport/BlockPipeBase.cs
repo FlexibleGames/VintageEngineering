@@ -54,7 +54,12 @@ namespace VintageEngineering.Transport
 
         public override void OnBlockPlaced(IWorldAccessor world, BlockPos blockPos, ItemStack byItemStack = null)
         {
-            // Detect Connections and adjust shape accordingly. Shape manipulation is done in the BE.            
+            // Detect Connections and adjust shape accordingly. Shape manipulation is done in the BE.
+            BEPipeBase pipebe = api.World.BlockAccessor.GetBlockEntity(blockPos) as BEPipeBase;
+            if (pipebe != null)
+            {
+                pipebe.MarkPipeDirty(world); // this builds connection information
+            }
             base.OnBlockPlaced(world, blockPos, byItemStack);
         }        
 

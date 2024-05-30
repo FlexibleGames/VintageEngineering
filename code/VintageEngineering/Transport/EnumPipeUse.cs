@@ -17,7 +17,8 @@ namespace VintageEngineering.Transport
         energy,
         gas,
         heat,
-        signal
+        signal,
+        universal
     }
 
     /// <summary>
