@@ -8,6 +8,9 @@ using Vintagestory.API.MathTools;
 
 namespace VintageEngineering.Transport
 {
+    /// <summary>
+    /// A node that extracts from whatever it's connected to.
+    /// </summary>
     public class PipeExtractionNode : IBlockEntityContainer
     {
         ICoreAPI _api;
@@ -16,10 +19,19 @@ namespace VintageEngineering.Transport
         protected PipeInventory inventory;
         protected long listenerID;
         // GUI?
-
+        /// <summary>
+        /// ItemSlot for the pipe upgrade
+        /// </summary>
         public ItemSlot Upgrade
         { get { return inventory[0]; } }
-
+        /// <summary>
+        /// Quick access to the stack-size of the upgrade, to prevent checking the attributes of the itemstack every tick.<br/>
+        /// If this is -1, do a whole stack, regardless of stack-size.
+        /// </summary>
+        private int _upgradeRate = 1; 
+        /// <summary>
+        /// Itemslot for the filter
+        /// </summary>
         public ItemSlot Filter
         { get { return inventory[1]; } }
 
@@ -83,7 +95,7 @@ namespace VintageEngineering.Transport
         /// <param name="deltatime">Time (in seconds) since last update.</param>
         public virtual void UpdateTick(float deltatime)
         {
-
+            // TODO all the things
         }
 
         /// <summary>

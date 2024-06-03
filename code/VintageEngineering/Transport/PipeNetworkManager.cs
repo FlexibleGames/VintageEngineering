@@ -63,7 +63,7 @@ namespace VintageEngineering.Transport
             {
                 foreach (KeyValuePair<long, PipeNetwork> net in _pipeNetworks)
                 {
-                    net.Value.NetworkID = net.Key;
+                    net.Value.NetworkID = net.Key; // ensure the ID is set for all the networks.
                 }
                 return SerializerUtil.Serialize(_pipeNetworks.Values);
             }
@@ -78,10 +78,39 @@ namespace VintageEngineering.Transport
 
         public void OnPipeBlockPlaced(IWorldAccessor world, BlockPos pos)
         {
-
+            // check the sides for other pipes and check connection overrides
+            // compare all networkID's
+            // Merge networks if needed create network if needed, set pos networkid
         }
 
         public void OnPipeBlockBroken(IWorldAccessor world, BlockPos pos)
+        {
+            // check connection sides for pipe connections
+            // if endpoint, remove node; otherwise split network
+        }
+        
+        /// <summary>
+        /// Called when the player force-removes a pipe-pipe connection
+        /// potentially splitting the network.
+        /// </summary>
+        /// <param name="world">World Accessor</param>
+        /// <param name="pos">Position of the override.</param>
+        public void OnPipeConnectionOverride(IWorldAccessor world, BlockPos pos)
+        {
+
+        }
+        /// <summary>
+        /// Merge Pipe Network net2 into net1.
+        /// </summary>
+        /// <param name="world"></param>
+        /// <param name="net1"></param>
+        /// <param name="net2"></param>
+        public void MergeNetworks(IWorldAccessor world, PipeNetwork net1, PipeNetwork net2)
+        {
+
+        }
+
+        public void SplitNetwork(IWorldAccessor world, BlockPos pos)
         {
 
         }

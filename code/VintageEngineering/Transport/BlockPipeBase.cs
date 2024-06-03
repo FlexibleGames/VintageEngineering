@@ -54,14 +54,19 @@ namespace VintageEngineering.Transport
 
         public override void OnBlockPlaced(IWorldAccessor world, BlockPos blockPos, ItemStack byItemStack = null)
         {
-            // Detect Connections and adjust shape accordingly. Shape manipulation is done in the BE.
+            // Detect Connections and adjust shape accordingly. This is done in the BE.
             BEPipeBase pipebe = api.World.BlockAccessor.GetBlockEntity(blockPos) as BEPipeBase;
             if (pipebe != null)
             {
                 pipebe.MarkPipeDirty(world); // this builds connection information
+                PipeNetworkManager pnm = api.ModLoader.GetModSystem<PipeNetworkManager>(true);
+                if (pnm != null)
+                {
+                    pnm.OnPipeBlockPlaced(world, blockPos);
+                }
             }
             base.OnBlockPlaced(world, blockPos, byItemStack);
-        }        
+        }
 
         public override Cuboidf[] GetSelectionBoxes(IBlockAccessor blockAccessor, BlockPos pos)
         {
@@ -79,7 +84,24 @@ namespace VintageEngineering.Transport
 
         public override void OnBlockBroken(IWorldAccessor world, BlockPos pos, IPlayer byPlayer, float dropQuantityMultiplier = 1)
         {
+            BEPipeBase pipebe = api.World.BlockAccessor.GetBlockEntity(pos) as BEPipeBase;
+            if (pipebe != null)
+            {
+                //pipebe.MarkPipeDirty(world); // this builds connection information
+                PipeNetworkManager pnm = api.ModLoader.GetModSystem<PipeNetworkManager>(true);
+                if (pnm != null)
+                {
+                    pnm.OnPipeBlockBroken(world, pos);
+                }
+            }
             base.OnBlockBroken(world, pos, byPlayer, dropQuantityMultiplier);
+        }
+
+        public override ItemStack[] GetDrops(IWorldAccessor world, BlockPos pos, IPlayer byPlayer, float dropQuantityMultiplier = 1)
+        {
+            // TODO Get any extraction node inventory drops. 
+            // Don't forget the base pipe block.
+            return base.GetDrops(world, pos, byPlayer, dropQuantityMultiplier);
         }
 
         /// <summary>
