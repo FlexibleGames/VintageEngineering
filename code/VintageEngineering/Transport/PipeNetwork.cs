@@ -65,7 +65,7 @@ namespace VintageEngineering.Transport
         {
             if (_pipeBlockPositions.Contains(pos))
             {
-                return _pipeBlockPositions.Remove(pos);                
+                return _pipeBlockPositions.Remove(pos);
             }
             return false;
         }

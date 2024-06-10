@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 
@@ -79,6 +80,12 @@ namespace VintageEngineering.Transport
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
         {
             // TODO: detect a wrench and handle, or open GUI if needed.
+            BEPipeBase pipe = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEPipeBase;
+
+            if (pipe != null)
+            {
+                return pipe.OnPlayerRightClick(world, byPlayer, blockSel);
+            }
             return base.OnBlockInteractStart(world, byPlayer, blockSel);
         }
 

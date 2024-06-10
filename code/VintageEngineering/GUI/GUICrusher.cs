@@ -344,8 +344,8 @@ namespace VintageEngineering
             Inventory.SlotModified -= OnSlotModified;
             SingleComposer.GetSlotGrid("inputSlot").OnGuiClosed(capi);
             SingleComposer.GetSlotGrid("outputSlots").OnGuiClosed(capi);
+            SingleComposer.GetDropDown("crushmode").Dispose();
             base.OnGuiClosed();
         }
-
     }
 }

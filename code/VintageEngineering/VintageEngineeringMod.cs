@@ -5,6 +5,8 @@ using Vintagestory.API.Client;
 using Vintagestory.API.Server;
 using VintageEngineering.Electrical;
 using Vintagestory.GameContent;
+using VintageEngineering.RecipeSystem.Recipes;
+using VintageEngineering.Transport;
 
 [assembly: ModInfo("VintageEngineering",
                     Authors = new string[] { "Flexible Games" },
@@ -62,6 +64,9 @@ namespace VintageEngineering
             api.RegisterBlockEntityClass("VEBEForge", typeof(BEForge));
             api.RegisterBlockEntityClass("VEBECNC", typeof(BECNC));
             api.RegisterBlockEntityClass("VEBEMixer", typeof(BEMixer));
+
+            //api.RegisterBlockEntityClass("VEBEItemPipe", typeof(BEPipeBase<PipeItemHandler>));
+            //api.RegisterBlockEntityClass("VEBEFluidPipe", typeof(BEPipeBase<PipeFluidHandler>));
         }
     }
 

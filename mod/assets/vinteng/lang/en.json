@@ -168,5 +168,15 @@
 	"vinteng:gui-title-kiln": "Kiln",
 	"vinteng:gui-title-forge": "Electric Forge",
 	"vinteng:gui-title-mixer": "Industrial Mixer",
-	"vinteng:gui-title-cnc": "CNC"
+	"vinteng:gui-title-cnc": "CNC",
+
+	"vinteng:gui-title-pipeextract": "Pipe Extraction",
+	"vinteng:gui-word-upgrade": "Upgrade",
+	"vinteng:gui-word-filter": "Filter",
+	"vinteng:gui-distro-text": "Distribution Mode",
+	"vinteng:gui-distromode-nearest": "Nearest First",
+	"vinteng:gui-distromode-farthest": "Farthest First",
+	"vinteng:gui-distromode-robin": "Round Robin",
+	"vinteng:gui-distromode-random": "Random",
+	"vinteng:gui-help-pipeupgrade": "Features can be unlocked with pipe upgrades."
 }

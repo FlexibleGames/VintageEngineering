@@ -29,7 +29,9 @@ namespace VintageEngineering.Transport
             }
         }
         /// <summary>
-        /// Rate of object movement per delay tick for this upgrade.
+        /// Rate of object movement per delay tick for this upgrade.<br/>
+        /// A value of -1 means a full stack, regardless of stack-size.<br/>
+        /// A value of -2 means everything of a single type in the container
         /// </summary>
         public int Rate
         { get { return _rate; } }
@@ -59,9 +61,8 @@ namespace VintageEngineering.Transport
 
         public override void OnHeldInteractStart(ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel, bool firstEvent, ref EnumHandHandling handling)
         {
-            // TODO:
-            // this should open a GUI allowing for changing settings if allowed.
-            // OR if right clicking on a pipe extraction node, insert (or swap) the upgrade into the extraction node
+            // TODO:            
+            // if right clicking on a pipe extraction node, insert (or swap) the upgrade into the extraction node
 
             base.OnHeldInteractStart(slot, byEntity, blockSel, entitySel, firstEvent, ref handling);
         }

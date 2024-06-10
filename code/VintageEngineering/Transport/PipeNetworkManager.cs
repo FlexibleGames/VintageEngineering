@@ -109,10 +109,14 @@ namespace VintageEngineering.Transport
         {
 
         }
-
+        /// <summary>
+        /// Splits a network at the given BlockPos
+        /// </summary>
+        /// <param name="world"></param>
+        /// <param name="pos"></param>
         public void SplitNetwork(IWorldAccessor world, BlockPos pos)
         {
-
+            // check pipe connections for neighboring pipes
         }
     }
 }
