@@ -8,7 +8,7 @@ using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.API.Util;
 
-namespace VintageEngineering.Transport
+namespace VintageEngineering.Transport.Network
 {
     public class PipeNetworkManager : ModSystem
     {
@@ -55,7 +55,7 @@ namespace VintageEngineering.Transport
         /// Next Pipe Network ID that will be used, updated internally, do not override.
         /// </summary>
         public long NextNetworkID
-        {  get { return _nextNetworkID; } }
+        { get { return _nextNetworkID; } }
 
         public byte[] NetworkBytes()
         {
@@ -88,7 +88,7 @@ namespace VintageEngineering.Transport
             // check connection sides for pipe connections
             // if endpoint, remove node; otherwise split network
         }
-        
+
         /// <summary>
         /// Called when the player force-removes a pipe-pipe connection
         /// potentially splitting the network.

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 
-namespace VintageEngineering.Transport
+namespace VintageEngineering.Transport.API
 {
     public interface ITransportHandler
     {

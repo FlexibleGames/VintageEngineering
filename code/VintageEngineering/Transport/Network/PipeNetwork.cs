@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VintageEngineering.Transport.API;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 
-namespace VintageEngineering.Transport
+namespace VintageEngineering.Transport.Network
 {
     [ProtoContract]
     public class PipeNetwork
@@ -100,13 +101,13 @@ namespace VintageEngineering.Transport
                 BlockPipeBase pipe = bacc.GetBlock(pos) as BlockPipeBase;
                 BEPipeBase pipebe = bacc.GetBlockEntity(pos) as BEPipeBase;
                 if (pipe == null || pipebe == null) { isValid = false; break; }
-                if (pipe.PipeUse != this._networkPipeType) { isValid = false; break; }
-                if (pipebe.NetworkID != this.NetworkID) { isValid = false; }
+                if (pipe.PipeUse != _networkPipeType) { isValid = false; break; }
+                if (pipebe.NetworkID != NetworkID) { isValid = false; }
             }
             return isValid;
         }
 
-        public IEnumerable<BlockPos> GetPipeBlockPositions() {  return _pipeBlockPositions; }
+        public IEnumerable<BlockPos> GetPipeBlockPositions() { return _pipeBlockPositions; }
 
         /// <summary>
         /// Network changed in some way, iterate nodes to update all extraction nodes

@@ -12,7 +12,7 @@ using Vintagestory.API.Util;
 using Vintagestory.GameContent;
 using Vintagestory.ServerMods;
 
-namespace VintageEngineering.Transport
+namespace VintageEngineering.Transport.API
 {
     public abstract class BEPipeBase : BlockEntity
     {
@@ -51,7 +51,7 @@ namespace VintageEngineering.Transport
         /// If 0, this block doesn't need to tick.
         /// </summary>
         public int NumExtractionConnections
-        {  get { return numExtractionConnections; } }
+        { get { return numExtractionConnections; } }
 
         /// <summary>
         /// Number of insertion nodes for this pipe block.
@@ -100,7 +100,7 @@ namespace VintageEngineering.Transport
             //extractionNodes ??= new PipeExtractionNode[6];
             connectionSides ??= new bool[6];
             if (extractionSides == null) { extractionSides = new bool[6]; }
-            if (disconnectedSides == null) {  disconnectedSides = new bool[6]; }
+            if (disconnectedSides == null) { disconnectedSides = new bool[6]; }
         }
 
         public virtual bool OnPlayerRightClick(IWorldAccessor world, IPlayer player, BlockSelection selection)
@@ -139,8 +139,8 @@ namespace VintageEngineering.Transport
             // the order is N, E, S, W, U, D
             for (int f = 0; f < BlockFacing.ALLFACES.Length; f++)
             {
-                Block dblock = world.BlockAccessor.GetBlock(this.Pos.AddCopy(BlockFacing.ALLFACES[f]), BlockLayersAccess.Solid);
-                BlockEntity dbe = world.BlockAccessor.GetBlockEntity(this.Pos.AddCopy(BlockFacing.ALLFACES[f]));
+                Block dblock = world.BlockAccessor.GetBlock(Pos.AddCopy(BlockFacing.ALLFACES[f]), BlockLayersAccess.Solid);
+                BlockEntity dbe = world.BlockAccessor.GetBlockEntity(Pos.AddCopy(BlockFacing.ALLFACES[f]));
 
                 // NEED to track NetworkID's of all faces, merge networks, join networks as needed.
 
@@ -152,12 +152,12 @@ namespace VintageEngineering.Transport
                         // while the block is air, we have an extraction node trying to connect to it                        
                         PipeExtractionNode penode = extractionNodes[f];
                         // Call OnNodeRemoved, drops the contents and removes tick listener.
-                        if (penode != null) 
+                        if (penode != null)
                         {
                             RemoveExtractionListener(f);
-                            penode.OnNodeRemoved(); 
+                            penode.OnNodeRemoved();
                         }
-                        
+
                         numExtractionConnections--;
                         _shapeDirty = true;
                         extractionSides[f] = false;
@@ -168,7 +168,7 @@ namespace VintageEngineering.Transport
                         disconnectedSides[f] = false;
                     }
                     if (insertionSides[f])
-                    {                        
+                    {
                         numInsertionConnections--; // block is now air, nothing to insert into
                         insertionSides[f] = false;
                         _shapeDirty = true;
@@ -197,7 +197,7 @@ namespace VintageEngineering.Transport
             if (extractionNodes[faceIndex] == null) return; // faceindex is invalid.
 
             if (extractionNodes[faceIndex].ListenerID != 0)
-            {                
+            {
                 RemoveExtractionTickEvent(extractionNodes[faceIndex].ListenerID);
             }
         }
@@ -244,7 +244,7 @@ namespace VintageEngineering.Transport
                     {
                         // "vinteng:pipeconnections-connection-" + BlockFacing.ALLFACES[f].Code
                         _meshData.AddMeshData(ConnectionMesh(new AssetLocation("vinteng:pipeconnections-connection-" + BlockFacing.ALLFACES[f].Code)));
-                    }                    
+                    }
                     if (extractionSides[f])
                     {
                         _meshData.AddMeshData(ConnectionMesh(new AssetLocation("vinteng:pipeconnections-extraction-" + BlockFacing.ALLFACES[f].Code)));
@@ -257,11 +257,11 @@ namespace VintageEngineering.Transport
         {
             MeshData output;
             Shape shape = Api.Assets.TryGet(location, true).ToObject<Shape>(null);
-            
+
             if (shape != null)
             {
-                (this.Api as ICoreClientAPI).Tesselator.TesselateShape(
-                    this.Block, shape, out output,
+                (Api as ICoreClientAPI).Tesselator.TesselateShape(
+                    Block, shape, out output,
                     Block.Shape.RotateXYZCopy, null, null);
                 return output;
             }
@@ -285,10 +285,10 @@ namespace VintageEngineering.Transport
         /// <param name="delayms">Required Tick Delay</param>
         /// <param name="tickEvent">Tick Handler Method</param>
         /// <returns>listenerID</returns>
-        public long AddExtractionTickEvent(int delayms, Action<float> tickEvent)            
+        public long AddExtractionTickEvent(int delayms, Action<float> tickEvent)
         {
             if (Api.Side == EnumAppSide.Server)
-            { return this.RegisterGameTickListener(tickEvent, delayms); }
+            { return RegisterGameTickListener(tickEvent, delayms); }
             return 0;
         }
         /// <summary>
@@ -297,7 +297,7 @@ namespace VintageEngineering.Transport
         /// <param name="lid">ListenerID to remove.</param>
         public void RemoveExtractionTickEvent(long lid)
         {
-            if (Api.Side == EnumAppSide.Server)  this.UnregisterGameTickListener(lid);
+            if (Api.Side == EnumAppSide.Server) UnregisterGameTickListener(lid);
         }
 
         public override void OnReceivedClientPacket(IPlayer fromPlayer, int packetid, byte[] data)
@@ -310,7 +310,7 @@ namespace VintageEngineering.Transport
                 tree.FromBytes(data);
 
                 BlockPos testpos = tree.GetBlockPos("position");
-                if (testpos != null && testpos == this.Pos)
+                if (testpos != null && testpos == Pos)
                 {
                     // just a check for debugging purposes to make sure the right block is updated
                     string face = tree.GetString("face", "error");
@@ -348,8 +348,8 @@ namespace VintageEngineering.Transport
         {
             base.FromTreeAttributes(tree, worldAccessForResolve);
             _networkID = tree.GetLong("networkid");
-            extractionSides = SerializerUtil.Deserialize<bool[]>(tree.GetBytes("extractsides"), new bool[6]);
-            for (int f = 0; f < 6;f++)
+            extractionSides = SerializerUtil.Deserialize(tree.GetBytes("extractsides"), new bool[6]);
+            for (int f = 0; f < 6; f++)
             {
                 if (extractionSides[f])
                 {
@@ -369,9 +369,9 @@ namespace VintageEngineering.Transport
                     }
                 }
             }
-            connectionSides = SerializerUtil.Deserialize<bool[]>(tree.GetBytes("connectsides"), new bool[6]);
-            disconnectedSides = SerializerUtil.Deserialize<bool[]>(tree.GetBytes("disconnectsides"), new bool[6]);
-            insertionSides = SerializerUtil.Deserialize<bool[]>(tree.GetBytes("insertsides"), new bool[6]);
+            connectionSides = SerializerUtil.Deserialize(tree.GetBytes("connectsides"), new bool[6]);
+            disconnectedSides = SerializerUtil.Deserialize(tree.GetBytes("disconnectsides"), new bool[6]);
+            insertionSides = SerializerUtil.Deserialize(tree.GetBytes("insertsides"), new bool[6]);
 
             numExtractionConnections = tree.GetInt("numextract");
             numInsertionConnections = tree.GetInt("numinsert");
