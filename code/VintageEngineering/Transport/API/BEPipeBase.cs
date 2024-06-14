@@ -141,13 +141,13 @@ namespace VintageEngineering.Transport.API
             // the order is N, E, S, W, U, D
             for (int f = 0; f < BlockFacing.ALLFACES.Length; f++)
             {
-                Block dblock = world.BlockAccessor.GetBlock(Pos.AddCopy(BlockFacing.ALLFACES[f]), BlockLayersAccess.Solid);
+                Block dblock = world.BlockAccessor.GetBlock((Pos.AddCopy(BlockFacing.ALLFACES[f])), BlockLayersAccess.Default);
                 BlockEntity dbe = world.BlockAccessor.GetBlockEntity(Pos.AddCopy(BlockFacing.ALLFACES[f]));
 
                 
                 // NEED to track NetworkID's of all faces, merge networks, join networks as needed.
 
-                if (dblock.Id == 0) // face direction is air block
+                if (dblock.Id == 0) // face direction is air block, neither solid nor fluid
                 {
                     // block is air, not a valid block to connect to.
                     if (extractionSides[f])
@@ -184,17 +184,26 @@ namespace VintageEngineering.Transport.API
                 }
                 else
                 {
-                    // block is NOT air, meaning a valid block
+                    // block is NOT air, meaning a valid block, could be fluid
                     // need to check the entity now
                     if (dblock is BlockPipeBase pipeb)
                     {
-                        if (pipeb.PipeUse == us.PipeUse)
+                        if (pipeb.PipeUse == us.PipeUse) // pipe use is the same as us?
                         {
                             if (!disconnectedSides[f] && !connectionSides[f])
                             {
                                 connectionSides[f] = true;
                                 _shapeDirty = true;
+                                continue;
                             }
+                        }
+                    }
+                    if (CanConnectTo(world, Pos.AddCopy(BlockFacing.ALLFACES[f])))
+                    {
+                        if (!disconnectedSides[f] && !insertionSides[f])
+                        {
+                            insertionSides[f] = true;
+                            _shapeDirty = true;
                         }
                     }
                 }
@@ -309,7 +318,7 @@ namespace VintageEngineering.Transport.API
         }
 
         /// <summary>
-        /// Checks the block position to determine whether this pipe type can interface with it.
+        /// Override to check the given block position to determine whether this pipe type can interface with it.
         /// </summary>
         /// <param name="world">World Accessor</param>
         /// <param name="pos">Position to check</param>

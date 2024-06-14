@@ -21,7 +21,14 @@ namespace VintageEngineering.Transport.Pipes
 
         public override bool CanConnectTo(IWorldAccessor world, BlockPos pos)
         {
-            return base.CanConnectTo(world, pos);
+            //Block dblock = world.BlockAccessor.GetBlock(pos); Don't need the block
+            BlockEntity dbe = world.BlockAccessor.GetBlockEntity(pos);
+            if (dbe != null && dbe is IBlockEntityContainer bec)
+            {
+                // TODO check and load config blacklist of assemblies and types to ignore
+                return true;
+            }
+            return false;
         }
 
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldAccessForResolve)
