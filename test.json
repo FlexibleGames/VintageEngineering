@@ -1,0 +1,20 @@
+[
+    {
+        file: "blocktypes/metal/lantern.json",
+        op: "add",
+        path: "/textures",
+        value: { "base": "game:textures/block/metal/lantern/lead" }
+    },
+    {
+        file: "blocktypes/metal/lantern.json",
+        op: "add",
+        path: "/textures/deco-lead",
+        value: { "base": "game:textures/block/metal/lantern/deco-lead" }
+    },
+    {
+        file: "blocktypes/metal/lantern.json",
+        op: "add",
+        path: "/creativeinventoryStacksByType/*-up/0/stacks/-",
+        value: { type: "block", code: "lantern-up", attributes: { material: "lead", lining: "plain", glass: "quartz" }
+    }
+]

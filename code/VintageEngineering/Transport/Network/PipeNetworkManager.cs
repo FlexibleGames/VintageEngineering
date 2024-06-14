@@ -34,21 +34,15 @@ namespace VintageEngineering.Transport.Network
 
         private void OnGameSave()
         {
-            if (_pipeNetworks.Count > 0)
-            {
-                _sapi.WorldManager.SaveGame.StoreData("pipenetworks", NetworkBytes);
-                _sapi.WorldManager.SaveGame.StoreData("pipenetworknextid", SerializerUtil.Serialize(_nextNetworkID));
-            }
+            _sapi.WorldManager.SaveGame.StoreData("vepipenetworks", NetworkBytes());
+            _sapi.WorldManager.SaveGame.StoreData("vepipenetworknextid", SerializerUtil.Serialize(_nextNetworkID));
         }
 
         private void OnSaveGameLoaded()
         {
-            byte[] networkbytes = _sapi.WorldManager.SaveGame.GetData("pipenetworks");
-            byte[] nextidbytes = _sapi.WorldManager.SaveGame.GetData("pipenetworknextid");
-            if (networkbytes != null) // null means there are no pipe networks in the world yet.
-            {
-                InitializeNetworkManager(networkbytes, nextidbytes);
-            }
+            byte[] networkbytes = _sapi.WorldManager.SaveGame.GetData("vepipenetworks");
+            byte[] nextidbytes = _sapi.WorldManager.SaveGame.GetData("vepipenetworknextid");                        
+            InitializeNetworkManager(networkbytes, nextidbytes);
         }
 
         /// <summary>
@@ -67,13 +61,23 @@ namespace VintageEngineering.Transport.Network
                 }
                 return SerializerUtil.Serialize(_pipeNetworks.Values);
             }
-            return null;
+            return new byte[1];
         }
 
         public void InitializeNetworkManager(byte[] networks, byte[] nextid)
         {
-            _pipeNetworks = SerializerUtil.Deserialize<Dictionary<long, PipeNetwork>>(networks);
-            _nextNetworkID = SerializerUtil.Deserialize<long>(nextid);
+            if (networks != null && networks.Length > 1)
+            { 
+                _pipeNetworks = SerializerUtil.Deserialize<Dictionary<long, PipeNetwork>>(networks); 
+            }
+            else
+            {
+                _pipeNetworks = new Dictionary<long, PipeNetwork>();
+            }
+            if (nextid != null)
+            { 
+                _nextNetworkID = SerializerUtil.Deserialize<long>(nextid); 
+            }
         }
 
         public void OnPipeBlockPlaced(IWorldAccessor world, BlockPos pos)

@@ -100,9 +100,10 @@ namespace VintageEngineering.Transport
             handler = _handler;
         }
         /// <summary>
-        /// Sets the Distribution mode of this extraction node.
+        /// Sets the Distribution mode of this extraction node.<br/>
+        /// String parameter reflects internal GUI Drop down option values.
         /// </summary>
-        /// <param name="distro"></param>
+        /// <param name="distro">Given string from GUI Dropdown option set.</param>
         public void SetDistroMode(string distro)
         {
             switch (distro)
@@ -148,6 +149,8 @@ namespace VintageEngineering.Transport
         /// <param name="deltatime">Time (in seconds) since last update.</param>
         public virtual void UpdateTick(float deltatime)
         {
+            if (handler == null || _api.Side == EnumAppSide.Client) return;
+
             handler.TransportTick(deltatime, _pos, _api.World, this);
         }
 
@@ -217,8 +220,9 @@ namespace VintageEngineering.Transport
                         {
                             // pipe ticks on server only, if we're here we are loading from disk most likely.
                             if (listenerID != 0)
-                            {                                
+                            {
                                 // this might require a new listener...
+                                // we should never be in here... loading from disk does not load a listenerID.
                                 bep.RemoveExtractionTickEvent(listenerID);
                             }
                             listenerID = bep.AddExtractionTickEvent(upgrade.Delay, UpdateTick);

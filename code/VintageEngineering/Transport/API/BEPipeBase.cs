@@ -23,7 +23,7 @@ namespace VintageEngineering.Transport.API
 
         protected List<PipeConnection> pushConnections;
         protected PipeExtractionNode[] extractionNodes; // uses BlockFacing index, N, E, S, W, U, D
-        private GUIPipeExtraction[] extractionGUIs; // uses BlockFacing index, N, E, S, W, U, D
+        protected GUIPipeExtraction[] extractionGUIs; // uses BlockFacing index, N, E, S, W, U, D
 
         protected int numExtractionConnections;
         protected int numInsertionConnections;
@@ -37,7 +37,7 @@ namespace VintageEngineering.Transport.API
         /// What kind of Transport handler does this type of pipe use?<br/>
         /// Handler class must implement the ITransportHandler interface
         /// </summary>
-        public static ITransportHandler TransportHandler { get; private set; }
+        public ITransportHandler TransportHandler { get; protected set; }
 
         /// <summary>
         /// Used by Extraction nodes to sort and push into based on settings.<br/>
@@ -97,10 +97,11 @@ namespace VintageEngineering.Transport.API
         {
             base.Initialize(api);
 
-            //extractionNodes ??= new PipeExtractionNode[6];
+            extractionNodes ??= new PipeExtractionNode[6];
             connectionSides ??= new bool[6];
-            if (extractionSides == null) { extractionSides = new bool[6]; }
-            if (disconnectedSides == null) { disconnectedSides = new bool[6]; }
+            extractionSides ??= new bool[6]; 
+            disconnectedSides ??= new bool[6]; 
+            insertionSides ??= new bool[6];
         }
 
         public virtual bool OnPlayerRightClick(IWorldAccessor world, IPlayer player, BlockSelection selection)
@@ -135,6 +136,7 @@ namespace VintageEngineering.Transport.API
         public virtual void MarkPipeDirty(IWorldAccessor world)
         {
             _shapeDirty = false;
+            BlockPipeBase us = world.BlockAccessor.GetBlock(Pos) as BlockPipeBase;
             // Check all 6 sides
             // the order is N, E, S, W, U, D
             for (int f = 0; f < BlockFacing.ALLFACES.Length; f++)
@@ -142,6 +144,7 @@ namespace VintageEngineering.Transport.API
                 Block dblock = world.BlockAccessor.GetBlock(Pos.AddCopy(BlockFacing.ALLFACES[f]), BlockLayersAccess.Solid);
                 BlockEntity dbe = world.BlockAccessor.GetBlockEntity(Pos.AddCopy(BlockFacing.ALLFACES[f]));
 
+                
                 // NEED to track NetworkID's of all faces, merge networks, join networks as needed.
 
                 if (dblock.Id == 0) // face direction is air block
@@ -183,6 +186,17 @@ namespace VintageEngineering.Transport.API
                 {
                     // block is NOT air, meaning a valid block
                     // need to check the entity now
+                    if (dblock is BlockPipeBase pipeb)
+                    {
+                        if (pipeb.PipeUse == us.PipeUse)
+                        {
+                            if (!disconnectedSides[f] && !connectionSides[f])
+                            {
+                                connectionSides[f] = true;
+                                _shapeDirty = true;
+                            }
+                        }
+                    }
                 }
             }
             if (_shapeDirty) MarkDirty(true);
@@ -199,6 +213,7 @@ namespace VintageEngineering.Transport.API
             if (extractionNodes[faceIndex].ListenerID != 0)
             {
                 RemoveExtractionTickEvent(extractionNodes[faceIndex].ListenerID);
+                extractionNodes[faceIndex].ListenerID = 0;
             }
         }
 
@@ -217,7 +232,11 @@ namespace VintageEngineering.Transport.API
         {
             if (_shapeDirty) RebuildShape();
 
-            if (_meshData != null) mesher.AddMeshData(_meshData, 1);
+            if (_meshData != null) 
+            { 
+                mesher.AddMeshData(_meshData, 1);
+                return true;
+            }
             return false;
         }
 
@@ -231,10 +250,16 @@ namespace VintageEngineering.Transport.API
             // reset the mesh if not null
             if (_meshData != null)
             {
-                _meshData.Dispose();
                 _meshData.Clear();
+                _meshData.Dispose();
+                (Api as ICoreClientAPI).Tesselator.TesselateBlock(this.Block, out _meshData);
             }
-            else _meshData = new MeshData();
+            else 
+            {
+                //_meshData = new MeshData(true); 
+                //_meshData = (Api as ICoreClientAPI).TesselatorManager.GetDefaultBlockMesh(this.Block);
+                (Api as ICoreClientAPI).Tesselator.TesselateBlock(this.Block, out _meshData);
+            }
 
             for (int f = 0; f < BlockFacing.ALLFACES.Length; f++)
             {
@@ -243,26 +268,41 @@ namespace VintageEngineering.Transport.API
                     if (connectionSides[f] || insertionSides[f])
                     {
                         // "vinteng:pipeconnections-connection-" + BlockFacing.ALLFACES[f].Code
-                        _meshData.AddMeshData(ConnectionMesh(new AssetLocation("vinteng:pipeconnections-connection-" + BlockFacing.ALLFACES[f].Code)));
+                        Block conb = Api.World.BlockAccessor.GetBlock(new AssetLocation("vinteng:pipeconnections-connection-" + BlockFacing.ALLFACES[f].Code));
+                        //MeshData testing = (Api as ICoreClientAPI).TesselatorManager.GetDefaultBlockMesh(conb);
+                        if (conb != null)
+                        {
+                            MeshData _data = ConnectionMesh(conb.Shape);
+                            if (_data != null)
+                            { 
+                                if (_meshData != null)
+                                { 
+                                    _meshData.AddMeshData(_data); 
+                                }
+                            }
+                        }
                     }
                     if (extractionSides[f])
                     {
-                        _meshData.AddMeshData(ConnectionMesh(new AssetLocation("vinteng:pipeconnections-extraction-" + BlockFacing.ALLFACES[f].Code)));
+                        Block conb = Api.World.BlockAccessor.GetBlock(new AssetLocation("vinteng:pipeconnections-extraction-" + BlockFacing.ALLFACES[f].Code));
+                        if (conb != null) _meshData.AddMeshData(ConnectionMesh(conb.Shape));
                     }
                 }
             }
         }
 
-        private MeshData ConnectionMesh(AssetLocation location)
+        private MeshData ConnectionMesh(CompositeShape _shape)
         {
             MeshData output;
-            Shape shape = Api.Assets.TryGet(location, true).ToObject<Shape>(null);
+            //Shape shape = Api.Assets.TryGet(_shape.Base, true).ToObject<Shape>(null);                       
 
-            if (shape != null)
+            if (_shape != null)
             {
                 (Api as ICoreClientAPI).Tesselator.TesselateShape(
-                    Block, shape, out output,
-                    Block.Shape.RotateXYZCopy, null, null);
+                    Block,
+                    (Api as ICoreClientAPI).TesselatorManager.GetCachedShape(_shape.Base),
+                    out output,
+                    _shape.RotateXYZCopy, null, null);
                 return output;
             }
             return new MeshData(true);
@@ -298,6 +338,21 @@ namespace VintageEngineering.Transport.API
         public void RemoveExtractionTickEvent(long lid)
         {
             if (Api.Side == EnumAppSide.Server) UnregisterGameTickListener(lid);
+        }
+
+        public override void OnBlockUnloaded()
+        {
+            for (int f = 0; f < 6; f++)
+            {
+                if (extractionNodes[f] != null)
+                {
+                    if (extractionNodes[f].ListenerID != 0)
+                    {
+                        RemoveExtractionListener(f); // removes the listener and sets ID to 0
+                    }
+                }
+            }
+            base.OnBlockUnloaded(); // base call can also remove tick listeners
         }
 
         public override void OnReceivedClientPacket(IPlayer fromPlayer, int packetid, byte[] data)
@@ -346,6 +401,9 @@ namespace VintageEngineering.Transport.API
         }
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldAccessForResolve)
         {
+            // this code is run:
+            // a) by the server when a chunk/world loads one of these
+            // b) by the client from data received from the server
             base.FromTreeAttributes(tree, worldAccessForResolve);
             _networkID = tree.GetLong("networkid");
             extractionSides = SerializerUtil.Deserialize(tree.GetBytes("extractsides"), new bool[6]);
@@ -375,6 +433,8 @@ namespace VintageEngineering.Transport.API
 
             numExtractionConnections = tree.GetInt("numextract");
             numInsertionConnections = tree.GetInt("numinsert");
+
+            MarkPipeDirty(worldAccessForResolve); // mark the pipe dirty to rebuild shape if needed
         }
     }
 }

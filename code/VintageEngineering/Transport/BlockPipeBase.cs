@@ -13,7 +13,7 @@ using Vintagestory.API.Server;
 
 namespace VintageEngineering.Transport
 {
-    public abstract class BlockPipeBase : Block
+    public class BlockPipeBase : Block
     {
         protected ICoreClientAPI capi;
         protected ICoreServerAPI sapi;
@@ -52,6 +52,11 @@ namespace VintageEngineering.Transport
         public override void OnNeighbourBlockChange(IWorldAccessor world, BlockPos pos, BlockPos neibpos)
         {
             // TODO Redetect any potential connections as something changed.
+            BEPipeBase pipebe = api.World.BlockAccessor.GetBlockEntity(pos) as BEPipeBase;
+            if (pipebe != null)
+            {
+                pipebe.MarkPipeDirty(world);
+            }
             base.OnNeighbourBlockChange(world, pos, neibpos);
         }
 
@@ -82,8 +87,13 @@ namespace VintageEngineering.Transport
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
         {
             // TODO: detect a wrench and handle, or open GUI if needed.
-            BEPipeBase pipe = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEPipeBase;
+            if (!byPlayer.InventoryManager.ActiveHotbarSlot.Empty &&
+                byPlayer.InventoryManager.ActiveHotbarSlot.Itemstack.Collectible is BlockPipeBase)
+            {
+                return base.OnBlockInteractStart(world, byPlayer, blockSel);
+            }
 
+            BEPipeBase pipe = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEPipeBase;
             if (pipe != null)
             {
                 return pipe.OnPlayerRightClick(world, byPlayer, blockSel);

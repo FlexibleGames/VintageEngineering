@@ -170,6 +170,8 @@
 	"vinteng:gui-title-mixer": "Industrial Mixer",
 	"vinteng:gui-title-cnc": "CNC",
 
+	"vinteng:block-pipe-item": "Item Pipe",
+	"vinteng:blockdesc-pipe-item": "Move items around your factory. Upgradable. Right-click with a wrench on a connection node to put into extraction mode. Shift+right-click with a wrench to remove a connection node.",
 	"vinteng:gui-title-pipeextract": "Pipe Extraction",
 	"vinteng:gui-word-upgrade": "Upgrade",
 	"vinteng:gui-word-filter": "Filter",

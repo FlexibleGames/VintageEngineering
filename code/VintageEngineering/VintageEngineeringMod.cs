@@ -4,9 +4,8 @@ using Vintagestory.Common;
 using Vintagestory.API.Client;
 using Vintagestory.API.Server;
 using VintageEngineering.Electrical;
-using Vintagestory.GameContent;
-using VintageEngineering.RecipeSystem.Recipes;
 using VintageEngineering.Transport;
+using VintageEngineering.Transport.Pipes;
 
 [assembly: ModInfo("VintageEngineering",
                     Authors = new string[] { "Flexible Games" },
@@ -49,6 +48,8 @@ namespace VintageEngineering
 
             // mixer has fluids
             api.RegisterBlockClass("VEMixer", typeof(BlockMixer));
+
+            api.RegisterBlockClass("VEPipeBlock", typeof(BlockPipeBase));
         }
         public void RegisterBlockEntities(ICoreAPI api)
         {
@@ -65,8 +66,8 @@ namespace VintageEngineering
             api.RegisterBlockEntityClass("VEBECNC", typeof(BECNC));
             api.RegisterBlockEntityClass("VEBEMixer", typeof(BEMixer));
 
-            //api.RegisterBlockEntityClass("VEBEItemPipe", typeof(BEPipeBase<PipeItemHandler>));
-            //api.RegisterBlockEntityClass("VEBEFluidPipe", typeof(BEPipeBase<PipeFluidHandler>));
+            api.RegisterBlockEntityClass("VEBEItemPipe", typeof(BEPipeItem));
+            //api.RegisterBlockEntityClass("VEBEFluidPipe", typeof(BEPipeFluid));
         }
     }
 

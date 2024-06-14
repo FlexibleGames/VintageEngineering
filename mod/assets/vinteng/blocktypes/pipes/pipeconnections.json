@@ -17,12 +17,12 @@
 					}}],
 	"creativeinventory": { "general": ["*"], "construction": ["*"] },
 	"shapeByType": {
-        "*-north":  { "base": "vinteng:block/pipes/{type}", "rotateX": 270 },
-		"*-east":   { "base": "vinteng:block/pipes/{type}", "rotateZ": 270 },
-		"*-south":  { "base": "vinteng:block/pipes/{type}", "rotateX": 90 },
-		"*-west":   { "base": "vinteng:block/pipes/{type}", "rotateZ": 90 },
-		"*-up":     { "base": "vinteng:block/pipes/{type}"},
-		"*-down":   { "base": "vinteng:block/pipes/{type}", "rotateX": 180 }
+        "*-north":  { "base": "vinteng:block/pipes/{type}", "rotateX": 90 },
+		"*-east":   { "base": "vinteng:block/pipes/{type}", "rotateZ": 90 },
+		"*-south":  { "base": "vinteng:block/pipes/{type}", "rotateX": 270 },
+		"*-west":   { "base": "vinteng:block/pipes/{type}", "rotateZ": 270 },
+		"*-up":   { "base": "vinteng:block/pipes/{type}", "rotateX": 180 },
+		"*-down":     { "base": "vinteng:block/pipes/{type}"}
     },
 	"attributes": {
 		"handbook": {
