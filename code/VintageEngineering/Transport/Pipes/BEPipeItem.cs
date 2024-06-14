@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using VintageEngineering.Transport.API;
+﻿using VintageEngineering.Transport.API;
 using VintageEngineering.Transport.Handlers;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
@@ -20,10 +15,9 @@ namespace VintageEngineering.Transport.Pipes
         }
 
         public override bool CanConnectTo(IWorldAccessor world, BlockPos pos)
-        {
-            //Block dblock = world.BlockAccessor.GetBlock(pos); Don't need the block
-            BlockEntity dbe = world.BlockAccessor.GetBlockEntity(pos);
-            if (dbe != null && dbe is IBlockEntityContainer bec)
+        {            
+            IBlockEntityContainer bec = world.BlockAccessor.GetBlock(pos).GetInterface<IBlockEntityContainer>(world, pos);
+            if (bec != null)
             {
                 // TODO check and load config blacklist of assemblies and types to ignore
                 return true;

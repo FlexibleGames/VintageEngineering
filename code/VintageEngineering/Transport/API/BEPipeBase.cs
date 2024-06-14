@@ -129,6 +129,21 @@ namespace VintageEngineering.Transport.API
             return true;
         }
 
+        public override void OnBlockBroken(IPlayer byPlayer = null)
+        {
+            for (int f = 0; f < 6; f++)
+            {
+                if (extractionSides[f])
+                {
+                    if (extractionNodes[f] != null)
+                    {
+                        extractionNodes[f].OnNodeRemoved();
+                    }
+                }
+            }
+            base.OnBlockBroken(byPlayer);
+        }
+
         /// <summary>
         /// Rebuild the connection directions; for example, when a Neighbor block changes.
         /// </summary>
@@ -203,6 +218,7 @@ namespace VintageEngineering.Transport.API
                         if (!disconnectedSides[f] && !insertionSides[f])
                         {
                             insertionSides[f] = true;
+                            numInsertionConnections++;
                             _shapeDirty = true;
                         }
                     }
