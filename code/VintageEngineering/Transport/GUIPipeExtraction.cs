@@ -18,14 +18,16 @@ namespace VintageEngineering.Transport
     {
         private BEPipeBase bepipe;
         private PipeExtractionNode _node;
+        private int _faceIndex;
 
-        public GUIPipeExtraction(string dialogTitle, InventoryBase inventory, BlockPos blockEntityPos, ICoreClientAPI capi, BEPipeBase bentity, PipeExtractionNode node) : base(dialogTitle, inventory, blockEntityPos, capi)
+        public GUIPipeExtraction(string dialogTitle, InventoryBase inventory, BlockPos blockEntityPos, ICoreClientAPI capi, BEPipeBase bentity, PipeExtractionNode node, int faceindex) : base(dialogTitle, inventory, blockEntityPos, capi)
         {
             if (base.IsDuplicate) return;            
 
             capi.World.Player.InventoryManager.OpenInventory(inventory);
             _node = node;
             bepipe = bentity;
+            _faceIndex = faceindex;
 
             SetupDialog();
         }
@@ -186,6 +188,7 @@ namespace VintageEngineering.Transport
 
         private void SendInvPacket(object obj)
         {
+            // might have to capture the packet and encode the face index in it.
             this.capi.Network.SendBlockEntityPacket(BlockEntityPosition.X, BlockEntityPosition.Y, BlockEntityPosition.Z, obj);
         }
 

@@ -81,17 +81,18 @@ namespace VintageEngineering.Transport
         }
 
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
-        {
-            // TODO: detect a wrench and handle, or open GUI if needed.
+        {            
             if (!byPlayer.InventoryManager.ActiveHotbarSlot.Empty &&
                 byPlayer.InventoryManager.ActiveHotbarSlot.Itemstack.Collectible is BlockPipeBase)
             {
-                return base.OnBlockInteractStart(world, byPlayer, blockSel);
+                // pipe in hand, build on top of targeted block
+                return base.OnBlockInteractStart(world, byPlayer, blockSel); 
             }
 
             BEPipeBase pipe = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEPipeBase;
             if (pipe != null)
             {
+                // Pass event to BE pipe base
                 return pipe.OnPlayerRightClick(world, byPlayer, blockSel);
             }
             return base.OnBlockInteractStart(world, byPlayer, blockSel);

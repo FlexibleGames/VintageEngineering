@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
@@ -33,6 +34,13 @@ namespace VintageEngineering.Transport.API
         protected bool[] disconnectedSides; // uses BlockFacing index, N, E, S, W, U, D
         protected bool[] insertionSides;    // uses BlockFacing index, N, E, S, W, U, D
 
+        public virtual string ExtractDialogTitle
+        {
+            get
+            {
+                return Lang.Get("vinteng:gui-title-pipeextract");
+            }
+        }
         /// <summary>
         /// What kind of Transport handler does this type of pipe use?<br/>
         /// Handler class must implement the ITransportHandler interface
@@ -106,14 +114,46 @@ namespace VintageEngineering.Transport.API
 
         public virtual bool OnPlayerRightClick(IWorldAccessor world, IPlayer player, BlockSelection selection)
         {
+            int faceindex = selection.SelectionBoxIndex;
+            if (faceindex == 6)
+            {
+                // right clicked the center main pipe object.
+                return true;
+            }
+
             if (player.InventoryManager.ActiveHotbarSlot?.Itemstack?.Item?.Tool == EnumTool.Wrench)
             {
                 // player right clicked WITH a wrench
-
                 // detect sneak
                 if (player.Entity.Controls.Sneak)
                 {
-
+                    // if sneaking, remove/add the connection
+                    if (insertionSides[faceindex])
+                    {
+                        insertionSides[faceindex] = false;
+                        numInsertionConnections--;
+                    }
+                    bool isd = disconnectedSides[faceindex];
+                    disconnectedSides[faceindex] = !isd;
+                }
+                else
+                {
+                    // otherwise switch connection type
+                    if (insertionSides[faceindex])
+                    {
+                        insertionSides[faceindex] = false;
+                        extractionSides[faceindex] = true;
+                        extractionNodes[faceindex] = new PipeExtractionNode();
+                        extractionNodes[faceindex].Initialize(Api, Pos, ConvertIndexToFace(faceindex).Code);
+                        extractionNodes[faceindex].SetHandler(GetHandler());
+                    }
+                    else if (extractionSides[faceindex])
+                    {
+                        extractionNodes[faceindex].OnNodeRemoved();
+                        
+                        extractionSides[faceindex] = false;
+                        insertionSides[faceindex] = true;
+                    }
                 }
             }
             else if (player.InventoryManager.ActiveHotbarSlot.Empty)
@@ -121,12 +161,30 @@ namespace VintageEngineering.Transport.API
                 // player right clicked with an empty hand
 
                 // Open GUI if it is an extraction node
-                if (ExtractionSides[selection.SelectionBoxIndex])
+                if (ExtractionSides[faceindex] && extractionNodes[faceindex] != null)
                 {
-
+                    if (Api.Side == EnumAppSide.Client)
+                    {
+                        ToggleExtractionNodeDialog(player, faceindex, delegate
+                        {
+                            extractionGUIs[faceindex] = new GUIPipeExtraction(ExtractDialogTitle + " " + ConvertIndexToFace(faceindex).Code, 
+                                (PipeInventory)extractionNodes[faceindex].Inventory,
+                                Pos, Api as ICoreClientAPI, this, extractionNodes[faceindex], faceindex);
+                            extractionGUIs[faceindex].Update();
+                            return extractionGUIs[faceindex];
+                        });
+                    }
                 }
             }
             return true;
+        }
+        /// <summary>
+        /// Override to return the proper handler for this pipe type.
+        /// </summary>
+        /// <returns>ITransportHandler object.</returns>
+        public virtual ITransportHandler GetHandler()
+        {
+            return null;
         }
 
         public override void OnBlockBroken(IPlayer byPlayer = null)
@@ -365,6 +423,31 @@ namespace VintageEngineering.Transport.API
             if (Api.Side == EnumAppSide.Server) UnregisterGameTickListener(lid);
         }
 
+        public void ToggleExtractionNodeDialog(IPlayer player, int faceindex, CreateDialogDelegate onCreateDialog)
+        {
+            if (extractionGUIs == null)
+            {
+                extractionGUIs = new GUIPipeExtraction[6];
+            }
+            if (extractionGUIs[faceindex] == null)
+            {
+                ICoreClientAPI capi = Api as ICoreClientAPI;
+                byte[] facebytes = SerializerUtil.Serialize(faceindex);
+                extractionGUIs[faceindex] = (GUIPipeExtraction)onCreateDialog();
+                extractionGUIs[faceindex].OnClosed += delegate ()
+                {
+                    extractionGUIs[faceindex] = null;
+                    capi.Network.SendBlockEntityPacket(Pos.X, Pos.Y, Pos.Z, 1001, facebytes);
+                    capi.Network.SendPacketClient(extractionNodes[faceindex].Inventory.Close(player));
+                };
+                extractionGUIs[faceindex].TryOpen();
+                capi.Network.SendPacketClient(extractionNodes[faceindex].Inventory.Open(player));
+                capi.Network.SendBlockEntityPacket(Pos.X, Pos.Y, Pos.Z, 1000, facebytes);
+                return;
+            }
+            extractionGUIs[faceindex].TryClose();
+        }
+
         public override void OnBlockUnloaded()
         {
             for (int f = 0; f < 6; f++)
@@ -382,7 +465,29 @@ namespace VintageEngineering.Transport.API
 
         public override void OnReceivedClientPacket(IPlayer fromPlayer, int packetid, byte[] data)
         {
-            base.OnReceivedClientPacket(fromPlayer, packetid, data);
+            base.OnReceivedClientPacket(fromPlayer, packetid, data); // this just informs behaviors
+            if (packetid < 1000)
+            {
+                // how can I know what extract node inventory to relay the packet to?
+                Api.World.BlockAccessor.GetChunkAtBlockPos(Pos).MarkModified();
+                return;
+            }
+            if (packetid == 1000)
+            {
+                IPlayerInventoryManager ivm = fromPlayer.InventoryManager;
+                if (ivm == null) return;
+                int faceindex = SerializerUtil.Deserialize<int>(data);
+                ivm.OpenInventory(extractionNodes[faceindex].Inventory);
+                return;
+            }
+            if (packetid == 1001)
+            {
+                IPlayerInventoryManager ivm = fromPlayer.InventoryManager;
+                if (ivm == null) return;
+                int faceindex = SerializerUtil.Deserialize<int>(data);
+                ivm.CloseInventory(extractionNodes[faceindex].Inventory);
+                return;
+            }
             if (packetid == 1003)
             {
                 // drop down selection changed
@@ -395,6 +500,10 @@ namespace VintageEngineering.Transport.API
                     // just a check for debugging purposes to make sure the right block is updated
                     string face = tree.GetString("face", "error");
                     string distro = tree.GetString("distro", "error");
+                    if (face == "error" || distro == "error")
+                    {
+                        throw new Exception("Error in PacketID 1003 for Pipe Distribution settings. Face and/or Distro mode is invalid.");
+                    }
                     if (extractionNodes[BlockFacing.FromCode(face).Index] == null) return;
                     extractionNodes[BlockFacing.FromCode(face).Index].SetDistroMode(distro);
                 }
@@ -460,6 +569,27 @@ namespace VintageEngineering.Transport.API
             numInsertionConnections = tree.GetInt("numinsert");
 
             MarkPipeDirty(worldAccessForResolve); // mark the pipe dirty to rebuild shape if needed
+        }
+
+        /// <summary>
+        /// Converts a Face Index int into a BlockFacing direction.<br/>
+        /// Returns NULL if the index is not 0 - 5<br/>
+        /// In Order: N, E, S, W, U, D
+        /// </summary>
+        /// <param name="faceindex">Index of the face.</param>
+        /// <returns>BlockFacing object or NULL if not valid.</returns>
+        public static BlockFacing ConvertIndexToFace(int faceindex)
+        {
+            switch (faceindex)
+            {
+                case 0: return BlockFacing.NORTH;
+                case 1: return BlockFacing.EAST;
+                case 2: return BlockFacing.SOUTH;
+                case 3: return BlockFacing.WEST;
+                case 4: return BlockFacing.UP;
+                case 5: return BlockFacing.DOWN;                
+                default: return null;
+            }
         }
     }
 }

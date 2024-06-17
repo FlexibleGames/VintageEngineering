@@ -75,20 +75,21 @@ namespace VintageEngineering.Transport
 
         public PipeExtractionNode()
         {
-            inventory = new PipeInventory(null, null);
+            inventory = new PipeInventory(null, 0, null);
             inventory.SlotModified += OnSlotModified;            
         }
 
-        public virtual void Initialize(ICoreAPI api, BlockPos pos, string face)
+        public virtual void Initialize(ICoreAPI api, BlockPos pos, string facecode)
         {
             _api = api;
             _pos = pos;
-            faceCode = face;
+            faceCode = facecode;
 
             inventory.LateInitialize(
                 $"{InventoryClassName}/{_pos.X}/{_pos.Y}/{_pos.Z}",
                 api
                 );
+            inventory.FaceIndex = BlockFacing.FromCode(facecode).Index;
         }
         /// <summary>
         /// Sets the Transport Handler for this extraction node.<br/>

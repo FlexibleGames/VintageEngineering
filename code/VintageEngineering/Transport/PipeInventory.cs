@@ -18,8 +18,11 @@ namespace VintageEngineering.Transport
     {
         private ItemSlot[] _slots;
 
-        public PipeInventory(string inventoryID, ICoreAPI api) : base(inventoryID, api)
+        public int FaceIndex { get; set; }
+
+        public PipeInventory(string inventoryID, int face, ICoreAPI api) : base(inventoryID, api)
         {
+            FaceIndex = face;
             _slots = base.GenEmptySlots(2);
             for (int x = 0; x < 2; x++)
             {
