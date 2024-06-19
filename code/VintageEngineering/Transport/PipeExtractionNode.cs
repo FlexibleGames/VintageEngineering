@@ -156,7 +156,7 @@ namespace VintageEngineering.Transport
         }
 
         /// <summary>
-        /// Player right clicked this ExtractionNode, passed in from the block.
+        /// Player right clicked this ExtractionNode, passed in from the block entity.
         /// </summary>
         /// <param name="player">Player who right clicked</param>
         /// <returns>True if event is handled.</returns>

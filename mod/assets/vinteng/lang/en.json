@@ -180,5 +180,12 @@
 	"vinteng:gui-distromode-farthest": "Farthest First",
 	"vinteng:gui-distromode-robin": "Round Robin",
 	"vinteng:gui-distromode-random": "Random",
-	"vinteng:gui-help-pipeupgrade": "Features can be unlocked with pipe upgrades."
+	"vinteng:gui-help-pipeupgrade": "Features can be unlocked with pipe upgrades.",
+	"vinteng:item-vepipeupgrade-copper": "Copper Pipe Upgrade (Tier1)",
+	"vinteng:item-vepipeupgrade-tinbronze": "Bronze Pipe Upgrade (Tier2)",
+	"vinteng:item-vepipeupgrade-iron": "Iron Pipe Upgrade (Tier3)",
+	"vinteng:item-vepipeupgrade-cupronickel": "Cupronickel Pipe Upgrade (Tier4)",
+	"vinteng:item-vepipeupgrade-steel": "Steel Pipe Upgrade (Tier5)",
+	"vinteng:itemdesc-vepipeupgrade-*": "Pipe upgrade defines extraction rate and node features."
+
 }

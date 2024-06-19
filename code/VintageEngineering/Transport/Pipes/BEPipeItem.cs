@@ -14,6 +14,11 @@ namespace VintageEngineering.Transport.Pipes
             TransportHandler = new ItemTransportHandler();
         }
 
+        public override ITransportHandler GetHandler()
+        {
+            return TransportHandler;
+        }
+
         public override bool CanConnectTo(IWorldAccessor world, BlockPos pos)
         {            
             IBlockEntityContainer bec = world.BlockAccessor.GetBlock(pos).GetInterface<IBlockEntityContainer>(world, pos);

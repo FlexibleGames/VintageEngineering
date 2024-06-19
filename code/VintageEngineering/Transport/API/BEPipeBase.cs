@@ -21,6 +21,8 @@ namespace VintageEngineering.Transport.API
         protected MeshData _meshData;
         //protected MeshRef _meshRef;
         protected bool _shapeDirty;
+        
+        private long _bounceMSStart = 0L;
 
         protected List<PipeConnection> pushConnections;
         protected PipeExtractionNode[] extractionNodes; // uses BlockFacing index, N, E, S, W, U, D
@@ -110,8 +112,21 @@ namespace VintageEngineering.Transport.API
             extractionSides ??= new bool[6]; 
             disconnectedSides ??= new bool[6]; 
             insertionSides ??= new bool[6];
-        }
 
+            MarkPipeDirty(api.World, true); // mark the pipe dirty to rebuild shape if needed
+
+            for (int f = 0; f< 6; f++)
+            {
+                if (extractionNodes[f] != null)
+                {
+                    extractionNodes[f].Initialize(Api, Pos, ConvertIndexToFace(f).Code);
+                }
+            }
+
+            //_shapeDirty = true;
+            //MarkDirty(true);
+        }
+        
         public virtual bool OnPlayerRightClick(IWorldAccessor world, IPlayer player, BlockSelection selection)
         {
             int faceindex = selection.SelectionBoxIndex;
@@ -120,8 +135,19 @@ namespace VintageEngineering.Transport.API
                 // right clicked the center main pipe object.
                 return true;
             }
+            if (world.ElapsedMilliseconds - _bounceMSStart > 500)
+            {
+                _bounceMSStart = 0L;
+            }
+            else return true;
 
-            if (player.InventoryManager.ActiveHotbarSlot?.Itemstack?.Item?.Tool == EnumTool.Wrench)
+            if (_bounceMSStart == 0)
+            {
+                _bounceMSStart = world.ElapsedMilliseconds;
+            }            
+
+            if (player.InventoryManager.ActiveHotbarSlot?.Itemstack?.Item?.Tool == EnumTool.Wrench &&
+                 Api.Side == EnumAppSide.Server)
             {
                 // player right clicked WITH a wrench
                 // detect sneak
@@ -132,6 +158,19 @@ namespace VintageEngineering.Transport.API
                     {
                         insertionSides[faceindex] = false;
                         numInsertionConnections--;
+                    }
+                    if (extractionSides[faceindex] && extractionNodes[faceindex] != null)
+                    {
+                        if (extractionGUIs[faceindex] != null && extractionGUIs[faceindex].IsOpened())
+                        {
+                            extractionGUIs[faceindex].TryClose();
+                            extractionGUIs[faceindex].Dispose();
+                        }
+                        extractionNodes[faceindex].OnNodeRemoved();
+                        RemoveExtractionListener(faceindex);
+                        extractionNodes[faceindex] = null;
+                        extractionSides[faceindex] = false;
+                        numExtractionConnections--;
                     }
                     bool isd = disconnectedSides[faceindex];
                     disconnectedSides[faceindex] = !isd;
@@ -146,17 +185,24 @@ namespace VintageEngineering.Transport.API
                         extractionNodes[faceindex] = new PipeExtractionNode();
                         extractionNodes[faceindex].Initialize(Api, Pos, ConvertIndexToFace(faceindex).Code);
                         extractionNodes[faceindex].SetHandler(GetHandler());
+                        numExtractionConnections++;
+                        numInsertionConnections--;
                     }
                     else if (extractionSides[faceindex])
                     {
                         extractionNodes[faceindex].OnNodeRemoved();
-                        
+                        RemoveExtractionListener(faceindex);
+                        extractionNodes[faceindex] = null;
+                        numExtractionConnections--;
+                        numInsertionConnections++;
                         extractionSides[faceindex] = false;
                         insertionSides[faceindex] = true;
-                    }
+                    }                    
                 }
+                _shapeDirty = true;
+                MarkDirty(true);
             }
-            else if (player.InventoryManager.ActiveHotbarSlot.Empty)
+            if (player.InventoryManager.ActiveHotbarSlot.Empty)
             {
                 // player right clicked with an empty hand
 
@@ -167,7 +213,7 @@ namespace VintageEngineering.Transport.API
                     {
                         ToggleExtractionNodeDialog(player, faceindex, delegate
                         {
-                            extractionGUIs[faceindex] = new GUIPipeExtraction(ExtractDialogTitle + " " + ConvertIndexToFace(faceindex).Code, 
+                            extractionGUIs[faceindex] = new GUIPipeExtraction($"{ExtractDialogTitle} {ConvertIndexToFace(faceindex).Code}", 
                                 (PipeInventory)extractionNodes[faceindex].Inventory,
                                 Pos, Api as ICoreClientAPI, this, extractionNodes[faceindex], faceindex);
                             extractionGUIs[faceindex].Update();
@@ -206,9 +252,9 @@ namespace VintageEngineering.Transport.API
         /// Rebuild the connection directions; for example, when a Neighbor block changes.
         /// </summary>
         /// <param name="world">WorldAccessor object</param>
-        public virtual void MarkPipeDirty(IWorldAccessor world)
+        public virtual void MarkPipeDirty(IWorldAccessor world, bool dirtyshape = false)
         {
-            _shapeDirty = false;
+            _shapeDirty = dirtyshape;
             BlockPipeBase us = world.BlockAccessor.GetBlock(Pos) as BlockPipeBase;
             // Check all 6 sides
             // the order is N, E, S, W, U, D
@@ -313,7 +359,7 @@ namespace VintageEngineering.Transport.API
 
         public override bool OnTesselation(ITerrainMeshPool mesher, ITesselatorAPI tessThreadTesselator)
         {
-            if (_shapeDirty) RebuildShape();
+            if (_shapeDirty || _meshData == null) RebuildShape();
 
             if (_meshData != null) 
             { 
@@ -372,6 +418,7 @@ namespace VintageEngineering.Transport.API
                     }
                 }
             }
+            _shapeDirty = false;
         }
 
         private MeshData ConnectionMesh(CompositeShape _shape)
@@ -466,16 +513,27 @@ namespace VintageEngineering.Transport.API
         public override void OnReceivedClientPacket(IPlayer fromPlayer, int packetid, byte[] data)
         {
             base.OnReceivedClientPacket(fromPlayer, packetid, data); // this just informs behaviors
-            if (packetid < 1000)
+            if (packetid == 1005)
             {
-                // how can I know what extract node inventory to relay the packet to?
+                TreeAttribute packet = TreeAttribute.CreateFromBytes(data); //SerializerUtil.Deserialize<TreeAttribute>(data);
+                int facei = packet.GetInt("faceindex");
+                //Packet_Client pc = new Packet_Client(); // SerializerUtil.Deserialize<Packet_Client>(packet.GetBytes("packet"));
+                byte[] p = packet.GetBytes("packet");
+                int pid = packet.GetInt("pid");
+                //Packet_ClientSerializer.DeserializeBuffer(p, p.Length, pc);
+
+                if (extractionNodes[facei] != null)
+                {
+                    ((PipeInventory)extractionNodes[facei].Inventory).InvNetworkUtil.HandleClientPacket(fromPlayer, pid, p);
+                }
+
                 Api.World.BlockAccessor.GetChunkAtBlockPos(Pos).MarkModified();
                 return;
             }
             if (packetid == 1000)
             {
                 IPlayerInventoryManager ivm = fromPlayer.InventoryManager;
-                if (ivm == null) return;
+                if (ivm == null || data == null) return;
                 int faceindex = SerializerUtil.Deserialize<int>(data);
                 ivm.OpenInventory(extractionNodes[faceindex].Inventory);
                 return;
@@ -483,7 +541,7 @@ namespace VintageEngineering.Transport.API
             if (packetid == 1001)
             {
                 IPlayerInventoryManager ivm = fromPlayer.InventoryManager;
-                if (ivm == null) return;
+                if (ivm == null || data == null) return;
                 int faceindex = SerializerUtil.Deserialize<int>(data);
                 ivm.CloseInventory(extractionNodes[faceindex].Inventory);
                 return;
@@ -541,6 +599,7 @@ namespace VintageEngineering.Transport.API
             base.FromTreeAttributes(tree, worldAccessForResolve);
             _networkID = tree.GetLong("networkid");
             extractionSides = SerializerUtil.Deserialize(tree.GetBytes("extractsides"), new bool[6]);
+            extractionNodes ??= new PipeExtractionNode[6];
             for (int f = 0; f < 6; f++)
             {
                 if (extractionSides[f])
@@ -554,7 +613,10 @@ namespace VintageEngineering.Transport.API
                     else
                     {
                         extractionNodes[f] = new PipeExtractionNode();
-                        extractionNodes[f].Initialize(Api, Pos, BlockFacing.ALLFACES[f].Code);
+                        if (Api != null) 
+                        { 
+                            extractionNodes[f].Initialize(Api, Pos, BlockFacing.ALLFACES[f].Code);                            
+                        }
                         extractionNodes[f].FromTreeAttributes(
                             TreeAttribute.CreateFromBytes(tree.GetBytes("extract-" + f.ToString())),
                             worldAccessForResolve);
@@ -568,7 +630,7 @@ namespace VintageEngineering.Transport.API
             numExtractionConnections = tree.GetInt("numextract");
             numInsertionConnections = tree.GetInt("numinsert");
 
-            MarkPipeDirty(worldAccessForResolve); // mark the pipe dirty to rebuild shape if needed
+            if (Api != null && Api.Side == EnumAppSide.Client) MarkPipeDirty(worldAccessForResolve, true);
         }
 
         /// <summary>

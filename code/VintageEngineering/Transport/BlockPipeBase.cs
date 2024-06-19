@@ -14,6 +14,7 @@ namespace VintageEngineering.Transport
         protected ICoreClientAPI capi;
         protected ICoreServerAPI sapi;
         protected EnumPipeUse _pipeUse;
+        private bool _oneClick = false;
 
         /// <summary>
         /// What type of pipe is this? Item, Fluid, Gas, etc, etc.
@@ -26,13 +27,22 @@ namespace VintageEngineering.Transport
             base.OnLoaded(api);
             if (api.Side == EnumAppSide.Server)
             {
-                sapi = api as ICoreServerAPI;
+                sapi = api as ICoreServerAPI;                
             }
             else
             {
                 capi = api as ICoreClientAPI;
+                //capi.Input.InWorldAction += InputWorldAction;
             }
             _pipeUse = Enum.Parse<EnumPipeUse>(this.LastCodePart());
+        }
+
+        private void InputWorldAction(EnumEntityAction action, bool on, ref EnumHandling handled)
+        {
+            if (action == EnumEntityAction.RightMouseDown && !on)
+            {
+                _oneClick = false;
+            }
         }
 
         public override string GetPlacedBlockInfo(IWorldAccessor world, BlockPos pos, IPlayer forPlayer)
@@ -79,9 +89,9 @@ namespace VintageEngineering.Transport
             // N, E, S, W, U, D, Base; where Base is the core pipe object.
             return base.GetSelectionBoxes(blockAccessor, pos);
         }
-
+        
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
-        {            
+        {
             if (!byPlayer.InventoryManager.ActiveHotbarSlot.Empty &&
                 byPlayer.InventoryManager.ActiveHotbarSlot.Itemstack.Collectible is BlockPipeBase)
             {

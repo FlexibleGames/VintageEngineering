@@ -11,6 +11,7 @@ using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
+using Vintagestory.API.Util;
 
 namespace VintageEngineering.Transport
 {
@@ -100,7 +101,7 @@ namespace VintageEngineering.Transport
 
             this.SingleComposer = capi.Gui.CreateCompo("vepipedlg" + blockPos?.ToString() + ":" + _node.FaceCode, window)
                 .AddShadedDialogBG(dialog, true, 5)
-                .AddDialogTitleBar(Lang.Get("vinteng:gui-title-pipeextract" + $": {_node.FaceCode}"), new Action(OnTitleBarClosed), null, null)
+                .AddDialogTitleBar(DialogTitle, new Action(OnTitleBarClosed), null, null)
                 .BeginChildElements(dialog)
 
                 // Upgrade Slot
@@ -189,7 +190,12 @@ namespace VintageEngineering.Transport
         private void SendInvPacket(object obj)
         {
             // might have to capture the packet and encode the face index in it.
-            this.capi.Network.SendBlockEntityPacket(BlockEntityPosition.X, BlockEntityPosition.Y, BlockEntityPosition.Z, obj);
+            TreeAttribute custompacket = new TreeAttribute();
+            custompacket.SetInt("faceindex", _faceIndex);
+            custompacket.SetBytes("packet", Packet_ClientSerializer.SerializeToBytes(obj as Packet_Client));
+            custompacket.SetInt("pid", (obj as Packet_Client).Id);
+
+            this.capi.Network.SendBlockEntityPacket(BlockEntityPosition.X, BlockEntityPosition.Y, BlockEntityPosition.Z, 1005, custompacket.ToBytes());
         }
 
         private void OnTitleBarClosed()
@@ -207,8 +213,8 @@ namespace VintageEngineering.Transport
         {
             Inventory.SlotModified -= OnSlotModified;
             SingleComposer.GetSlotGrid("upgradeslot").OnGuiClosed(capi);
-            SingleComposer.GetSlotGrid("filterslot").OnGuiClosed(capi);
-            SingleComposer.GetDropDown("distromode").Dispose();
+            SingleComposer.GetSlotGrid("filterslot")?.OnGuiClosed(capi);
+            SingleComposer.GetDropDown("distromode")?.Dispose();
             base.OnGuiClosed();
         }
     }

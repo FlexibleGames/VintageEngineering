@@ -84,13 +84,13 @@ namespace VintageEngineering.Transport
 
         public override void FromTreeAttributes(ITreeAttribute tree)
         {
-            this._slots = SlotsFromTreeAttributes(tree, _slots, null);
+            this._slots = SlotsFromTreeAttributes(tree, _slots, null);            
         }
 
         public override void ToTreeAttributes(ITreeAttribute tree)
         {
             SlotsToTreeAttributes(_slots, tree);
-            ResolveBlocksOrItems();
+            if (Api != null) ResolveBlocksOrItems();
         }
     }
 }

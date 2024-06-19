@@ -30,9 +30,14 @@ namespace VintageEngineering
             {
                 sapi = api as ICoreServerAPI;                
             }
+            RegisterItems(api);
             RegisterBlocks(api);
-            RegisterBlockEntities(api);
-            
+            RegisterBlockEntities(api);            
+        }
+
+        public void RegisterItems(ICoreAPI api)
+        {
+            api.RegisterItemClass("VEPipeUpgrade", typeof(ItemPipeUpgrade));
         }
 
         public void RegisterBlocks(ICoreAPI api)
