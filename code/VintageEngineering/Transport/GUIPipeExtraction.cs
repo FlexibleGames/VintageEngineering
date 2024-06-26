@@ -65,8 +65,8 @@ namespace VintageEngineering.Transport
             ElementBounds distroText = ElementBounds.Fixed(172, 6 + titlebarheight, 132, 18);
             ElementBounds dropdownbounds = ElementBounds.Fixed(172, 28 + titlebarheight, 132, 25);
 
-            ElementBounds outputtxtinset = ElementBounds.Fixed(6, 86 + titlebarheight, 160, 58);
-            ElementBounds outputtextbnds = ElementBounds.Fixed(8, 88 + titlebarheight, 156, 54);
+            ElementBounds outputtxtinset = ElementBounds.Fixed(6, 86 + titlebarheight, 298, 58);
+            ElementBounds outputtextbnds = ElementBounds.Fixed(8, 88 + titlebarheight, 294, 54);
 
             dialog.WithChildren(new ElementBounds[]
             {

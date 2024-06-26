@@ -20,9 +20,7 @@ namespace VintageEngineering.Transport.API
         protected long _networkID;
         protected MeshData _meshData;
         //protected MeshRef _meshRef;
-        protected bool _shapeDirty;
-        
-        private long _bounceMSStart = 0L;
+        protected bool _shapeDirty;               
 
         protected List<PipeConnection> pushConnections;
         protected PipeExtractionNode[] extractionNodes; // uses BlockFacing index, N, E, S, W, U, D
@@ -135,16 +133,6 @@ namespace VintageEngineering.Transport.API
                 // right clicked the center main pipe object.
                 return true;
             }
-            if (world.ElapsedMilliseconds - _bounceMSStart > 500)
-            {
-                _bounceMSStart = 0L;
-            }
-            else return true;
-
-            if (_bounceMSStart == 0)
-            {
-                _bounceMSStart = world.ElapsedMilliseconds;
-            }            
 
             if (player.InventoryManager.ActiveHotbarSlot?.Itemstack?.Item?.Tool == EnumTool.Wrench &&
                  Api.Side == EnumAppSide.Server)
@@ -161,7 +149,7 @@ namespace VintageEngineering.Transport.API
                     }
                     if (extractionSides[faceindex] && extractionNodes[faceindex] != null)
                     {
-                        if (extractionGUIs[faceindex] != null && extractionGUIs[faceindex].IsOpened())
+                        if (extractionGUIs != null && extractionGUIs[faceindex] != null && extractionGUIs[faceindex].IsOpened())
                         {
                             extractionGUIs[faceindex].TryClose();
                             extractionGUIs[faceindex].Dispose();
@@ -172,8 +160,22 @@ namespace VintageEngineering.Transport.API
                         extractionSides[faceindex] = false;
                         numExtractionConnections--;
                     }
+                    if (connectionSides[faceindex])
+                    {
+                        // we're forcefully removing pipe-pipe connection
+                        // we need to inform neighboring blocks
+                        connectionSides[faceindex] = false;
+                    }
                     bool isd = disconnectedSides[faceindex];
                     disconnectedSides[faceindex] = !isd;
+                    int oppface = ConvertIndexToFace(faceindex).Opposite.Index;
+                    BEPipeBase bepb = world.BlockAccessor.GetBlockEntity(Pos.AddCopy(ConvertIndexToFace(faceindex))) as BEPipeBase;
+                    if (bepb != null)
+                    {
+                        bepb.OverridePipeConnectionFace(oppface, disconnectedSides[faceindex]);
+                    }
+                    //world.BlockAccessor.TriggerNeighbourBlockUpdate(Pos);
+                    MarkPipeDirty(world, true);
                 }
                 else
                 {
@@ -184,7 +186,7 @@ namespace VintageEngineering.Transport.API
                         extractionSides[faceindex] = true;
                         extractionNodes[faceindex] = new PipeExtractionNode();
                         extractionNodes[faceindex].Initialize(Api, Pos, ConvertIndexToFace(faceindex).Code);
-                        extractionNodes[faceindex].SetHandler(GetHandler());
+                        extractionNodes[faceindex].SetHandler(GetHandler()); 
                         numExtractionConnections++;
                         numInsertionConnections--;
                     }
@@ -197,20 +199,21 @@ namespace VintageEngineering.Transport.API
                         numInsertionConnections++;
                         extractionSides[faceindex] = false;
                         insertionSides[faceindex] = true;
-                    }                    
+                    }
                 }
                 _shapeDirty = true;
                 MarkDirty(true);
             }
             if (player.InventoryManager.ActiveHotbarSlot.Empty)
             {
-                // player right clicked with an empty hand
-
+                // player right clicked with an empty hand                
                 // Open GUI if it is an extraction node
                 if (ExtractionSides[faceindex] && extractionNodes[faceindex] != null)
                 {
                     if (Api.Side == EnumAppSide.Client)
                     {
+                        if (extractionGUIs == null) extractionGUIs = new GUIPipeExtraction[6];
+
                         ToggleExtractionNodeDialog(player, faceindex, delegate
                         {
                             extractionGUIs[faceindex] = new GUIPipeExtraction($"{ExtractDialogTitle} {ConvertIndexToFace(faceindex).Code}", 
@@ -309,15 +312,20 @@ namespace VintageEngineering.Transport.API
                     {
                         if (pipeb.PipeUse == us.PipeUse) // pipe use is the same as us?
                         {
-                            if (!disconnectedSides[f] && !connectionSides[f])
+                            BEPipeBase bepb = dbe as BEPipeBase;
+                            if (bepb == null) continue;
+                            if (!disconnectedSides[f])
                             {
-                                connectionSides[f] = true;
-                                _shapeDirty = true;
-                                continue;
+                                if (!connectionSides[f])
+                                {
+                                    connectionSides[f] = true;
+                                    _shapeDirty = true;
+                                }
                             }
+                            continue;
                         }
                     }
-                    if (CanConnectTo(world, Pos.AddCopy(BlockFacing.ALLFACES[f])))
+                    else if (CanConnectTo(world, Pos.AddCopy(BlockFacing.ALLFACES[f])))
                     {
                         if (!disconnectedSides[f] && !insertionSides[f])
                         {
@@ -355,6 +363,16 @@ namespace VintageEngineering.Transport.API
         public virtual void RebuildPushConnections(IWorldAccessor world, BlockPos[] pipenetwork)
         {
 
+        }
+        /// <summary>
+        /// Called when a player overrides a pipe connection on a neighboring pipe.
+        /// </summary>
+        /// <param name="faceindex">Face index to change.</param>
+        public virtual void OverridePipeConnectionFace(int faceindex, bool newvalue)
+        {            
+            disconnectedSides[faceindex] = newvalue;
+            _shapeDirty = true;
+            MarkDirty(true);
         }
 
         public override bool OnTesselation(ITerrainMeshPool mesher, ITesselatorAPI tessThreadTesselator)

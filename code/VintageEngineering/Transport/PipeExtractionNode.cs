@@ -76,7 +76,7 @@ namespace VintageEngineering.Transport
         public PipeExtractionNode()
         {
             inventory = new PipeInventory(null, 0, null);
-            inventory.SlotModified += OnSlotModified;            
+            inventory.SlotModified += OnSlotModified;
         }
 
         public virtual void Initialize(ICoreAPI api, BlockPos pos, string facecode)

@@ -6,15 +6,16 @@ using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
+using Vintagestory.GameContent;
 
 namespace VintageEngineering.Transport
 {
-    public class BlockPipeBase : Block
+    public class BlockPipeBase : Block, IWrenchOrientable
     {
         protected ICoreClientAPI capi;
         protected ICoreServerAPI sapi;
         protected EnumPipeUse _pipeUse;
-        private bool _oneClick = false;
+        private bool _firstEvent = true;
 
         /// <summary>
         /// What type of pipe is this? Item, Fluid, Gas, etc, etc.
@@ -37,14 +38,6 @@ namespace VintageEngineering.Transport
             _pipeUse = Enum.Parse<EnumPipeUse>(this.LastCodePart());
         }
 
-        private void InputWorldAction(EnumEntityAction action, bool on, ref EnumHandling handled)
-        {
-            if (action == EnumEntityAction.RightMouseDown && !on)
-            {
-                _oneClick = false;
-            }
-        }
-
         public override string GetPlacedBlockInfo(IWorldAccessor world, BlockPos pos, IPlayer forPlayer)
         {
             return base.GetPlacedBlockInfo(world, pos, forPlayer);
@@ -61,7 +54,7 @@ namespace VintageEngineering.Transport
             BEPipeBase pipebe = api.World.BlockAccessor.GetBlockEntity(pos) as BEPipeBase;
             if (pipebe != null)
             {
-                pipebe.MarkPipeDirty(world);
+                pipebe.MarkPipeDirty(world, true);
             }
             base.OnNeighbourBlockChange(world, pos, neibpos);
         }
@@ -88,10 +81,15 @@ namespace VintageEngineering.Transport
             // Build the array based on number of connections this block has, always in the order
             // N, E, S, W, U, D, Base; where Base is the core pipe object.
             return base.GetSelectionBoxes(blockAccessor, pos);
-        }
+        }        
         
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
         {
+            if (byPlayer == null) return true;
+            if (!world.Claims.TryAccess(byPlayer, blockSel.Position, EnumBlockAccessFlags.Use))
+            {
+                return false;
+            }
             if (!byPlayer.InventoryManager.ActiveHotbarSlot.Empty &&
                 byPlayer.InventoryManager.ActiveHotbarSlot.Itemstack.Collectible is BlockPipeBase)
             {
@@ -100,12 +98,34 @@ namespace VintageEngineering.Transport
             }
 
             BEPipeBase pipe = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEPipeBase;
-            if (pipe != null)
+            if (pipe != null && _firstEvent)
             {
                 // Pass event to BE pipe base
-                return pipe.OnPlayerRightClick(world, byPlayer, blockSel);
+                pipe.OnPlayerRightClick(world, byPlayer, blockSel);
+                _firstEvent = false;
+                return true;
             }
-            return base.OnBlockInteractStart(world, byPlayer, blockSel);
+            base.OnBlockInteractStart(world, byPlayer, blockSel);
+
+            return true;
+        }
+
+        public override bool OnBlockInteractStep(float secondsUsed, IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
+        {
+            return true;
+        }
+
+        public override void OnBlockInteractStop(float secondsUsed, IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
+        {
+            if (api.Side == EnumAppSide.Server) _firstEvent = true;
+            //base.OnBlockInteractStop(secondsUsed, world, byPlayer, blockSel);
+        }
+
+        public override bool OnBlockInteractCancel(float secondsUsed, IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel, EnumItemUseCancelReason cancelReason)
+        {
+            _firstEvent = true;
+            return true;
+            //return base.OnBlockInteractCancel(secondsUsed, world, byPlayer, blockSel, cancelReason);
         }
 
         public override void OnBlockBroken(IWorldAccessor world, BlockPos pos, IPlayer byPlayer, float dropQuantityMultiplier = 1)
@@ -156,5 +176,13 @@ namespace VintageEngineering.Transport
             }
         }
 
+        public void Rotate(EntityAgent byEntity, BlockSelection blockSel, int dir)
+        {
+            if (byEntity.Controls.Sneak) 
+            { 
+                OnBlockInteractStart(api.World, (byEntity as EntityPlayer).Player, blockSel);
+                _firstEvent = true;
+            }
+        }
     }
 }
