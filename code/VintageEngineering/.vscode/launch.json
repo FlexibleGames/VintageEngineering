@@ -15,13 +15,12 @@
             "osx": {
                 "program": "${env:VINTAGE_STORY}/Vintagestory"
             },
-            "preLaunchTask": "build",
+            "preLaunchTask": "build (Debug)",
             "args": [
-                // "--playStyle" , "preset-surviveandbuild",
-                // "--openWorld" , "modding test world",
                 "--tracelog",
                 "--addModPath",
-                "${workspaceFolder}/VintageEngineering/bin/Debug/Mods"
+                "${workspaceFolder}/../../",
+                "--openWorld=modtestworld"
             ],
             "console": "internalConsole",
             "stopAtEntry": false
@@ -37,25 +36,14 @@
             "osx": {
                 "program": "${env:VINTAGE_STORY}/VintagestoryServer"
             },
-            "preLaunchTask": "build",
+            "preLaunchTask": "build (Debug)",
             "args": [
                 "--tracelog",
                 "--addModPath",
-                "${workspaceFolder}/VintageEngineering/bin/Debug/Mods"
+                "${workspaceFolder}/../../"
             ],
             "console": "internalConsole",
             "stopAtEntry": false
-        },
-        {
-            "name": "CakeBuild",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build (Cake)",
-            "program": "${workspaceFolder}/CakeBuild/bin/Debug/net7.0/CakeBuild.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}/CakeBuild",
-            "stopAtEntry": false,
-            "console": "internalConsole"
         }
     ]
 }

@@ -20,10 +20,10 @@ The mod will expand late-game play as steel is the primary material used for its
 ## Building
 Set the VINTAGE_STORY environmental variable before loading or trying to build the project. The [wiki](https://wiki.vintagestory.at/index.php/Modding:Preparing_For_Code_Mods#Creating_an_Environment_Variable) has directions for setting the variable on Windows.
 
-The mod can be built with either Visual Studio or directly with msbuild.
+The mod can be built with either Visual Studio, Visual Studio Code, or directly with msbuild. It has been tested on Windows and Linux.
 
-### Visual Studio
-Load the solution file in the code\VintageEngineering directory with Visual Studio. Press F5 to launch Vintage Story in the debugger with the mod loaded.
+### Visual Studio or Visual Studio Code
+Load the solution in the code\VintageEngineering directory. Press F5 to launch Vintage Story in the debugger with the mod loaded.
 
 Press Ctrl + Shift + B to build the mod without starting the debugger.
 
