@@ -8,31 +8,31 @@
 
   <ItemGroup>
     <Reference Include="cairo-sharp">
-      <HintPath>..\..\..\..\..\Users\simtr\AppData\Roaming\Vintagestory\Lib\cairo-sharp.dll</HintPath>
+      <HintPath>$(VINTAGE_STORY)\Lib\cairo-sharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\..\..\..\Users\simtr\AppData\Roaming\Vintagestory\Lib\Newtonsoft.Json.dll</HintPath>
+      <HintPath>$(VINTAGE_STORY)\Lib\Newtonsoft.Json.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="protobuf-net">
-      <HintPath>..\..\..\..\..\Users\simtr\AppData\Roaming\Vintagestory\Lib\protobuf-net.dll</HintPath>
+      <HintPath>$(VINTAGE_STORY)\Lib\protobuf-net.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="VintagestoryAPI">
-      <HintPath>..\..\..\..\..\Users\simtr\AppData\Roaming\Vintagestory\VintagestoryAPI.dll</HintPath>
+      <HintPath>$(VINTAGE_STORY)\VintagestoryAPI.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="VintagestoryLib">
-      <HintPath>..\..\..\..\..\Users\simtr\AppData\Roaming\Vintagestory\VintagestoryLib.dll</HintPath>
+      <HintPath>$(VINTAGE_STORY)\VintagestoryLib.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="VSEssentials">
-      <HintPath>..\..\..\..\..\Users\simtr\AppData\Roaming\Vintagestory\Mods\VSEssentials.dll</HintPath>
+      <HintPath>$(VINTAGE_STORY)\Mods\VSEssentials.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="VSSurvivalMod">
-      <HintPath>..\..\..\..\..\Users\simtr\AppData\Roaming\Vintagestory\Mods\VSSurvivalMod.dll</HintPath>
+      <HintPath>$(VINTAGE_STORY)\Mods\VSSurvivalMod.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
@@ -53,7 +53,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="copy $(TargetDir)*.* C:\_Programming\Vintage\VintageEngineering\mod&#xD;&#xA;" />
+    <Exec Command="copy $(TargetDir)*.* $(MSBuildProjectDirectory)\..\..\mod" />
   </Target>
 
 </Project>
