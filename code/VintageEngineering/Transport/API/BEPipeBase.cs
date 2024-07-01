@@ -34,6 +34,7 @@ namespace VintageEngineering.Transport.API
         protected bool[] disconnectedSides; // uses BlockFacing index, N, E, S, W, U, D
         protected bool[] insertionSides;    // uses BlockFacing index, N, E, S, W, U, D
 
+        public static string[] Faceletter = {"N", "E", "S", "W", "U", "D"};
         public virtual string ExtractDialogTitle
         {
             get
@@ -124,7 +125,37 @@ namespace VintageEngineering.Transport.API
             //_shapeDirty = true;
             //MarkDirty(true);
         }
-        
+
+        public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
+        {
+            //base.GetBlockInfo(forPlayer, dsc);
+            string output = string.Empty;
+            output += $"NetID: {NetworkID}" + System.Environment.NewLine;
+            //if (!Api.World.EntityDebugMode)
+            //{
+            //    // TODO Uncomment when this feature is 'done'
+            //    dsc.Append(output);
+            //    return;
+            //}
+            string inserts = string.Empty;
+            string extracts = string.Empty;
+            string overrides = string.Empty;
+            string pipecons = string.Empty;
+
+            for (int f = 0; f < 6; f++)
+            {
+                if (insertionSides[f]) inserts += Faceletter[f] + (f != 5 ? ", " : "");
+                if (extractionSides[f]) extracts += Faceletter[f] + (f != 5 ? ", " : "");
+                if (disconnectedSides[f]) overrides += Faceletter[f] + (f != 5 ? ", " : "");
+                if (connectionSides[f]) pipecons += Faceletter[f] + (f != 5 ? ", " : "");
+            }
+            output += $"Insert Sides: {inserts}" + System.Environment.NewLine;
+            output += $"Extract Sides: {extracts}" + System.Environment.NewLine;
+            output += $"Overrides: {overrides}" + System.Environment.NewLine;
+            output += $"Pipe Cons: {pipecons}";
+            dsc.Append(output);
+        }
+
         public virtual bool OnPlayerRightClick(IWorldAccessor world, IPlayer player, BlockSelection selection)
         {
             int faceindex = selection.SelectionBoxIndex;
@@ -190,15 +221,18 @@ namespace VintageEngineering.Transport.API
                         numExtractionConnections++;
                         numInsertionConnections--;
                     }
-                    else if (extractionSides[faceindex])
-                    {
-                        extractionNodes[faceindex].OnNodeRemoved();
-                        RemoveExtractionListener(faceindex);
-                        extractionNodes[faceindex] = null;
-                        numExtractionConnections--;
-                        numInsertionConnections++;
-                        extractionSides[faceindex] = false;
-                        insertionSides[faceindex] = true;
+                    else // can't do an elseif here as it would ALWAYS be true after the first if above. 
+                    {                        
+                        if (extractionSides[faceindex])
+                        {
+                            extractionNodes[faceindex].OnNodeRemoved();
+                            RemoveExtractionListener(faceindex);
+                            extractionNodes[faceindex] = null;
+                            numExtractionConnections--;
+                            numInsertionConnections++;
+                            extractionSides[faceindex] = false;
+                            insertionSides[faceindex] = true;
+                        }
                     }
                 }
                 _shapeDirty = true;
@@ -327,7 +361,7 @@ namespace VintageEngineering.Transport.API
                     }
                     else if (CanConnectTo(world, Pos.AddCopy(BlockFacing.ALLFACES[f])))
                     {
-                        if (!disconnectedSides[f] && !insertionSides[f])
+                        if (!disconnectedSides[f] && !insertionSides[f] && !extractionSides[f])
                         {
                             insertionSides[f] = true;
                             numInsertionConnections++;

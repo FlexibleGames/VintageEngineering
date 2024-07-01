@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using VintageEngineering.Transport.API;
 using VintageEngineering.Transport.Network;
 using Vintagestory.API.Client;
@@ -18,7 +19,8 @@ namespace VintageEngineering.Transport
         private bool _firstEvent = true;
 
         /// <summary>
-        /// What type of pipe is this? Item, Fluid, Gas, etc, etc.
+        /// What type of pipe is this? item, fluid, gas, etc, etc.<br/>
+        /// Created by parsing the last code part of the block, i.e. pipe-item vs pipe-fluid.
         /// </summary>
         public EnumPipeUse PipeUse
         { get { return _pipeUse; } }
@@ -40,6 +42,13 @@ namespace VintageEngineering.Transport
 
         public override string GetPlacedBlockInfo(IWorldAccessor world, BlockPos pos, IPlayer forPlayer)
         {
+            BEPipeBase bep = world.BlockAccessor.GetBlockEntity(pos) as BEPipeBase;
+            if (bep != null)
+            {
+                StringBuilder sb = new StringBuilder();
+                bep.GetBlockInfo(forPlayer, sb);
+                return sb.ToString().TrimEnd();
+            }
             return base.GetPlacedBlockInfo(world, pos, forPlayer);
         }
 
@@ -50,7 +59,7 @@ namespace VintageEngineering.Transport
 
         public override void OnNeighbourBlockChange(IWorldAccessor world, BlockPos pos, BlockPos neibpos)
         {
-            // TODO Redetect any potential connections as something changed.
+            // Redetect any potential connections as something changed.
             BEPipeBase pipebe = api.World.BlockAccessor.GetBlockEntity(pos) as BEPipeBase;
             if (pipebe != null)
             {
@@ -175,7 +184,12 @@ namespace VintageEngineering.Transport
                 default: return null;
             }
         }
-
+        /// <summary>
+        /// Defined in the IWrenchOrientatable interface, called by the wrench item.
+        /// </summary>
+        /// <param name="byEntity"></param>
+        /// <param name="blockSel"></param>
+        /// <param name="dir"></param>
         public void Rotate(EntityAgent byEntity, BlockSelection blockSel, int dir)
         {
             if (byEntity.Controls.Sneak) 
