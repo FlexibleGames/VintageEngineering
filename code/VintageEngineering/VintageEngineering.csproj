@@ -8,31 +8,31 @@
 
   <ItemGroup>
     <Reference Include="cairo-sharp">
-      <HintPath>..\..\..\..\..\Users\simtr\AppData\Roaming\Vintagestory\Lib\cairo-sharp.dll</HintPath>
+      <HintPath>$(VINTAGE_STORY)\Lib\cairo-sharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\..\..\..\Users\simtr\AppData\Roaming\Vintagestory\Lib\Newtonsoft.Json.dll</HintPath>
+      <HintPath>$(VINTAGE_STORY)\Lib\Newtonsoft.Json.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="protobuf-net">
-      <HintPath>..\..\..\..\..\Users\simtr\AppData\Roaming\Vintagestory\Lib\protobuf-net.dll</HintPath>
+      <HintPath>$(VINTAGE_STORY)\Lib\protobuf-net.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="VintagestoryAPI">
-      <HintPath>..\..\..\..\..\Users\simtr\AppData\Roaming\Vintagestory\VintagestoryAPI.dll</HintPath>
+      <HintPath>$(VINTAGE_STORY)\VintagestoryAPI.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="VintagestoryLib">
-      <HintPath>..\..\..\..\..\Users\simtr\AppData\Roaming\Vintagestory\VintagestoryLib.dll</HintPath>
+      <HintPath>$(VINTAGE_STORY)\VintagestoryLib.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="VSEssentials">
-      <HintPath>..\..\..\..\..\Users\simtr\AppData\Roaming\Vintagestory\Mods\VSEssentials.dll</HintPath>
+      <HintPath>$(VINTAGE_STORY)\Mods\VSEssentials.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="VSSurvivalMod">
-      <HintPath>..\..\..\..\..\Users\simtr\AppData\Roaming\Vintagestory\Mods\VSSurvivalMod.dll</HintPath>
+      <HintPath>$(VINTAGE_STORY)\Mods\VSSurvivalMod.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
@@ -53,7 +53,34 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="copy $(TargetDir)*.* C:\_Programming\Vintage\VintageEngineering\mod&#xD;&#xA;" />
+    <!-- In a csproj, items are a kind of variable that can hold a filename
+         list. Setting an item is a way to evaluate a filename glob. Items are
+         read with the syntax: @(name).
+
+         Items can only be set inside of a ItemGroup element. Because this
+         ItemGroup is inside a Target, the items will be evaluated when the
+         target is run, instead of when the csproj is loaded. This is
+         important, because the target files (including the output dll) may
+         not exist when the csproj is first loaded.
+
+         This pattern is documented at
+         https://learn.microsoft.com/en-us/visualstudio/msbuild/copy-task?view=vs-2022.
+        -->
+
+    <ItemGroup>
+      <!-- The name of the item (kind of variable) is given in the element name.
+
+            Full syntax:
+            https://learn.microsoft.com/en-us/visualstudio/msbuild/item-element-msbuild?view=vs-2022
+
+          -->
+      <TargetFiles Include="$(TargetDir)\*.*" />
+    </ItemGroup>
+    <Copy
+      SourceFiles="@(TargetFiles)"
+      DestinationFolder="$(MSBuildProjectDirectory)\..\..\mod"
+      SkipUnchangedFiles="true"
+    />
   </Target>
 
 </Project>

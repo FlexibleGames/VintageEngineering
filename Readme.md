@@ -17,6 +17,22 @@ The mod will expand late-game play as steel is the primary material used for its
 - Electrical system, power generation using Coal and oil based combustion, then expanding into more modern power options (nuclear?).
 - Pipez-style system for moving goods and fluids around. At least I hope this won't crush FPS.
 
+## Building
+Set the VINTAGE_STORY environmental variable before loading or trying to build the project. The [wiki](https://wiki.vintagestory.at/index.php/Modding:Preparing_For_Code_Mods#Creating_an_Environment_Variable) has directions for setting the variable on Windows.
+
+The mod can be built with either Visual Studio, Visual Studio Code, or directly with msbuild. It has been tested on Windows and Linux.
+
+### Visual Studio or Visual Studio Code
+Load the solution in the code\VintageEngineering directory. Press F5 to launch Vintage Story in the debugger with the mod loaded.
+
+Press Ctrl + Shift + B to build the mod without starting the debugger.
+
+### MSBuild
+Open a developer command prompt (one that has msbuild in the path). From the code\VintageEngineering directory, either run `msbuild` or `dotnet build`, depending on which is installed on your system.
+
+### Packaging
+After a successful build, the output will be placed in the mod directory. In order to distribute the mod, the contents of the mod directory must be manually zipped. Specifically the zip file should contain modinfo.json at the top level, rather than mod\modinfo.json.
+
 ## Help Is Welcome
 Immersive Engineering has had over 80 contributers, I know a project like this is just overwhelming for one person. So I will be more then welcoming of other contributions.
 
