@@ -48,7 +48,6 @@ namespace VintageEngineering.Electrical.Systems.Catenary
             MeshData mesh = new MeshData(4, 6);
             mesh.SetMode(EnumDrawMode.Triangles);
 
-
             MeshData mesh_top = new MeshData(4, 6);
             mesh_top.SetMode(EnumDrawMode.Triangles);
 

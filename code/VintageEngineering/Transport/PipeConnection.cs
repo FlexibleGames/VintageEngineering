@@ -16,7 +16,7 @@ namespace VintageEngineering.Transport
         private BlockPos pos;
         private BlockFacing facing;
         private int distance;
-        private bool isextraction;
+        //private bool isextraction;
         //private ItemSlot filterslot;
 
         /// <summary>
@@ -36,14 +36,14 @@ namespace VintageEngineering.Transport
         /// <summary>
         /// Is this connection an extraction node?
         /// </summary>
-        public bool IsExtraction { get { return isextraction; } }
+        //public bool IsExtraction { get { return isextraction; } }
 
-        public PipeConnection(BlockPos bpos, BlockFacing bfacing, int dist = 0, bool isextract = false)
+        public PipeConnection(BlockPos bpos, BlockFacing bfacing, int dist = 0)
         {
             pos = bpos;
             facing = bfacing;
             distance = dist;
-            isextraction = isextract;
+            //isextraction = isextract;
         }
     }
 }

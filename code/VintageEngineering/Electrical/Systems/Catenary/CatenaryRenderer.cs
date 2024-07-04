@@ -60,6 +60,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
             IStandardShaderProgram prog = rpi.PreparedStandardShader(worldAccess.Player.Entity.Pos.AsBlockPos.X, 
                                                                 worldAccess.Player.Entity.Pos.AsBlockPos.Y,
                                                                 worldAccess.Player.Entity.Pos.AsBlockPos.Z);
+            
             //prog.Use();            
             prog.ProjectionMatrix = rpi.CurrentProjectionMatrix;
             prog.ViewMatrix = rpi.CameraMatrixOriginf;

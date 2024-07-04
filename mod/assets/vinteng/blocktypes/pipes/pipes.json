@@ -21,6 +21,10 @@
 			}
 		}
 	},
+	"texturesByType": {
+		"*-item": { "pipe": { "base": "block/bronze" } },
+		"*": {}
+	},
 	"selectionBoxes":[
 		{ "x1": 0.375, "y1": 0, "z1": 0.375, "x2": 0.625, "y2": 0.3125, "z2": 0.625, "rotateX": 90, "rotateZ": 0 },
 		{ "x1": 0.375, "y1": 0, "z1": 0.375, "x2": 0.625, "y2": 0.3125, "z2": 0.625, "rotateX": 90, "rotateZ": 90 },

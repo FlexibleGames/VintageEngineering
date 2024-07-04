@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using VintageEngineering.Transport.Network;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -205,6 +206,11 @@ namespace VintageEngineering.Transport.API
                     {
                         bepb.OverridePipeConnectionFace(oppface, disconnectedSides[faceindex]);
                     }
+                    PipeNetworkManager pnm = Api.ModLoader.GetModSystem<PipeNetworkManager>(true);
+                    if (pnm != null)
+                    {
+                        pnm.OnPipeConnectionOverride(world, Pos, selection, disconnectedSides[faceindex]);
+                    }
                     //world.BlockAccessor.TriggerNeighbourBlockUpdate(Pos);
                     MarkPipeDirty(world, true);
                 }
@@ -393,11 +399,72 @@ namespace VintageEngineering.Transport.API
         /// BlockPos array should be all the block positions of the pipes in the network, not the connected machines.
         /// </summary>
         /// <param name="world">World Accessor</param>
-        /// <param name="pipenetwork">BlockPos array of all pipes in this network.</param>
+        /// <param name="pipenetwork">BlockPos array of all pipes in this network that have an insert connection.</param>
         public virtual void RebuildPushConnections(IWorldAccessor world, BlockPos[] pipenetwork)
         {
+            if (pipenetwork != null && pipenetwork.Length > 0)
+            {
+                if (pushConnections != null) pushConnections.Clear();
+                else pushConnections = new List<PipeConnection>();
 
+                foreach (BlockPos p in pipenetwork)
+                {
+                    BEPipeBase bep = world.BlockAccessor.GetBlockEntity(p) as BEPipeBase;
+                    if (bep == null) continue;
+                    for (int f = 0; f < 6; f++)
+                    {
+                        if (bep.insertionSides[f])
+                        {
+                            BlockFacing facing = ConvertIndexToFace(f);
+                            int dist = Pos.ManhattenDistance(p.AddCopy(facing));
+                            pushConnections.Add(new PipeConnection(
+                                p.AddCopy(facing), facing, dist));
+                        }
+                    }
+                }
+                if (pushConnections != null && pushConnections.Count > 1)
+                {
+                    pushConnections.Sort((x, y) => x.Distance.CompareTo(y.Distance)); 
+                }
+            }
         }
+        /// <summary>
+        /// Alter the pushConnection list strictly based on the given block position.
+        /// </summary>
+        /// <param name="world">World Accessor</param>
+        /// <param name="altered">Pipe BlockPos either added or removed.</param>
+        /// <param name="isRemove">True if removing pushConnections, otherwise false.</param>
+        public virtual void AlterPushConnections(IWorldAccessor world, BlockPos altered, bool isRemove = false)
+        {
+            BEPipeBase alteredpipe = world.BlockAccessor.GetBlockEntity(altered) as BEPipeBase;
+            if (alteredpipe == null) return;
+            for (int f = 0; f < 6; f++)
+            {
+                if (alteredpipe.insertionSides[f])
+                {
+                    PipeConnection con = new PipeConnection(
+                        altered.AddCopy(ConvertIndexToFace(f)),
+                        ConvertIndexToFace(f),
+                        Pos.ManhattenDistance(altered));
+                    if (isRemove)
+                    {
+                        if (pushConnections != null && pushConnections.Count > 0)
+                        { 
+                            pushConnections.Remove(con); 
+                        }
+                    }
+                    else
+                    {
+                        if (pushConnections == null)
+                        {
+                            pushConnections = new List<PipeConnection>();
+                        }
+                        pushConnections.Add(con);
+                    }
+                }
+            }
+        }
+            
         /// <summary>
         /// Called when a player overrides a pipe connection on a neighboring pipe.
         /// </summary>
@@ -479,7 +546,7 @@ namespace VintageEngineering.Transport.API
             //Shape shape = Api.Assets.TryGet(_shape.Base, true).ToObject<Shape>(null);                       
 
             if (_shape != null)
-            {
+            {                
                 (Api as ICoreClientAPI).Tesselator.TesselateShape(
                     Block,
                     (Api as ICoreClientAPI).TesselatorManager.GetCachedShape(_shape.Base),

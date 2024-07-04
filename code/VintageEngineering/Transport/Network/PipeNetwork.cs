@@ -19,6 +19,7 @@ namespace VintageEngineering.Transport.Network
         protected EnumPipeUse _networkPipeType;
         [ProtoMember(3)]
         protected List<BlockPos> _pipeBlockPositions;
+        protected bool _isSleeping;
 
         public long NetworkID
         { get { return _networkID; } set { _networkID = value; } }
@@ -33,6 +34,11 @@ namespace VintageEngineering.Transport.Network
         public List<BlockPos> PipeBlockPositions
         { get => _pipeBlockPositions; }
 
+        public bool IsSleeping => _isSleeping;
+
+        public void Wake() => _isSleeping = false;
+
+
         public PipeNetwork(long networkID, EnumPipeUse pipeType)
         {
             _networkID = networkID;
@@ -41,9 +47,11 @@ namespace VintageEngineering.Transport.Network
         }
 
         /// <summary>
-        /// Add a Pipe position to this network.
+        /// Add a Pipe position to this network.<br/>
+        /// Sets the network id for the pipes block entity at pos
         /// </summary>
         /// <param name="pos">Position to add</param>
+        /// <param name="world">World Accessor</param>
         /// <returns>True if successful, false if position already existed.</returns>
         public bool AddPipe(BlockPos pos, IWorldAccessor world)
         {
@@ -102,12 +110,25 @@ namespace VintageEngineering.Transport.Network
                 BEPipeBase pipebe = bacc.GetBlockEntity(pos) as BEPipeBase;
                 if (pipe == null || pipebe == null) { isValid = false; break; }
                 if (pipe.PipeUse != _networkPipeType) { isValid = false; break; }
-                if (pipebe.NetworkID != NetworkID) { isValid = false; }
+                if (pipebe.NetworkID != NetworkID) { isValid = false; break; }
             }
             return isValid;
         }
 
         public IEnumerable<BlockPos> GetPipeBlockPositions() { return _pipeBlockPositions; }
+
+        public void QuickUpdateNetwork(IWorldAccessor world, BlockPos altered, bool isRemove = false)
+        {
+            foreach (BlockPos pos in _pipeBlockPositions)
+            {
+                BEPipeBase bep = world.BlockAccessor.GetBlockEntity(pos) as BEPipeBase;
+                if (bep == null) continue;
+                if (bep.NumExtractionConnections > 0)
+                {
+                    bep.AlterPushConnections(world, altered, isRemove);
+                }
+            }
+        }
 
         /// <summary>
         /// Network changed in some way, iterate nodes to update all extraction nodes
@@ -115,7 +136,23 @@ namespace VintageEngineering.Transport.Network
         /// <param name="world">Required to update blocks and entities.</param>
         public void MarkNetworkDirty(IWorldAccessor world)
         {
+            List<BlockPos> insertpos = new List<BlockPos>();
+            List<BlockPos> extractpos = new List<BlockPos>();
 
+            foreach (BlockPos pos in _pipeBlockPositions)
+            {
+                if (world.BlockAccessor.GetChunkAtBlockPos(pos) == null) { continue; }
+                BEPipeBase bep = world.BlockAccessor.GetBlockEntity(pos) as BEPipeBase;
+                if (bep == null) continue;
+                if (bep.NumInsertionConnections > 0) insertpos.Add(pos);
+                if (bep.NumExtractionConnections > 0) extractpos.Add(pos);
+            }
+            foreach (BlockPos pos in extractpos)
+            {
+                BEPipeBase bep = world.BlockAccessor.GetBlockEntity(pos) as BEPipeBase;
+                if (bep == null) continue;
+                bep.RebuildPushConnections(world, insertpos.ToArray());
+            }
         }
     }
 }
