@@ -40,7 +40,10 @@
                     "*-west": 90
                 }
             }
-        ]
+        ],
+        "recipeMachineByType": {
+            "*-north": [ "kiln" ]
+        }
 	},
 	"creativeinventory": { "general": ["vekiln-north"], "terrain": ["*"], "mechanics": ["*"] },
 	"shapeByType": {

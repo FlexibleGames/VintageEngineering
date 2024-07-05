@@ -2,6 +2,8 @@
 using System.Runtime.CompilerServices;
 using VintageEngineering.Electrical.Systems;
 using VintageEngineering.Electrical.Systems.Catenary;
+using VintageEngineering.RecipeSystem;
+using VintageEngineering.RecipeSystem.Recipes;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
@@ -18,8 +20,8 @@ namespace VintageEngineering.Electrical
         /// What sort of Machine is this?
         /// <br>Valid Types: Consumer, Producer, Storage, Transformer, Toggle, Relay, Other</br>
         /// </summary>
-        public EnumElectricalEntityType ElectricalEntityType 
-        { 
+        public EnumElectricalEntityType ElectricalEntityType
+        {
             get
             {
                 return Enum.Parse<EnumElectricalEntityType>(this.Attributes["entitytype"].AsString("Other"));
@@ -55,9 +57,23 @@ namespace VintageEngineering.Electrical
         public override void OnLoaded(ICoreAPI api)
         {
             base.OnLoaded(api); // IMPORTANT base call sets wire anchors and functions
+
+            RegisterRecipeMachine(api);
         }
 
-        
+        private void RegisterRecipeMachine(ICoreAPI api)
+        {
+            if (api.Side != EnumAppSide.Client) return;
+
+            string[] recipeTypes = Attributes?["recipeMachine"]?.AsArray<string>();
+            if (recipeTypes == null || recipeTypes.Length == 0) return;
+
+            VERecipeRegistrySystem mod = api.ModLoader.GetModSystem<VERecipeRegistrySystem>(true);
+            if (mod == null) return;
+            foreach (string recipeType in recipeTypes) {
+                mod.RegisterRecipeMachine(recipeType, this);
+            }
+        }
 
         public override string GetPlacedBlockInfo(IWorldAccessor world, BlockPos pos, IPlayer forPlayer)
         {
@@ -70,8 +86,8 @@ namespace VintageEngineering.Electrical
             }
 
             if (wiredblock != null) // DEBUG information, TODO set a config value
-            { 
-                return outtext + Environment.NewLine + "Code: " + this.Code.ToString() + Environment.NewLine + wiredblock.GetNetworkInfo(); 
+            {
+                return outtext + Environment.NewLine + "Code: " + this.Code.ToString() + Environment.NewLine + wiredblock.GetNetworkInfo();
             }
             return base.GetPlacedBlockInfo(world, pos, forPlayer) + outtext;
         }
@@ -82,7 +98,7 @@ namespace VintageEngineering.Electrical
             {
                 return false; // only block if we can't interact via permissions with this block
             }
-            blockSel.Block = this;            
+            blockSel.Block = this;
             if (base.OnWireInteractionStart(world, byPlayer, blockSel)) return true;
             BlockEntity machEntity = world.BlockAccessor.GetBlockEntity(blockSel.Position);
             if (machEntity != null)
@@ -127,7 +143,7 @@ namespace VintageEngineering.Electrical
                 EnumElectricalPowerTier wiretier = Enum.Parse<EnumElectricalPowerTier>(wireitem.Attributes["powertier"].AsString());
                 if (blocktier != wiretier) return false;
             }
-            return true; 
+            return true;
         }
     }
 }

@@ -44,7 +44,10 @@
                     "*-west": 90
                 }
             }
-        ]
+        ],
+        "recipeMachineByType": {
+            "*-north": [ "mixer" ]
+        }
 	},
 	"creativeinventory": { "general": ["vemixer-north"], "terrain": ["*"], "mechanics": ["*"] },
 	"shapeByType": {

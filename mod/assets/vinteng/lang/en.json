@@ -186,6 +186,20 @@
 	"vinteng:item-vepipeupgrade-iron": "Iron Pipe Upgrade (Tier3)",
 	"vinteng:item-vepipeupgrade-cupronickel": "Cupronickel Pipe Upgrade (Tier4)",
 	"vinteng:item-vepipeupgrade-steel": "Steel Pipe Upgrade (Tier5)",
-	"vinteng:itemdesc-vepipeupgrade-*": "Pipe upgrade defines extraction rate and node features."
-
+	"vinteng:itemdesc-vepipeupgrade-*": "Pipe upgrade defines extraction rate and node features.",
+	"vinteng:in machine": " in machine ",
+	"vinteng:Industrially crushes into": "Industrially crushes into",
+	"vinteng:Industrially crushing": "Industrially crushing",
+	"vinteng:Presses into": "Presses into",
+	"vinteng:Pressing": "Pressing",
+	"vinteng:Splits into": "Splits into",
+	"vinteng:Splitting": "Splitting",
+	"vinteng:Saws into": "Saws into",
+	"vinteng:Sawing": "Sawing",
+	"vinteng:Extrudes into": "Extrudes into",
+	"vinteng:Extruding": "Extruding",
+	"vinteng:Industrially fires into": "Industrially fires into",
+	"vinteng:Industrially firing": "Industrially firing",
+	"vinteng:Industrially mixes into": "Industrially mixes into",
+	"vinteng:Industrially mixing": "Industrially mixing"
 }

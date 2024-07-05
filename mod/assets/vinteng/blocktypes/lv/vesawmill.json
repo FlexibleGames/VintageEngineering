@@ -41,7 +41,10 @@
                     "*-west": 90
                 }
             }
-        ]
+        ],
+        "recipeMachineByType": {
+            "*-north": [ "sawmill" ]
+        }
 	},
 	"creativeinventory": { "general": ["vesawmill-north"], "terrain": ["*"], "mechanics": ["*"] },
 	"shapeByType": {

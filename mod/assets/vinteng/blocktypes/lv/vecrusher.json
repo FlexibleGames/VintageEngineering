@@ -42,7 +42,10 @@
                     "*-west": 90
                 }
             }
-        ]
+        ],
+        "recipeMachineByType": {
+            "*-north": [ "crusher" ]
+        }
 	},
 	"creativeinventory": { "general": ["vecrusher-north"], "terrain": ["*"], "mechanics": ["*"] },
 	"shapeByType": {

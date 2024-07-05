@@ -70,6 +70,19 @@ namespace VintageEngineering.RecipeSystem.Recipes
             }
         }
 
+        public bool SatisfiesAsIngredient(int index, ItemStack inputStack, bool checkStacksize = true)
+        {
+            return Ingredients[index].SatisfiesAsIngredient(inputStack, checkStacksize);
+        }
+
+        public ItemStack GetResolvedInput(int index) {
+            return Ingredients[index].ResolvedItemstack;
+        }
+
+        public ItemStack GetResolvedOutput(int index) {
+            return Outputs[index].ResolvedItemstack;
+        }
+
         public RecipeGrinder Clone()
         {
             throw new NotImplementedException();

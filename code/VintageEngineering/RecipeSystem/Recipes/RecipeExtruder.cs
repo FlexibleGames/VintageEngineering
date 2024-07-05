@@ -76,6 +76,19 @@ namespace VintageEngineering.RecipeSystem.Recipes
             }
         }
 
+        public bool SatisfiesAsIngredient(int index, ItemStack inputStack, bool checkStacksize = true)
+        {
+            return Ingredients[index].SatisfiesAsIngredient(inputStack, checkStacksize);
+        }
+
+        public ItemStack GetResolvedInput(int index) {
+            return Ingredients[index].ResolvedItemstack;
+        }
+
+        public ItemStack GetResolvedOutput(int index) {
+            return Outputs[index].ResolvedItemstack;
+        }
+
         /// <summary>
         /// Checks the validity of given ingredient and "requires" item to this recipe.<br/>        
         /// </summary>        
@@ -86,24 +99,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
         {
             if (ingredient.Empty) return false; // no ingredient to even check, bounce
 
-            if (Ingredients[0].ResolvedItemstack != null)
-            {
-                // Satisfies call ignores fields not needed to test for equality, like stacksize.
-                if (!Ingredients[0].ResolvedItemstack.Satisfies(ingredient.Itemstack))
-                {
-                    if (!Ingredients[0].SatisfiesAsIngredient(ingredient.Itemstack, true))
-                    {
-                        return false;
-                    }
-                    return false;
-                }
-                // check stack sizes... 
-                if (ingredient.Itemstack.StackSize < Ingredients[0].ResolvedItemstack.StackSize) return false;
-            }
-            else
-            {
-                if (!Ingredients[0].SatisfiesAsIngredient(ingredient.Itemstack, true)) return false;
-            }
+            if (!Ingredients[0].SatisfiesAsIngredient(ingredient.Itemstack, true)) return false;
 
             if (Requires != null) // if this recipe requires something, we need to check for it in the requires slot
             {

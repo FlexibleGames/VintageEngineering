@@ -41,7 +41,10 @@
                     "*-west": 90
                 }
             }
-        ]
+        ],
+        "recipeMachineByType": {
+            "*-north": [ "metalpress" ]
+        }
 	},
 	"creativeinventory": { "general": ["vemetalpress-north"], "terrain": ["*"], "mechanics": ["*"] },
 	"shapeByType": {

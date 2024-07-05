@@ -41,7 +41,10 @@
                     "*-west": 90
                 }
             }
-        ]
+        ],
+        "recipeMachineByType": {
+            "*-north": [ "logsplitter" ]
+        }
 	},
 	"creativeinventory": { "general": ["velogsplitter-north"], "terrain": ["*"], "mechanics": ["*"] },
 	"shapeByType": {
