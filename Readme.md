@@ -39,6 +39,9 @@ Immersive Engineering has had over 80 contributers, I know a project like this i
 # Current Contributers
 Quentin (QPTech), Mister Andy Dandy(MAD), Rinly, DeathxxRenegade
 
+# Code Wizard Contributers
+bluelightning32
+
 **What can you help with?**
 - Models
 - Textures
