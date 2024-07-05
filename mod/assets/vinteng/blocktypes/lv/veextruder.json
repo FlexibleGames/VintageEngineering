@@ -41,7 +41,10 @@
                     "*-west": 90
                 }
             }
-        ]
+        ],
+        "recipeMachineByType": {
+            "*-north": [ "extruder" ]
+        }
 	},
 	"creativeinventory": { "general": ["veextruder-north"], "terrain": ["*"], "mechanics": ["*"] },
 	"shapeByType": {

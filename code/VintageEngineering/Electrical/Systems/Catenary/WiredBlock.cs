@@ -10,7 +10,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
 {
     /// <summary>
     /// Base object for a generic wire connectable block
-    /// <br>Impliments IWireAnchor</br>
+    /// <br>Implements IWireAnchor</br>
     /// </summary>
     public abstract class WiredBlock : Block, IWireAnchor
     {

@@ -74,5 +74,28 @@ namespace VintageEngineering.RecipeSystem.Recipes
         /// Typically of type VERecipeVariableOuput for VE variable-output recipes.
         /// </summary>
         IRecipeOutput[] Outputs { get; }
+
+        /// <summary>
+        /// Determines if the given item stack matches the recipe ingredient.
+        /// </summary>
+        /// <param name="index">A valid index in <see cref="Ingredients"/></param>
+        /// <param name="inputStack">The stack to match against the ingredient</param>
+        /// <param name="checkStacksize">Whether the stack size (number of items) should be considered in the comparison</param>
+        /// <returns>true if the inputStack matches</returns>
+        bool SatisfiesAsIngredient(int index, ItemStack inputStack, bool checkStacksize = true);
+
+        /// <summary>
+        ///  Gets the resolved item corresponding to an input ingredient.
+        /// </summary>
+        /// <param name="index">A valid index in <see cref="Ingredients"/></param>
+        /// <returns>resolved item, or null if the ingredient is a wildcard</returns>
+        ItemStack GetResolvedInput(int index);
+
+        /// <summary>
+        ///  Gets the resolved item corresponding to a recipe output.
+        /// </summary>
+        /// <param name="index">A valid index in <see cref="Outputs"/></param>
+        /// <returns>resolved item</returns>
+        ItemStack GetResolvedOutput(int index);
     }
 }

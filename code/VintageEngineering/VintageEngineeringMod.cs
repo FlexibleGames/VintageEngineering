@@ -6,6 +6,7 @@ using Vintagestory.API.Server;
 using VintageEngineering.Electrical;
 using VintageEngineering.Transport;
 using VintageEngineering.Transport.Pipes;
+using HarmonyLib;
 
 [assembly: ModInfo("VintageEngineering",
                     Authors = new string[] { "Flexible Games" },
@@ -18,21 +19,30 @@ namespace VintageEngineering
     {
         ICoreClientAPI capi;
         ICoreServerAPI sapi;
+        private Harmony harmony;
 
         public override void Start(ICoreAPI api)
         {
             base.Start(api);
+
+            string patchId = Mod.Info.ModID;
+            if (!Harmony.HasAnyPatches(patchId))
+            {
+                harmony = new Harmony(patchId);
+                harmony.PatchAll();
+            }
+
             if (api.Side == EnumAppSide.Client)
             {
                 capi = api as ICoreClientAPI;
             }
             else
             {
-                sapi = api as ICoreServerAPI;                
+                sapi = api as ICoreServerAPI;
             }
             RegisterItems(api);
             RegisterBlocks(api);
-            RegisterBlockEntities(api);            
+            RegisterBlockEntities(api);
         }
 
         public void RegisterItems(ICoreAPI api)
@@ -43,7 +53,7 @@ namespace VintageEngineering
         public void RegisterBlocks(ICoreAPI api)
         {
             // generic electric block, can be used for most machines
-            api.RegisterBlockClass("VEElectricBlock", typeof(ElectricBlock)); 
+            api.RegisterBlockClass("VEElectricBlock", typeof(ElectricBlock));
 
             // LVGenerator has neighbor side power distribution
             api.RegisterBlockClass("VELVGenerator", typeof(BlockLVGenerator));
@@ -73,6 +83,12 @@ namespace VintageEngineering
 
             api.RegisterBlockEntityClass("VEBEItemPipe", typeof(BEPipeItem));
             //api.RegisterBlockEntityClass("VEBEFluidPipe", typeof(BEPipeFluid));
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            harmony?.UnpatchAll(harmony.Id);
         }
     }
 
