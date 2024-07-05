@@ -157,6 +157,19 @@ namespace VintageEngineering.Transport.API
             dsc.Append(output);
         }
 
+        public virtual BlockPos[] GetPipeConnections()
+        {
+            List<BlockPos> connections = new List<BlockPos>();
+            for (int f=0; f < 6; f++)
+            {
+                if (connectionSides[f])
+                {
+                    connections.Add(Pos.AddCopy(ConvertIndexToFace(f)));
+                }
+            }
+            return connections.ToArray();
+        }
+
         public virtual bool OnPlayerRightClick(IWorldAccessor world, IPlayer player, BlockSelection selection)
         {
             int faceindex = selection.SelectionBoxIndex;
@@ -466,7 +479,8 @@ namespace VintageEngineering.Transport.API
         }
             
         /// <summary>
-        /// Called when a player overrides a pipe connection on a neighboring pipe.
+        /// Called when a player overrides a pipe connection on a neighboring pipe.<br/>
+        /// Bool value sets the disconnectedSides value for the given faceindex.
         /// </summary>
         /// <param name="faceindex">Face index to change.</param>
         public virtual void OverridePipeConnectionFace(int faceindex, bool newvalue)

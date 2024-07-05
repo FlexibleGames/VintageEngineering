@@ -190,21 +190,92 @@ namespace VintageEngineering.Transport.Network
         /// <summary>
         /// Merge Pipe Network net2 into net1.
         /// </summary>
-        /// <param name="world"></param>
-        /// <param name="net1id"></param>
-        /// <param name="net2id"></param>
+        /// <param name="world">World Accessor</param>
+        /// <param name="net1id">PipeNetwork to grow</param>
+        /// <param name="net2id">PipeNetwork to merge into net1</param>
         public void MergeNetworks(IWorldAccessor world, long net1id, long net2id)
         {
-
+            // Sanity check
+            if (!_pipeNetworks.ContainsKey(net2id) || !_pipeNetworks.ContainsKey(net1id)) return;
+            
+            foreach (BlockPos pos in _pipeNetworks[net2id].PipeBlockPositions)
+            {
+                // this also sets the Pipes NetworkID of the block entity
+                _pipeNetworks[net1id].AddPipe(pos, world);
+            }
+            _pipeNetworks[net2id].Clear();
+            _pipeNetworks.Remove(net2id);
         }
         /// <summary>
         /// Splits a network at the given BlockPos
         /// </summary>
-        /// <param name="world"></param>
-        /// <param name="pos"></param>
+        /// <param name="world">World Accessor</param>
+        /// <param name="pos">Pipe Block being removed.</param>
         public void SplitNetwork(IWorldAccessor world, BlockPos pos)
         {
             // check pipe connections for neighboring pipes
+            List<BlockPos> connectedpipes = new List<BlockPos>();
+
+            BEPipeBase bep = world.BlockAccessor.GetBlockEntity(pos) as BEPipeBase;
+            BlockPipeBase pipeblock = world.BlockAccessor.GetBlock(pos) as BlockPipeBase;
+            if (bep == null || pipeblock == null) return; // something is wrong
+
+            long splitid = bep.NetworkID;
+
+            for (int f = 0; f < 6; f++)
+            {
+                if (bep.ConnectionSides[f])
+                {
+                    connectedpipes.Add(pos.AddCopy(BEPipeBase.ConvertIndexToFace(f)));
+                    bep.OverridePipeConnectionFace(f, true); // disconnect the face to avoid false connections.
+                }
+            }
+            // connectedpipes now has a list of all the pipe block positions of new (potential) networks.
+            // the connections of the position passed in have also been disabled to prevent false connections.
+            if (connectedpipes.Count > 0)
+            {
+                foreach (BlockPos newnet in connectedpipes)
+                {
+                    // TODO all the stuff in here...
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns List of BlockPos of all the pipes connected to the given pos.
+        /// </summary>
+        /// <param name="world">World Accessor</param>
+        /// <param name="pos">Start Position to check from.</param>
+        /// <returns>List of BlockPos of all connected pipes.</returns>
+        public List<BlockPos> GetConnectedPipes(IWorldAccessor world, BlockPos pos)
+        {
+            List<BlockPos> connectedpipes = new List<BlockPos>();
+            List<BlockPos> pipestoprocess = new List<BlockPos>();
+
+            BEPipeBase bep = world.BlockAccessor.GetBlockEntity(pos) as BEPipeBase;
+
+            connectedpipes.Add(pos);
+            pipestoprocess.AddRange(bep.GetPipeConnections());
+
+            while (pipestoprocess.Count > 0)
+            {
+                List<BlockPos> nodestoadd = new List<BlockPos>();
+                foreach (BlockPos node in pipestoprocess)
+                {
+                    if (!connectedpipes.Contains(node))
+                    {
+                        connectedpipes.Add(node);
+                    }
+                    else continue;
+
+                    BEPipeBase pipe = world.BlockAccessor.GetBlockEntity(node) as BEPipeBase;
+                    if (pipe == null) continue; // sanity check
+                    nodestoadd.AddRange(pipe.GetPipeConnections());
+                }
+                pipestoprocess.Clear();
+                if (nodestoadd.Count > 0) pipestoprocess.AddRange(nodestoadd);
+            }
+            return connectedpipes;
         }
     }
 }

@@ -131,6 +131,15 @@ namespace VintageEngineering.Transport.Network
         }
 
         /// <summary>
+        /// Clear this network and any memory it may use.
+        /// </summary>
+        public void Clear()
+        {
+            _networkID = 0;
+            _pipeBlockPositions.Clear();
+        }
+
+        /// <summary>
         /// Network changed in some way, iterate nodes to update all extraction nodes
         /// </summary>
         /// <param name="world">Required to update blocks and entities.</param>
