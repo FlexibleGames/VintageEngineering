@@ -135,7 +135,7 @@ namespace VintageEngineering.Electrical
             {
                 electricpower = 0;
             }
-            this.MarkDirty();
+            this.MarkDirty(true);
         }
 
         public virtual ulong RatedPower(float dt, bool isInsert = false)

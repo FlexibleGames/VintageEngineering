@@ -318,6 +318,12 @@ namespace VintageEngineering.Electrical
             }
         }
 
+        public override void OnBlockPlaced(ItemStack byItemStack = null)
+        {
+            base.OnBlockPlaced(byItemStack);
+            MachineState = EnumBEState.Sleeping; // when first placed, a machine is on and not crafting.
+        }
+
         /// <summary>
         /// Returns Rotation depending on what direction this block is facing.<br/>
         /// north return 0, west return 90, south returns 180, east returns 270
