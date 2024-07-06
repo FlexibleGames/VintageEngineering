@@ -69,7 +69,7 @@ namespace VintageEngineering.Electrical
                 if (machineState != value)
                 {
                     machineState = value;
-                    StateChange();
+                    StateChanged();
                 }
             }
         }
@@ -400,9 +400,9 @@ namespace VintageEngineering.Electrical
         }
 
         /// <summary>
-        /// Override to define particles and animations when machine changes state.
+        /// Called after the machine state changes. Override to define particles and animations when machine changes state.
         /// </summary>
-        public virtual void StateChange()
+        protected virtual void StateChanged()
         {
         }
 

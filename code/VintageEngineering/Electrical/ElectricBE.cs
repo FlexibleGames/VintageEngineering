@@ -69,6 +69,7 @@ namespace VintageEngineering.Electrical
                 if (machineState != value)
                 {
                     machineState = value;
+                    StateChanged();
                 }
             }
         }
@@ -402,6 +403,13 @@ namespace VintageEngineering.Electrical
                 }
             }
             base.OnBlockUnloaded();
+        }
+
+        /// <summary>
+        /// Called after the machine state changes. Override to define particles and animations when machine changes state.
+        /// </summary>
+        protected virtual void StateChanged()
+        {
         }
 
         #region AttributeTrees
