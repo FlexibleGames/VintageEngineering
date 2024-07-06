@@ -19,18 +19,18 @@ namespace VintageEngineering.Electrical
     public abstract class ElectricBENoGUI : BlockEntity, IElectricalBlockEntity, IWireNetwork, IElectricalConnection
     {
         /// <summary>
-        /// Total power this Block Entity has
+        /// Total power this Block Entity has in its battery. Saved to disk in the entity.
         /// </summary>
         protected ulong electricpower = 0L;
 
         /// <summary>
-        /// Machine States are On, Off, and Sleeping<br/>
+        /// Machine States are On, Off, Paused, and Sleeping<br/>
         /// Saved with base ToTreeAttribute call.
         /// </summary>
         private EnumBEState machineState;
 
         /// <summary>
-        /// What Priority is this machine in the Electric Network its attached too?
+        /// What Priority is this machine in the Electric Network its attached too? Saved in base ElectricBE.
         /// </summary>
         protected int priority = 5;
 
@@ -58,7 +58,7 @@ namespace VintageEngineering.Electrical
         }
 
         /// <summary>
-        /// Machine States are On, Off, and Sleeping<br/>
+        /// Machine States are On, Off, Paused, and Sleeping<br/>
         /// Saved with base ToTreeAttribute call.
         /// </summary>
         public EnumBEState MachineState
@@ -74,95 +74,6 @@ namespace VintageEngineering.Electrical
             }
         }
 
-        public override void Initialize(ICoreAPI api)
-        {
-            base.Initialize(api);
-            if (electricConnections == null) electricConnections = new Dictionary<int, List<WireNode>>();
-            if (NetworkIDs == null) NetworkIDs = new Dictionary<int, long>();
-            if (NetworkIDs.Count > 0 && electricConnections.Count > 0 && api.Side == EnumAppSide.Server)
-            {
-                // lets try to add ourselves to the proper network
-                ElectricalNetworkManager nm = api.ModLoader.GetModSystem<ElectricalNetworkMod>(true).manager;
-                if (nm != null)
-                {
-                    foreach (KeyValuePair<int, long> networkpair in NetworkIDs)
-                    {
-                        if (networkpair.Value == 0)
-                        {
-                            NetworkIDs.Remove(networkpair.Key);
-                            continue; // part of a network but with id = 0 means a corrupted BE
-                        }
-                        if (base.Block is WiredBlock wiredBlock)
-                        {
-                            if (wiredBlock.WireAnchors == null) continue;
-                            WireNode node = wiredBlock.GetWireNodeInBlock(networkpair.Key).Copy();
-                            if (node == null) continue;
-                            node.blockPos = this.Pos; // extremely important that we add Block Position to this.
-                            nm.JoinNetwork(networkpair.Value, node, this);
-                        }
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Returns Rotation depending on what direction this block is facing.<br/>
-        /// north return 0, west return 90, south returns 180, east returns 270
-        /// </summary>
-        /// <returns>Rotate value</returns>
-        public int GetRotation()
-        {
-            RegistryObject block = this.Api.World.BlockAccessor.GetBlock(this.Pos);
-            string lastpart = block.LastCodePart(0); // "north", "east", "south", "west"
-            switch (lastpart)
-            {
-                case "north": return 0;
-                case "west": return 90;
-                case "south": return 180;
-                case "east": return 270;
-                default: return 0;
-            }
-        }
-
-        public virtual bool IsPlayerHoldingWire(IPlayer byPlayer, BlockSelection blockSel)
-        {
-            if (byPlayer.InventoryManager.ActiveHotbarSlot?.Itemstack?.Collectible?.FirstCodePart() == "catenary")
-            {
-                return true;
-            }
-            return false;
-        }
-
-        public override void OnBlockUnloaded()
-        {
-            if (Api.Side == EnumAppSide.Server)
-            {
-                ElectricalNetworkManager nm = Api.ModLoader.GetModSystem<ElectricalNetworkMod>(true).manager;
-                if (nm == null) return;
-                foreach (KeyValuePair<int, long> networkpair in NetworkIDs)
-                {
-                    if (base.Block is WiredBlock wiredBlock)
-                    {
-                        if (wiredBlock.WireAnchors == null) continue;
-                        
-                        WireNode node = wiredBlock.GetWireNodeInBlock(networkpair.Key).Copy();
-                        if (node == null) continue;
-                        node.blockPos = Pos;  // extremely important that we add Block Position to this.
-                        nm.LeaveNetwork(networkpair.Value, node, this);
-                    }
-                }
-            }
-            base.OnBlockUnloaded();
-        }
-
-        /// <summary>
-        /// Override to define particles and animations when machine changes state.
-        /// </summary>
-        public virtual void StateChange()
-        {
-
-        }
-
         #region IElectricBlockEntity
         public virtual ulong MaxPower
         {
@@ -176,6 +87,8 @@ namespace VintageEngineering.Electrical
             }
         }
 
+        public ulong CurrentPower => electricpower;
+
         public virtual ulong MaxPPS
         {
             get
@@ -187,8 +100,6 @@ namespace VintageEngineering.Electrical
                 return 0;
             }
         }
-
-        public ulong CurrentPower => electricpower;
 
         public virtual EnumElectricalEntityType ElectricalEntityType
         {
@@ -208,11 +119,11 @@ namespace VintageEngineering.Electrical
 
         public virtual bool IsPowerFull => CurrentPower == MaxPower;
 
+        public virtual int Priority { get => priority; set => priority = value; }
+
         public bool IsSleeping => machineState == EnumBEState.Sleeping;
 
         public bool IsEnabled => machineState != EnumBEState.Off;
-
-        public virtual int Priority => priority;
 
         public virtual void CheatPower(bool drain = false)
         {
@@ -256,7 +167,7 @@ namespace VintageEngineering.Electrical
             // pps at this point is the PPS from JSON multiplied by DeltaTime (fractional second timing).
             // NOT going to deal with fractinal amounts of power. So Rounding errors are expected.
 
-            if (pps == 0) pps = ulong.MaxValue; // PPS of 0 means NO LIMIT ***This would break recipes***
+            if (pps == 0) pps = ulong.MaxValue; // PPS of 0 means NO LIMIT ***This will break recipes***
 
             // PPS can't exceed the amount of power we have in this generator
             // i.e. we can't provide power we don't have
@@ -265,7 +176,7 @@ namespace VintageEngineering.Electrical
             if (pps >= powerWanted) // this will probably rarely fire.
             {
                 // PPS meets or exceeds power wanted, this machine can cover all power needs.
-                if (!simulate) electricpower -= powerWanted;                
+                if (!simulate) electricpower -= powerWanted;
                 this.MarkDirty(true);
                 return 0; // all power wanted was supplied
             }
@@ -277,6 +188,7 @@ namespace VintageEngineering.Electrical
                 return powerWanted - pps; // return powerWanted reduced by our PPS.
             }
         }
+
         public virtual ulong ReceivePower(ulong powerOffered, float dt, bool simulate = false)
         {
             if (MachineState == EnumBEState.Off || !CanReceivePower) return powerOffered; // machine is off, bounce.
@@ -364,19 +276,65 @@ namespace VintageEngineering.Electrical
             }
             this.MarkDirty(true);
         }
+        #endregion
 
-        public long GetNetworkID(int selectionIndex = 0)
+        public override void Initialize(ICoreAPI api)
         {
-            if (NetworkIDs == null)
+            base.Initialize(api);
+            if (electricConnections == null) electricConnections = new Dictionary<int, List<WireNode>>();
+            if (NetworkIDs == null) NetworkIDs = new Dictionary<int, long>();
+            if (NetworkIDs.Count > 0 && electricConnections.Count > 0 && api.Side == EnumAppSide.Server)
             {
-                NetworkIDs = new Dictionary<int, long>();
-                return 0;
+                // lets try to add ourselves to the proper network
+                ElectricalNetworkManager nm = api.ModLoader.GetModSystem<ElectricalNetworkMod>(true).manager;
+                if (nm != null)
+                {
+                    foreach (KeyValuePair<int, long> networkpair in NetworkIDs)
+                    {
+                        if (networkpair.Value == 0)
+                        {
+                            NetworkIDs.Remove(networkpair.Key);
+                            continue; // part of a network but with id = 0 means a corrupted BE
+                        }
+                        if (base.Block is WiredBlock wiredBlock)
+                        {
+                            /* //Example code to CHUNK LOAD the chunk column at this block position...
+                            int chunkx = this.Pos.X / GlobalConstants.ChunkSize;
+                            int chunkz = this.Pos.Z / GlobalConstants.ChunkSize;
+                            (api as ICoreServerAPI).WorldManager.LoadChunkColumnPriority(chunkx, chunkz, new ChunkLoadOptions { KeepLoaded = true });
+
+                            //Call to REMOVE the CHUNK LOAD
+                            (api as ICoreServerAPI).WorldManager.UnloadChunkColumn(chunkx, chunkz);
+                            */
+
+                            if (wiredBlock.WireAnchors == null) continue;
+                            WireNode node = wiredBlock.GetWireNodeInBlock(networkpair.Key).Copy();
+                            if (node == null) continue;
+                            node.blockPos = this.Pos; // extremely important that we add Block Position to this.
+                            nm.JoinNetwork(networkpair.Value, node, this);
+                        }
+                    }
+                }
             }
-            if (NetworkIDs.Count == 0) return 0;
+        }
 
-            if (NetworkIDs.ContainsKey(selectionIndex)) return NetworkIDs[selectionIndex];
-
-            return 0;
+        /// <summary>
+        /// Returns Rotation depending on what direction this block is facing.<br/>
+        /// north return 0, west return 90, south returns 180, east returns 270
+        /// </summary>
+        /// <returns>Rotate value</returns>
+        public int GetRotation()
+        {
+            RegistryObject block = this.Api.World.BlockAccessor.GetBlock(this.Pos);
+            string lastpart = block.LastCodePart(0); // "north", "east", "south", "west"
+            switch (lastpart)
+            {
+                case "north": return 0;
+                case "west": return 90;
+                case "south": return 180;
+                case "east": return 270;
+                default: return 0;
+            }
         }
 
         public virtual string GetMachineHUDText()
@@ -391,22 +349,8 @@ namespace VintageEngineering.Electrical
                 default: onOff = "Error"; break;
             }
 
-            return $"{onOff} | {Lang.Get("vinteng:gui-word-power")}: {CurrentPower:N0}/{MaxPower:N0}{System.Environment.NewLine}{Lang.Get("vinteng:gui-machine-pps")}{MaxPPS}";
+            return $"{onOff} | {Lang.Get("vinteng:gui-word-power")}: {CurrentPower:N0}/{MaxPower:N0}{System.Environment.NewLine}{Lang.Get("vinteng:gui-machine-pps")} : {MaxPPS}";
         }
-
-        public bool SetNetworkID(long networkID, int selectionIndex = 0)
-        {
-            if (NetworkIDs == null) NetworkIDs = new Dictionary<int, long>();
-            if (NetworkIDs.ContainsKey(selectionIndex) && NetworkIDs[selectionIndex] != networkID)
-            {
-                NetworkIDs[selectionIndex] = networkID;
-                return true;
-            }
-            NetworkIDs.Add(selectionIndex, networkID);
-            this.MarkDirty(true);
-            return true;
-        }
-        #endregion
 
         public virtual string GetNetworkInfo()
         {
@@ -424,6 +368,43 @@ namespace VintageEngineering.Electrical
             return stringBuilder.ToString();
         }
 
+        public virtual bool IsPlayerHoldingWire(IPlayer byPlayer, BlockSelection blockSel)
+        {
+            if (byPlayer.InventoryManager.ActiveHotbarSlot?.Itemstack?.Collectible?.FirstCodePart() == "catenary")
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public override void OnBlockUnloaded()
+        {
+            if (Api.Side == EnumAppSide.Server)
+            {
+                ElectricalNetworkManager nm = Api.ModLoader.GetModSystem<ElectricalNetworkMod>(true).manager;
+                if (nm == null) return;
+                foreach (KeyValuePair<int, long> networkpair in NetworkIDs)
+                {
+                    if (base.Block is WiredBlock wiredBlock)
+                    {
+                        if (wiredBlock.WireAnchors == null) continue;
+                        
+                        WireNode node = wiredBlock.GetWireNodeInBlock(networkpair.Key).Copy();
+                        if (node == null) continue;
+                        node.blockPos = this.Pos;  // extremely important that we add Block Position to this.
+                        nm.LeaveNetwork(networkpair.Value, node, this);
+                    }
+                }
+            }
+            base.OnBlockUnloaded();
+        }
+
+        /// <summary>
+        /// Override to define particles and animations when machine changes state.
+        /// </summary>
+        public virtual void StateChange()
+        {
+        }
 
         #region AttributeTrees
         public override void ToTreeAttributes(ITreeAttribute tree)
@@ -461,6 +442,35 @@ namespace VintageEngineering.Electrical
             {
                 NetworkIDs = new Dictionary<int, long>();
             }            
+        }
+        #endregion
+
+        #region IWireNetwork
+        public bool SetNetworkID(long networkID, int selectionIndex = 0)
+        {
+            if (NetworkIDs == null) NetworkIDs = new Dictionary<int, long>();
+            if (NetworkIDs.ContainsKey(selectionIndex) && NetworkIDs[selectionIndex] != networkID)
+            {
+                NetworkIDs[selectionIndex] = networkID;
+                return true;
+            }
+            NetworkIDs.Add(selectionIndex, networkID);
+            this.MarkDirty(true);
+            return true;
+        }
+
+        public long GetNetworkID(int selectionIndex = 0)
+        {
+            if (NetworkIDs == null)
+            {
+                NetworkIDs = new Dictionary<int, long>();
+                return 0;
+            }
+            if (NetworkIDs.Count == 0) return 0;
+
+            if (NetworkIDs.ContainsKey(selectionIndex)) return NetworkIDs[selectionIndex];
+
+            return 0;
         }
         #endregion
     }
