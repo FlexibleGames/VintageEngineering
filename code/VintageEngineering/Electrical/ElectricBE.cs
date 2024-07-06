@@ -404,13 +404,6 @@ namespace VintageEngineering.Electrical
             base.OnBlockUnloaded();
         }
 
-        /// <summary>
-        /// Called when changing MachineState. Override to trigger animations, GUI updates, and other fancy things.
-        /// </summary>
-        public virtual void StateChange(EnumBEState newState = EnumBEState.Sleeping)
-        {
-        }
-
         #region AttributeTrees
         public override void ToTreeAttributes(ITreeAttribute tree)
         {

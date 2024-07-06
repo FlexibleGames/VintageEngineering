@@ -164,7 +164,7 @@ namespace VintageEngineering
                 if (InputSlot.Empty || ProgramSlot.Empty)
                 {
                     isCrafting = false;
-                    StateChange(EnumBEState.Sleeping);
+                    SetState(EnumBEState.Sleeping);
                     currentRecipe = null;
                     recipePowerApplied = 0;
                 }
@@ -198,9 +198,9 @@ namespace VintageEngineering
                 isCrafting = false;
                 recipeClayNeeded = 0;
                 recipeMaxPowerNeeded = 0;
-                StateChange(EnumBEState.Sleeping);
+                SetState(EnumBEState.Sleeping);
                 return false;
-            }            
+            }
 
             if (!ProgramSlot.Itemstack.Collectible.Code.Path.Contains("vecncprogram"))
             {
@@ -215,7 +215,7 @@ namespace VintageEngineering
                         recipeMaxPowerNeeded = voxels * recipePowerPerVoxel;
                         recipeClayNeeded = (int)(voxels / 25);
                         recipeClayNeeded = Math.Max(1, recipeClayNeeded);
-                        StateChange(EnumBEState.On);
+                        SetState(EnumBEState.On);
                         break;
                     }
                 }
@@ -233,16 +233,16 @@ namespace VintageEngineering
                     // cncprogram is blank
                     currentRecipe = null;
                     isCrafting = false;
-                    StateChange(EnumBEState.Sleeping);
+                    SetState(EnumBEState.Sleeping);
                     return false;
                 }
                 else
                 {
-                    // cncprogram is encoded, time to parse what it has... 
+                    // cncprogram is encoded, time to parse what it has...
                     // not yet implemented
                     currentRecipe = null;
                     isCrafting = false;
-                    StateChange(EnumBEState.Sleeping);
+                    SetState(EnumBEState.Sleeping);
                     return false;
                 }
             }
@@ -442,7 +442,7 @@ namespace VintageEngineering
 
                         if (!FindMatchingRecipe())
                         {
-                            StateChange(EnumBEState.Sleeping);                            
+                            SetState(EnumBEState.Sleeping);
                             isCrafting = false;
                         }
                         recipePowerApplied = 0;
@@ -475,7 +475,7 @@ namespace VintageEngineering
             if (!inventory[1].Empty) FindMatchingRecipe();
         }
 
-        public override void StateChange(EnumBEState newstate)
+        protected virtual void SetState(EnumBEState newstate)
         {
             MachineState = newstate;
 
@@ -531,11 +531,11 @@ namespace VintageEngineering
             {
                 if (IsEnabled) // we're enabled, we need to turn off
                 {
-                    StateChange(EnumBEState.Off);
+                    SetState(EnumBEState.Off);
                 }
                 else
                 {
-                    StateChange(isCrafting ? EnumBEState.On : EnumBEState.Sleeping);
+                    SetState(isCrafting ? EnumBEState.On : EnumBEState.Sleeping);
                 }
                 MarkDirty(true, null);
             }
@@ -569,7 +569,7 @@ namespace VintageEngineering
             FindMatchingRecipe();
             if (Api != null && Api.Side == EnumAppSide.Client)
             {
-                StateChange(MachineState);
+                SetState(MachineState);
                 if (this.clientDialog != null && clientDialog.IsOpened())
                 {
                     clientDialog.Update(RecipeProgress, CurrentPower, currentRecipe);

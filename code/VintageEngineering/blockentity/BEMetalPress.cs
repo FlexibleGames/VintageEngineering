@@ -145,7 +145,7 @@ namespace VintageEngineering
                 if (InputSlot.Empty)
                 {
                     isCrafting = false;
-                    StateChange(EnumBEState.Sleeping);                  
+                    SetState(EnumBEState.Sleeping);
                     currentPressRecipe = null;
                     recipePowerApplied = 0;
                 }
@@ -322,7 +322,7 @@ namespace VintageEngineering
             {
                 currentPressRecipe = null;
                 isCrafting = false;
-                StateChange(EnumBEState.Sleeping);                
+                SetState(EnumBEState.Sleeping);
                 return false;
             }
 
@@ -338,13 +338,13 @@ namespace VintageEngineering
                 {
                     currentPressRecipe = mprecipe.Clone();
                     isCrafting = true;
-                    StateChange(EnumBEState.On);
+                    SetState(EnumBEState.On);
                     return true;
                 }
             }
             currentPressRecipe = null;
             isCrafting = false;
-            StateChange(EnumBEState.Sleeping);
+            SetState(EnumBEState.Sleeping);
             return false;
         }
 
@@ -460,7 +460,7 @@ namespace VintageEngineering
                     else if (!IsCrafting) // machine isn't crafting
                     {
                         // enabled but not crafting means we have no valid recipe
-                        StateChange(EnumBEState.Sleeping); // go to sleep
+                        SetState(EnumBEState.Sleeping); // go to sleep
                     }
                     if (RecipeProgress >= 1f)
                     {
@@ -588,7 +588,7 @@ namespace VintageEngineering
 
                         if (!FindMatchingRecipe())
                         {
-                            StateChange(EnumBEState.Sleeping);
+                            SetState(EnumBEState.Sleeping);
                             isCrafting = false;                            
                         }
                         recipePowerApplied = 0;
@@ -621,7 +621,7 @@ namespace VintageEngineering
             if (!inventory[0].Empty) FindMatchingRecipe();
         }
 
-        public override void StateChange(EnumBEState newstate)
+        protected virtual void SetState(EnumBEState newstate)
         {                  
             MachineState = newstate;
 
@@ -677,11 +677,11 @@ namespace VintageEngineering
             {
                 if (IsEnabled) // we're enabled, we need to turn off
                 {
-                    StateChange(EnumBEState.Off);
+                    SetState(EnumBEState.Off);
                 }
                 else
                 {
-                    StateChange(isCrafting ? EnumBEState.On : EnumBEState.Sleeping);
+                    SetState(isCrafting ? EnumBEState.On : EnumBEState.Sleeping);
                 }
                 MarkDirty(true, null);
             }
@@ -716,7 +716,7 @@ namespace VintageEngineering
             FindMatchingRecipe();
             if (Api != null && Api.Side == EnumAppSide.Client)
             {
-                StateChange(MachineState);
+                SetState(MachineState);
                 if (this.clientDialog != null && clientDialog.IsOpened())
                 {
                     clientDialog.Update(RecipeProgress, CurrentPower, currentPressRecipe);

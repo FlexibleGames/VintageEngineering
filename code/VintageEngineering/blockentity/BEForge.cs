@@ -181,13 +181,13 @@ namespace VintageEngineering
             if (heatingBlock)
             {
                 isHeating = true;
-                StateChange(EnumBEState.On);
+                SetState(EnumBEState.On);
                 return true;
             }
             if (InputSlot.Empty)
             {
                 isHeating = false;
-                StateChange(EnumBEState.Sleeping);
+                SetState(EnumBEState.Sleeping);
                 return false;
             }
             isHeating = false;
@@ -208,14 +208,14 @@ namespace VintageEngineering
                             if (CurrentTemp < workable)
                             {
                                 isHeating = true;
-                                StateChange(EnumBEState.On);
+                                SetState(EnumBEState.On);
                                 return true;
                             }
                         }
                         else // if (CurrentTemp < (_cproperties.MeltingPoint / 2) + 50) // an extra 50 degrees
                         {
                             _currentTempGoal = (_cproperties.MeltingPoint / 2) + 50;
-                            StateChange(EnumBEState.On);
+                            SetState(EnumBEState.On);
                             isHeating = true;
                             return true;
                         }
@@ -224,7 +224,7 @@ namespace VintageEngineering
                     {
                         _currentTempGoal = tempGoal;
                         isHeating = true;
-                        StateChange(EnumBEState.On);
+                        SetState(EnumBEState.On);
                         return true;
                     }
                 }
@@ -240,7 +240,7 @@ namespace VintageEngineering
                     {
                         _currentTempGoal = workable;
                         isHeating = true;
-                        StateChange(EnumBEState.On);
+                        SetState(EnumBEState.On);
                         return true;
                     }
                 }
@@ -250,7 +250,7 @@ namespace VintageEngineering
                     // whatever we have it can't be heated in this mode.
                     _currentTempGoal = 0;
                     isHeating = false;
-                    StateChange(EnumBEState.Sleeping);
+                    SetState(EnumBEState.Sleeping);
                     return false;
                 }
             }
@@ -258,12 +258,12 @@ namespace VintageEngineering
             {
                 _currentTempGoal = tempGoal;
                 isHeating = true;
-                StateChange(EnumBEState.On);
+                SetState(EnumBEState.On);
                 return true;
             }
             _currentTempGoal = 0;
             isHeating = false;            
-            StateChange(EnumBEState.Sleeping);
+            SetState(EnumBEState.Sleeping);
             return false;
         }
 
@@ -398,7 +398,7 @@ namespace VintageEngineering
             FindMatchingRecipe();
         }
 
-        public override void StateChange(EnumBEState newstate)
+        protected virtual void SetState(EnumBEState newstate)
         {
             //if (MachineState == newstate) return; // no change, nothing to see here.            
             MachineState = newstate;
@@ -693,10 +693,10 @@ namespace VintageEngineering
             base.OnReceivedClientPacket(player, packetid, data);
             if (packetid == 1002) // Enable Button
             {
-                if (IsEnabled) StateChange(EnumBEState.Off); // turn off
+                if (IsEnabled) SetState(EnumBEState.Off); // turn off
                 else
                 {
-                    StateChange((IsCrafting || IsHeating) ? EnumBEState.On : EnumBEState.Sleeping);
+                    SetState((IsCrafting || IsHeating) ? EnumBEState.On : EnumBEState.Sleeping);
                 }
                 MarkDirty(true, null);
             }
@@ -748,7 +748,7 @@ namespace VintageEngineering
                     InputSlot.Itemstack, currentItemTemp, true);
             }
 
-            if (Api != null && Api.Side == EnumAppSide.Client) { StateChange(MachineState); }
+            if (Api != null && Api.Side == EnumAppSide.Client) { SetState(MachineState); }
             if (clientDialog != null)
             {
                 clientDialog.Update(RecipeProgress, CurrentPower, CurrentTemp, _currentTempGoal, tempGoal);

@@ -192,7 +192,7 @@ namespace VintageEngineering
                 recipePowerApplied = 0;
                 isHeating = false;
                 isCrafting = false;
-                StateChange(EnumBEState.Sleeping);
+                SetState(EnumBEState.Sleeping);
                 return false;
             }
 
@@ -210,7 +210,7 @@ namespace VintageEngineering
                     {
                         if (currentTemp < _cproperties.MeltingPoint) isHeating = true;
                         else isCrafting = true;
-                        StateChange(EnumBEState.On);
+                        SetState(EnumBEState.On);
                         return true;
                     }
                 }
@@ -226,7 +226,7 @@ namespace VintageEngineering
                     currentRecipe = mprecipe;
                     if (mprecipe.RequiresTemp > currentTemp) isHeating = true;
                     else isCrafting = true;
-                    StateChange(EnumBEState.On);
+                    SetState(EnumBEState.On);
                     return true;
                 }
             }
@@ -235,7 +235,7 @@ namespace VintageEngineering
             isHeating = false;
             _burntimeelapsed = 0f;
             recipePowerApplied = 0;
-            StateChange(EnumBEState.Sleeping);
+            SetState(EnumBEState.Sleeping);
             return false;
         }
 
@@ -431,7 +431,7 @@ namespace VintageEngineering
                     {                        
                         isCrafting = false;
                         isHeating = false;
-                        StateChange(EnumBEState.Sleeping);
+                        SetState(EnumBEState.Sleeping);
                     }
                     _burntimeelapsed = 0;
                     recipePowerApplied = 0;                    
@@ -441,7 +441,7 @@ namespace VintageEngineering
             this.MarkDirty(true, null);
         }
 
-        public override void StateChange(EnumBEState newstate)
+        protected virtual void SetState(EnumBEState newstate)
         {
             //if (MachineState == newstate) return; // no change, nothing to see here.            
             MachineState = newstate;
@@ -520,10 +520,10 @@ namespace VintageEngineering
             base.OnReceivedClientPacket(player, packetid, data);
             if (packetid == 1002) // Enable Button
             {
-                if (IsEnabled) StateChange(EnumBEState.Off); // turn off
+                if (IsEnabled) SetState(EnumBEState.Off); // turn off
                 else
                 {
-                    StateChange((IsCrafting || IsHeating) ? EnumBEState.On : EnumBEState.Sleeping);
+                    SetState((IsCrafting || IsHeating) ? EnumBEState.On : EnumBEState.Sleeping);
                 }
                 MarkDirty(true, null);
             }
@@ -562,7 +562,7 @@ namespace VintageEngineering
             environmentTemp = tree.GetFloat("worldtemp", 20);
             currentTemp = tree.GetFloat("currenttemp", environmentTemp);
 
-            if (Api != null && Api.Side == EnumAppSide.Client) { StateChange(MachineState); }
+            if (Api != null && Api.Side == EnumAppSide.Client) { SetState(MachineState); }
             if (clientDialog != null)
             {
                 clientDialog.Update(RecipeProgress, CurrentPower, currentTemp, currentRecipe, _cproperties);

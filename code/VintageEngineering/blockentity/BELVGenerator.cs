@@ -116,11 +116,11 @@ namespace VintageEngineering
                 {
                     sleepTimer += 5; // ensure the machine gets a full upate next tick
                     if (fuelBurnTime == 0) CanDoBurn(); // update burn time if we have no burn time left.
-                    StateChange(EnumBEState.On);
+                    SetState(EnumBEState.On);
                 }
                 else
                 {
-                    StateChange(EnumBEState.Sleeping);
+                    SetState(EnumBEState.Sleeping);
                 }
             }
             base.Block = this.Api.World.BlockAccessor.GetBlock(this.Pos);
@@ -143,7 +143,7 @@ namespace VintageEngineering
             return outtext + crafting;
         }
 
-        public override void StateChange(EnumBEState newstate)
+        protected virtual void SetState(EnumBEState newstate)
         {              
             MachineState = newstate;
 
@@ -197,7 +197,7 @@ namespace VintageEngineering
                     if (fuelBurnTime > 0f || genTemp >= tempToGen) // now will generate additional power as long as it's hot enough.
                     {
                         // we have space for power AND we have fuel
-                        StateChange(EnumBEState.On); // turn it on!
+                        SetState(EnumBEState.On); // turn it on!
                         genTemp = ChangeTemperature(genTemp, maxTemp, deltatime);
                         fuelBurnTime -= deltatime; // burn!
                         if (fuelBurnTime <= 0f) 
@@ -219,7 +219,7 @@ namespace VintageEngineering
                     {
                         // we have space for power and no burn time
                         if (genTemp != 20f) genTemp = ChangeTemperature(genTemp, 20f, deltatime);
-                        StateChange(EnumBEState.Sleeping); // go to sleep... zzzz
+                        SetState(EnumBEState.Sleeping); // go to sleep... zzzz
                         CanDoBurn(); // check for fuel for the next tick
                     }
                 }
@@ -227,12 +227,12 @@ namespace VintageEngineering
                 {
                     // power is full
                     if (genTemp != 20f) genTemp = ChangeTemperature(genTemp, 20f, deltatime); // cool it down
-                    StateChange(EnumBEState.Sleeping); // go to sleep... zzzz
+                    SetState(EnumBEState.Sleeping); // go to sleep... zzzz
                 }
                 prevGenTemp = genTemp;
                 if ((faceHasMachine[0] || faceHasMachine[1] || faceHasMachine[2] || faceHasMachine[3]) && CurrentPower > 0)
                 {
-                    if (GiveNeighborsPower(deltatime)) StateChange(EnumBEState.On);
+                    if (GiveNeighborsPower(deltatime)) SetState(EnumBEState.On);
                 }
                 MarkDirty(true, null);
             }
@@ -256,7 +256,7 @@ namespace VintageEngineering
                 {
                     FuelStack = null;
                 }
-                StateChange(EnumBEState.On); // ensure we're on!
+                SetState(EnumBEState.On); // ensure we're on!
                 FuelSlot.MarkDirty();
                 MarkDirty(true);
             }
@@ -440,7 +440,7 @@ namespace VintageEngineering
             fuelBurnTime = tree.GetFloat("fuelBurnTime", 0);
             if (Api != null && Api.Side == EnumAppSide.Client)
             {
-                StateChange(MachineState); 
+                SetState(MachineState);
                 if (this.clientDialog != null) clientDialog.Update(genTemp, fuelBurnTime, CurrentPower);
                 MarkDirty(true, null);
             }

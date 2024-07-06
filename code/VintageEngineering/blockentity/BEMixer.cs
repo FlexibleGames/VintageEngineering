@@ -220,7 +220,7 @@ namespace VintageEngineering
             {
                 currentRecipe = null;                
                 isCrafting = false;
-                StateChange(EnumBEState.Sleeping);
+                SetState(EnumBEState.Sleeping);
                 return false;
             }
 
@@ -233,14 +233,14 @@ namespace VintageEngineering
                 {
                     currentRecipe = mrecipe;
                     isCrafting = true;
-                    StateChange(EnumBEState.On);
+                    SetState(EnumBEState.On);
                     return true;
                 }
             }
 
             isCrafting = false;
             recipePowerApplied = 0;
-            StateChange(EnumBEState.Sleeping);
+            SetState(EnumBEState.Sleeping);
             return false;
         }
         #endregion
@@ -287,7 +287,7 @@ namespace VintageEngineering
                     
                     if (!FindMatchingRecipe())
                     {
-                        StateChange(EnumBEState.Sleeping);
+                        SetState(EnumBEState.Sleeping);
                         isCrafting = false;
                     }
                     recipePowerApplied = 0;
@@ -297,7 +297,7 @@ namespace VintageEngineering
             }
         }
 
-        public override void StateChange(EnumBEState newstate)
+        protected virtual void SetState(EnumBEState newstate)
         {
             MachineState = newstate;
 
@@ -375,10 +375,10 @@ namespace VintageEngineering
             base.OnReceivedClientPacket(player, packetid, data);
             if (packetid == 1002) // Enable Button
             {
-                if (IsEnabled) StateChange(EnumBEState.Off); // turn off
+                if (IsEnabled) SetState(EnumBEState.Off); // turn off
                 else
                 {
-                    StateChange(IsCrafting ? EnumBEState.On : EnumBEState.Sleeping);
+                    SetState(IsCrafting ? EnumBEState.On : EnumBEState.Sleeping);
                 }
                 MarkDirty(true, null);
             }
@@ -413,7 +413,7 @@ namespace VintageEngineering
             basinTemperature = tree.GetFloat("basintemp", 20f);
             recipePowerCostTotal = (ulong)(tree.GetLong("recipepowercosttotal"));            
             FindMatchingRecipe();
-            if (Api != null && Api.Side == EnumAppSide.Client) { StateChange(MachineState); }
+            if (Api != null && Api.Side == EnumAppSide.Client) { SetState(MachineState); }
             if (clientDialog != null && clientDialog.IsOpened())
             {
                 clientDialog.Update(RecipeProgress, CurrentPower, currentRecipe);

@@ -105,7 +105,7 @@ namespace VintageEngineering
                     isCrafting = false;
                     currentRecipe = null;
                     recipePowerApplied = 0;
-                    StateChange(EnumBEState.Sleeping);
+                    SetState(EnumBEState.Sleeping);
                 }
                 else
                 {
@@ -154,7 +154,7 @@ namespace VintageEngineering
             {
                 currentRecipe = null;
                 isCrafting = false;
-                StateChange(EnumBEState.Sleeping);
+                SetState(EnumBEState.Sleeping);
                 return false;
             }
 
@@ -169,14 +169,14 @@ namespace VintageEngineering
                 {
                     currentRecipe = mprecipe;
                     isCrafting = true;
-                    StateChange(EnumBEState.On);
+                    SetState(EnumBEState.On);
                     return true;
                 }
             }
             currentRecipe = null;
             isCrafting = false;
             recipePowerApplied = 0;
-            StateChange(EnumBEState.Sleeping);
+            SetState(EnumBEState.Sleeping);
             return false;
         }
         #endregion
@@ -208,7 +208,7 @@ namespace VintageEngineering
                     recipePowerApplied += (ulong)Math.Round(powerpertick);
                     electricpower -= (ulong)Math.Round(powerpertick);
                 }
-                else if (!isCrafting) StateChange(EnumBEState.Sleeping);
+                else if (!isCrafting) SetState(EnumBEState.Sleeping);
                 else if (RecipeProgress >= 1f)
                 {
                     // recipe crafting complete
@@ -327,7 +327,7 @@ namespace VintageEngineering
 
                     if (InputSlot.Empty || !FindMatchingRecipe())
                     {
-                        StateChange(EnumBEState.Sleeping);
+                        SetState(EnumBEState.Sleeping);
                         isCrafting = false;
                     }
                     recipePowerApplied = 0;
@@ -337,7 +337,7 @@ namespace VintageEngineering
             }
         }
 
-        public override void StateChange(EnumBEState newstate)
+        protected virtual void SetState(EnumBEState newstate)
         {               
             MachineState = newstate;
 
@@ -413,10 +413,10 @@ namespace VintageEngineering
             base.OnReceivedClientPacket(player, packetid, data);
             if (packetid == 1002) // Enable Button
             {
-                if (IsEnabled) StateChange(EnumBEState.Off); // turn off
+                if (IsEnabled) SetState(EnumBEState.Off); // turn off
                 else
                 {
-                    StateChange(IsCrafting ? EnumBEState.On : EnumBEState.Sleeping);
+                    SetState(IsCrafting ? EnumBEState.On : EnumBEState.Sleeping);
                 }
                 MarkDirty(true, null);
             }
@@ -447,7 +447,7 @@ namespace VintageEngineering
             isCrafting = tree.GetBool("iscrafting", false);
             if (!inv[0].Empty) FindMatchingRecipe();
 
-            if (Api != null && Api.Side == EnumAppSide.Client) { StateChange(MachineState); }
+            if (Api != null && Api.Side == EnumAppSide.Client) { SetState(MachineState); }
 
             if (clientDialog != null && clientDialog.IsOpened())
             {

@@ -141,7 +141,7 @@ namespace VintageEngineering
                     isCrafting = false;
                     currentRecipe = null;
                     recipePowerApplied = 0;
-                    StateChange(EnumBEState.Sleeping);
+                    SetState(EnumBEState.Sleeping);
                 }
                 else
                 {
@@ -208,7 +208,7 @@ namespace VintageEngineering
                 crushingProperties = null;
                 nuggetType = null;
                 isCrafting = false;
-                StateChange(EnumBEState.Sleeping);
+                SetState(EnumBEState.Sleeping);
                 return false;
             }
 
@@ -230,7 +230,7 @@ namespace VintageEngineering
                         crushPowerCostTotal = (ulong)(crushingPowerCost * 2);
                     }
                     isCrafting = true;
-                    StateChange(EnumBEState.On);
+                    SetState(EnumBEState.On);
                     return true;
                 }
                 else
@@ -248,10 +248,10 @@ namespace VintageEngineering
                     crushingProperties = InputSlot.Itemstack.Collectible.CrushingProps.Clone();
                     if (crushPowerCostTotal == 0)
                     { 
-                        crushPowerCostTotal = (ulong)(crushingPowerCost * (crushingProperties.HardnessTier == 0 ? 1 : crushingProperties.HardnessTier)); 
+                        crushPowerCostTotal = (ulong)(crushingPowerCost * (crushingProperties.HardnessTier == 0 ? 1 : crushingProperties.HardnessTier));
                     }
                     isCrafting = true;
-                    StateChange(EnumBEState.On);
+                    SetState(EnumBEState.On);
                     return true;
                 }
                 crushPowerCostTotal = 0;
@@ -272,7 +272,7 @@ namespace VintageEngineering
                     {
                         currentRecipe = mprecipe;
                         isCrafting = true;
-                        StateChange(EnumBEState.On);
+                        SetState(EnumBEState.On);
                         return true;
                     }
                 }
@@ -287,7 +287,7 @@ namespace VintageEngineering
                     grindingProperties = InputSlot.Itemstack.Collectible.GrindingProps.Clone();
                     if (crushPowerCostTotal == 0) crushPowerCostTotal = ((ulong)crushingPowerCost);
                     isCrafting = true;
-                    StateChange(EnumBEState.On);
+                    SetState(EnumBEState.On);
                     return true;
                 }
                 crushPowerCostTotal = 0;
@@ -295,7 +295,7 @@ namespace VintageEngineering
             }
             isCrafting = false;
             recipePowerApplied = 0;
-            StateChange(EnumBEState.Sleeping);
+            SetState(EnumBEState.Sleeping);
             return false;
         }
         #endregion
@@ -358,7 +358,7 @@ namespace VintageEngineering
                     recipePowerApplied += (ulong)Math.Round(powerpertick);
                     electricpower -= (ulong)Math.Round(powerpertick);
                 }
-                else if (!isCrafting) StateChange(EnumBEState.Sleeping);
+                else if (!isCrafting) SetState(EnumBEState.Sleeping);
                 else if (RecipeProgress >= 1f)
                 {
                     // recipe crafting complete
@@ -463,7 +463,7 @@ namespace VintageEngineering
 
                     if (InputSlot.Empty || !FindMatchingRecipe())
                     {
-                        StateChange(EnumBEState.Sleeping);
+                        SetState(EnumBEState.Sleeping);
                         isCrafting = false;
                     }
                     recipePowerApplied = 0;
@@ -473,7 +473,7 @@ namespace VintageEngineering
             }
         }
 
-        public override void StateChange(EnumBEState newstate)
+        protected virtual void SetState(EnumBEState newstate)
         {                  
             MachineState = newstate;
 
@@ -549,10 +549,10 @@ namespace VintageEngineering
             base.OnReceivedClientPacket(player, packetid, data);
             if (packetid == 1002) // Enable Button
             {
-                if (IsEnabled) StateChange(EnumBEState.Off); // turn off
+                if (IsEnabled) SetState(EnumBEState.Off); // turn off
                 else
                 {
-                    StateChange(IsCrafting ? EnumBEState.On : EnumBEState.Sleeping);
+                    SetState(IsCrafting ? EnumBEState.On : EnumBEState.Sleeping);
                 }
                 MarkDirty(true, null);
             }
@@ -594,13 +594,13 @@ namespace VintageEngineering
             if (Api != null) inv.AfterBlocksLoaded(Api.World);
             recipePowerApplied = (ulong)tree.GetLong("recipepowerapplied");
             isCrafting = tree.GetBool("iscrafting", false);
-            if (!isCrafting) StateChange(EnumBEState.Sleeping);
-            if (!IsEnabled) StateChange(EnumBEState.Off);
+            if (!isCrafting) SetState(EnumBEState.Sleeping);
+            if (!IsEnabled) SetState(EnumBEState.Off);
             craftMode = tree.GetString("craftmode", "crush");
             crushPowerCostTotal = (ulong)(tree.GetLong("crushrecipepowertotal"));
 //            nuggetType = tree.GetItemstack("nuggettype");
             FindMatchingRecipe();
-            if (Api != null && Api.Side == EnumAppSide.Client) { StateChange(MachineState); }
+            if (Api != null && Api.Side == EnumAppSide.Client) { SetState(MachineState); }
             if (clientDialog != null && clientDialog.IsOpened())
             {
                 clientDialog.Update(RecipeProgress, CurrentPower, currentRecipe, crushingProperties, nuggetType, grindingProperties);
