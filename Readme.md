@@ -33,6 +33,17 @@ Open a developer command prompt (one that has msbuild in the path). From the cod
 ### Packaging
 After a successful build, the output will be placed in the mod directory. In order to distribute the mod, the contents of the mod directory must be manually zipped. Specifically the zip file should contain modinfo.json at the top level, rather than mod\modinfo.json.
 
+## Debugging in VS Code
+
+To allow the F11 key in the VS Code debugger to step into the base game libraries, create a source folder under the vintagestory folder, and checkout the game source there. For example, on Linux do:
+```
+mkdir "${VINTAGE_STORY}/source"
+cd "${VINTAGE_STORY}/source"
+git clone https://github.com/anegostudios/vssurvivalmod.git
+git clone https://github.com/anegostudios/vsessentialsmod.git
+git clone https://github.com/anegostudios/vsapi.git
+```
+
 ## Help Is Welcome
 Immersive Engineering has had over 80 contributers, I know a project like this is just overwhelming for one person. So I will be more then welcoming of other contributions.
 
