@@ -12,6 +12,7 @@ using VintageEngineering.RecipeSystem;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 using Vintagestory.API.Config;
+using System.Text;
 
 namespace VintageEngineering
 {
@@ -348,15 +349,12 @@ namespace VintageEngineering
             return false;
         }
 
-        public override string GetMachineHUDText()
+        public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
         {
-            string outtext = base.GetMachineHUDText() + System.Environment.NewLine;
+            base.GetBlockInfo(forPlayer, dsc);
 
             float recipeProgressPercent = RecipeProgress * 100;
-
-            string crafting = isCrafting ? $"{Lang.Get("vinteng:gui-word-crafting")}: {recipeProgressPercent:N1}%" : $"{Lang.Get("vinteng:gui-machine-notcrafting")}";
-
-            return outtext + crafting;
+            dsc.AppendLine(isCrafting ? $"{Lang.Get("vinteng:gui-word-crafting")}: {recipeProgressPercent:N1}%" : $"{Lang.Get("vinteng:gui-machine-notcrafting")}");
         }
 
         /// <summary>

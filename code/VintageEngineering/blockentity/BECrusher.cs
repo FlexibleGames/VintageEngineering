@@ -532,15 +532,12 @@ namespace VintageEngineering
             }
         }
 
-        public override string GetMachineHUDText()
+        public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
         {
-            string outtext = base.GetMachineHUDText() + System.Environment.NewLine;
+            base.GetBlockInfo(forPlayer, dsc);
 
             float recipeProgressPercent = RecipeProgress * 100;
-
-            string crafting = isCrafting ? $"{Lang.Get("vinteng:gui-word-crafting")}: {recipeProgressPercent:N1}%" : $"{Lang.Get("vinteng:gui-machine-notcrafting")}";
-
-            return outtext + crafting;
+            dsc.AppendLine(isCrafting ? $"{Lang.Get("vinteng:gui-word-crafting")}: {recipeProgressPercent:N1}%" : $"{Lang.Get("vinteng:gui-machine-notcrafting")}");
         }
 
         #region ServerClientStuff

@@ -343,8 +343,10 @@ namespace VintageEngineering.Electrical
             }
         }
 
-        public virtual string GetMachineHUDText()
+        public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
         {
+            base.GetBlockInfo(forPlayer, dsc);
+
             string onOff;
             switch (MachineState)
             {
@@ -355,7 +357,7 @@ namespace VintageEngineering.Electrical
                 default: onOff = "Error"; break;
             }
 
-            return $"{onOff} | {Lang.Get("vinteng:gui-word-power")}: {CurrentPower:N0}/{MaxPower:N0}{System.Environment.NewLine}{Lang.Get("vinteng:gui-machine-pps")} : {MaxPPS}";
+            dsc.AppendLine($"{onOff} | {Lang.Get("vinteng:gui-word-power")}: {CurrentPower:N0}/{MaxPower:N0}{System.Environment.NewLine}{Lang.Get("vinteng:gui-machine-pps")} : {MaxPPS}");
         }
 
         public virtual string GetNetworkInfo()

@@ -9,6 +9,7 @@ using Vintagestory.API.Datastructures;
 using VintageEngineering.Electrical;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
+using System.Text;
 
 namespace VintageEngineering
 {
@@ -134,13 +135,11 @@ namespace VintageEngineering
             chunkatPos.MarkModified();
         }
 
-        public override string GetMachineHUDText()
+        public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
         {
-            string outtext = base.GetMachineHUDText() + System.Environment.NewLine;            
+            base.GetBlockInfo(forPlayer, dsc);
 
-            string crafting = $"{GenTemp:N1}°C {FuelBurnTime:N1} {Lang.Get("vinteng:gui-word-seconds")}";
-
-            return outtext + crafting;
+            dsc.AppendLine($"{GenTemp:N1}°C {FuelBurnTime:N1} {Lang.Get("vinteng:gui-word-seconds")}");
         }
 
         protected virtual void SetState(EnumBEState newstate)

@@ -80,13 +80,6 @@ namespace VintageEngineering.Electrical
 
         public override string GetPlacedBlockInfo(IWorldAccessor world, BlockPos pos, IPlayer forPlayer)
         {
-            IElectricalConnection conentity = world.BlockAccessor.GetBlockEntity(pos) as IElectricalConnection;
-            string outtext = "";
-            if (conentity != null)
-            {
-                outtext = conentity.GetMachineHUDText();
-            }
-
             bool extDebug = (api as ICoreClientAPI)?.Settings.Bool["extendedDebugInfo"] == true;
             string baseText = base.GetPlacedBlockInfo(world, pos, forPlayer);
             if (extDebug)
@@ -109,7 +102,7 @@ namespace VintageEngineering.Electrical
                     baseText = "Code: " + this.Code.ToString() + Environment.NewLine + baseText + Environment.NewLine + wiredblock.GetNetworkInfo();
                 }
             }
-            return (baseText + Environment.NewLine + outtext).TrimEnd();
+            return baseText;
         }
 
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)

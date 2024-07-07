@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using VintageEngineering.Electrical;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -467,17 +468,12 @@ namespace VintageEngineering
             this.Dispose();
         }
 
-        public override string GetMachineHUDText()
+        public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
         {
-            string outtext = base.GetMachineHUDText() + System.Environment.NewLine;
+            base.GetBlockInfo(forPlayer, dsc);
 
-            float recipeProgressPercent = RecipeProgress * 100;
-
-//            string crafting = isCrafting ? $"{Lang.Get("vinteng:gui-word-crafting")}: {recipeProgressPercent:N1}%" : $"{Lang.Get("vinteng:gui-machine-notcrafting")}";
-            string heating = isHeating ? $"{Lang.Get("vinteng:gui-word-heating")}: " : "";
-            heating += $"{CurrentTemp:N1}°";
-
-            return outtext + Environment.NewLine + heating;
+            dsc.Append(isHeating ? $"{Lang.Get("vinteng:gui-word-heating")}: " : "");
+            dsc.AppendLine($"{CurrentTemp:N1}°");
         }
 
         #region MoldMeshAndRenderingStuff

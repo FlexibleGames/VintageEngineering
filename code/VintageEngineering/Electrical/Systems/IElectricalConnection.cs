@@ -36,13 +36,5 @@ namespace VintageEngineering.Electrical.Systems
         /// <param name="wirenodeindex">Index of the WireNode</param>
         /// <returns>Total connections this node has.</returns>
         int NumConnections(int wirenodeindex);
-
-        /// <summary>
-        /// Returns helpful HUD text (like Power, PPS, and state) for display in the HUD when looking at this block.<br/>
-        /// Override to customize, but call base to build basic machine data.
-        /// </summary>
-        /// <returns>String with machine info.</returns>
-        string GetMachineHUDText();
-
     }
 }
