@@ -18,44 +18,6 @@ namespace VintageEngineering.Electrical
     /// </summary>
     public class ElectricBlock : WiredBlock
     {
-        /// <summary>
-        /// What sort of Machine is this?
-        /// <br>Valid Types: Consumer, Producer, Storage, Transformer, Toggle, Relay, Other</br>
-        /// </summary>
-        public EnumElectricalEntityType ElectricalEntityType
-        {
-            get
-            {
-                return Enum.Parse<EnumElectricalEntityType>(this.Attributes["entitytype"].AsString("Other"));
-            }
-        }
-
-        /// <summary>
-        /// What is the max power this machine can hold?
-        /// <br>Type : Unsigned Long (ulong)</br>
-        /// <br>Max Value : 18,446,744,073,709,551,615</br>
-        /// </summary>
-        public ulong MaxPower
-        {
-            get
-            {
-                return (ulong)this.Attributes["maxpower"].AsDouble();
-            }
-        }
-
-        /// <summary>
-        /// What is the MAX Power per second this machine can give or accept
-        /// <br>Type : Unsigned Long (ulong)</br>
-        /// <br>Max Value : 18,446,744,073,709,551,615</br>
-        /// </summary>
-        public ulong MaxPPS
-        {
-            get
-            {
-                return (ulong)this.Attributes["maxpps"].AsDouble();
-            }
-        }
-
         public override void OnLoaded(ICoreAPI api)
         {
             base.OnLoaded(api); // IMPORTANT base call sets wire anchors and functions

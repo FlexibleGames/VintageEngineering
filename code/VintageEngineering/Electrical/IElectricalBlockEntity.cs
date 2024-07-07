@@ -7,12 +7,15 @@ namespace VintageEngineering.Electrical
     public interface IElectricalBlockEntity
     {
         /// <summary>
-        /// Max power this entity stores. Set in JSON.
+        /// What is the max power this machine can hold?
+        /// <br>Type : Unsigned Long (ulong)</br>
+        /// <br>Max Value : 18,446,744,073,709,551,615</br>
         /// </summary>
         ulong MaxPower { get; }
 
-        /// <summary>
-        /// Max Power Per Second this Entity can handle, incoming and outgoing and generating. Set in JSON.
+        /// What is the MAX Power per second this machine can give or accept
+        /// <br>Type : Unsigned Long (ulong)</br>
+        /// <br>Max Value : 18,446,744,073,709,551,615</br>
         /// </summary>
         ulong MaxPPS { get; }
 
@@ -22,8 +25,8 @@ namespace VintageEngineering.Electrical
         ulong CurrentPower { get; }
 
         /// <summary>
-        /// What type of Electrical Entity is this? 
-        /// <br>This is set in the JSON Attributes "entitytype" variable.</br>
+        /// What sort of Machine is this?
+        /// <br>Valid Types: Consumer, Producer, Storage, Transformer, Toggle, Relay, Other</br>
         /// </summary>
         EnumElectricalEntityType ElectricalEntityType { get; }
 
