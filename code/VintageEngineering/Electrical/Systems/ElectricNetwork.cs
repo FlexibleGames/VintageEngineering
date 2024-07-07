@@ -132,11 +132,11 @@ namespace VintageEngineering.Electrical.Systems
             // however they need to be seperate networks as a toggle that is OFF severs the connection
             // and I think it best to not merge and seperate the networks every time the toggle is switched
             
-            IElectricalBlockEntity electricalBlockEntity = blockAccessor.GetBlockEntity(node.blockPos) as IElectricalBlockEntity;
+            IElectricalBlockEntity electricalBlockEntity = IElectricalBlockEntity.GetAtPos(blockAccessor, node.blockPos);
 
             if (electricalBlockEntity ==  null) { throw new Exception("Attempting to add Electrical Node that is NOT an ElectricalBlockEntity!"); }
 
-            IWireNetwork wirenet = blockAccessor.GetBlockEntity(node.blockPos) as IWireNetwork;
+            IWireNetwork wirenet = IWireNetwork.GetAtPos(blockAccessor, node.blockPos);
             if (wirenet != null && updateEntity)
             {
                 wirenet.SetNetworkID(NetworkID);
@@ -232,14 +232,14 @@ namespace VintageEngineering.Electrical.Systems
         {
             if (allNodes.Contains(node))
             {
-                IElectricalBlockEntity electricalBlockEntity = blockAccessor.GetBlockEntity(node.blockPos) as IElectricalBlockEntity;
+                IElectricalBlockEntity electricalBlockEntity = IElectricalBlockEntity.GetAtPos(blockAccessor, node.blockPos);
 
                 if (electricalBlockEntity == null) 
                 { 
                     throw new Exception("Attempting to remove Electrical Node that is NOT an IElectricalBlockEntity!"); 
                 }
 
-                IWireNetwork wirenet = blockAccessor.GetBlockEntity(node.blockPos) as IWireNetwork;
+                IWireNetwork wirenet = IWireNetwork.GetAtPos(blockAccessor, node.blockPos);
                 if (wirenet != null) 
                 {
                     allNodes.Remove(node);
@@ -309,7 +309,7 @@ namespace VintageEngineering.Electrical.Systems
                 {
                     // if the block position is invalid remove the network as it's bad data
                     if (api.World.BlockAccessor.GetBlockEntity(node.blockPos) is null) { return false; }
-                    if (api.World.BlockAccessor.GetBlockEntity(node.blockPos) is not IElectricalBlockEntity) { return false; }
+                    if (IElectricalBlockEntity.GetAtPos(api.World.BlockAccessor, node.blockPos) is null) { return false; }
                 }
             }
 

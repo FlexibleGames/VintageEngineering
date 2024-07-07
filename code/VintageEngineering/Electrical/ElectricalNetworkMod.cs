@@ -29,17 +29,22 @@ namespace VintageEngineering.Electrical
         #region ModSystem
         public override bool ShouldLoad(EnumAppSide forSide)
         {
-            if (forSide == EnumAppSide.Server)
-            {
-                return true;
-            }
-            return false;
+            // All of the network simulation runs on the server side. The mod also needs to start on the client side
+            // so that the block entity behaviors are registered. The GUIs on the client side access the block entity
+            // behaviors.
+            return true;
         }
 
         public override void Start(ICoreAPI _api)
         {
             base.Start(api);
             this.api = _api;
+            RegisterBlockEntityBehaviors(api);
+        }
+
+        private void RegisterBlockEntityBehaviors(ICoreAPI api)
+        {
+            api.RegisterBlockEntityBehaviorClass("Electric", typeof(ElectricBEBehavior));
         }
 
         //public override void StartClientSide(ICoreClientAPI api)

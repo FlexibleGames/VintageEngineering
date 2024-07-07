@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using VintageEngineering.Electrical.Systems.Catenary;
+using Vintagestory.API.Common;
+using Vintagestory.API.MathTools;
 
 
 namespace VintageEngineering.Electrical.Systems
@@ -36,5 +38,20 @@ namespace VintageEngineering.Electrical.Systems
         /// <param name="wirenodeindex">Index of the WireNode</param>
         /// <returns>Total connections this node has.</returns>
         int NumConnections(int wirenodeindex);
+
+        /// <summary>
+        /// Returns the IElectricalBlockEntity for the BlockEntity or one of its behaviors at given position.
+        /// </summary>
+        /// <param name="blockAccessor">The accessor for the world</param>
+        /// <param name="pos">The position of the block</param>
+        /// <returns>The interface, or null if the block at that position does not implement it</returns>
+        static IElectricalConnection GetAtPos(IBlockAccessor blockAccessor, BlockPos pos)
+        {
+            BlockEntity entity = blockAccessor.GetBlockEntity(pos);
+            if (entity is IElectricalConnection converted) {
+                return converted;
+            }
+            return entity?.GetBehavior<IElectricalConnection>();
+        }
     }
 }

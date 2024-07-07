@@ -11,7 +11,7 @@ using Vintagestory.GameContent;
 
 namespace VintageEngineering.Electrical
 {
-    public abstract class ElectricBEWithFluid: ElectricBE, IVELiquidInterface
+    public abstract class FluidContainerBE: ElectricContainerBE, IVELiquidInterface
     {
         #region IVELiquidInterface
         public virtual bool AllowPipeLiquidTransfer

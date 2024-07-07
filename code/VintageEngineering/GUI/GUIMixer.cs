@@ -30,8 +30,8 @@ namespace VintageEngineering
 
             capi.World.Player.InventoryManager.OpenInventory(inventory);
             bemixer = bentity;
-            _currentPower = bemixer.CurrentPower;
-            _maxPower = bemixer.MaxPower;
+            _currentPower = bemixer.Electric.CurrentPower;
+            _maxPower = bemixer.Electric.MaxPower;
             _craftProgress = bemixer.RecipeProgress;
             SetupDialog();
         }
@@ -111,7 +111,7 @@ namespace VintageEngineering
                 window.WithAlignment(EnumDialogArea.CenterMiddle).WithFixedAlignmentOffset(20, 0);
             }
             BlockPos blockPos = base.BlockEntityPosition;
-            string enablebtnstring = bemixer.IsEnabled ? Lang.Get("vinteng:gui-turn-off") : Lang.Get("vinteng:gui-turn-on");
+            string enablebtnstring = bemixer.Electric.IsEnabled ? Lang.Get("vinteng:gui-turn-off") : Lang.Get("vinteng:gui-turn-on");
 
             CairoFont centerwhite = CairoFont.WhiteDetailText().WithWeight(FontWeight.Normal).WithOrientation(EnumTextOrientation.Center);
             double[] yellow = new double[3] { 1, 1, 0 };
@@ -219,7 +219,7 @@ namespace VintageEngineering
                 SingleComposer.GetCustomDraw("fluidtank1").Redraw();
                 SingleComposer.GetCustomDraw("fluidtank2").Redraw();
                 SingleComposer.GetCustomDraw("fluidtankoutput").Redraw();
-                SingleComposer.GetDynamicText("enableBtnText").SetNewText(bemixer.IsEnabled ? Lang.Get("vinteng:gui-turn-off") : Lang.Get("vinteng:gui-turn-on"));
+                SingleComposer.GetDynamicText("enableBtnText").SetNewText(bemixer.Electric.IsEnabled ? Lang.Get("vinteng:gui-turn-off") : Lang.Get("vinteng:gui-turn-on"));
                 SingleComposer.GetDynamicText("outputText").SetNewText(GetHelpText());
             }
         }
@@ -262,7 +262,7 @@ namespace VintageEngineering
         {
             string outputstring = "";
             float craftPercent = _craftProgress * 100;
-            if (bemixer.IsSleeping) // machine is sleeping if on and not crafting
+            if (bemixer.Electric.IsSleeping) // machine is sleeping if on and not crafting
             {
                 outputstring = Lang.Get("vinteng:gui-is-sleeping-short");
             }
@@ -270,11 +270,11 @@ namespace VintageEngineering
             {
                 outputstring = $"{craftPercent:N1}%";
             }
-            if (!bemixer.IsSleeping && !bemixer.IsCrafting) // these SHOULD be mutually exclusive
+            if (!bemixer.Electric.IsSleeping && !bemixer.IsCrafting) // these SHOULD be mutually exclusive
             {
                 outputstring = $"Error";
             }
-            if (!bemixer.IsEnabled)
+            if (!bemixer.Electric.IsEnabled)
             {
                 outputstring = Lang.Get("vinteng:gui-word-off");
             }
@@ -292,7 +292,7 @@ namespace VintageEngineering
             }
             else
             {
-                if (bemixer.IsSleeping)
+                if (bemixer.Electric.IsSleeping)
                 {
                     outputhelptext = Lang.Get("vinteng:gui-no-valid-recipe");    // third is a VALID recipe
                 }
@@ -305,7 +305,7 @@ namespace VintageEngineering
                     outputhelptext = Lang.Get("vinteng:gui-machine-isfull");   // an output is full...                    
                 }
             }
-            if (!bemixer.IsEnabled)
+            if (!bemixer.Electric.IsEnabled)
             {
                 outputhelptext = Lang.Get("vinteng:gui-machine-off");
             }
