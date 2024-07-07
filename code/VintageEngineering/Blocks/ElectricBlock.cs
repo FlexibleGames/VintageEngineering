@@ -4,7 +4,9 @@ using VintageEngineering.Electrical.Systems;
 using VintageEngineering.Electrical.Systems.Catenary;
 using VintageEngineering.RecipeSystem;
 using VintageEngineering.RecipeSystem.Recipes;
+using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
 
@@ -70,14 +72,14 @@ namespace VintageEngineering.Electrical
 
             VERecipeRegistrySystem mod = api.ModLoader.GetModSystem<VERecipeRegistrySystem>(true);
             if (mod == null) return;
-            foreach (string recipeType in recipeTypes) {
+            foreach (string recipeType in recipeTypes)
+            {
                 mod.RegisterRecipeMachine(recipeType, this);
             }
         }
 
         public override string GetPlacedBlockInfo(IWorldAccessor world, BlockPos pos, IPlayer forPlayer)
         {
-            IWireNetwork wiredblock = world.BlockAccessor.GetBlockEntity(pos) as IWireNetwork;
             IElectricalConnection conentity = world.BlockAccessor.GetBlockEntity(pos) as IElectricalConnection;
             string outtext = "";
             if (conentity != null)
@@ -85,11 +87,29 @@ namespace VintageEngineering.Electrical
                 outtext = conentity.GetMachineHUDText();
             }
 
-            if (wiredblock != null) // DEBUG information, TODO set a config value
+            bool extDebug = (api as ICoreClientAPI)?.Settings.Bool["extendedDebugInfo"] == true;
+            string baseText = base.GetPlacedBlockInfo(world, pos, forPlayer);
+            if (extDebug)
             {
-                return outtext + Environment.NewLine + "Code: " + this.Code.ToString() + Environment.NewLine + wiredblock.GetNetworkInfo();
+                // The base method iterates the block behaviors, the decors, and the block entity. It also adds the
+                // default block description. There is no easy way to run everything in the base method except adding
+                // the default block description.
+                //
+                // The default block description is also used to show the block info of the item when it is in the
+                // inventory. So simply removing the default block description is also not an option.
+                //
+                // So instead let the base class add everything, then remove the default block description.
+                string descLangCode = Code.Domain + AssetLocation.LocationSeparator + ItemClass.ToString().ToLowerInvariant() + "desc-" + Code.Path;
+                string desc = Lang.GetMatching(descLangCode);
+                baseText = baseText.Replace(desc, "").TrimEnd();
+
+                IWireNetwork wiredblock = world.BlockAccessor.GetBlockEntity(pos) as IWireNetwork;
+                if (wiredblock != null) // DEBUG information
+                {
+                    baseText = "Code: " + this.Code.ToString() + Environment.NewLine + baseText + Environment.NewLine + wiredblock.GetNetworkInfo();
+                }
             }
-            return base.GetPlacedBlockInfo(world, pos, forPlayer) + outtext;
+            return (baseText + Environment.NewLine + outtext).TrimEnd();
         }
 
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)

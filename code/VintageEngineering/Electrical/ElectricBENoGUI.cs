@@ -361,17 +361,15 @@ namespace VintageEngineering.Electrical
         public virtual string GetNetworkInfo()
         {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append(System.Environment.NewLine); // new line right away
             if (electricConnections.Count == 0)
             {
-                stringBuilder.Append("No Network");
-                return stringBuilder.ToString();
+                return "No Network";
             }
             foreach (KeyValuePair<int, List<WireNode>> pair in electricConnections)
             {
-                stringBuilder.Append($"Node {pair.Key} has {((pair.Value == null) ? "null!" : pair.Value.Count)} cons on id {(NetworkIDs.ContainsKey(pair.Key) ? NetworkIDs[pair.Key] : "NULL!")}" + System.Environment.NewLine);
+                stringBuilder.AppendLine($"Node {pair.Key} has {((pair.Value == null) ? "null!" : pair.Value.Count)} cons on id {(NetworkIDs.ContainsKey(pair.Key) ? NetworkIDs[pair.Key] : "NULL!")}");
             }
-            return stringBuilder.ToString();
+            return stringBuilder.ToString().TrimEnd();
         }
 
         public virtual bool IsPlayerHoldingWire(IPlayer byPlayer, BlockSelection blockSel)
