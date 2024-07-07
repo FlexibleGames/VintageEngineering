@@ -14,7 +14,10 @@
 			"name": "Electric",
 			"properties": {
 				"canExtractPower": false,
-				"canReceivePower": true
+				"canReceivePower": true,
+				"entitytype": "Consumer",
+				"maxpower": 1024,
+				"maxpps": 64
 			}
 		}
 	],
@@ -28,10 +31,7 @@
 		},
 		"craftinganimcode": "craft",
 		"crushpowercost": 128,
-		"entitytype": "Consumer",
 		"priority": 5,
-		"maxpower": 1024,
-		"maxpps": 64,
         "wireNodes": [
             {
                 "index": 0,

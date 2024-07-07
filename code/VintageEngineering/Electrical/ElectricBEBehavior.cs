@@ -33,7 +33,7 @@ namespace VintageEngineering.Electrical
         private EnumBEState machineState;
 
         /// <summary>
-        /// What Priority is this machine in the Electric Network its attached too? Saved in base ElectricBE.
+        /// What Priority is this machine in the Electric Network its attached too?
         /// </summary>
         protected int priority = 5;
 
@@ -84,9 +84,9 @@ namespace VintageEngineering.Electrical
         {
             get
             {
-                if (Block.Attributes != null)
+                if (properties != null)
                 {
-                    return (ulong)Block.Attributes["maxpower"].AsDouble(0);
+                    return (ulong)properties["maxpower"].AsDouble(0);
                 }
                 return 0;
             }
@@ -98,9 +98,9 @@ namespace VintageEngineering.Electrical
         {
             get
             {
-                if (Block.Attributes != null)
+                if (properties != null)
                 {
-                    return (ulong)Block.Attributes["maxpps"].AsDouble(0);
+                    return (ulong)properties["maxpps"].AsDouble(0);
                 }
                 return 0;
             }
@@ -110,9 +110,9 @@ namespace VintageEngineering.Electrical
         {
             get
             {
-                if (Block.Attributes != null)
+                if (properties != null)
                 {
-                    return Enum.Parse<EnumElectricalEntityType>(Block.Attributes["entitytype"].AsString("Other"));
+                    return Enum.Parse<EnumElectricalEntityType>(properties["entitytype"].AsString("Other"));
                 }
                 return EnumElectricalEntityType.Other;
             }

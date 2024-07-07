@@ -10,7 +10,10 @@
 			"name": "Electric",
 			"properties": {
 				"canExtractPower": false,
-				"canReceivePower": true
+				"canReceivePower": true,
+				"entitytype": "Consumer",
+				"maxpower": 1024,
+				"maxpps": 128
 			}
 		}
 	],
@@ -26,10 +29,7 @@
 			}
 		},
 		"heatpersecond": 160,
-		"entitytype": "Consumer",
 		"priority": 5,
-		"maxpower": 1024,
-		"maxpps": 128,
         "wireNodes": [
             {
                 "index": 0,
