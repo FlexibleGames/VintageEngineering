@@ -96,11 +96,7 @@ namespace VintageEngineering.Electrical
                 string desc = Lang.GetMatching(descLangCode);
                 baseText = baseText.Replace(desc, "").TrimEnd();
 
-                IWireNetwork wiredblock = world.BlockAccessor.GetBlockEntity(pos) as IWireNetwork;
-                if (wiredblock != null) // DEBUG information
-                {
-                    baseText = "Code: " + this.Code.ToString() + Environment.NewLine + baseText + Environment.NewLine + wiredblock.GetNetworkInfo();
-                }
+                baseText = "Code: " + this.Code.ToString() + Environment.NewLine + baseText;
             }
             return baseText;
         }

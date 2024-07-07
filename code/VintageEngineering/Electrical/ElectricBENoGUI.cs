@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using VintageEngineering.Electrical.Systems;
 using VintageEngineering.Electrical.Systems.Catenary;
+using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
@@ -358,6 +359,12 @@ namespace VintageEngineering.Electrical
             }
 
             dsc.AppendLine($"{onOff} | {Lang.Get("vinteng:gui-word-power")}: {CurrentPower:N0}/{MaxPower:N0}{System.Environment.NewLine}{Lang.Get("vinteng:gui-machine-pps")} : {MaxPPS}");
+
+            bool extDebug = (Api as ICoreClientAPI)?.Settings.Bool["extendedDebugInfo"] == true;
+            if (extDebug)
+            {
+                dsc.AppendLine(GetNetworkInfo());
+            }
         }
 
         public virtual string GetNetworkInfo()
