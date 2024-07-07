@@ -29,8 +29,8 @@ namespace VintageEngineering
 
             capi.World.Player.InventoryManager.OpenInventory(inventory);
             bekiln = bentity;
-            _currentPower = bekiln.CurrentPower;
-            _maxPower = bekiln.MaxPower;
+            _currentPower = bekiln.Electric.CurrentPower;
+            _maxPower = bekiln.Electric.MaxPower;
             _craftProgress = bekiln.RecipeProgress;
             _currentTemp = bekiln.CurrentTemp;
             SetupDialog();
@@ -101,7 +101,7 @@ namespace VintageEngineering
                 window.WithAlignment(EnumDialogArea.CenterMiddle).WithFixedAlignmentOffset(20, 0);
             }
             BlockPos blockPos = base.BlockEntityPosition;
-            string enablebtnstring = bekiln.IsEnabled ? Lang.Get("vinteng:gui-turn-off") : Lang.Get("vinteng:gui-turn-on");
+            string enablebtnstring = bekiln.Electric.IsEnabled ? Lang.Get("vinteng:gui-turn-off") : Lang.Get("vinteng:gui-turn-on");
 
             CairoFont centerwhite = CairoFont.WhiteSmallText().WithWeight(FontWeight.Normal).WithOrientation(EnumTextOrientation.Center);
             double[] yellow = new double[3] { 1, 1, 0 };
@@ -151,7 +151,7 @@ namespace VintageEngineering
                 SingleComposer.GetDynamicText("progressText").SetNewText(GetProgressText());
                 SingleComposer.GetCustomDraw("powerDrawer").Redraw();
                 SingleComposer.GetCustomDraw("progressBar").Redraw();
-                SingleComposer.GetDynamicText("enableBtnText").SetNewText(bekiln.IsEnabled ? Lang.Get("vinteng:gui-turn-off") : Lang.Get("vinteng:gui-turn-on"));
+                SingleComposer.GetDynamicText("enableBtnText").SetNewText(bekiln.Electric.IsEnabled ? Lang.Get("vinteng:gui-turn-off") : Lang.Get("vinteng:gui-turn-on"));
                 SingleComposer.GetDynamicText("outputText").SetNewText(GetHelpText());
                 SingleComposer.GetDynamicText("tempText").SetNewText(currentTemp.ToString("N1") + "°");
             }
@@ -193,7 +193,7 @@ namespace VintageEngineering
         {
             string outputstring = "";
             float craftPercent = _craftProgress * 100;
-            if (bekiln.IsSleeping) // machine is sleeping if on and not crafting
+            if (bekiln.Electric.IsSleeping) // machine is sleeping if on and not crafting
             {
                 outputstring = Lang.Get("vinteng:gui-is-sleeping-short");
             }
@@ -208,15 +208,15 @@ namespace VintageEngineering
                     outputstring = $"{craftPercent:N1}%";
                 }
             }
-            if (!bekiln.IsSleeping && !bekiln.IsCrafting && !bekiln.IsHeating) // these SHOULD be mutually exclusive
+            if (!bekiln.Electric.IsSleeping && !bekiln.IsCrafting && !bekiln.IsHeating) // these SHOULD be mutually exclusive
             {
                 outputstring = $"Error";
             }
-            if (bekiln.MachineState == EnumBEState.Paused)
+            if (bekiln.Electric.MachineState == EnumBEState.Paused)
             {
                 outputstring = Lang.Get("vinteng:gui-word-paused");
             }
-            if (!bekiln.IsEnabled)
+            if (!bekiln.Electric.IsEnabled)
             {
                 outputstring = Lang.Get("vinteng:gui-word-off");
             }
@@ -245,7 +245,7 @@ namespace VintageEngineering
             }
             else
             {
-                if (bekiln.IsSleeping)
+                if (bekiln.Electric.IsSleeping)
                 {
                     outputhelptext = Lang.Get("vinteng:gui-no-valid-recipe");    // third is a VALID recipe
                 }
@@ -254,7 +254,7 @@ namespace VintageEngineering
                     outputhelptext = Lang.Get("vinteng:gui-machine-ingredients");// second priority is an ingredient
                 }
             }
-            if (!bekiln.IsEnabled)
+            if (!bekiln.Electric.IsEnabled)
             {
                 outputhelptext = Lang.Get("vinteng:gui-machine-off");
             }
@@ -266,7 +266,7 @@ namespace VintageEngineering
             {
                 outputhelptext = Lang.Get("vinteng:gui-machine-isfull");   // output is full...                    
             }
-            if (bekiln.MachineState == EnumBEState.Paused)
+            if (bekiln.Electric.MachineState == EnumBEState.Paused)
             {
                 outputhelptext = Lang.Get("vinteng:gui-machine-paused");
             }

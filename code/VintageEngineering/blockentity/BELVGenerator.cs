@@ -13,7 +13,7 @@ using System.Text;
 
 namespace VintageEngineering
 {
-    public class BELVGenerator : ElectricBE
+    public class BELVGenerator : ElectricContainerBE
     {
         ICoreClientAPI capi;
         ICoreServerAPI sapi;
@@ -33,9 +33,6 @@ namespace VintageEngineering
         /// N E S W
         /// </summary>
         private bool[] faceHasMachine = new bool[4];
-
-        public override bool CanExtractPower => true;
-        public override bool CanReceivePower => false;
 
         public float FuelBurnTime { get { return fuelBurnTime; } }
         public float GenTemp { get { return genTemp; } }
@@ -128,7 +125,7 @@ namespace VintageEngineering
             this.MarkDirty(this.Api.Side == EnumAppSide.Server, null);
             if (this.Api is ICoreClientAPI && this.clientDialog != null)
             {
-                clientDialog.Update(genTemp, fuelBurnTime, CurrentPower);
+                clientDialog.Update(genTemp, fuelBurnTime, Electric.CurrentPower);
             }
             IWorldChunk chunkatPos = this.Api.World.BlockAccessor.GetChunkAtBlockPos(this.Pos);
             if (chunkatPos == null) return;
@@ -144,9 +141,9 @@ namespace VintageEngineering
 
         protected virtual void SetState(EnumBEState newstate)
         {              
-            MachineState = newstate;
+            Electric.MachineState = newstate;
 
-            if (MachineState == EnumBEState.On)
+            if (Electric.MachineState == EnumBEState.On)
             {
                 if (AnimUtil != null)
                 {
@@ -173,7 +170,7 @@ namespace VintageEngineering
 
             if (Api != null && Api.Side == EnumAppSide.Client && clientDialog != null && clientDialog.IsOpened())
             {
-                clientDialog.Update(GenTemp, fuelBurnTime, CurrentPower);
+                clientDialog.Update(GenTemp, fuelBurnTime, Electric.CurrentPower);
             }
             MarkDirty(true, null);
         }
@@ -182,8 +179,8 @@ namespace VintageEngineering
         {
             if (this.Api is ICoreServerAPI)
             {
-                if (!IsEnabled) return;
-                if (IsSleeping)
+                if (!Electric.IsEnabled) return;
+                if (Electric.IsSleeping)
                 {
                     if (genTemp != 20f) genTemp = ChangeTemperature(genTemp, 20f, deltatime);
                     sleepTimer += deltatime;
@@ -191,7 +188,7 @@ namespace VintageEngineering
                     else sleepTimer = 0;
                 }
 
-                if (CurrentPower != MaxPower)
+                if (Electric.CurrentPower != Electric.MaxPower)
                 {
                     if (fuelBurnTime > 0f || genTemp >= tempToGen) // now will generate additional power as long as it's hot enough.
                     {
@@ -210,8 +207,8 @@ namespace VintageEngineering
                         if (genTemp >= tempToGen)
                         {
                             // we're hot enough to generate power, currenly hard coded to 100
-                            electricpower += ((ulong)Math.Round(MaxPPS * deltatime));
-                            if (CurrentPower > MaxPower) electricpower = MaxPower;
+                            Electric.electricpower += ((ulong)Math.Round(Electric.MaxPPS * deltatime));
+                            if (Electric.CurrentPower > Electric.MaxPower) Electric.electricpower = Electric.MaxPower;
                         }
                     }
                     else
@@ -229,7 +226,7 @@ namespace VintageEngineering
                     SetState(EnumBEState.Sleeping); // go to sleep... zzzz
                 }
                 prevGenTemp = genTemp;
-                if ((faceHasMachine[0] || faceHasMachine[1] || faceHasMachine[2] || faceHasMachine[3]) && CurrentPower > 0)
+                if ((faceHasMachine[0] || faceHasMachine[1] || faceHasMachine[2] || faceHasMachine[3]) && Electric.CurrentPower > 0)
                 {
                     if (GiveNeighborsPower(deltatime)) SetState(EnumBEState.On);
                 }
@@ -237,7 +234,7 @@ namespace VintageEngineering
             }
             if (Api != null && Api.Side == EnumAppSide.Client)
             {
-                if (this.clientDialog != null) clientDialog.Update(genTemp, fuelBurnTime, CurrentPower);
+                if (this.clientDialog != null) clientDialog.Update(genTemp, fuelBurnTime, Electric.CurrentPower);
             }
         }
 
@@ -265,9 +262,9 @@ namespace VintageEngineering
         {
             // a temporary routine to push power into a machine, will be an electric network eventually
             IElectricalBlockEntity beElectricalMachine;
-            ulong ratedpower = this.RatedPower(dt);
+            ulong ratedpower = Electric.RatedPower(dt);
             ulong ratedpowerbackup = ratedpower;
-            if (ratedpower > CurrentPower) ratedpower = CurrentPower;
+            if (ratedpower > Electric.CurrentPower) ratedpower = Electric.CurrentPower;
 
             for (int x = 0; x < 4; x++)
             {
@@ -321,7 +318,7 @@ namespace VintageEngineering
             ulong usedpower = ratedpowerbackup - ratedpower;
             if (usedpower > 0)
             {
-                electricpower -= usedpower;
+                Electric.electricpower -= usedpower;
                 return true;
             }
             else return false;
@@ -389,7 +386,7 @@ namespace VintageEngineering
                 capi = api as ICoreClientAPI;
                 if (AnimUtil != null)
                 {
-                    AnimUtil.InitializeAnimator("velvgenerator", null, null, new Vec3f(0f, GetRotation(), 0f));
+                    AnimUtil.InitializeAnimator("velvgenerator", null, null, new Vec3f(0f, Electric.GetRotation(), 0f));
                 }
             }
             this.inventory.Pos = this.Pos;
@@ -405,7 +402,7 @@ namespace VintageEngineering
                 base.toggleInventoryDialogClient(byPlayer, delegate
                 {
                     this.clientDialog = new GUILVGenerator(DialogTitle, Inventory, this.Pos, this.Api as ICoreClientAPI, this);
-                    clientDialog.Update(genTemp, fuelBurnTime, CurrentPower);
+                    clientDialog.Update(genTemp, fuelBurnTime, Electric.CurrentPower);
                     return this.clientDialog;
                 });
             }
@@ -439,8 +436,8 @@ namespace VintageEngineering
             fuelBurnTime = tree.GetFloat("fuelBurnTime", 0);
             if (Api != null && Api.Side == EnumAppSide.Client)
             {
-                SetState(MachineState);
-                if (this.clientDialog != null) clientDialog.Update(genTemp, fuelBurnTime, CurrentPower);
+                SetState(Electric.MachineState);
+                if (this.clientDialog != null) clientDialog.Update(genTemp, fuelBurnTime, Electric.CurrentPower);
                 MarkDirty(true, null);
             }
         }

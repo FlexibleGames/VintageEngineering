@@ -8,7 +8,16 @@
 	"variantgroups": [
 		{ "code":"side", "loadFromProperties": "abstract/horizontalorientation" }
 	],
-	"entityBehaviorsByType": { "*": [{ "name": "Animatable" }] },
+	"entityBehaviors": [
+		{ "name": "Animatable" },
+		{
+			"name": "Electric",
+			"properties": {
+				"canExtractPower": true,
+				"canReceivePower": false
+			}
+		}
+	],
 	"attributes": {
 		"handbook": {
 			"groupBy": ["velvgenerator-*"],

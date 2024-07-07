@@ -23,19 +23,6 @@ namespace VintageEngineering
         private float updateBouncer = 0f;
         private GUIMixer clientDialog;
 
-        public ElectricBEBehavior Electric { get; private set; }
-
-        /// <summary>
-        /// Utility for setting, starting, and stopping animations.
-        /// </summary>
-        protected BlockEntityAnimationUtil AnimUtil
-        {
-            get
-            {
-                return Electric.AnimUtil;
-            }
-        }
-
         public string DialogTitle
         {
             get
@@ -53,12 +40,6 @@ namespace VintageEngineering
         public override void Initialize(ICoreAPI api)
         {
             base.Initialize(api);
-            Electric = GetBehavior<ElectricBEBehavior>();
-            if (Electric == null)
-            {
-                api.Logger.Fatal("The Electric behavior is required on {0}", Block.Code);
-                throw new FormatException("The Electric behavior is required on ${Block.Code}");
-            }
             if (api.Side == EnumAppSide.Server)
             {
                 sapi = api as ICoreServerAPI;

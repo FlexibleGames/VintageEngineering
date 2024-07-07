@@ -13,7 +13,7 @@ using Vintagestory.GameContent;
 
 namespace VintageEngineering
 {
-    public class BEForge : ElectricBE, IRenderer, IDisposable, ITexPositionSource
+    public class BEForge : ElectricContainerBE, IRenderer, IDisposable, ITexPositionSource
     {
         private ICoreClientAPI capi;
         private ICoreServerAPI sapi;
@@ -34,9 +34,6 @@ namespace VintageEngineering
             inv.SlotModified += OnSlotModified;
         }
 
-        public override bool CanExtractPower => false;
-        public override bool CanReceivePower => true;
-
         public override void Initialize(ICoreAPI api)
         {
             base.Initialize(api);
@@ -56,7 +53,7 @@ namespace VintageEngineering
                 capi.Event.RegisterRenderer(this, EnumRenderStage.Opaque, "veforge");
                 if (AnimUtil != null)
                 {
-                    AnimUtil.InitializeAnimator("veforge", null, null, new Vec3f(0, GetRotation(), 0f));
+                    AnimUtil.InitializeAnimator("veforge", null, null, new Vec3f(0, Electric.GetRotation(), 0f));
                 }
             }
             inv.Pos = this.Pos;
@@ -143,7 +140,7 @@ namespace VintageEngineering
 
                 if (clientDialog != null && clientDialog.IsOpened())
                 {
-                    clientDialog.Update(RecipeProgress, CurrentPower, CurrentTemp, _currentTempGoal, tempGoal);
+                    clientDialog.Update(RecipeProgress, Electric.CurrentPower, CurrentTemp, _currentTempGoal, tempGoal);
                 }
             }
         }
@@ -174,7 +171,7 @@ namespace VintageEngineering
         public bool FindMatchingRecipe()
         {
             if (Api == null) return false; // we're running this WAY too soon, bounce.            
-            if (MachineState == EnumBEState.Off) // if the machine is off, bounce.
+            if (Electric.MachineState == EnumBEState.Off) // if the machine is off, bounce.
             {
                 isHeating = false;
                 return false;
@@ -316,7 +313,7 @@ namespace VintageEngineering
                 environmentTempDelay = 0f;
             }
 
-            if (IsSleeping || MachineState == EnumBEState.Paused)
+            if (Electric.IsSleeping || Electric.MachineState == EnumBEState.Paused)
             {
                 // A sleeping machine runs this routine every 2 seconds instead of 10 times a second.
                 updateBouncer += dt;
@@ -333,10 +330,10 @@ namespace VintageEngineering
                 if (updateBouncer < 2f) return;
                 updateBouncer = 0f;
             }
-            if (MachineState == EnumBEState.On) // machine is on and actively crafting something
+            if (Electric.MachineState == EnumBEState.On) // machine is on and actively crafting something
             {
-                float powerpertick = MaxPPS * dt;
-                if (CurrentPower == 0 || CurrentPower < powerpertick) { return; } // power is low!
+                float powerpertick = Electric.MaxPPS * dt;
+                if (Electric.CurrentPower == 0 || Electric.CurrentPower < powerpertick) { return; } // power is low!
                 if (!OutputSlot.Empty) { return; } // something is in the output slot
                 if (isHeating) // we're heating
                 {
@@ -371,7 +368,7 @@ namespace VintageEngineering
                         FindMatchingRecipe(); // how'd this happen?
                         return;
                     }
-                    electricpower -= (ulong)Math.Round(powerpertick); // consume power when heating up
+                    Electric.electricpower -= (ulong)Math.Round(powerpertick); // consume power when heating up
                 }
 
                 if (RecipeProgress >= 1f) // target temp has been achieved!
@@ -402,9 +399,9 @@ namespace VintageEngineering
         protected virtual void SetState(EnumBEState newstate)
         {
             //if (MachineState == newstate) return; // no change, nothing to see here.            
-            MachineState = newstate;
+            Electric.MachineState = newstate;
 
-            if (MachineState == EnumBEState.On)
+            if (Electric.MachineState == EnumBEState.On)
             {
                 if (AnimUtil != null && base.Block.Attributes["craftinganimcode"].Exists)
                 {
@@ -427,11 +424,10 @@ namespace VintageEngineering
             }
             if (Api != null && Api.Side == EnumAppSide.Client && clientDialog != null && clientDialog.IsOpened())
             {
-                clientDialog.Update(RecipeProgress, CurrentPower, CurrentTemp, _currentTempGoal, tempGoal);
+                clientDialog.Update(RecipeProgress, Electric.CurrentPower, CurrentTemp, _currentTempGoal, tempGoal);
             }
             MarkDirty(true);
         }
-
 
         public override bool OnPlayerRightClick(IPlayer byPlayer, BlockSelection blockSel)
         {
@@ -440,7 +436,7 @@ namespace VintageEngineering
                 base.toggleInventoryDialogClient(byPlayer, delegate
                 {
                     clientDialog = new GUIForge(DialogTitle, Inventory, this.Pos, capi, this);
-                    clientDialog.Update(RecipeProgress, CurrentPower, CurrentTemp, _currentTempGoal, tempGoal);
+                    clientDialog.Update(RecipeProgress, Electric.CurrentPower, CurrentTemp, _currentTempGoal, tempGoal);
                     return this.clientDialog;
                 });
             }
@@ -689,7 +685,7 @@ namespace VintageEngineering
             base.OnReceivedClientPacket(player, packetid, data);
             if (packetid == 1002) // Enable Button
             {
-                if (IsEnabled) SetState(EnumBEState.Off); // turn off
+                if (Electric.IsEnabled) SetState(EnumBEState.Off); // turn off
                 else
                 {
                     SetState((IsCrafting || IsHeating) ? EnumBEState.On : EnumBEState.Sleeping);
@@ -708,7 +704,7 @@ namespace VintageEngineering
         public override void OnReceivedServerPacket(int packetid, byte[] data)
         {
             base.OnReceivedServerPacket(packetid, data);
-            if (clientDialog != null && clientDialog.IsOpened()) clientDialog.Update(RecipeProgress, CurrentPower, CurrentTemp, _currentTempGoal, tempGoal);
+            if (clientDialog != null && clientDialog.IsOpened()) clientDialog.Update(RecipeProgress, Electric.CurrentPower, CurrentTemp, _currentTempGoal, tempGoal);
         }
 
         public override void ToTreeAttributes(ITreeAttribute tree)
@@ -744,10 +740,10 @@ namespace VintageEngineering
                     InputSlot.Itemstack, currentItemTemp, true);
             }
 
-            if (Api != null && Api.Side == EnumAppSide.Client) { SetState(MachineState); }
+            if (Api != null && Api.Side == EnumAppSide.Client) { SetState(Electric.MachineState); }
             if (clientDialog != null)
             {
-                clientDialog.Update(RecipeProgress, CurrentPower, CurrentTemp, _currentTempGoal, tempGoal);
+                clientDialog.Update(RecipeProgress, Electric.CurrentPower, CurrentTemp, _currentTempGoal, tempGoal);
             }
         }
 

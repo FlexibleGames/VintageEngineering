@@ -16,7 +16,7 @@ using System.Text;
 
 namespace VintageEngineering
 {
-    public class BEMetalPress : ElectricBE, ITexPositionSource
+    public class BEMetalPress : ElectricContainerBE, ITexPositionSource
     {
         ICoreClientAPI capi;
         ICoreServerAPI sapi;
@@ -58,9 +58,6 @@ namespace VintageEngineering
         /// Is this machine currently working on something?
         /// </summary>
         public bool IsCrafting { get { return isCrafting; } }
-
-        public override bool CanExtractPower => false;
-        public override bool CanReceivePower => true;
 
         private ItemSlot InputSlot
         {
@@ -157,7 +154,7 @@ namespace VintageEngineering
                 MarkDirty(true, null);
                 if (clientDialog != null && clientDialog.IsOpened())
                 {
-                    clientDialog.Update(RecipeProgress, CurrentPower, currentPressRecipe);
+                    clientDialog.Update(RecipeProgress, Electric.CurrentPower, currentPressRecipe);
                 }
             }
             if (slotId == 3)
@@ -315,7 +312,7 @@ namespace VintageEngineering
         /// <returns>True if recipe found that matches ingredient and mold.</returns>
         public bool FindMatchingRecipe()
         {
-            if (MachineState == EnumBEState.Off) // if the machine is off, bounce.
+            if (Electric.MachineState == EnumBEState.Off) // if the machine is off, bounce.
             {
                 return false;
             }
@@ -427,7 +424,7 @@ namespace VintageEngineering
             if (this.Api is ICoreServerAPI) // only simulates on the server!
             {
                 // if the machine is ON but not crafting, it's sleeping, tick slower
-                if (IsSleeping)
+                if (Electric.IsSleeping)
                 {
                     updateBouncer += deltatime;
                     if (updateBouncer < 2f) return;
@@ -435,25 +432,25 @@ namespace VintageEngineering
                 updateBouncer = 0;
 
                 // if we're sleeping, bounce out of here. Extremely fast updates.
-                if (MachineState == EnumBEState.On) // block is enabled (on/off)
+                if (Electric.MachineState == EnumBEState.On) // block is enabled (on/off)
                 {
                     if (isCrafting && RecipeProgress < 1f) // machine is activly crafting and recipe isn't done
                     {
-                        if (CurrentPower == 0) return; // we have no power, there's no point in trying. bounce
+                        if (Electric.CurrentPower == 0) return; // we have no power, there's no point in trying. bounce
                         if (!HasRoomInOutput(0, null)) return; // output is full... bounce
 
                         if (!ValidateTemp()) return;
 
                         // scale power to apply to recipe by how much time has passed
-                        float powerToApply = MaxPPS * deltatime;
+                        float powerToApply = Electric.MaxPPS * deltatime;
 
-                        if (CurrentPower < powerToApply) return; // we don't have enough power to continue... bounce.
+                        if (Electric.CurrentPower < powerToApply) return; // we don't have enough power to continue... bounce.
 
                         // calculate percent of progress for this time-step.
                         float percentOfTotal = powerToApply / currentPressRecipe.PowerPerCraft;
                         // apply progress to recipe progress.
                         recipePowerApplied += (ulong)Math.Round(powerToApply);
-                        electricpower -= (ulong)Math.Round(powerToApply);
+                        Electric.electricpower -= (ulong)Math.Round(powerToApply);
                     }
                     else if (!IsCrafting) // machine isn't crafting
                     {
@@ -610,7 +607,7 @@ namespace VintageEngineering
                 capi = api as ICoreClientAPI;
                 if (AnimUtil != null)
                 {
-                    AnimUtil.InitializeAnimator("vemetalpress", null, null, new Vec3f(0f, GetRotation(), 0f) );
+                    AnimUtil.InitializeAnimator("vemetalpress", null, null, new Vec3f(0f, Electric.GetRotation(), 0f) );
                 }
                 UpdateMesh(3);
             }
@@ -621,9 +618,9 @@ namespace VintageEngineering
 
         protected virtual void SetState(EnumBEState newstate)
         {                  
-            MachineState = newstate;
+            Electric.MachineState = newstate;
 
-            if (MachineState == EnumBEState.On)
+            if (Electric.MachineState == EnumBEState.On)
             {
                 if (AnimUtil != null)
                 {
@@ -649,7 +646,7 @@ namespace VintageEngineering
             }
             if (Api != null && Api.Side == EnumAppSide.Client && clientDialog != null && clientDialog.IsOpened())
             {
-                clientDialog.Update(RecipeProgress, CurrentPower, currentPressRecipe);
+                clientDialog.Update(RecipeProgress, Electric.CurrentPower, currentPressRecipe);
             }
             MarkDirty(true, null);
         }
@@ -661,7 +658,7 @@ namespace VintageEngineering
                 base.toggleInventoryDialogClient(byPlayer, delegate
                 {
                     this.clientDialog = new GUIMetalPress(DialogTitle, Inventory, this.Pos, this.Api as ICoreClientAPI, this);
-                    this.clientDialog.Update(RecipeProgress, CurrentPower, currentPressRecipe);
+                    this.clientDialog.Update(RecipeProgress, Electric.CurrentPower, currentPressRecipe);
                     return this.clientDialog;
                 });
             }
@@ -673,7 +670,7 @@ namespace VintageEngineering
             base.OnReceivedClientPacket(player, packetid, data);
             if (packetid == 1002) // Enable button pressed
             {
-                if (IsEnabled) // we're enabled, we need to turn off
+                if (Electric.IsEnabled) // we're enabled, we need to turn off
                 {
                     SetState(EnumBEState.Off);
                 }
@@ -688,7 +685,7 @@ namespace VintageEngineering
         public override void OnReceivedServerPacket(int packetid, byte[] data)
         {
             base.OnReceivedServerPacket(packetid, data);
-            if (clientDialog != null && clientDialog.IsOpened()) clientDialog.Update(RecipeProgress, CurrentPower, currentPressRecipe);
+            if (clientDialog != null && clientDialog.IsOpened()) clientDialog.Update(RecipeProgress, Electric.CurrentPower, currentPressRecipe);
         }
 
         public override void ToTreeAttributes(ITreeAttribute tree)
@@ -714,10 +711,10 @@ namespace VintageEngineering
             FindMatchingRecipe();
             if (Api != null && Api.Side == EnumAppSide.Client)
             {
-                SetState(MachineState);
+                SetState(Electric.MachineState);
                 if (this.clientDialog != null && clientDialog.IsOpened())
                 {
-                    clientDialog.Update(RecipeProgress, CurrentPower, currentPressRecipe);
+                    clientDialog.Update(RecipeProgress, Electric.CurrentPower, currentPressRecipe);
                 }
                 UpdateMesh(3);
                 MarkDirty(true, null);

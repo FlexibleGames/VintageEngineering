@@ -5,6 +5,15 @@
 	"behaviors": [
 		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "vekiln-north" }}}
 	],
+	"entityBehaviors": [
+		{
+			"name": "Electric",
+			"properties": {
+				"canExtractPower": false,
+				"canReceivePower": true
+			}
+		}
+	],
 	"variantgroups": [
 		{ "code":"side", "loadFromProperties": "abstract/horizontalorientation" }
 	],
