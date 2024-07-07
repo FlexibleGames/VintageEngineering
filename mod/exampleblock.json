@@ -1,9 +1,17 @@
 {
 
     "class": "ElectricBlock", // MUST be a block that inherits from ElectricBlock
-    "entityclass": "ElectricalBlockEntity",  // MUST be a BE that inherits from ElectricBE or ElectricBENoGUI
 	"behaviors": [
 		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "vecrusher-north" }}} // required to place the block in the direction the player is facing
+	],
+	"entityBehaviors": [
+		{
+			"name": "Electric",
+			"properties": {
+				"canExtractPower": false, // Set this to true for machines that produce power
+				"canReceivePower": true // Set this to true for machines that consume power
+			}
+		}
 	],
 	"variantgroups": [
 		{ "code":"side", "loadFromProperties": "abstract/horizontalorientation" } // see behavior above

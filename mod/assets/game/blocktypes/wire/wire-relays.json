@@ -17,6 +17,15 @@
 						"west": { "x1": 7, "y1": 7, "z1": 0, "x2": 8, "y2": 8, "z2": 1, "rotateY": 270 }
 					}
 					}}],
+	"entityBehaviors": [
+		{
+			"name": "Electric",
+			"properties": {
+				"canExtractPower": false,
+				"canReceivePower": true
+			}
+		}
+	],
 	"creativeinventory": { "general": ["*"], "construction": ["*"] },
 	"shapeByType": {
         "*-north":  { "base": "game:block/relays/{type}", "rotateX": 270 },
