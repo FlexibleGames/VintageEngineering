@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using VintageEngineering.Transport.API;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
+using Vintagestory.Common;
 
 namespace VintageEngineering.Transport.Network
 {
@@ -54,7 +55,7 @@ namespace VintageEngineering.Transport.Network
         /// <param name="world">World Accessor</param>
         /// <returns>True if successful, false if position already existed.</returns>
         public bool AddPipe(BlockPos pos, IWorldAccessor world)
-        {
+        {            
             if (!_pipeBlockPositions.Contains(pos))
             {
                 _pipeBlockPositions.Add(pos);
@@ -63,6 +64,29 @@ namespace VintageEngineering.Transport.Network
                 return true;
             }
             return false;
+        }
+        /// <summary>
+        /// Add many pipes to this network from the given list of BlockPos<br/>
+        /// If there is a duplicate position, it will be skipped, all positions are processed regardless.<br/>
+        /// Sets the networkID of all Pipe entities to this networks ID.
+        /// </summary>
+        /// <param name="world">World Accessor</param>
+        /// <param name="pipes">List of Pipe positions to add.</param>
+        /// <returns>True if successful, false if a given position is a duplicate.</returns>
+        public bool AddPipes(IWorldAccessor world, List<BlockPos> pipes)
+        {
+            bool output = true;
+            foreach (BlockPos pos in pipes)
+            {
+                if (_pipeBlockPositions.Contains(pos)) { output = false; }
+                else
+                {
+                    _pipeBlockPositions.Add(pos);
+                    BEPipeBase pipe = world.BlockAccessor.GetBlockEntity(pos) as BEPipeBase;
+                    if (pipe != null) { pipe.NetworkID = _networkID; }
+                }
+            }
+            return output;
         }
 
         /// <summary>
@@ -77,6 +101,23 @@ namespace VintageEngineering.Transport.Network
                 return _pipeBlockPositions.Remove(pos);
             }
             return false;
+        }
+        /// <summary>
+        /// Removes many Pipe positions from this network.<br/>
+        /// Will process entire list, even if a given pos was not apart of this network.
+        /// </summary>
+        /// <param name="world">World Accessor</param>
+        /// <param name="remove">List of BlockPos to remove</param>
+        /// <returns>True if successful, false if a given position was not apart of this network.</returns>
+        public bool RemovePipes(IWorldAccessor world, List<BlockPos> remove)
+        {
+            bool output = true;
+            foreach (BlockPos pos in remove)
+            {
+                if (!_pipeBlockPositions.Contains(pos)) { output = false; }
+                _pipeBlockPositions.Remove(pos);
+            }
+            return output;
         }
 
         /// <summary>

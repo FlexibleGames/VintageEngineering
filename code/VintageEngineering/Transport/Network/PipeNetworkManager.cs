@@ -86,7 +86,22 @@ namespace VintageEngineering.Transport.Network
                 _nextNetworkID = SerializerUtil.Deserialize<long>(nextid); 
             }
         }
+        /// <summary>
+        /// Creates a network and returns the ID of that network.
+        /// </summary>
+        /// <param name="pipeuse">The type of pipe of this network.</param>
+        /// <returns>long NetworkID of the new network</returns>
+        public long CreateNetwork(EnumPipeUse pipeuse)
+        {
+            long output = NextNetworkID;
 
+            // a fancy null status check and assignment if true.
+            _pipeNetworks ??= new Dictionary<long, PipeNetwork>();
+
+            _pipeNetworks.Add(_nextNetworkID, new PipeNetwork(_nextNetworkID, pipeuse));
+            _nextNetworkID++;
+            return output;
+        }
         public void OnPipeBlockPlaced(IWorldAccessor world, BlockPos pos)
         {
             // check the sides for other pipes and check connection overrides
@@ -125,10 +140,8 @@ namespace VintageEngineering.Transport.Network
                 }
                 if (pipecons == 0)
                 {
-                    if (_pipeNetworks == null) _pipeNetworks = new Dictionary<long, PipeNetwork>();
-                    _pipeNetworks.Add(_nextNetworkID, new PipeNetwork(_nextNetworkID, usb.PipeUse));
-                    _pipeNetworks[_nextNetworkID].AddPipe(pos.Copy(), world);
-                    _nextNetworkID++;
+                    long newid = CreateNetwork(usb.PipeUse);                    
+                    _pipeNetworks[newid].AddPipe(pos.Copy(), world);                    
                 }
                 if (pipecons == 1 && hasinserts)
                 {
@@ -171,7 +184,7 @@ namespace VintageEngineering.Transport.Network
             }
             else
             {
-                SplitNetwork(world, pos);
+                SplitNetworkAt(world, pos);
             }
         }
 
@@ -185,6 +198,11 @@ namespace VintageEngineering.Transport.Network
         /// <param name="overrideState">True if connection node is overridden.</param>
         public void OnPipeConnectionOverride(IWorldAccessor world, BlockPos pos, BlockSelection selection, bool overrideState)
         {
+            // this process should be much easier as there's just an A and B side to track...
+            BEPipeBase bep = world.BlockAccessor.GetBlockEntity(pos) as BEPipeBase;
+            BlockPipeBase pblock = world.BlockAccessor.GetBlock(pos) as BlockPipeBase;
+            if (bep == null ||  pblock == null) return; // sanity check
+
 
         }
         /// <summary>
@@ -211,16 +229,16 @@ namespace VintageEngineering.Transport.Network
         /// </summary>
         /// <param name="world">World Accessor</param>
         /// <param name="pos">Pipe Block being removed.</param>
-        public void SplitNetwork(IWorldAccessor world, BlockPos pos)
+        public void SplitNetworkAt(IWorldAccessor world, BlockPos pos)
         {
-            // check pipe connections for neighboring pipes
+            // check pipe connections for neighboring pipes, key = face
             List<BlockPos> connectedpipes = new List<BlockPos>();
 
             BEPipeBase bep = world.BlockAccessor.GetBlockEntity(pos) as BEPipeBase;
             BlockPipeBase pipeblock = world.BlockAccessor.GetBlock(pos) as BlockPipeBase;
             if (bep == null || pipeblock == null) return; // something is wrong
 
-            long splitid = bep.NetworkID;
+            long splitid = bep.NetworkID; // the networkID of the source of the split
 
             for (int f = 0; f < 6; f++)
             {
@@ -232,11 +250,31 @@ namespace VintageEngineering.Transport.Network
             }
             // connectedpipes now has a list of all the pipe block positions of new (potential) networks.
             // the connections of the position passed in have also been disabled to prevent false connections.
-            if (connectedpipes.Count > 0)
+            if (connectedpipes.Count > 1)
             {
-                foreach (BlockPos newnet in connectedpipes)
+                BlockPos firstpos = connectedpipes[0];
+                List<BlockPos> firstcon = GetConnectedPipes(world, firstpos.Copy());
+                connectedpipes.Remove(firstpos);                 
+
+                for (int x = 0; x < connectedpipes.Count; x++)
                 {
-                    // TODO all the stuff in here...
+                    long conid = (world.BlockAccessor.GetBlockEntity(connectedpipes[x]) as BEPipeBase).NetworkID;
+                    if (firstcon.Contains(connectedpipes[x]) || splitid != conid)
+                    {
+                        // When splitid != conid that means we've already processed that list of pipes into a new network
+                        // the next connection is part of the first, skip
+                        continue;
+                    }
+                    else
+                    {
+                        // this is a new network
+                        List<BlockPos> newnet = GetConnectedPipes(world, connectedpipes[x]);
+                        long newid = CreateNetwork(pipeblock.PipeUse);
+                        // add the pipes to the new network
+                        _pipeNetworks[newid].AddPipes(world, newnet);
+                        // remove those same pipes from the original network
+                        _pipeNetworks[splitid].RemovePipes(world, newnet);
+                    }
                 }
             }
         }

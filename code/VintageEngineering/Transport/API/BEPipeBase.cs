@@ -156,7 +156,10 @@ namespace VintageEngineering.Transport.API
             output += $"Pipe Cons: {pipecons}";
             dsc.Append(output);
         }
-
+        /// <summary>
+        /// Returns a BlockPos array of all Pipe positions that connect to this one.
+        /// </summary>
+        /// <returns>BlockPos array.</returns>
         public virtual BlockPos[] GetPipeConnections()
         {
             List<BlockPos> connections = new List<BlockPos>();
