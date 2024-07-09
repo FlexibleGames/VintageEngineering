@@ -203,7 +203,27 @@ namespace VintageEngineering.Transport.Network
             BlockPipeBase pblock = world.BlockAccessor.GetBlock(pos) as BlockPipeBase;
             if (bep == null ||  pblock == null) return; // sanity check
 
+            BEPipeBase other = world.BlockAccessor.GetBlockEntity(pos.AddCopy(BEPipeBase.ConvertIndexToFace(selection.SelectionBoxIndex))) as BEPipeBase;
 
+
+            if (overrideState)
+            {
+                // we are forcefully disconnecting the pipe-pipe connection
+                List<BlockPos> othernet = GetConnectedPipes(world, other.Pos);
+
+                if (othernet.Contains(pos)) { return; } // the network is still connected elsewhere... do not split
+                else
+                {
+                    long newid = CreateNetwork(pblock.PipeUse);
+                    _pipeNetworks[newid].AddPipes(world, othernet);
+                    _pipeNetworks[bep.NetworkID].RemovePipes(world, othernet);
+                }
+            }
+            else
+            {
+                // the connection override has been removed, the networks should merge
+                MergeNetworks(world, bep.NetworkID, other.NetworkID);
+            }
         }
         /// <summary>
         /// Merge Pipe Network net2 into net1.
@@ -280,7 +300,8 @@ namespace VintageEngineering.Transport.Network
         }
 
         /// <summary>
-        /// Returns List of BlockPos of all the pipes connected to the given pos.
+        /// Returns List of BlockPos of all the pipes connected to the given pos.<br/>
+        /// By far the most expensive call in this feature, optimizations to come later.
         /// </summary>
         /// <param name="world">World Accessor</param>
         /// <param name="pos">Start Position to check from.</param>
