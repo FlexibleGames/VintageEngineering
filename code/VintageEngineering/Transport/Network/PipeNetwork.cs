@@ -39,8 +39,15 @@ namespace VintageEngineering.Transport.Network
 
         public void Wake() => _isSleeping = false;
 
-        public PipeNetwork() { }
-
+        /// <summary>
+        /// Empty constructor for ProtoBuf system
+        /// </summary>
+        public PipeNetwork() { } 
+        /// <summary>
+        /// Create a new empty network with the given use and ID.
+        /// </summary>
+        /// <param name="networkID">ID of this new network</param>
+        /// <param name="pipeType">Type of network</param>
         public PipeNetwork(long networkID, EnumPipeUse pipeType)
         {
             _networkID = networkID;

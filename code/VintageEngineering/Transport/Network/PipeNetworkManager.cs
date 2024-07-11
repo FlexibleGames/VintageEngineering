@@ -139,7 +139,8 @@ namespace VintageEngineering.Transport.Network
             if (pipecons == 0)
             {
                 long newid = CreateNetwork(usb.PipeUse);                    
-                _pipeNetworks[newid].AddPipe(pos.Copy(), world);                    
+                _pipeNetworks[newid].AddPipe(pos.Copy(), world);
+                _pipeNetworks[newid].MarkNetworkDirty(world); // rebuilds insert list for all extraction nodes
             }
             if (pipecons == 1 && hasinserts)
             {
@@ -238,6 +239,7 @@ namespace VintageEngineering.Transport.Network
                 // this also sets the Pipes NetworkID of the block entity
                 _pipeNetworks[net1id].AddPipe(pos.Copy(), world);
             }
+            _pipeNetworks[net1id].MarkNetworkDirty(world); // rebuilds insert list for all extraction nodes
             _pipeNetworks[net2id].Clear();
             _pipeNetworks.Remove(net2id);
         }
@@ -292,6 +294,7 @@ namespace VintageEngineering.Transport.Network
                         long newid = CreateNetwork(pipeblock.PipeUse);
                         // add the pipes to the new network
                         _pipeNetworks[newid].AddPipes(world, newnet);
+                        _pipeNetworks[newid].MarkNetworkDirty(world); // rebuilds insert list for all extraction nodes
                         // remove those same pipes from the original network
                         _pipeNetworks[splitid].RemovePipes(world, newnet);
                     }

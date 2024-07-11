@@ -153,7 +153,9 @@ namespace VintageEngineering.Transport.API
             output += $"Insert Sides: {inserts}" + System.Environment.NewLine;
             output += $"Extract Sides: {extracts}" + System.Environment.NewLine;
             output += $"Overrides: {overrides}" + System.Environment.NewLine;
-            output += $"Pipe Cons: {pipecons}";
+            output += $"Pipe Cons: {pipecons}" + System.Environment.NewLine;
+            output += $"# Ins/Extr: {numInsertionConnections}/{numExtractionConnections}";            
+            if (pushConnections != null) output += Environment.NewLine + $"#Pushes: {pushConnections.Count}";
             dsc.Append(output);
         }
         /// <summary>
