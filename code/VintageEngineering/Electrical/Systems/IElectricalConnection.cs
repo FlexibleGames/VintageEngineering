@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using VintageEngineering.Electrical.Systems.Catenary;
+using Vintagestory.API.Common;
+using Vintagestory.API.MathTools;
 
 
 namespace VintageEngineering.Electrical.Systems
@@ -38,11 +40,18 @@ namespace VintageEngineering.Electrical.Systems
         int NumConnections(int wirenodeindex);
 
         /// <summary>
-        /// Returns helpful HUD text (like Power, PPS, and state) for display in the HUD when looking at this block.<br/>
-        /// Override to customize, but call base to build basic machine data.
+        /// Returns the IElectricalBlockEntity for the BlockEntity or one of its behaviors at given position.
         /// </summary>
-        /// <returns>String with machine info.</returns>
-        string GetMachineHUDText();
-
+        /// <param name="blockAccessor">The accessor for the world</param>
+        /// <param name="pos">The position of the block</param>
+        /// <returns>The interface, or null if the block at that position does not implement it</returns>
+        static IElectricalConnection GetAtPos(IBlockAccessor blockAccessor, BlockPos pos)
+        {
+            BlockEntity entity = blockAccessor.GetBlockEntity(pos);
+            if (entity is IElectricalConnection converted) {
+                return converted;
+            }
+            return entity?.GetBehavior<IElectricalConnection>();
+        }
     }
 }

@@ -24,8 +24,8 @@ namespace VintageEngineering
             }
             capi.World.Player.InventoryManager.OpenInventory(inventory);
             betestgen = bentity;
-            _currentPower = betestgen.CurrentPower;
-            _maxPower = betestgen.MaxPower;
+            _currentPower = betestgen.Electric.CurrentPower;
+            _maxPower = betestgen.Electric.MaxPower;
 
             this.SetupDialog();
         }

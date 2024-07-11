@@ -16,7 +16,7 @@ using Vintagestory.GameContent;
 
 namespace VintageEngineering
 {
-    public class BEMixer : ElectricBEWithFluid, IHeatable
+    public class BEMixer : FluidContainerBE, IHeatable
     {
         private ICoreClientAPI capi;
         private ICoreServerAPI sapi;
@@ -36,8 +36,6 @@ namespace VintageEngineering
             inv = new InvMixer(null, null);
             inv.SlotModified += OnSlotModified;
         }
-        public override bool CanExtractPower => false;
-        public override bool CanReceivePower => true;
 
         public override void Initialize(ICoreAPI api)
         {
@@ -52,7 +50,7 @@ namespace VintageEngineering
                 capi = api as ICoreClientAPI;
                 if (AnimUtil != null)
                 {
-                    AnimUtil.InitializeAnimator("vemixer", null, null, new Vec3f(0, GetRotation(), 0f));
+                    AnimUtil.InitializeAnimator("vemixer", null, null, new Vec3f(0, Electric.GetRotation(), 0f));
                 }
             }
             inv.Pos = this.Pos;
@@ -67,10 +65,10 @@ namespace VintageEngineering
         #region RecipeAndInventoryStuff
         private InvMixer inv;
 
-        private RecipeMixer currentRecipe;        
+        private RecipeMixer currentRecipe;
 
         public float basinTemperature;
-                
+
         /// <summary>
         /// When using a Barrel Recipe, what is the power requirement total.
         /// </summary>
@@ -78,7 +76,7 @@ namespace VintageEngineering
 
         private ulong recipePowerApplied;
         private bool isCrafting = false;
-        
+
         public float RecipeProgress
         {
             get
@@ -94,8 +92,8 @@ namespace VintageEngineering
         public bool IsCrafting { get { return isCrafting; } }
 
         public ItemSlot[] InputSlots
-        { 
-            get 
+        {
+            get
             {
                 return new ItemSlot[]
                 {
@@ -105,7 +103,7 @@ namespace VintageEngineering
                     inv[3],
                     inv[4] as ItemSlotLiquidOnly,
                     inv[5] as ItemSlotLiquidOnly
-                };                
+                };
             }
         }
 
@@ -153,7 +151,7 @@ namespace VintageEngineering
                 MarkDirty(true);
                 if (clientDialog != null && clientDialog.IsOpened())
                 {
-                    clientDialog.Update(RecipeProgress, CurrentPower, currentRecipe);
+                    clientDialog.Update(RecipeProgress, Electric.CurrentPower, currentRecipe);
                 }
             }
         }
@@ -181,7 +179,7 @@ namespace VintageEngineering
                 {
                     WaterTightContainableProps wprops = BlockLiquidContainerBase.GetContainableProps(inv[7].Itemstack);
                     if (wprops == null) fluidout = 0;
-                    fluidout = (int)((inv[7] as ItemSlotLiquidOnly).CapacityLitres - (inv[7].Itemstack.StackSize/wprops.ItemsPerLitre));
+                    fluidout = (int)((inv[7] as ItemSlotLiquidOnly).CapacityLitres - (inv[7].Itemstack.StackSize / wprops.ItemsPerLitre));
                 }
                 else fluidout = 50;
 
@@ -206,7 +204,7 @@ namespace VintageEngineering
         public bool FindMatchingRecipe()
         {
             if (Api == null) return false; // we're running this WAY too soon, bounce.
-            if (MachineState == EnumBEState.Off) // if the machine is off, bounce.
+            if (Electric.MachineState == EnumBEState.Off) // if the machine is off, bounce.
             {
                 return false;
             }
@@ -218,9 +216,9 @@ namespace VintageEngineering
             }
             if (noinput)
             {
-                currentRecipe = null;                
+                currentRecipe = null;
                 isCrafting = false;
-                StateChange(EnumBEState.Sleeping);
+                SetState(EnumBEState.Sleeping);
                 return false;
             }
 
@@ -233,14 +231,14 @@ namespace VintageEngineering
                 {
                     currentRecipe = mrecipe;
                     isCrafting = true;
-                    StateChange(EnumBEState.On);
+                    SetState(EnumBEState.On);
                     return true;
                 }
             }
 
             isCrafting = false;
             recipePowerApplied = 0;
-            StateChange(EnumBEState.Sleeping);
+            SetState(EnumBEState.Sleeping);
             return false;
         }
         #endregion
@@ -248,18 +246,18 @@ namespace VintageEngineering
         public void OnSimTick(float dt)
         {
             if (Api.Side == EnumAppSide.Client) return; // only tick on the server
-            if (IsSleeping)
+            if (Electric.IsSleeping)
             {
                 // A sleeping machine runs this routine every 2 seconds instead of 10 times a second.
                 updateBouncer += dt;
                 if (updateBouncer < 2f) return;
                 updateBouncer = 0f;
             }
-            if (MachineState == EnumBEState.On) // machine is on and actively crafting something
+            if (Electric.MachineState == EnumBEState.On) // machine is on and actively crafting something
             {
                 if (isCrafting && RecipeProgress < 1f)
                 {
-                    if (CurrentPower == 0 || CurrentPower < (MaxPPS * dt)) return; // we don't have any power to progress.                    
+                    if (Electric.CurrentPower == 0 || Electric.CurrentPower < (Electric.MaxPPS * dt)) return; // we don't have any power to progress.
 
                     if (!HasRoomInOutput(0, null)) return;
 
@@ -268,26 +266,26 @@ namespace VintageEngineering
                         if (basinTemperature < currentRecipe.RequiresTemp) return;
                     }
 
-                    float powerpertick = MaxPPS * dt;
+                    float powerpertick = Electric.MaxPPS * dt;
 
-                    if (CurrentPower < powerpertick) return; // last check for our power requirements.
+                    if (Electric.CurrentPower < powerpertick) return; // last check for our power requirements.
 
                     // round to the nearest whole number
                     recipePowerApplied += (ulong)Math.Round(powerpertick);
-                    electricpower -= (ulong)Math.Round(powerpertick);
-                }                
+                    Electric.electricpower -= (ulong)Math.Round(powerpertick);
+                }
                 else if (RecipeProgress >= 1f)
-                {                  
-                    
+                {
+
                     if (currentRecipe != null)
                     {
                         // used a Mixer Recipe
                         currentRecipe.TryCraftNow(Api, InputSlots, OutputSlots);
                     }
-                    
+
                     if (!FindMatchingRecipe())
                     {
-                        StateChange(EnumBEState.Sleeping);
+                        SetState(EnumBEState.Sleeping);
                         isCrafting = false;
                     }
                     recipePowerApplied = 0;
@@ -297,11 +295,11 @@ namespace VintageEngineering
             }
         }
 
-        public override void StateChange(EnumBEState newstate)
+        protected virtual void SetState(EnumBEState newstate)
         {
-            MachineState = newstate;
+            Electric.MachineState = newstate;
 
-            if (MachineState == EnumBEState.On)
+            if (Electric.MachineState == EnumBEState.On)
             {
                 if (AnimUtil != null && base.Block.Attributes["craftinganimcode"].Exists)
                 {
@@ -324,7 +322,7 @@ namespace VintageEngineering
             }
             if (Api != null && Api.Side == EnumAppSide.Client && clientDialog != null && clientDialog.IsOpened())
             {
-                clientDialog.Update(RecipeProgress, CurrentPower, currentRecipe);
+                clientDialog.Update(RecipeProgress, Electric.CurrentPower, currentRecipe);
             }
             MarkDirty(true);
         }
@@ -337,7 +335,7 @@ namespace VintageEngineering
                 base.toggleInventoryDialogClient(byPlayer, delegate
                 {
                     clientDialog = new GUIMixer(DialogTitle, Inventory, this.Pos, capi, this);
-                    clientDialog.Update(RecipeProgress, CurrentPower, currentRecipe);
+                    clientDialog.Update(RecipeProgress, Electric.CurrentPower, currentRecipe);
                     return this.clientDialog;
                 });
             }
@@ -356,17 +354,13 @@ namespace VintageEngineering
             }
         }
 
-        public override string GetMachineHUDText()
+        public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
         {
-            string outtext = base.GetMachineHUDText() + System.Environment.NewLine;
+            base.GetBlockInfo(forPlayer, dsc);
 
             float recipeProgressPercent = RecipeProgress * 100;
-
-            string crafting = isCrafting ? $"{Lang.Get("vinteng:gui-word-crafting")}: {recipeProgressPercent:N1}%" : $"{Lang.Get("vinteng:gui-machine-notcrafting")}";
-
-            string heated = System.Environment.NewLine + $"{Lang.Get("vinteng:gui-word-temp")} {basinTemperature:N1}°";
-
-            return outtext + crafting + heated;
+            dsc.AppendLine(isCrafting ? $"{Lang.Get("vinteng:gui-word-crafting")}: {recipeProgressPercent:N1}%" : $"{Lang.Get("vinteng:gui-machine-notcrafting")}");
+            dsc.AppendLine($"{Lang.Get("vinteng:gui-word-temp")} {basinTemperature:N1}°");
         }
 
         #region ServerClientStuff
@@ -375,10 +369,10 @@ namespace VintageEngineering
             base.OnReceivedClientPacket(player, packetid, data);
             if (packetid == 1002) // Enable Button
             {
-                if (IsEnabled) StateChange(EnumBEState.Off); // turn off
+                if (Electric.IsEnabled) SetState(EnumBEState.Off); // turn off
                 else
                 {
-                    StateChange(IsCrafting ? EnumBEState.On : EnumBEState.Sleeping);
+                    SetState(IsCrafting ? EnumBEState.On : EnumBEState.Sleeping);
                 }
                 MarkDirty(true, null);
             }
@@ -387,7 +381,7 @@ namespace VintageEngineering
         public override void OnReceivedServerPacket(int packetid, byte[] data)
         {
             base.OnReceivedServerPacket(packetid, data);
-            if (clientDialog != null && clientDialog.IsOpened()) clientDialog.Update(RecipeProgress, CurrentPower, currentRecipe);
+            if (clientDialog != null && clientDialog.IsOpened()) clientDialog.Update(RecipeProgress, Electric.CurrentPower, currentRecipe);
         }
 
         public override void ToTreeAttributes(ITreeAttribute tree)
@@ -397,7 +391,7 @@ namespace VintageEngineering
             inv.ToTreeAttributes(invtree);
             tree["inventory"] = invtree;
             tree.SetLong("recipepowerapplied", (long)recipePowerApplied);
-            tree.SetBool("iscrafting", isCrafting);            
+            tree.SetBool("iscrafting", isCrafting);
             tree.SetLong("recipepowercosttotal", (long)recipePowerCostTotal);
             tree.SetFloat("basintemp", basinTemperature);
             //            tree.SetItemstack("nuggettype", nuggetType);
@@ -411,12 +405,12 @@ namespace VintageEngineering
             recipePowerApplied = (ulong)tree.GetLong("recipepowerapplied");
             isCrafting = tree.GetBool("iscrafting", false);
             basinTemperature = tree.GetFloat("basintemp", 20f);
-            recipePowerCostTotal = (ulong)(tree.GetLong("recipepowercosttotal"));            
+            recipePowerCostTotal = (ulong)(tree.GetLong("recipepowercosttotal"));
             FindMatchingRecipe();
-            if (Api != null && Api.Side == EnumAppSide.Client) { StateChange(MachineState); }
+            if (Api != null && Api.Side == EnumAppSide.Client) { SetState(Electric.MachineState); }
             if (clientDialog != null && clientDialog.IsOpened())
             {
-                clientDialog.Update(RecipeProgress, CurrentPower, currentRecipe);
+                clientDialog.Update(RecipeProgress, Electric.CurrentPower, currentRecipe);
             }
         }
 

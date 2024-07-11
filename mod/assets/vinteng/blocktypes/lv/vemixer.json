@@ -8,7 +8,19 @@
 	"variantgroups": [
 		{ "code":"side", "loadFromProperties": "abstract/horizontalorientation" }
 	],
-	"entityBehaviorsByType": { "*": [{ "name": "Animatable" }] },
+	"entityBehaviors": [
+		{ "name": "Animatable" },
+		{
+			"name": "Electric",
+			"properties": {
+				"canExtractPower": false,
+				"canReceivePower": true,
+				"entitytype": "Consumer",
+				"maxpower": 1024,
+				"maxpps": 64
+			}
+		}
+	],
 	"attributes": {
 		"handbook": {
 			"groupBy": ["vemixer-*"],
@@ -21,10 +33,7 @@
 		"allowPipeLiquidTransfer": true,
 		"transferLitresPerSecond": 5,
 		"craftinganimcode": "craft",
-		"entitytype": "Consumer",
 		"priority": 5,
-		"maxpower": 1024,
-		"maxpps": 64,
         "wireNodes": [
             {
                 "index": 0,

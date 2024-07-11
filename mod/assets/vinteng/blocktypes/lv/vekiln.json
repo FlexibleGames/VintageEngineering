@@ -5,6 +5,18 @@
 	"behaviors": [
 		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "vekiln-north" }}}
 	],
+	"entityBehaviors": [
+		{
+			"name": "Electric",
+			"properties": {
+				"canExtractPower": false,
+				"canReceivePower": true,
+				"entitytype": "Consumer",
+				"maxpower": 1024,
+				"maxpps": 128
+			}
+		}
+	],
 	"variantgroups": [
 		{ "code":"side", "loadFromProperties": "abstract/horizontalorientation" }
 	],
@@ -17,10 +29,7 @@
 			}
 		},
 		"heatpersecond": 80,
-		"entitytype": "Consumer",
 		"priority": 5,
-		"maxpower": 1024,
-		"maxpps": 128,
         "wireNodes": [
             {
                 "index": 0,

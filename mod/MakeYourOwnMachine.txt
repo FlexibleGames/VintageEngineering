@@ -6,11 +6,9 @@ Depending on how complex your machine is steps can vary, I'll cover the basics.
 
 Most of my simple machines use block class VEElectricBlock. In JSON,  "class": "VEElectricBlock",
 
-Your custom BlockEntity needs to inherit from ElectricBE or ElectricBENoGUI.
-- ElectricBE is for those machines/blocks WITH a GUI and inventory.
-- ElectricBENoGUI is for more generic blocks (like the Relays) that don't require GUI's or inventories.
+Your block must have the Electric block entity behavior installed on it. In order for the block to do anything with the power it receives, it must either have a custom block entity class or block entity behavior that interacts with the Electric behavior.
 
-In your block entities you have access to many variables from the base class described above.
+In your block entities you have access to many variables from the Electric behavior described above.
 CurrentPower, MachineState, MaxPower, MaxPPS, are among the important ones.
 
 Setting the defaults for a machine happens in JSON attributes.
@@ -78,7 +76,7 @@ It is vital that your machine BE (Block Entity) override CanReceivePower and Can
 Override GetMachineHUDText in your block entity to add information to the popup data you see when looking at your machine.
     Be sure to call base to get power information first.
 
-You do NOT need to do anything with the Electric Network power, all that is handled for you by the base classes.
+You do NOT need to do anything with the Electric Network power, all that is handled for you by the Electric behavior.
 
 Please, Be kind, this framework took 9 months to build. So don't copy it. As I add features to my mod, hopefully it
     opens more opportunities for others to build upon it.

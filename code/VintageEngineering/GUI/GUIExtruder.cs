@@ -30,8 +30,8 @@ namespace VintageEngineering
             capi.World.Player.InventoryManager.OpenInventory(inventory);
             betestmach = bentity;
             _craftProgress = betestmach.RecipeProgress;
-            _currentPower = betestmach.CurrentPower;
-            _maxPower = betestmach.MaxPower; // set this once as it doesn't/shouldn't change (for now)
+            _currentPower = betestmach.Electric.CurrentPower;
+            _maxPower = betestmach.Electric.MaxPower; // set this once as it doesn't/shouldn't change (for now)
             this.SetupDialog();
         }
         private void OnSlotModified(int slotid)
@@ -109,7 +109,7 @@ namespace VintageEngineering
             CairoFont centerwhite = CairoFont.WhiteSmallText().WithWeight(FontWeight.Normal).WithOrientation(EnumTextOrientation.Center);
             double[] yellow = new double[3] { 1, 1, 0 }; // Yellow?
             outputFont.WithColor(yellow);
-            string enablebuttontext = this.betestmach.IsEnabled ? Lang.Get("vinteng:gui-turn-off") : Lang.Get("vinteng:gui-turn-on");
+            string enablebuttontext = this.betestmach.Electric.IsEnabled ? Lang.Get("vinteng:gui-turn-off") : Lang.Get("vinteng:gui-turn-on");
 
             CairoFont outputfont = CairoFont.WhiteDetailText().WithWeight(FontWeight.Normal).WithOrientation(EnumTextOrientation.Left);
 
@@ -155,12 +155,12 @@ namespace VintageEngineering
                 langcode += "-" + outputstack.Collectible.Code.Path;
                 outputhelptext = $"{Lang.Get("vinteng:gui-word-crafting")} {Lang.Get(langcode)}";
 
-                if (betestmach.CurrentPower < 10) outputhelptext = Lang.Get("vinteng:gui-machine-lowpower");
+                if (betestmach.Electric.CurrentPower < 10) outputhelptext = Lang.Get("vinteng:gui-machine-lowpower");
                 if (!betestmach.ValidateTemp()) outputhelptext = Lang.Get("vinteng:gui-input-hot-enough");
             }
             else
             {
-                if (betestmach.IsSleeping || currentRecipe == null)
+                if (betestmach.Electric.IsSleeping || currentRecipe == null)
                 {
                     outputhelptext = Lang.Get("vinteng:gui-no-valid-recipe");    // third is a VALID recipe
                 }
@@ -177,7 +177,7 @@ namespace VintageEngineering
                     outputhelptext = Lang.Get("vinteng:gui-extruder-die");   // first priority is a mold
                 }
             }
-            if (!betestmach.IsEnabled)
+            if (!betestmach.Electric.IsEnabled)
             {
                 outputhelptext = Lang.Get("vinteng:gui-machine-off");
             }
@@ -188,7 +188,7 @@ namespace VintageEngineering
         {
             string outputstring = "";
             float craftPercent = _craftProgress * 100;
-            if (betestmach.IsSleeping) // machine is sleeping if on and not crafting
+            if (betestmach.Electric.IsSleeping) // machine is sleeping if on and not crafting
             {
                 outputstring = Lang.Get("vinteng:gui-is-sleeping-short");
             }
@@ -196,11 +196,11 @@ namespace VintageEngineering
             {
                 outputstring = $"{craftPercent:N1}%";
             }
-            if (!betestmach.IsSleeping && !betestmach.IsCrafting) // these SHOULD be mutually exclusive
+            if (!betestmach.Electric.IsSleeping && !betestmach.IsCrafting) // these SHOULD be mutually exclusive
             {
                 outputstring = $"Error";
             }
-            if (!betestmach.IsEnabled)
+            if (!betestmach.Electric.IsEnabled)
             {
                 outputstring = Lang.Get("vinteng:gui-word-off");
             }
@@ -283,7 +283,7 @@ namespace VintageEngineering
                 base.SingleComposer.GetDynamicText("progressText").SetNewText(GetProgressText());
                 base.SingleComposer.GetCustomDraw("powerDrawer").Redraw();
                 base.SingleComposer.GetCustomDraw("progressBar").Redraw();
-                base.SingleComposer.GetDynamicText("enableBtnText").SetNewText(betestmach.IsEnabled ? Lang.Get("vinteng:gui-turn-off") : Lang.Get("vinteng:gui-turn-on"));
+                base.SingleComposer.GetDynamicText("enableBtnText").SetNewText(betestmach.Electric.IsEnabled ? Lang.Get("vinteng:gui-turn-off") : Lang.Get("vinteng:gui-turn-on"));
                 currentRecipe = mprecipe;
                 base.SingleComposer.GetDynamicText("outputText").SetNewText(GetHelpText());
             }

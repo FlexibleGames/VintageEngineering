@@ -8,7 +8,19 @@
 	"variantgroups": [
 		{ "code":"side", "loadFromProperties": "abstract/horizontalorientation" }
 	],
-	"entityBehaviorsByType": { "*": [{ "name": "Animatable" }] },
+	"entityBehaviors": [
+		{ "name": "Animatable" },
+		{
+			"name": "Electric",
+			"properties": {
+				"canExtractPower": true,
+				"canReceivePower": false,
+				"entitytype": "Producer",
+				"maxpower": 1024,
+				"maxpps": 32
+			}
+		}
+	],
 	"attributes": {
 		"handbook": {
 			"groupBy": ["velvgenerator-*"],
@@ -18,10 +30,7 @@
 			}
 		},
 		"craftinganimcode": "craft",
-		"entitytype": "Producer",
 		"priority": 5,
-		"maxpower": 1024,
-		"maxpps": 32,
         "wireNodes": [
             {
                 "index": 0,

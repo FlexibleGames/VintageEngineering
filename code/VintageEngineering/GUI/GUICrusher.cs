@@ -31,8 +31,8 @@ namespace VintageEngineering
 
             capi.World.Player.InventoryManager.OpenInventory(inventory);
             becrusher = bentity;
-            _currentPower = becrusher.CurrentPower;
-            _maxPower = becrusher.MaxPower;
+            _currentPower = becrusher.Electric.CurrentPower;
+            _maxPower = becrusher.Electric.MaxPower;
             _craftProgress = becrusher.RecipeProgress;
             SetupDialog();
         }
@@ -104,7 +104,7 @@ namespace VintageEngineering
                 window.WithAlignment(EnumDialogArea.CenterMiddle).WithFixedAlignmentOffset(20, 0);
             }
             BlockPos blockPos = base.BlockEntityPosition;
-            string enablebtnstring = becrusher.IsEnabled ? Lang.Get("vinteng:gui-turn-off") : Lang.Get("vinteng:gui-turn-on");
+            string enablebtnstring = becrusher.Electric.IsEnabled ? Lang.Get("vinteng:gui-turn-off") : Lang.Get("vinteng:gui-turn-on");
 
             CairoFont centerwhite = CairoFont.WhiteSmallText().WithWeight(FontWeight.Normal).WithOrientation(EnumTextOrientation.Center);
             double[] yellow = new double[3] { 1, 1, 0 };
@@ -168,7 +168,7 @@ namespace VintageEngineering
                 SingleComposer.GetDynamicText("progressText").SetNewText(GetProgressText());
                 SingleComposer.GetCustomDraw("powerDrawer").Redraw();
                 SingleComposer.GetCustomDraw("progressBar").Redraw();
-                SingleComposer.GetDynamicText("enableBtnText").SetNewText(becrusher.IsEnabled ? Lang.Get("vinteng:gui-turn-off") : Lang.Get("vinteng:gui-turn-on"));
+                SingleComposer.GetDynamicText("enableBtnText").SetNewText(becrusher.Electric.IsEnabled ? Lang.Get("vinteng:gui-turn-off") : Lang.Get("vinteng:gui-turn-on"));
                 SingleComposer.GetDynamicText("outputText").SetNewText(GetHelpText());
             }
         }
@@ -222,7 +222,7 @@ namespace VintageEngineering
         {
             string outputstring = "";
             float craftPercent = _craftProgress * 100;
-            if (becrusher.IsSleeping) // machine is sleeping if on and not crafting
+            if (becrusher.Electric.IsSleeping) // machine is sleeping if on and not crafting
             {
                 outputstring = Lang.Get("vinteng:gui-is-sleeping-short");
             }
@@ -230,11 +230,11 @@ namespace VintageEngineering
             {
                 outputstring = $"{craftPercent:N1}%";
             }
-            if (!becrusher.IsSleeping && !becrusher.IsCrafting) // these SHOULD be mutually exclusive
+            if (!becrusher.Electric.IsSleeping && !becrusher.IsCrafting) // these SHOULD be mutually exclusive
             {
                 outputstring = $"Error";
             }
-            if (!becrusher.IsEnabled)
+            if (!becrusher.Electric.IsEnabled)
             {
                 outputstring = Lang.Get("vinteng:gui-word-off");
             }
@@ -279,7 +279,7 @@ namespace VintageEngineering
             }
             else
             {
-                if (becrusher.IsSleeping)
+                if (becrusher.Electric.IsSleeping)
                 {
                     outputhelptext = Lang.Get("vinteng:gui-no-valid-recipe");    // third is a VALID recipe
                 }
@@ -292,7 +292,7 @@ namespace VintageEngineering
                     outputhelptext = Lang.Get("vinteng:gui-machine-isfull");   // an output is full...                    
                 }
             }
-            if (!becrusher.IsEnabled)
+            if (!becrusher.Electric.IsEnabled)
             {
                 outputhelptext = Lang.Get("vinteng:gui-machine-off");
             }
