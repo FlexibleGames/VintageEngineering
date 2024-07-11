@@ -157,17 +157,25 @@ namespace VintageEngineering.Transport.API
             dsc.Append(output);
         }
         /// <summary>
-        /// Returns a BlockPos array of all Pipe positions that connect to this one.
+        /// Returns a BlockPos array of all Pipe positions that connect to this one.      
         /// </summary>
+        /// <param name="skippos">BlockPos to ignore all connections to/from.</param>
         /// <returns>BlockPos array.</returns>
-        public virtual BlockPos[] GetPipeConnections()
+        public virtual BlockPos[] GetPipeConnections(BlockPos skippos = null)
         {
             List<BlockPos> connections = new List<BlockPos>();
             for (int f=0; f < 6; f++)
             {
                 if (connectionSides[f])
                 {
-                    connections.Add(Pos.AddCopy(ConvertIndexToFace(f)));
+                    if (skippos != null && Pos.AddCopy(ConvertIndexToFace(f)) == skippos)
+                    {
+                        continue; 
+                    }
+                    else
+                    {
+                        connections.Add(Pos.AddCopy(ConvertIndexToFace(f)));
+                    }
                 }
             }
             return connections.ToArray();

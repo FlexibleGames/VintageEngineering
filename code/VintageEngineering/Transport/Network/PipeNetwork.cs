@@ -39,6 +39,7 @@ namespace VintageEngineering.Transport.Network
 
         public void Wake() => _isSleeping = false;
 
+        public PipeNetwork() { }
 
         public PipeNetwork(long networkID, EnumPipeUse pipeType)
         {
@@ -60,7 +61,11 @@ namespace VintageEngineering.Transport.Network
             {
                 _pipeBlockPositions.Add(pos);
                 BEPipeBase pipe = world.BlockAccessor.GetBlockEntity(pos) as BEPipeBase;
-                if (pipe != null) { pipe.NetworkID = _networkID; }
+                if (pipe != null) 
+                { 
+                    pipe.NetworkID = _networkID;
+                    pipe.MarkDirty(true);
+                }
                 return true;
             }
             return false;
@@ -83,14 +88,19 @@ namespace VintageEngineering.Transport.Network
                 {
                     _pipeBlockPositions.Add(pos);
                     BEPipeBase pipe = world.BlockAccessor.GetBlockEntity(pos) as BEPipeBase;
-                    if (pipe != null) { pipe.NetworkID = _networkID; }
+                    if (pipe != null) 
+                    { 
+                        pipe.NetworkID = _networkID; 
+                        pipe.MarkDirty(true);
+                    }
                 }
             }
             return output;
         }
 
         /// <summary>
-        /// Removes a Pipe position from this network.
+        /// Removes a Pipe position from this network.<br/>
+        /// Does NOT reset the NetworkID of the pipe at the given BlockPos
         /// </summary>
         /// <param name="pos">Position to remove</param>
         /// <returns>True if successful, false if position wasn't apart of this network.</returns>
@@ -104,7 +114,8 @@ namespace VintageEngineering.Transport.Network
         }
         /// <summary>
         /// Removes many Pipe positions from this network.<br/>
-        /// Will process entire list, even if a given pos was not apart of this network.
+        /// Will process entire list, even if a given pos was not apart of this network.<br/>
+        /// Does NOT reset the NetworkID of the pipe at the given BlockPositions
         /// </summary>
         /// <param name="world">World Accessor</param>
         /// <param name="remove">List of BlockPos to remove</param>
@@ -118,22 +129,6 @@ namespace VintageEngineering.Transport.Network
                 _pipeBlockPositions.Remove(pos);
             }
             return output;
-        }
-
-        /// <summary>
-        /// Join this network to the given network.
-        /// </summary>
-        /// <param name="net">Pipe Network to join.</param>
-        /// <returns>True if successful, false if a single given position already exists in this network.</returns>
-        public bool JoinNetwork(PipeNetwork net, IWorldAccessor world)
-        {
-            bool duplicatedposition = false;
-            foreach (BlockPos pos in net._pipeBlockPositions)
-            {
-                if (_pipeBlockPositions.Contains(pos)) duplicatedposition = true;
-                else AddPipe(pos, world);
-            }
-            return !duplicatedposition;
         }
 
         /// <summary>

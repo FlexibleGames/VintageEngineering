@@ -110,11 +110,12 @@ namespace VintageEngineering.Electrical
         /// </summary>
         /// <param name="blockAccessor">The accessor for the world</param>
         /// <param name="pos">The position of the block</param>
-        /// <returns>The interface, or null if the block at that position does not implement it</returns>
+        /// <returns>The interface, or null if the block at that position does not implement it.</returns>
         static IElectricalBlockEntity GetAtPos(IBlockAccessor blockAccessor, BlockPos pos)
         {
             BlockEntity entity = blockAccessor.GetBlockEntity(pos);
-            if (entity is IElectricalBlockEntity converted) {
+            if (entity is IElectricalBlockEntity converted) 
+            {
                 return converted;
             }
             return entity?.GetBehavior<IElectricalBlockEntity>();

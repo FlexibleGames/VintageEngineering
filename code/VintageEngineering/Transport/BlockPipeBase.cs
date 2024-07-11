@@ -70,6 +70,8 @@ namespace VintageEngineering.Transport
 
         public override void OnBlockPlaced(IWorldAccessor world, BlockPos blockPos, ItemStack byItemStack = null)
         {
+            base.OnBlockPlaced(world, blockPos, byItemStack); // this actually spawns the BE
+
             // Detect Connections and adjust shape accordingly. This is done in the BE.
             BEPipeBase pipebe = api.World.BlockAccessor.GetBlockEntity(blockPos) as BEPipeBase;
             if (pipebe != null)
@@ -81,7 +83,7 @@ namespace VintageEngineering.Transport
                     pnm.OnPipeBlockPlaced(world, blockPos);
                 }
             }
-            base.OnBlockPlaced(world, blockPos, byItemStack);
+            
         }
 
         public override Cuboidf[] GetSelectionBoxes(IBlockAccessor blockAccessor, BlockPos pos)

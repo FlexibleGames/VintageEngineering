@@ -107,52 +107,49 @@ namespace VintageEngineering.Transport.Network
             // check the sides for other pipes and check connection overrides
             // compare all networkID's
             // Merge networks if needed create network if needed, set pos networkid
-            BEPipeBase us = world.BlockAccessor.GetBlockEntity(pos) as BEPipeBase;
-            if (us == null) return;
+            BEPipeBase us = world.BlockAccessor.GetBlockEntity(pos) as BEPipeBase;            
             BlockPipeBase usb = world.BlockAccessor.GetBlock(pos) as BlockPipeBase;
-            if (usb == null) return;
+            if (us == null || usb == null) return;
             int pipecons = 0;
             bool hasinserts = false;
-            if (us != null)
+
+            for (int f = 0; f < 6; f++)
             {
-                for (int f = 0; f < 6; f++)
-                {                    
-                    if (us.ConnectionSides[f])
+                if (us.ConnectionSides[f])
+                {
+                    BEPipeBase them = world.BlockAccessor.GetBlockEntity(pos.AddCopy(BEPipeBase.ConvertIndexToFace(f))) as BEPipeBase;
+                    if (them == null) continue;
+                    pipecons++;
+                    if (us.NetworkID == 0)
                     {
-                        BEPipeBase them = world.BlockAccessor.GetBlockEntity(pos.AddCopy(BEPipeBase.ConvertIndexToFace(f))) as BEPipeBase;
-                        if (them == null) continue;
-                        pipecons++;
-                        if (us.NetworkID == 0)
+                        us.NetworkID = them.NetworkID;
+                        _pipeNetworks[us.NetworkID].AddPipe(pos.Copy(), world);
+                    }
+                    else
+                    {
+                        if (us.NetworkID != them.NetworkID)
                         {
-                            us.NetworkID = them.NetworkID;
-                            _pipeNetworks[us.NetworkID].AddPipe(pos.Copy(), world);
-                        }
-                        else
-                        {
-                            if (us.NetworkID != them.NetworkID)
-                            {
-                                MergeNetworks(world, us.NetworkID, them.NetworkID);
-                                hasinserts = true;
-                            }
+                            MergeNetworks(world, us.NetworkID, them.NetworkID);
+                            hasinserts = true;
                         }
                     }
-                    if (us.InsertionSides[f]) hasinserts = true;
                 }
-                if (pipecons == 0)
-                {
-                    long newid = CreateNetwork(usb.PipeUse);                    
-                    _pipeNetworks[newid].AddPipe(pos.Copy(), world);                    
-                }
-                if (pipecons == 1 && hasinserts)
-                {
-                    _pipeNetworks[us.NetworkID].QuickUpdateNetwork(world, pos.Copy(), false);
-                }
-                if (pipecons > 1 && hasinserts)
-                {
-                    // if we have an insert node and have merged networks, we need to inform the rest 
-                    // of the network to rebuild their pushConnection lists.
-                    _pipeNetworks[us.NetworkID].MarkNetworkDirty(world);
-                }
+                if (us.InsertionSides[f]) hasinserts = true;
+            }
+            if (pipecons == 0)
+            {
+                long newid = CreateNetwork(usb.PipeUse);                    
+                _pipeNetworks[newid].AddPipe(pos.Copy(), world);                    
+            }
+            if (pipecons == 1 && hasinserts)
+            {
+                _pipeNetworks[us.NetworkID].QuickUpdateNetwork(world, pos.Copy(), false);
+            }
+            if (pipecons > 1 && hasinserts)
+            {
+                // if we have an insert node and have merged networks, we need to inform the rest 
+                // of the network to rebuild their pushConnection lists.
+                _pipeNetworks[us.NetworkID].MarkNetworkDirty(world);
             }
         }
 
@@ -239,7 +236,7 @@ namespace VintageEngineering.Transport.Network
             foreach (BlockPos pos in _pipeNetworks[net2id].PipeBlockPositions)
             {
                 // this also sets the Pipes NetworkID of the block entity
-                _pipeNetworks[net1id].AddPipe(pos, world);
+                _pipeNetworks[net1id].AddPipe(pos.Copy(), world);
             }
             _pipeNetworks[net2id].Clear();
             _pipeNetworks.Remove(net2id);
@@ -268,13 +265,16 @@ namespace VintageEngineering.Transport.Network
                     bep.OverridePipeConnectionFace(f, true); // disconnect the face to avoid false connections.
                 }
             }
+            // we need to remove THIS pipe from its network
+            _pipeNetworks[splitid].RemovePipe(pos, world);
+
             // connectedpipes now has a list of all the pipe block positions of new (potential) networks.
             // the connections of the position passed in have also been disabled to prevent false connections.
             if (connectedpipes.Count > 1)
             {
                 BlockPos firstpos = connectedpipes[0];
-                List<BlockPos> firstcon = GetConnectedPipes(world, firstpos.Copy());
-                connectedpipes.Remove(firstpos);                 
+                List<BlockPos> firstcon = GetConnectedPipes(world, firstpos.Copy(), pos.Copy());
+                connectedpipes.Remove(firstpos);
 
                 for (int x = 0; x < connectedpipes.Count; x++)
                 {
@@ -288,7 +288,7 @@ namespace VintageEngineering.Transport.Network
                     else
                     {
                         // this is a new network
-                        List<BlockPos> newnet = GetConnectedPipes(world, connectedpipes[x]);
+                        List<BlockPos> newnet = GetConnectedPipes(world, connectedpipes[x].Copy(), pos.Copy());
                         long newid = CreateNetwork(pipeblock.PipeUse);
                         // add the pipes to the new network
                         _pipeNetworks[newid].AddPipes(world, newnet);
@@ -305,8 +305,9 @@ namespace VintageEngineering.Transport.Network
         /// </summary>
         /// <param name="world">World Accessor</param>
         /// <param name="pos">Start Position to check from.</param>
+        /// <param name="skippos">BlockPos to skip and ignore all connections to/from.</param>
         /// <returns>List of BlockPos of all connected pipes.</returns>
-        public List<BlockPos> GetConnectedPipes(IWorldAccessor world, BlockPos pos)
+        public List<BlockPos> GetConnectedPipes(IWorldAccessor world, BlockPos pos, BlockPos skippos = null)
         {
             List<BlockPos> connectedpipes = new List<BlockPos>();
             List<BlockPos> pipestoprocess = new List<BlockPos>();
@@ -314,7 +315,7 @@ namespace VintageEngineering.Transport.Network
             BEPipeBase bep = world.BlockAccessor.GetBlockEntity(pos) as BEPipeBase;
 
             connectedpipes.Add(pos);
-            pipestoprocess.AddRange(bep.GetPipeConnections());
+            pipestoprocess.AddRange(bep.GetPipeConnections(skippos));
 
             while (pipestoprocess.Count > 0)
             {
@@ -329,7 +330,7 @@ namespace VintageEngineering.Transport.Network
 
                     BEPipeBase pipe = world.BlockAccessor.GetBlockEntity(node) as BEPipeBase;
                     if (pipe == null) continue; // sanity check
-                    nodestoadd.AddRange(pipe.GetPipeConnections());
+                    nodestoadd.AddRange(pipe.GetPipeConnections(skippos));
                 }
                 pipestoprocess.Clear();
                 if (nodestoadd.Count > 0) pipestoprocess.AddRange(nodestoadd);
