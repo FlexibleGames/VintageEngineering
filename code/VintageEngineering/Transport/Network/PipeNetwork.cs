@@ -160,6 +160,13 @@ namespace VintageEngineering.Transport.Network
 
         public IEnumerable<BlockPos> GetPipeBlockPositions() { return _pipeBlockPositions; }
 
+        /// <summary>
+        /// A fast(er) way to inform a pipe network of a insert node change on the network<br/>
+        /// I.E. An insert node, added or removed.
+        /// </summary>
+        /// <param name="world"></param>
+        /// <param name="altered"></param>
+        /// <param name="isRemove"></param>
         public void QuickUpdateNetwork(IWorldAccessor world, BlockPos altered, bool isRemove = false)
         {
             foreach (BlockPos pos in _pipeBlockPositions)

@@ -23,7 +23,7 @@ namespace VintageEngineering.Transport.API
         //protected MeshRef _meshRef;
         protected bool _shapeDirty;               
 
-        protected List<PipeConnection> pushConnections;
+        protected List<PipeConnection> _pushConnections;
         protected PipeExtractionNode[] extractionNodes; // uses BlockFacing index, N, E, S, W, U, D
         protected GUIPipeExtraction[] extractionGUIs; // uses BlockFacing index, N, E, S, W, U, D
 
@@ -54,7 +54,7 @@ namespace VintageEngineering.Transport.API
         /// PipeConnection object contains a Distance variable set when this list is built.
         /// </summary>
         public List<PipeConnection> PushConnections
-        { get { return pushConnections; } }
+        { get { return _pushConnections; } }
 
         /// <summary>
         /// Number of extraction nodes for this pipe block<br/>
@@ -155,7 +155,7 @@ namespace VintageEngineering.Transport.API
             output += $"Overrides: {overrides}" + System.Environment.NewLine;
             output += $"Pipe Cons: {pipecons}" + System.Environment.NewLine;
             output += $"# Ins/Extr: {numInsertionConnections}/{numExtractionConnections}";            
-            if (pushConnections != null) output += Environment.NewLine + $"#Pushes: {pushConnections.Count}";
+            if (_pushConnections != null) output += Environment.NewLine + $"#Pushes: {_pushConnections.Count}";
             dsc.Append(output);
         }
         /// <summary>
@@ -252,6 +252,16 @@ namespace VintageEngineering.Transport.API
                         extractionNodes[faceindex].SetHandler(GetHandler()); 
                         numExtractionConnections++;
                         numInsertionConnections--;
+                        // CHECK PushConnection list, build if empty
+                        // This will be empty on world/chunk load as it is not saved to disk
+                        if (_pushConnections == null)
+                        {
+                            PipeNetworkManager pnm = Api.ModLoader.GetModSystem<PipeNetworkManager>(true);
+                            if (pnm != null)
+                            {
+                                RebuildPushConnections(world, pnm.GetNetwork(_networkID)?.PipeBlockPositions.ToArray());
+                            }
+                        }
                     }
                     else // can't do an elseif here as it would ALWAYS be true after the first if above. 
                     {                        
@@ -264,6 +274,11 @@ namespace VintageEngineering.Transport.API
                             numInsertionConnections++;
                             extractionSides[faceindex] = false;
                             insertionSides[faceindex] = true;
+                            // Switching it back doesn't do anything to the PushConnection list
+                            // There could be other extraction nodes at this position
+                            // it isn't saved to disk, so it will be discarded eventually.
+                            // HOWEVER, since this node is now an insertion node, the other extraction
+                            // nodes on the network need to be updated efficiently
                         }
                     }
                 }
@@ -430,8 +445,8 @@ namespace VintageEngineering.Transport.API
         {
             if (pipenetwork != null && pipenetwork.Length > 0)
             {
-                if (pushConnections != null) pushConnections.Clear();
-                else pushConnections = new List<PipeConnection>();
+                if (_pushConnections != null) _pushConnections.Clear();
+                else _pushConnections = new List<PipeConnection>();
 
                 foreach (BlockPos p in pipenetwork)
                 {
@@ -443,14 +458,14 @@ namespace VintageEngineering.Transport.API
                         {
                             BlockFacing facing = ConvertIndexToFace(f);
                             int dist = Pos.ManhattenDistance(p.AddCopy(facing));
-                            pushConnections.Add(new PipeConnection(
+                            _pushConnections.Add(new PipeConnection(
                                 p.AddCopy(facing), facing, dist));
                         }
                     }
                 }
-                if (pushConnections != null && pushConnections.Count > 1)
+                if (_pushConnections != null && _pushConnections.Count > 1)
                 {
-                    pushConnections.Sort((x, y) => x.Distance.CompareTo(y.Distance)); 
+                    _pushConnections.Sort((x, y) => x.Distance.CompareTo(y.Distance)); 
                 }
             }
         }
@@ -474,18 +489,18 @@ namespace VintageEngineering.Transport.API
                         Pos.ManhattenDistance(altered));
                     if (isRemove)
                     {
-                        if (pushConnections != null && pushConnections.Count > 0)
+                        if (_pushConnections != null && _pushConnections.Count > 0)
                         { 
-                            pushConnections.Remove(con); 
+                            _pushConnections.Remove(con); 
                         }
                     }
                     else
                     {
-                        if (pushConnections == null)
+                        if (_pushConnections == null)
                         {
-                            pushConnections = new List<PipeConnection>();
+                            _pushConnections = new List<PipeConnection>();
                         }
-                        pushConnections.Add(con);
+                        _pushConnections.Add(con);
                     }
                 }
             }
