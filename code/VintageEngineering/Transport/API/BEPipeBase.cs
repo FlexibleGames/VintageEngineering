@@ -25,7 +25,7 @@ namespace VintageEngineering.Transport.API
 
         protected List<PipeConnection> _pushConnections;
         protected PipeExtractionNode[] extractionNodes; // uses BlockFacing index, N, E, S, W, U, D
-        protected GUIPipeExtraction[] extractionGUIs; // uses BlockFacing index, N, E, S, W, U, D
+        protected GUIPipeExtraction[] extractionGUIs; // uses BlockFacing index, N, E, S, W, U, D        
 
         protected int numExtractionConnections;
         protected int numInsertionConnections;
@@ -105,8 +105,7 @@ namespace VintageEngineering.Transport.API
 
         public override void Initialize(ICoreAPI api)
         {
-            base.Initialize(api);
-
+            base.Initialize(api);            
             extractionNodes ??= new PipeExtractionNode[6];
             connectionSides ??= new bool[6];
             extractionSides ??= new bool[6]; 

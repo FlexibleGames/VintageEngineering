@@ -22,9 +22,14 @@ namespace VintageEngineering.Transport
         protected long listenerID;
         protected EnumPipeDistribution pipeDistribution = EnumPipeDistribution.Nearest;
         protected bool canFilter = false;
-        protected bool canChangeDistro = false;
+        protected bool canChangeDistro = false;                
 
         private static ITransportHandler handler;
+
+        /// <summary>
+        /// The Enumerator set when Node is in RoundRobin mode.
+        /// </summary>
+        public List<PipeConnection>.Enumerator PushEnumerator;
 
         /// <summary>
         /// Block Position of this extraction node.
@@ -45,7 +50,12 @@ namespace VintageEngineering.Transport
         /// Quick access to the stack-size move rate of the upgrade, to prevent checking the attributes of the itemstack every tick.<br/>
         /// If this is -1, do a whole stack, regardless of stack-size.
         /// </summary>
-        private int _upgradeRate = 1; 
+        private int _upgradeRate = 1;
+        /// <summary>
+        /// Quick access to the stack-size move rate of the upgrade, to prevent checking the attributes of the itemstack every tick.<br/>
+        /// If this is -1, do a whole stack, regardless of stack-size.
+        /// </summary>
+        public int UpgradeRate => _upgradeRate;
         /// <summary>
         /// Itemslot for the filter
         /// </summary>
@@ -127,6 +137,7 @@ namespace VintageEngineering.Transport
         {
             if (slotid == 0)
             {
+                // TODO
                 // pipe upgrade changed
             }
             else
