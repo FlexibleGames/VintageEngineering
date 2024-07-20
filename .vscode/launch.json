@@ -19,7 +19,7 @@
             "args": [
                 "--tracelog",
                 "--addModPath",
-                "${workspaceFolder}/../../",
+                "${workspaceFolder}/",
                 "--openWorld=modtestworld"
             ],
             "console": "internalConsole",
@@ -47,7 +47,7 @@
             "args": [
                 "--tracelog",
                 "--addModPath",
-                "${workspaceFolder}/../../"
+                "${workspaceFolder}/"
             ],
             "console": "internalConsole",
             "stopAtEntry": false,
