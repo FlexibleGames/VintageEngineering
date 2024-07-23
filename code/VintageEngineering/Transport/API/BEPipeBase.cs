@@ -155,6 +155,7 @@ namespace VintageEngineering.Transport.API
             output += $"Pipe Cons: {pipecons}" + System.Environment.NewLine;
             output += $"# Ins/Extr: {numInsertionConnections}/{numExtractionConnections}";            
             if (_pushConnections != null) output += Environment.NewLine + $"#Pushes: {_pushConnections.Count}";
+            if (this.TickHandlers != null) output += Environment.NewLine + $"#Tickers: {TickHandlers.Count}";
             dsc.Append(output);
         }
         /// <summary>
@@ -181,7 +182,13 @@ namespace VintageEngineering.Transport.API
             }
             return connections.ToArray();
         }
-
+        /// <summary>
+        /// Called when a player right clicks a pipe block.
+        /// </summary>
+        /// <param name="world">World Accessor</param>
+        /// <param name="player">Player who interacted</param>
+        /// <param name="selection">BlockSelection data</param>
+        /// <returns>True if handled without issue.</returns>
         public virtual bool OnPlayerRightClick(IWorldAccessor world, IPlayer player, BlockSelection selection)
         {
             int faceindex = selection.SelectionBoxIndex;
@@ -190,22 +197,42 @@ namespace VintageEngineering.Transport.API
                 // right clicked the center main pipe object.
                 return true;
             }
+            if (Api.Side != EnumAppSide.Server) return true;
 
-            if (player.InventoryManager.ActiveHotbarSlot?.Itemstack?.Item?.Tool == EnumTool.Wrench &&
-                 Api.Side == EnumAppSide.Server)
+            // grab the network manager
+            PipeNetworkManager pnm = Api.ModLoader.GetModSystem<PipeNetworkManager>(true);
+
+            if (player.InventoryManager.ActiveHotbarSlot?.Itemstack?.Item?.Tool == EnumTool.Wrench)
             {
                 // player right clicked WITH a wrench
                 // detect sneak
+                bool sidevalid = false;
                 if (player.Entity.Controls.Sneak)
                 {
                     // if sneaking, remove/add the connection
+                    // these if's are mutually exclusive
                     if (insertionSides[faceindex])
                     {
+                        sidevalid = true;
+                        // removing an insert node
                         insertionSides[faceindex] = false;
                         numInsertionConnections--;
+
+                        PipeConnection contoremove = new PipeConnection(
+                            Pos.AddCopy(ConvertIndexToFace(faceindex)),
+                            ConvertIndexToFace(faceindex),
+                            0);
+                        // Update Network
+                        if (pnm != null)
+                        {
+                            // update network and remove the insert node from the lists on the network.
+                            pnm.GetNetwork(NetworkID).QuickUpdateNetwork(world, contoremove, true);
+                        }
                     }
                     if (extractionSides[faceindex] && extractionNodes[faceindex] != null)
                     {
+                        sidevalid = true;
+                        // remove extract node
                         if (extractionGUIs != null && extractionGUIs[faceindex] != null && extractionGUIs[faceindex].IsOpened())
                         {
                             extractionGUIs[faceindex].TryClose();
@@ -216,34 +243,47 @@ namespace VintageEngineering.Transport.API
                         extractionNodes[faceindex] = null;
                         extractionSides[faceindex] = false;
                         numExtractionConnections--;
+                        // network need not be updated as we did not remove an insert
                     }
                     if (connectionSides[faceindex])
                     {
+                        sidevalid = true;
                         // we're forcefully removing pipe-pipe connection
                         // we need to inform neighboring blocks
                         connectionSides[faceindex] = false;
+                        int oppface = ConvertIndexToFace(faceindex).Opposite.Index;
+                        BEPipeBase bepb = world.BlockAccessor.GetBlockEntity(Pos.AddCopy(ConvertIndexToFace(faceindex))) as BEPipeBase;
+                        if (bepb != null)
+                        {
+                            bepb.OverridePipeConnectionFace(oppface, true);
+                            if (pnm != null)
+                            {
+                                pnm.OnPipeConnectionOverride(world, Pos, selection, true);
+                            }
+                        }
                     }
-                    bool isd = disconnectedSides[faceindex];
-                    disconnectedSides[faceindex] = !isd;
-                    int oppface = ConvertIndexToFace(faceindex).Opposite.Index;
-                    BEPipeBase bepb = world.BlockAccessor.GetBlockEntity(Pos.AddCopy(ConvertIndexToFace(faceindex))) as BEPipeBase;
-                    if (bepb != null)
+                    if (disconnectedSides[faceindex])
                     {
-                        bepb.OverridePipeConnectionFace(oppface, disconnectedSides[faceindex]);
+                        // the side was manually overriden, we need to restore it gracefully
+                        disconnectedSides[faceindex] = false;
                     }
-                    PipeNetworkManager pnm = Api.ModLoader.GetModSystem<PipeNetworkManager>(true);
-                    if (pnm != null)
+                    else
                     {
-                        pnm.OnPipeConnectionOverride(world, Pos, selection, disconnectedSides[faceindex]);
+                        // side wasn't overridden, but we're doing so now!
+                        // only set to true if the side connection was something valid as
+                        // we don't want to override a side that was empty already.
+                        if (sidevalid) disconnectedSides[faceindex] = true;
                     }
+
                     //world.BlockAccessor.TriggerNeighbourBlockUpdate(Pos);
                     MarkPipeDirty(world, true);
-                }
+                }            
                 else
                 {
-                    // otherwise switch connection type
+                    // otherwise swap connection type
                     if (insertionSides[faceindex])
                     {
+                        // swap from insert -> extract
                         insertionSides[faceindex] = false;
                         extractionSides[faceindex] = true;
                         extractionNodes[faceindex] = new PipeExtractionNode();
@@ -253,12 +293,26 @@ namespace VintageEngineering.Transport.API
                         numInsertionConnections--;
                         // CHECK PushConnection list, build if empty
                         // This will be empty on world/chunk load as it is not saved to disk
-                        if (_pushConnections == null)
+                        PipeConnection contoremove = new PipeConnection(
+                            Pos.AddCopy(ConvertIndexToFace(faceindex)),
+                            ConvertIndexToFace(faceindex),
+                            0);
+
+                        if (_pushConnections == null) // if this is null we're freshly loaded or a new extract node
                         {
-                            PipeNetworkManager pnm = Api.ModLoader.GetModSystem<PipeNetworkManager>(true);
                             if (pnm != null)
                             {
+                                // a fresh node with a new list, need to build it
                                 RebuildPushConnections(world, pnm.GetNetwork(_networkID)?.PipeBlockPositions.ToArray());
+                            }
+                        }
+                        else
+                        {   // our push list isn't null
+                            // Update Network, this WILL update our list as well
+                            if (pnm != null)
+                            {
+                                // update network and add the insert node to the lists on the network.
+                                pnm.GetNetwork(NetworkID).QuickUpdateNetwork(world, contoremove, true);
                             }
                         }
                     }
@@ -266,6 +320,7 @@ namespace VintageEngineering.Transport.API
                     {                        
                         if (extractionSides[faceindex])
                         {
+                            // swap extract -> insert
                             extractionNodes[faceindex].OnNodeRemoved();
                             RemoveExtractionListener(faceindex);
                             extractionNodes[faceindex] = null;
@@ -278,6 +333,16 @@ namespace VintageEngineering.Transport.API
                             // it isn't saved to disk, so it will be discarded eventually.
                             // HOWEVER, since this node is now an insertion node, the other extraction
                             // nodes on the network need to be updated efficiently
+                            PipeConnection contoadd = new PipeConnection(
+                                Pos.AddCopy(ConvertIndexToFace(faceindex)),
+                                ConvertIndexToFace(faceindex),
+                                0);
+                            // Update Network
+                            if (pnm != null)
+                            {
+                                // update network and add the insert node to the lists on the network.
+                                pnm.GetNetwork(NetworkID).QuickUpdateNetwork(world, contoadd, false);
+                            }
                         }
                     }
                 }
@@ -469,7 +534,8 @@ namespace VintageEngineering.Transport.API
             }
         }
         /// <summary>
-        /// Alter the pushConnection list strictly based on the given block position.
+        /// Alter the pushConnection list strictly based on the given block position.<br/>
+        /// Mainly used when a new pipe is placed or removed.
         /// </summary>
         /// <param name="world">World Accessor</param>
         /// <param name="altered">Pipe BlockPos either added or removed.</param>
@@ -500,6 +566,32 @@ namespace VintageEngineering.Transport.API
                             _pushConnections = new List<PipeConnection>();
                         }
                         _pushConnections.Add(con);
+                    }
+                }
+            }
+        }
+        /// <summary>
+        /// Add or remove a set of push connections for this pipe entity.<br/>
+        /// Will recalculate the distance value before altering the list.
+        /// </summary>
+        /// <param name="world">World Accessor</param>
+        /// <param name="cons">Connections to add or remove</param>
+        /// <param name="isRemove">True to remove the given connections</param>
+        public virtual void AlterPushConnections(IWorldAccessor world, PipeConnection[] cons, bool isRemove = false)
+        {
+            if (cons == null || cons.Length == 0) return; // sanity check            
+            for (int x = 0; x < cons.Length; x++)
+            {
+                PipeConnection newcon = cons[x].Copy(Pos.ManhattenDistance(cons[x].Position));
+                if (isRemove)
+                {
+                    _pushConnections.Remove(newcon);
+                }
+                else
+                {
+                    if (!_pushConnections.Contains(newcon))
+                    {
+                        _pushConnections.Add(newcon.Copy());
                     }
                 }
             }
