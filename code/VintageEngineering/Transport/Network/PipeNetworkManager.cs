@@ -102,6 +102,11 @@ namespace VintageEngineering.Transport.Network
             _nextNetworkID++;
             return output;
         }
+        /// <summary>
+        /// Called when a new pipe block is placed but after it updates its own connections.
+        /// </summary>
+        /// <param name="world">World Accessor</param>
+        /// <param name="pos">Position of new pipe block</param>
         public void OnPipeBlockPlaced(IWorldAccessor world, BlockPos pos)
         {
             // check the sides for other pipes and check connection overrides

@@ -34,16 +34,35 @@ namespace VintageEngineering.Transport
         /// </summary>
         public int Distance { get { return distance; } }
         /// <summary>
-        /// Is this connection an extraction node?
+        /// Set a new Distance for this connection
         /// </summary>
-        //public bool IsExtraction { get { return isextraction; } }
+        /// <param name="newdist">New distance value.</param>
+        public void SetDistance(int newdist) => distance = newdist;
 
         public PipeConnection(BlockPos bpos, BlockFacing bfacing, int dist = 0)
         {
             pos = bpos;
             facing = bfacing;
-            distance = dist;
-            //isextraction = isextract;
+            distance = dist;         
+        }
+        /// <summary>
+        /// Create a copy using a new distance value.
+        /// </summary>
+        /// <param name="newdist">New Distance value</param>
+        /// <returns>A copy of this object.</returns>
+        public PipeConnection Copy(int newdist)
+        {
+            PipeConnection acopy = new PipeConnection(this.pos.Copy(), Facing, newdist);
+            return acopy;
+        }
+        /// <summary>
+        /// Create an exact copy of this connection.
+        /// </summary>
+        /// <returns>A copy of this object.</returns>
+        public PipeConnection Copy()
+        {
+            PipeConnection acopy = new PipeConnection(this.pos.Copy(), Facing, Distance);
+            return acopy;
         }
     }
 }

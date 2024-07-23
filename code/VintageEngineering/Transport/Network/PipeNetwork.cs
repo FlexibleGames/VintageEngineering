@@ -161,12 +161,12 @@ namespace VintageEngineering.Transport.Network
         public IEnumerable<BlockPos> GetPipeBlockPositions() { return _pipeBlockPositions; }
 
         /// <summary>
-        /// A fast(er) way to inform a pipe network of a insert node change on the network<br/>
-        /// I.E. An insert node, added or removed.
+        /// A fast(er) way to inform a pipe network of a pipe block change on the network<br/>
+        /// I.E. A pipe block is added or removed.
         /// </summary>
-        /// <param name="world"></param>
-        /// <param name="altered"></param>
-        /// <param name="isRemove"></param>
+        /// <param name="world">World Accessor</param>
+        /// <param name="altered">Pipe Block Position altered</param>
+        /// <param name="isRemove">True if block removed.</param>
         public void QuickUpdateNetwork(IWorldAccessor world, BlockPos altered, bool isRemove = false)
         {
             foreach (BlockPos pos in _pipeBlockPositions)
@@ -176,6 +176,36 @@ namespace VintageEngineering.Transport.Network
                 if (bep.NumExtractionConnections > 0)
                 {
                     bep.AlterPushConnections(world, altered, isRemove);
+                }
+            }
+        }
+        /// <summary>
+        /// A fast(er) way to inform a pipe network of a single PipeConnection change.
+        /// </summary>
+        /// <param name="world">World Accessor</param>
+        /// <param name="con">PipeConnection</param>
+        /// <param name="isRemove">True to remove the PipeConnection, false to add it.</param>
+        public void QuickUpdateNetwork(IWorldAccessor world, PipeConnection con, bool isRemove = false)
+        {
+            PipeConnection[] cons = new PipeConnection[1] { con };
+            QuickUpdateNetwork(world, cons, isRemove);
+        }
+        /// <summary>
+        /// A fast(er) way to inform a pipe network of multiple PipeConnection changes.<br/>
+        /// Cannot both add and remove connections in the same call, all must be one or the other.
+        /// </summary>
+        /// <param name="world">World Accessor</param>
+        /// <param name="cons">PipeConnection array of changes</param>
+        /// <param name="isRemove">If True these connections will be removed from the list.</param>
+        public void QuickUpdateNetwork(IWorldAccessor world, PipeConnection[] cons, bool isRemove = false)
+        {
+            foreach (BlockPos pos in _pipeBlockPositions)
+            {
+                BEPipeBase bep = world.BlockAccessor.GetBlockEntity(pos) as BEPipeBase;
+                if (bep == null) continue;
+                if (isRemove)
+                {
+                    bep.AlterPushConnections(world, cons, isRemove);
                 }
             }
         }
