@@ -203,10 +203,7 @@ namespace VintageEngineering.Transport.Network
             {
                 BEPipeBase bep = world.BlockAccessor.GetBlockEntity(pos) as BEPipeBase;
                 if (bep == null) continue;
-                if (isRemove)
-                {
-                    bep.AlterPushConnections(world, cons, isRemove);
-                }
+                bep.AlterPushConnections(world, cons, isRemove);
             }
         }
 

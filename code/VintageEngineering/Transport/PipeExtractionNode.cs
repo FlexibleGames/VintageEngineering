@@ -100,6 +100,28 @@ namespace VintageEngineering.Transport
                 api
                 );
             inventory.FaceIndex = BlockFacing.FromCode(facecode).Index;
+
+            if (api != null)
+            {
+                BEPipeBase bep = _api.World.BlockAccessor.GetBlockEntity(_pos) as BEPipeBase;
+                if (bep != null)
+                {
+                    int delay = Upgrade.Empty ? 1000 : ((ItemPipeUpgrade)Upgrade.Itemstack.Collectible).Delay;
+                    listenerID = bep.AddExtractionTickEvent(delay, UpdateTick);
+                }
+            }
+
+        }
+        /// <summary>
+        /// Called when the chunk a pipe block is in is unloaded.
+        /// </summary>
+        public virtual void OnBlockUnloaded(IWorldAccessor world)
+        {
+            BEPipeBase bep = world.BlockAccessor.GetBlockEntity(_pos) as BEPipeBase;
+            if (bep != null && listenerID != 0)
+            {
+                bep.RemoveExtractionTickEvent(ListenerID);
+            }
         }
         /// <summary>
         /// Sets the Transport Handler for this extraction node.<br/>

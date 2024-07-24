@@ -197,7 +197,7 @@ namespace VintageEngineering.Transport.API
                 // right clicked the center main pipe object.
                 return true;
             }
-            if (Api.Side != EnumAppSide.Server) return true;
+            //if (Api.Side != EnumAppSide.Server) return true;
 
             // grab the network manager
             PipeNetworkManager pnm = Api.ModLoader.GetModSystem<PipeNetworkManager>(true);
@@ -265,16 +265,45 @@ namespace VintageEngineering.Transport.API
                     if (disconnectedSides[faceindex])
                     {
                         // the side was manually overriden, we need to restore it gracefully
-                        disconnectedSides[faceindex] = false;
+                        disconnectedSides[faceindex] = false;                        
+                        if (pnm != null)
+                        {
+                            int oppface = ConvertIndexToFace(faceindex).Opposite.Index;
+                            BEPipeBase bepb = world.BlockAccessor.GetBlockEntity(Pos.AddCopy(ConvertIndexToFace(faceindex))) as BEPipeBase;
+
+                            if (bepb != null)
+                            {                            
+                                if (pnm.GetNetwork(NetworkID).NetworkPipeType == pnm.GetNetwork(bepb.NetworkID).NetworkPipeType)
+                                {
+                                    bepb.OverridePipeConnectionFace(oppface, false);
+                                    pnm.OnPipeConnectionOverride(world, Pos, selection, false);
+                                    bepb.MarkPipeDirty(world, true);
+                                }
+                            }
+                            else
+                            {
+                                if (CanConnectTo(world, Pos.AddCopy(ConvertIndexToFace(faceindex))))
+                                {
+                                    insertionSides[faceindex] = true;
+                                    numInsertionConnections++;
+                                    PipeConnection restored = new PipeConnection(
+                                        Pos.AddCopy(ConvertIndexToFace(faceindex)),
+                                        ConvertIndexToFace(faceindex), 0);
+                                    pnm.GetNetwork(NetworkID).QuickUpdateNetwork(world, restored, false);
+                                }
+                            }                            
+                        }                        
                     }
                     else
                     {
                         // side wasn't overridden, but we're doing so now!
                         // only set to true if the side connection was something valid as
                         // we don't want to override a side that was empty already.
-                        if (sidevalid) disconnectedSides[faceindex] = true;
-                    }
-
+                        if (sidevalid) 
+                        { 
+                            disconnectedSides[faceindex] = true; 
+                        }
+                    }                    
                     //world.BlockAccessor.TriggerNeighbourBlockUpdate(Pos);
                     MarkPipeDirty(world, true);
                 }            
@@ -287,8 +316,8 @@ namespace VintageEngineering.Transport.API
                         insertionSides[faceindex] = false;
                         extractionSides[faceindex] = true;
                         extractionNodes[faceindex] = new PipeExtractionNode();
-                        extractionNodes[faceindex].Initialize(Api, Pos, ConvertIndexToFace(faceindex).Code);
-                        extractionNodes[faceindex].SetHandler(GetHandler()); 
+                        extractionNodes[faceindex].SetHandler(GetHandler());
+                        extractionNodes[faceindex].Initialize(Api, Pos, ConvertIndexToFace(faceindex).Code);                         
                         numExtractionConnections++;
                         numInsertionConnections--;
                         // CHECK PushConnection list, build if empty
@@ -297,6 +326,10 @@ namespace VintageEngineering.Transport.API
                             Pos.AddCopy(ConvertIndexToFace(faceindex)),
                             ConvertIndexToFace(faceindex),
                             0);
+                        if (pnm != null)
+                        {
+                            pnm.GetNetwork(NetworkID).QuickUpdateNetwork(world, contoremove, true);
+                        }
 
                         if (_pushConnections == null) // if this is null we're freshly loaded or a new extract node
                         {
@@ -304,15 +337,6 @@ namespace VintageEngineering.Transport.API
                             {
                                 // a fresh node with a new list, need to build it
                                 RebuildPushConnections(world, pnm.GetNetwork(_networkID)?.PipeBlockPositions.ToArray());
-                            }
-                        }
-                        else
-                        {   // our push list isn't null
-                            // Update Network, this WILL update our list as well
-                            if (pnm != null)
-                            {
-                                // update network and add the insert node to the lists on the network.
-                                pnm.GetNetwork(NetworkID).QuickUpdateNetwork(world, contoremove, true);
                             }
                         }
                     }
@@ -324,6 +348,11 @@ namespace VintageEngineering.Transport.API
                             extractionNodes[faceindex].OnNodeRemoved();
                             RemoveExtractionListener(faceindex);
                             extractionNodes[faceindex] = null;
+                            if (extractionGUIs != null && extractionGUIs[faceindex] != null) 
+                            {
+                                if (extractionGUIs[faceindex].IsOpened()) extractionGUIs[faceindex].TryClose();
+                                extractionGUIs[faceindex].Dispose();
+                            }
                             numExtractionConnections--;
                             numInsertionConnections++;
                             extractionSides[faceindex] = false;
@@ -347,7 +376,13 @@ namespace VintageEngineering.Transport.API
                     }
                 }
                 _shapeDirty = true;
-                MarkDirty(true);
+                //MarkDirty(true);
+            }
+            if (player.InventoryManager.ActiveHotbarSlot?.Itemstack?.Collectible is ItemPipeUpgrade
+                ||
+                player.InventoryManager.ActiveHotbarSlot?.Itemstack?.Collectible is ItemPipeFilter)
+            {
+                // TODO AutoSwap hand item into extraction node
             }
             if (player.InventoryManager.ActiveHotbarSlot.Empty)
             {
@@ -370,6 +405,7 @@ namespace VintageEngineering.Transport.API
                     }
                 }
             }
+            MarkDirty(true);
             return true;
         }
         /// <summary>
@@ -389,7 +425,8 @@ namespace VintageEngineering.Transport.API
                 {
                     if (extractionNodes[f] != null)
                     {
-                        extractionNodes[f].OnNodeRemoved();
+                        RemoveExtractionListener(f);
+                        extractionNodes[f].OnNodeRemoved();                        
                     }
                 }
             }
@@ -459,6 +496,10 @@ namespace VintageEngineering.Transport.API
                         {
                             BEPipeBase bepb = dbe as BEPipeBase;
                             if (bepb == null) continue;
+                            if (!bepb.disconnectedSides[ConvertIndexToFace(f).Opposite.Index])
+                            {
+                                disconnectedSides[f] = false;
+                            }
                             if (!disconnectedSides[f])
                             {
                                 if (!connectionSides[f])
@@ -531,6 +572,7 @@ namespace VintageEngineering.Transport.API
                 {
                     _pushConnections.Sort((x, y) => x.Distance.CompareTo(y.Distance)); 
                 }
+                MarkDirty(true);
             }
         }
         /// <summary>
@@ -569,6 +611,7 @@ namespace VintageEngineering.Transport.API
                     }
                 }
             }
+            MarkDirty(true);
         }
         /// <summary>
         /// Add or remove a set of push connections for this pipe entity.<br/>
@@ -579,7 +622,7 @@ namespace VintageEngineering.Transport.API
         /// <param name="isRemove">True to remove the given connections</param>
         public virtual void AlterPushConnections(IWorldAccessor world, PipeConnection[] cons, bool isRemove = false)
         {
-            if (cons == null || cons.Length == 0) return; // sanity check            
+            if (cons == null || cons.Length == 0 || _pushConnections == null) return; // sanity check            
             for (int x = 0; x < cons.Length; x++)
             {
                 PipeConnection newcon = cons[x].Copy(Pos.ManhattenDistance(cons[x].Position));
@@ -591,10 +634,11 @@ namespace VintageEngineering.Transport.API
                 {
                     if (!_pushConnections.Contains(newcon))
                     {
-                        _pushConnections.Add(newcon.Copy());
+                        _pushConnections.Add(newcon.Copy());                        
                     }
-                }
+                }                
             }
+            MarkDirty(true);
         }
             
         /// <summary>
@@ -605,6 +649,7 @@ namespace VintageEngineering.Transport.API
         public virtual void OverridePipeConnectionFace(int faceindex, bool newvalue)
         {            
             disconnectedSides[faceindex] = newvalue;
+            if (connectionSides[faceindex] && newvalue) connectionSides[faceindex] = false;
             _shapeDirty = true;
             MarkDirty(true);
         }
@@ -842,6 +887,10 @@ namespace VintageEngineering.Transport.API
 
             tree.SetInt("numextract", numExtractionConnections);
             tree.SetInt("numinsert", numInsertionConnections);
+
+            // DEBUG STUFF HERE, remove before release!!
+            tree.SetBytes("tickhandlers", SerializerUtil.Serialize(this.TickHandlers));
+            tree.SetBytes("pushcons", SerializerUtil.Serialize(this._pushConnections));
         }
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldAccessForResolve)
         {
@@ -882,7 +931,12 @@ namespace VintageEngineering.Transport.API
             numExtractionConnections = tree.GetInt("numextract");
             numInsertionConnections = tree.GetInt("numinsert");
 
-            if (Api != null && Api.Side == EnumAppSide.Client) MarkPipeDirty(worldAccessForResolve, true);
+            if (Api != null && Api.Side == EnumAppSide.Client)
+            {
+                _pushConnections = SerializerUtil.Deserialize<List<PipeConnection>>(tree.GetBytes("pushcons"));
+                TickHandlers = SerializerUtil.Deserialize<List<long>>(tree.GetBytes("tickhandlers"));
+                MarkPipeDirty(worldAccessForResolve, true); 
+            }
         }
 
         /// <summary>

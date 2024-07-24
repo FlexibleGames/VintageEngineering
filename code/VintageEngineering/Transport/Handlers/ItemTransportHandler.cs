@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using VintageEngineering.Transport.API;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
+using Vintagestory.GameContent;
 
 namespace VintageEngineering.Transport.Handlers
 {
@@ -22,9 +23,17 @@ namespace VintageEngineering.Transport.Handlers
             BlockPos connectedto = pos.AddCopy(BlockFacing.FromCode(node.FaceCode));
             InventoryBase inv = (InventoryBase)((world.BlockAccessor.GetBlock(connectedto).GetInterface<IBlockEntityContainer>(world, connectedto)).Inventory);
             if (inv == null) return; // sanity check 2
-
             int stacksize = node.UpgradeRate;
-            ItemSlot pull = GetPullSlot(inv, node);
+            ItemSlot pull;
+            if (world.BlockAccessor.GetBlockEntity(connectedto) is BlockEntityGenericTypedContainer)
+            {
+                pull = GetGenericInventoryPullSlot(inv);
+            }
+            else
+            { 
+                pull = GetPullSlot(inv, node); 
+            }
+            if (pull == null) return;
             if (stacksize == -1)
             {
                 stacksize = pull.Itemstack.Collectible.MaxStackSize;
@@ -33,7 +42,7 @@ namespace VintageEngineering.Transport.Handlers
 
             ItemSlot push = GetPushSlot(world, node, us.PushConnections, pull);
 
-            if (pull == null || push == null) return; // sanity check 3
+            if (push == null) return; // sanity check 3
 
             int moved = pull.TryPutInto(push, ref ismo);
             if (moved == 0) return;
@@ -45,6 +54,16 @@ namespace VintageEngineering.Transport.Handlers
             // TODO all the things
             // filter stuff, etc
             return inventory.GetAutoPullFromSlot(BlockFacing.FromCode(node.FaceCode).Opposite);
+        }
+        /// <summary>
+        /// Special case for vanilla inventories that only allow pulling from the DOWN direction.
+        /// </summary>
+        /// <param name="inv"></param>        
+        /// <returns></returns>
+        public ItemSlot GetGenericInventoryPullSlot(InventoryBase inv)
+        {
+            if (inv.Empty || inv.Count == 0) { return null; }
+            return inv.GetAutoPullFromSlot(BlockFacing.DOWN);
         }
 
         /// <summary>
@@ -67,7 +86,7 @@ namespace VintageEngineering.Transport.Handlers
                 for (int x = 0; x < conarray.Length; x++)
                 {
                     IBlockEntityContainer contain = world.BlockAccessor.GetBlock(conarray[x].Position).GetInterface<IBlockEntityContainer>(world, conarray[x].Position);
-                    if (contain is InventoryBase inv)
+                    if (contain.Inventory is InventoryBase inv)
                     {
                         ItemSlot push = inv.GetAutoPushIntoSlot(BlockFacing.FromCode(node.FaceCode).Opposite, pullfrom);
                         if (push == null) continue;

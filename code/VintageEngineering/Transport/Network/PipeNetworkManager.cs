@@ -220,6 +220,10 @@ namespace VintageEngineering.Transport.Network
                     long newid = CreateNetwork(pblock.PipeUse);
                     _pipeNetworks[newid].AddPipes(world, othernet);
                     _pipeNetworks[bep.NetworkID].RemovePipes(world, othernet);
+
+                    // rebuild each networks push connnections
+                    _pipeNetworks[newid].MarkNetworkDirty(world);
+                    _pipeNetworks[bep.NetworkID].MarkNetworkDirty(world);
                 }
             }
             else
