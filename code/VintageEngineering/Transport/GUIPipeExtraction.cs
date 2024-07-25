@@ -1,17 +1,12 @@
 ﻿using Cairo;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using VintageEngineering.RecipeSystem.Recipes;
 using VintageEngineering.Transport.API;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
-using Vintagestory.API.Util;
+
 
 namespace VintageEngineering.Transport
 {
@@ -23,7 +18,7 @@ namespace VintageEngineering.Transport
 
         public GUIPipeExtraction(string dialogTitle, InventoryBase inventory, BlockPos blockEntityPos, ICoreClientAPI capi, BEPipeBase bentity, PipeExtractionNode node, int faceindex) : base(dialogTitle, inventory, blockEntityPos, capi)
         {
-            if (base.IsDuplicate) return;            
+            if (base.IsDuplicate) return;
 
             capi.World.Player.InventoryManager.OpenInventory(inventory);
             _node = node;
@@ -50,7 +45,7 @@ namespace VintageEngineering.Transport
             int titlebarheight = 31;
             double slotpadding = GuiElementItemSlotGridBase.unscaledSlotPadding;
 
-            ElementBounds dialogBounds = ElementBounds.Fixed(315, 150 + titlebarheight);
+            ElementBounds dialogBounds = ElementBounds.Fixed(315, 164 + titlebarheight);
             ElementBounds dialog = ElementBounds.Fill.WithFixedPadding(0);
             dialog.BothSizing = ElementSizing.FitToChildren;
 
@@ -65,8 +60,8 @@ namespace VintageEngineering.Transport
             ElementBounds distroText = ElementBounds.Fixed(172, 6 + titlebarheight, 132, 18);
             ElementBounds dropdownbounds = ElementBounds.Fixed(172, 28 + titlebarheight, 132, 25);
 
-            ElementBounds outputtxtinset = ElementBounds.Fixed(6, 86 + titlebarheight, 298, 58);
-            ElementBounds outputtextbnds = ElementBounds.Fixed(8, 88 + titlebarheight, 294, 54);
+            ElementBounds outputtxtinset = ElementBounds.Fixed(6, 86 + titlebarheight, 298, 72);
+            ElementBounds outputtextbnds = ElementBounds.Fixed(8, 88 + titlebarheight, 294, 68);
 
             dialog.WithChildren(new ElementBounds[]
             {
@@ -93,7 +88,7 @@ namespace VintageEngineering.Transport
             {
                 window.WithAlignment(EnumDialogArea.CenterMiddle).WithFixedAlignmentOffset(20, 0);
             }
-            BlockPos blockPos = base.BlockEntityPosition;            
+            BlockPos blockPos = base.BlockEntityPosition;
             CairoFont centerwhite = CairoFont.WhiteSmallText().WithWeight(FontWeight.Normal).WithOrientation(EnumTextOrientation.Center);
             double[] yellow = new double[3] { 1, 1, 0 };
             CairoFont leftyellow = CairoFont.WhiteDetailText().WithWeight(FontWeight.Normal).WithOrientation(EnumTextOrientation.Left).WithColor(yellow);
@@ -156,7 +151,7 @@ namespace VintageEngineering.Transport
         }
 
         private int GetDistroIndex()
-        {            
+        {
             switch (_node.PipeDistribution)
             {
                 case EnumPipeDistribution.Nearest: return 0;
@@ -175,6 +170,7 @@ namespace VintageEngineering.Transport
                 outputhelptext = Lang.Get("vinteng:gui-help-pipeupgrade") + System.Environment.NewLine;
                 outputhelptext += $"{Lang.Get("vinteng:gui-word-filter")} : {Lang.Get("vinteng:gui-word-off")}{System.Environment.NewLine}";
                 outputhelptext += $"{Lang.Get("vinteng:gui-distro-text")} : {Lang.Get("vinteng:gui-word-off")}";
+                outputhelptext += Environment.NewLine + $"{Lang.Get("vinteng:gui-word-rate")} : {_node.UpgradeRate} / {Lang.Get("vinteng:gui-word-delay")} : 1000ms";
             }
             else
             {
@@ -183,7 +179,10 @@ namespace VintageEngineering.Transport
                 string can_distro = upgrade.CanChangeDistro ? Lang.Get("vinteng:gui-word-on") : Lang.Get("vinteng:gui-word-off");
                 outputhelptext = $"{Lang.Get("vinteng:gui-word-filter")} : {can_filter}{System.Environment.NewLine}";
                 outputhelptext += $"{Lang.Get("vinteng:gui-distro-text")} : {can_distro}";
+                string rate = (upgrade.Rate == -1) ? Lang.Get("vinteng:gui-word-stack") : upgrade.Rate.ToString("N0");
+                outputhelptext += Environment.NewLine + $"{Lang.Get("vinteng:gui-word-rate")} : {rate} / {Lang.Get("vinteng:gui-word-delay")} : {upgrade.Delay}ms";
             }
+
             return outputhelptext;
         }
 

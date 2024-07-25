@@ -31,7 +31,7 @@ namespace VintageEngineering.Transport
         /// <summary>
         /// Rate of object movement per delay tick for this upgrade.<br/>
         /// A value of -1 means a full stack, regardless of stack-size.<br/>
-        /// A value of -2 means everything of a single type in the container
+        /// A value of -2 means everything of a single type in the container (not yet implemented)
         /// </summary>
         public int Rate
         { get { return _rate; } }

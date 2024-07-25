@@ -103,6 +103,8 @@ namespace VintageEngineering.Transport.API
         public bool[] InsertionSides
         { get { return insertionSides; } }
 
+        public GUIPipeExtraction[] PipeExtractionGUIs => extractionGUIs;
+
         public override void Initialize(ICoreAPI api)
         {
             base.Initialize(api);            
@@ -119,12 +121,19 @@ namespace VintageEngineering.Transport.API
                 if (extractionNodes[f] != null)
                 {
                     extractionNodes[f].Initialize(Api, Pos, ConvertIndexToFace(f).Code);
+                    if (api.Side == EnumAppSide.Server) extractionNodes[f].SetHandler(GetHandler());
                 }
             }
 
-            //_shapeDirty = true;
-            //MarkDirty(true);
-        }
+            PipeNetworkManager pnm = api.ModLoader.GetModSystem<PipeNetworkManager>(true); // this only exists on the server
+            if (pnm == null) return;
+
+            if (numExtractionConnections > 0) 
+            { 
+                RebuildPushConnections(api.World, pnm.GetNetwork(NetworkID).PipeBlockPositions.ToArray());
+                api.World.BlockAccessor.MarkBlockEntityDirty(Pos);
+            }            
+        }        
 
         public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
         {
@@ -764,7 +773,11 @@ namespace VintageEngineering.Transport.API
         /// <param name="lid">ListenerID to remove.</param>
         public void RemoveExtractionTickEvent(long lid)
         {
-            if (Api.Side == EnumAppSide.Server) UnregisterGameTickListener(lid);
+            if (Api.Side == EnumAppSide.Server) 
+            { 
+                UnregisterGameTickListener(lid);
+                MarkDirty(true); // need to push updated data to client
+            }
         }
 
         public void ToggleExtractionNodeDialog(IPlayer player, int faceindex, CreateDialogDelegate onCreateDialog)
@@ -800,8 +813,9 @@ namespace VintageEngineering.Transport.API
                 {
                     if (extractionNodes[f].ListenerID != 0)
                     {
-                        RemoveExtractionListener(f); // removes the listener and sets ID to 0
+                        RemoveExtractionListener(f); // removes the listener and sets ID to 0                        
                     }
+                    extractionNodes[f].OnBlockUnloaded(Api.World);
                 }
             }
             base.OnBlockUnloaded(); // base call can also remove tick listeners
@@ -921,7 +935,7 @@ namespace VintageEngineering.Transport.API
                         extractionNodes[f].FromTreeAttributes(
                             TreeAttribute.CreateFromBytes(tree.GetBytes("extract-" + f.ToString())),
                             worldAccessForResolve);
-                    }
+                    }                    
                 }
             }
             connectionSides = SerializerUtil.Deserialize(tree.GetBytes("connectsides"), new bool[6]);

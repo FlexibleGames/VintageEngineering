@@ -103,25 +103,15 @@ namespace VintageEngineering.Transport
 
             if (api != null)
             {
-                BEPipeBase bep = _api.World.BlockAccessor.GetBlockEntity(_pos) as BEPipeBase;
-                if (bep != null)
-                {
-                    int delay = Upgrade.Empty ? 1000 : ((ItemPipeUpgrade)Upgrade.Itemstack.Collectible).Delay;
-                    listenerID = bep.AddExtractionTickEvent(delay, UpdateTick);
-                }
+                ApplyUpgrade();
             }
 
         }
         /// <summary>
-        /// Called when the chunk a pipe block is in is unloaded.
+        /// Called when the chunk a pipe block that contains this node is in is unloaded.
         /// </summary>
         public virtual void OnBlockUnloaded(IWorldAccessor world)
         {
-            BEPipeBase bep = world.BlockAccessor.GetBlockEntity(_pos) as BEPipeBase;
-            if (bep != null && listenerID != 0)
-            {
-                bep.RemoveExtractionTickEvent(ListenerID);
-            }
         }
         /// <summary>
         /// Sets the Transport Handler for this extraction node.<br/>
@@ -139,6 +129,9 @@ namespace VintageEngineering.Transport
         /// <param name="distro">Given string from GUI Dropdown option set.</param>
         public void SetDistroMode(string distro)
         {
+            // reset the round-robin enumerator, if it exists
+            if (PushEnumerator.Current != null) PushEnumerator.Dispose();
+
             switch (distro)
             {
                 case "nearest": pipeDistribution = EnumPipeDistribution.Nearest; break;
@@ -159,13 +152,49 @@ namespace VintageEngineering.Transport
         {
             if (slotid == 0)
             {
-                // TODO
-                // pipe upgrade changed
+                ApplyUpgrade();
             }
             else
             {
                 // pipe filter changed
             }
+        }
+
+        public virtual void ApplyUpgrade()
+        {
+            BEPipeBase bep = _api.World.BlockAccessor.GetBlockEntity(_pos) as BEPipeBase;
+            if (bep == null) return; // the BE we're apart of is invalid somehow
+            if (listenerID != 0)
+            {
+                // remove the listener if we have it
+                bep.RemoveExtractionTickEvent(ListenerID);
+                listenerID = 0;
+            }
+
+            if (Upgrade.Empty) // it IS possible for someone to remove an upgrade.
+            {
+                _upgradeRate = 1;
+                listenerID = bep.AddExtractionTickEvent(1000, UpdateTick);
+                canChangeDistro = false;
+                canFilter = false;
+            }
+            else
+            {
+                ItemPipeUpgrade upgradeitem = (ItemPipeUpgrade)Upgrade.Itemstack.Collectible;
+                int msdelay = upgradeitem.Delay;
+                canChangeDistro = upgradeitem.CanChangeDistro;
+                canFilter = upgradeitem.CanFilter;
+                _upgradeRate = upgradeitem.Rate;
+                listenerID = bep.AddExtractionTickEvent(msdelay, UpdateTick);
+            }
+            if (bep.PipeExtractionGUIs != null &&
+                bep.PipeExtractionGUIs[BlockFacing.FromCode(FaceCode).Index] != null &&
+                bep.PipeExtractionGUIs[BlockFacing.FromCode(FaceCode).Index].IsOpened())
+            {
+                bep.PipeExtractionGUIs[BlockFacing.FromCode(FaceCode).Index].Update();
+                bep.PipeExtractionGUIs[BlockFacing.FromCode(FaceCode).Index].Recompose();
+            }
+            bep.MarkDirty(true);
         }
         /// <summary>
         /// Called when removing the node, drops any upgrade and filter.
@@ -233,37 +262,6 @@ namespace VintageEngineering.Transport
             _pos = tree.GetBlockPos("position");
             faceCode = tree.GetString("facecode", "error");
             pipeDistribution = Enum.Parse<EnumPipeDistribution>(tree.GetString("distro", "Nearest"));
-            if (_api != null && _api.Side == EnumAppSide.Server)
-            {
-                _upgradeRate = 1; // defaults to 1
-                if (!Upgrade.Empty)
-                {
-                    // check upgrade attributes for rate and delay values.
-                    // server side this means we were loaded from disk
-                    // need to redo the tick listener
-                    // get the upgrade, get the rate
-                    if (Upgrade.Itemstack.Item != null && Upgrade.Itemstack.Collectible is ItemPipeUpgrade upgrade)
-                    {
-                        // we have an upgrade!
-                        //ItemPipeUpgrade upgrade = (ItemPipeUpgrade)Upgrade.Itemstack.Collectible;
-                        _upgradeRate = upgrade.Rate;
-                        canFilter = upgrade.CanFilter;
-                        canChangeDistro = upgrade.CanChangeDistro;
-                        BEPipeBase bep = worldForResolving.BlockAccessor.GetBlockEntity(this._pos) as BEPipeBase;
-                        if (bep != null && _api.Side == EnumAppSide.Server)
-                        {
-                            // pipe ticks on server only, if we're here we are loading from disk most likely.
-                            if (listenerID != 0)
-                            {
-                                // this might require a new listener...
-                                // we should never be in here... loading from disk does not load a listenerID.
-                                bep.RemoveExtractionTickEvent(listenerID);
-                            }
-                            listenerID = bep.AddExtractionTickEvent(upgrade.Delay, UpdateTick);
-                        }
-                    }
-                }
-            }
         }
     }
 }

@@ -77,6 +77,7 @@ namespace VintageEngineering.Transport.Handlers
         /// <returns>Valid ItemSlot to push into, or null if no slot is found.</returns>
         public ItemSlot GetPushSlot(IWorldAccessor world, PipeExtractionNode node, List<PipeConnection> pushcons, ItemSlot pullfrom)
         {
+            if (pushcons == null || pushcons.Count == 0) { return null; }
             if (node.PipeDistribution == EnumPipeDistribution.Nearest)
             {
                 // what is the cost of this call?
@@ -102,7 +103,7 @@ namespace VintageEngineering.Transport.Handlers
                 for (int x = 0; x < conarray.Length; x++)
                 {
                     IBlockEntityContainer contain = world.BlockAccessor.GetBlock(conarray[x].Position).GetInterface<IBlockEntityContainer>(world, conarray[x].Position);
-                    if (contain is InventoryBase inv)
+                    if (contain.Inventory is InventoryBase inv)
                     {
                         ItemSlot push = inv.GetAutoPushIntoSlot(BlockFacing.FromCode(node.FaceCode).Opposite, pullfrom);
                         if (push == null) continue;
@@ -116,12 +117,21 @@ namespace VintageEngineering.Transport.Handlers
                 if (node.PushEnumerator.Current == null)
                 {
                     node.PushEnumerator = pushcons.GetEnumerator();
+                    node.PushEnumerator.MoveNext();
                 }
-                else node.PushEnumerator.MoveNext();
+                else 
+                { 
+                    if (!node.PushEnumerator.MoveNext())
+                    {
+                        node.PushEnumerator.Dispose();
+                        node.PushEnumerator = pushcons.GetEnumerator();
+                        node.PushEnumerator.MoveNext();
+                    }
+                }
 
                 PipeConnection current = node.PushEnumerator.Current;
                 IBlockEntityContainer contain = world.BlockAccessor.GetBlock(current.Position).GetInterface<IBlockEntityContainer>(world, current.Position);
-                if (contain is InventoryBase inv)
+                if (contain.Inventory is InventoryBase inv)
                 {
                     ItemSlot push = inv.GetAutoPushIntoSlot(BlockFacing.FromCode(node.FaceCode).Opposite, pullfrom);                    
                     return push;
@@ -133,7 +143,7 @@ namespace VintageEngineering.Transport.Handlers
                 int randomcon = world.Rand.Next(pushcons.Count);                
                 PipeConnection current = pushcons[randomcon];
                 IBlockEntityContainer contain = world.BlockAccessor.GetBlock(current.Position).GetInterface<IBlockEntityContainer>(world, current.Position);
-                if (contain is InventoryBase inv)
+                if (contain.Inventory is InventoryBase inv)
                 {
                     ItemSlot push = inv.GetAutoPushIntoSlot(BlockFacing.FromCode(node.FaceCode).Opposite, pullfrom);
                     return push;
