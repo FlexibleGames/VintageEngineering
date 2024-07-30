@@ -30,6 +30,9 @@ namespace VintageEngineering.Transport.API
         protected int numExtractionConnections;
         protected int numInsertionConnections;
 
+        private int numPushConsDebug = 0;
+        private int numTickHandlerDebug = 0;
+
         protected bool[] connectionSides;   // uses BlockFacing index, N, E, S, W, U, D
         protected bool[] extractionSides;   // uses BlockFacing index, N, E, S, W, U, D
         protected bool[] disconnectedSides; // uses BlockFacing index, N, E, S, W, U, D
@@ -132,7 +135,8 @@ namespace VintageEngineering.Transport.API
             { 
                 RebuildPushConnections(api.World, pnm.GetNetwork(NetworkID).PipeBlockPositions.ToArray());
                 api.World.BlockAccessor.MarkBlockEntityDirty(Pos);
-            }            
+            }
+            if (api.Side == EnumAppSide.Server) MarkDirty(true);
         }        
 
         public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
@@ -163,8 +167,8 @@ namespace VintageEngineering.Transport.API
             output += $"Overrides: {overrides}" + System.Environment.NewLine;
             output += $"Pipe Cons: {pipecons}" + System.Environment.NewLine;
             output += $"# Ins/Extr: {numInsertionConnections}/{numExtractionConnections}";            
-            if (_pushConnections != null) output += Environment.NewLine + $"#Pushes: {_pushConnections.Count}";
-            if (this.TickHandlers != null) output += Environment.NewLine + $"#Tickers: {TickHandlers.Count}";
+            if (numPushConsDebug != 0) output += Environment.NewLine + $"#Pushes: {numPushConsDebug}";
+            if (numTickHandlerDebug != 0) output += Environment.NewLine + $"#Tickers: {numTickHandlerDebug}";
             dsc.Append(output);
         }
         /// <summary>
@@ -903,8 +907,8 @@ namespace VintageEngineering.Transport.API
             tree.SetInt("numinsert", numInsertionConnections);
 
             // DEBUG STUFF HERE, remove before release!!
-            tree.SetBytes("tickhandlers", SerializerUtil.Serialize(this.TickHandlers));
-            tree.SetBytes("pushcons", SerializerUtil.Serialize(this._pushConnections));
+            if (TickHandlers != null) tree.SetInt("tickhandlers", this.TickHandlers.Count);
+            if (_pushConnections != null) tree.SetInt("pushcons", this._pushConnections.Count);
         }
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldAccessForResolve)
         {
@@ -945,10 +949,11 @@ namespace VintageEngineering.Transport.API
             numExtractionConnections = tree.GetInt("numextract");
             numInsertionConnections = tree.GetInt("numinsert");
 
+            numPushConsDebug = tree.GetInt("pushcons", 0);
+            numTickHandlerDebug = tree.GetInt("tickhandlers", 0);
+
             if (Api != null && Api.Side == EnumAppSide.Client)
             {
-                _pushConnections = SerializerUtil.Deserialize<List<PipeConnection>>(tree.GetBytes("pushcons"));
-                TickHandlers = SerializerUtil.Deserialize<List<long>>(tree.GetBytes("tickhandlers"));
                 MarkPipeDirty(worldAccessForResolve, true); 
             }
         }

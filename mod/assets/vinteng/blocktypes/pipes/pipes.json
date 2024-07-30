@@ -60,6 +60,12 @@
 		"rotation": { "x": -2, "y": 25, "z": -78 },
 		"scale": 0.4
 	},
+	"groundTransform": {
+		"translation": { "x": 0, "y": -0.356, "z": 0 },
+		"rotation": { "x": 0, "y": -41, "z": 0 },
+		"origin": { "x": 0.5, "y": 0, "z": 0.5 },
+		"scale": 4.82
+	},
 	"guiTransform": {
 		"rotation": { "x": -24, "y": -43, "z": -5 },
 		"scale": 2.75
