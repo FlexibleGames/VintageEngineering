@@ -7,17 +7,16 @@ using Cairo;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
+using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
 
 namespace VintageEngineering.Transport
 {
-    public class GUIPipeFilter : GuiDialog
+    public class GUIPipeFilter : GuiDialogGeneric
     {        
         public override string ToggleKeyCombinationCode => null;
 
         public override double DrawOrder => 0.2;
-
-        public virtual string DialogTitle => Lang.Get("vinteng:gui-filtersettings");
 
         protected string _currentSearchText;
 
@@ -37,10 +36,11 @@ namespace VintageEngineering.Transport
         
         private double _dialogHeight = 516.0;
 
-        public GUIPipeFilter(ICoreClientAPI capi, ItemStack filterItem) : base(capi)
+        public GUIPipeFilter(ICoreClientAPI capi, ItemStack filterItem) : base(Lang.Get("vinteng:gui-filtersettings"), capi)
         {            
             _filterItem = filterItem;
-            
+            PopulateFilterItemList();
+            SetupDialog();
         }
 
         public override void OnKeyPress(KeyEvent args)
@@ -81,100 +81,122 @@ namespace VintageEngineering.Transport
             ElementBounds optionWildcardToggle = ElementBounds.Fixed(29, 244 + tbh, 30, 30);
 
             // Set/Saved Filter items            
-            ElementBounds filterItemsList = ElementBounds.Fixed(92, 11 + tbh, 337, 265);
-            ElementBounds filterItemsClip = filterItemsList.ForkBoundingParent(0, 0, 0, 0);
-            ElementBounds filterItemsInset = filterItemsList.FlatCopy().FixedGrow(padding).WithFixedOffset(-padding, -padding); //ElementBounds.Fixed(88, 7 + tbh, 345, 273);
-            ElementBounds filterItemsScroll = filterItemsInset.CopyOffsetedSibling(filterItemsList.fixedWidth + 10, 0, 0, 0).WithFixedWidth(20);
+            ElementBounds filterItemsInset = ElementBounds.Fixed(88, 7 + tbh, 345, 273);//filterItemsList.FlatCopy().FixedGrow(padding+padding).WithFixedOffset(-padding, -padding); //ElementBounds.Fixed(88, 7 + tbh, 345, 273);
+            ElementBounds filterItemsList = ElementBounds.Fixed(92, 12 + tbh, 317, 265);
+            ElementBounds filterItemsClip = ElementBounds.Fixed(93, 13 + tbh, 315, 263);  //filterItemsList.ForkBoundingParent(0, 0, 0, 0);             
+            ElementBounds filterItemsScroll = ElementStdBounds.VerticalScrollbar(filterItemsList); //ElementBounds.Fixed(409, 12 + tbh, 20, 265); //filterItemsInset.CopyOffsetedSibling(filterItemsList.fixedWidth + 10, 0, 0, 0).WithFixedWidth(20);
 
             // search bar and button
             ElementBounds searchTextInset = ElementBounds.Fixed(7, 285 + tbh, 353, 34);
             ElementBounds searchTextText = ElementBounds.Fixed(11, 289 + tbh, 64, 26);
             ElementBounds searchTextInput = ElementBounds.Fixed(88, 289 + tbh, 268, 26);
-            ElementBounds searchTextButton = ElementBounds.Fixed(365, 285 + tbh, 68, 34);
-            ElementBounds searchTextButtonText = searchTextButton.FlatCopy().FixedShrink(padding); //ElementBounds.Fixed(369, 289 + tbh, 60, 26);
+            ElementBounds searchTextButton = ElementStdBounds.ToggleButton(365, 285 + tbh, 68, 34);
+            ElementBounds searchTextButtonText = ElementBounds.Fixed(369, 289 + tbh, 60, 26);// searchTextButton.FlatCopy().FixedShrink(padding); //ElementBounds.Fixed(369, 289 + tbh, 60, 26);
 
             // Save/Cancel Buttons
-            ElementBounds cancelButton = ElementBounds.Fixed(7, 436 + tbh, 76, 34);
-            ElementBounds cancelText = cancelButton.FlatCopy().FixedShrink(padding);
-            ElementBounds saveButton = ElementBounds.Fixed(7, 475 + tbh, 76, 34);
-            ElementBounds saveText = saveButton.FlatCopy().FixedShrink(padding);
+            ElementBounds cancelButton = ElementStdBounds.ToggleButton(7, 436 + tbh, 76, 34);
+            ElementBounds cancelText = ElementBounds.Fixed(11, 440 + tbh, 68, 26); // cancelButton.FlatCopy().FixedShrink(padding);
+            ElementBounds saveButton = ElementStdBounds.ToggleButton(7, 475 + tbh, 76, 34);
+            ElementBounds saveText = ElementBounds.Fixed(11, 479 + tbh, 68, 26); // saveButton.FlatCopy().FixedShrink(padding);
 
             // Search Filter Results
-            ElementBounds resultsItemsList = ElementBounds.Fixed(92, 328 + tbh, 337, 177);
-            ElementBounds resultsItemsClip = resultsItemsList.ForkBoundingParent(0, 0, 0, 0);
-            ElementBounds resultsItemsInset = resultsItemsList.FlatCopy().FixedGrow(padding).WithFixedOffset(-padding, -padding); //ElementBounds.Fixed(88, 7 + tbh, 345, 273);
-            ElementBounds resultsItemsScroll = resultsItemsInset.CopyOffsetedSibling(resultsItemsList.fixedWidth + 10, 0, 0, 0).WithFixedWidth(20);
+            ElementBounds resultsItemsInset = ElementBounds.Fixed(88, 324 + tbh, 345, 185); //resultsItemsList.FlatCopy().FixedGrow(padding+padding).WithFixedOffset(-padding, -padding); //ElementBounds.Fixed(88, 7 + tbh, 345, 273);
+            ElementBounds resultsItemsList = ElementBounds.Fixed(92, 328 + tbh, 317, 177);
+            ElementBounds resultsItemsClip = ElementBounds.Fixed(93, 329 + tbh, 315, 175); //resultsItemsList.ForkBoundingParent(0, 0, 0, 0);            
+            ElementBounds resultsItemsScroll = ElementStdBounds.VerticalScrollbar(resultsItemsList); // ElementBounds.Fixed(409, 328 + tbh, 20, 177); //resultsItemsInset.CopyOffsetedSibling(resultsItemsList.fixedWidth + 10, 0, 0, 0).WithFixedWidth(20);
 
             dialog.WithChildren(new ElementBounds[]
             {
+                dialogBounds,
                 blklistInset,blklistText,blklistToggle,
                 optionInset,optionBlockText,optionBlockToggle,optionItemText,optionItemToggle,optionWildcardText,optionWildcardToggle,
                 filterItemsList,filterItemsInset,filterItemsScroll,
-                searchTextInset,searchTextText,searchTextInput,searchTextButton,searchTextButtonText,
-                cancelButton,cancelText,saveButton,saveText,
+                searchTextInset,searchTextText,searchTextInput,searchTextButton,
+                cancelButton,saveButton,
                 resultsItemsList,resultsItemsInset,resultsItemsScroll
             });
 
             ElementBounds window = ElementStdBounds.AutosizedMainDialog.WithAlignment(EnumDialogArea.CenterMiddle)
                 .WithFixedAlignmentOffset(-GuiStyle.DialogToScreenPadding, 0);
 
-            CairoFont whitecenter = CairoFont.WhiteDetailText().WithWeight(FontWeight.Normal).WithOrientation(EnumTextOrientation.Center);
-            CairoFont whiteright = CairoFont.WhiteDetailText().WithWeight(FontWeight.Normal).WithOrientation(EnumTextOrientation.Right);
-            CairoFont whiteleft = CairoFont.WhiteDetailText().WithWeight(FontWeight.Normal).WithOrientation(EnumTextOrientation.Left);
+            CairoFont whitebigcenter = CairoFont.WhiteSmallishText().WithOrientation(EnumTextOrientation.Center).WithColor(new double[3] { 1,1,1 });
+            CairoFont whitecenter = CairoFont.WhiteDetailText().WithOrientation(EnumTextOrientation.Center);
+            CairoFont whiteright = CairoFont.WhiteSmallishText().WithOrientation(EnumTextOrientation.Right);
+            CairoFont whiteleft = CairoFont.WhiteDetailText().WithOrientation(EnumTextOrientation.Left);
 
             double[] yellow = new double[3] { 1, 1, 0 };
             CairoFont yellowleft = CairoFont.WhiteDetailText().WithWeight(FontWeight.Normal).WithOrientation(EnumTextOrientation.Left).WithColor(yellow);
 
             this.SingleComposer = capi.Gui.CreateCompo("vepipefiltergui", window)
-                .AddShadedDialogBG(dialogBounds, true, 5)
+                .AddShadedDialogBG(dialog, true, 5)
                 .AddDialogTitleBar(Lang.Get("vinteng:gui-filtersettings"), new Action(OnTitleBarClose), null, null)
-                .BeginChildElements()
+                .BeginChildElements(dialog);
 
-                // Blacklist toggle
-                .AddInset(blklistInset, ((int)padding), 0f)
+            // Blacklist toggle
+            this.SingleComposer.AddInset(blklistInset, ((int)padding), 0.6f)
                 .AddStaticText(Lang.Get("vinteng:gui-blacklist"), whitecenter, blklistText, "blklisttext")
-                .AddSwitch(new Action<bool>(OnBlackListSwitch), blklistToggle, "blklisttoggle", 30, 0)
+                .AddSwitch(new Action<bool>(OnBlackListSwitch), blklistToggle, "blklisttoggle", 30, 0);
 
-                // Search Option Panel
-                .AddInset(optionInset, ((int)padding), 0f)
+            //Search Option Panel
+            this.SingleComposer.AddInset(optionInset, ((int)padding), 0.6f)
                 .AddStaticText(Lang.Get("vinteng:gui-blocks"), whitecenter, optionBlockText, "optionblocktext")
                 .AddSwitch(new Action<bool>(OnSearchBlockSwitch), optionBlockToggle, "optionblocktoggle", 30, 0)
                 .AddStaticText(Lang.Get("vinteng:gui-items"), whitecenter, optionItemText, "optionitemtext")
                 .AddSwitch(new Action<bool>(OnSearchItemSwitch), optionItemToggle, "optionitemtoggle", 30, 0)
                 .AddStaticText(Lang.Get("vinteng:gui-wildcards"), whitecenter, optionWildcardText, "optionwildcardtext")
-                .AddSwitch(new Action<bool>(OnSearchWildcardSwitch), optionWildcardToggle, "optionwildcardtoggle", 30, 0)
+                .AddSwitch(new Action<bool>(OnSearchWildcardSwitch), optionWildcardToggle, "optionwildcardtoggle", 30, 0);
 
-                // Saved/Loaded Filter settingss
-                .AddInset(filterItemsInset, ((int)padding), 0f)
+            //Saved / Loaded Filter settings
+            this.SingleComposer.AddInset(filterItemsInset, ((int)padding), 0f)
                 .BeginClip(filterItemsClip)
                 .AddFlatList(filterItemsList, new Action<int>(OnLeftClickFilterEntry), _filterItems, "filteritemslist")
                 .EndClip()
-                .AddVerticalScrollbar(new Action<float>(OnFilterItemsScroll), filterItemsScroll, "filteritemsscroll")
+                .AddVerticalScrollbar(new Action<float>(OnFilterItemsScroll), filterItemsScroll, "filteritemsscroll");
 
-                // Search Bar and Button
-                .AddInset(searchTextInset, ((int)padding), 0f)
-                .AddStaticText(Lang.Get("vinteng:gui-search"), whiteright, searchTextText, "searchtexttext")
+            // Search Bar and Button
+            this.SingleComposer.AddInset(searchTextInset, ((int)padding), 0.6f)
+                .AddStaticText(Lang.Get("vinteng:gui-search") + ":", whiteright, searchTextText, "searchtexttext")
                 .AddTextInput(searchTextInput, new Action<string>(OnSearchTextChange), whiteleft, "searchtextinput")
                 .AddIf(_canSearchWildCards)
-                .AddSmallButton("", new ActionConsumable(AddButtonClicked), searchTextButton, EnumButtonStyle.Small, "addbutton")
-                .AddStaticText(Lang.Get("vinteng:gui-add"), whitecenter, searchTextButtonText, "searchtextbtntext")
-                .EndIf()
+                .AddSmallButton(Lang.Get("vinteng:gui-add"), new ActionConsumable(AddButtonClicked), searchTextButton, EnumButtonStyle.Normal, "addbutton")
+                //.AddStaticText(Lang.Get("vinteng:gui-add"), whitebigcenter, searchTextButtonText, "searchtextbtntext")
+                .EndIf();
 
-                // Cancel and Save Buttons
-                .AddSmallButton("", new ActionConsumable(CancelButtonClicked), cancelButton, EnumButtonStyle.Small, "cancelbutton")
-                .AddStaticText(Lang.Get("vinteng:gui-cancel"), whitecenter, cancelText, "cancelbtntext")
-                .AddSmallButton("", new ActionConsumable(SaveButtonClicked), saveButton, EnumButtonStyle.Small, "savebutton")
-                .AddStaticText(Lang.Get("vinteng:gui-save"), whitecenter, saveText, "savebtntext")
+            // Cancel and Save Buttons
+            this.SingleComposer.AddSmallButton(Lang.Get("vinteng:gui-cancel"), new ActionConsumable(CancelButtonClicked), cancelButton, EnumButtonStyle.Normal, "cancelbutton")
+                //.AddStaticText(Lang.Get("vinteng:gui-cancel"), whitebigcenter, cancelText, "cancelbtntext")
+                .AddSmallButton(Lang.Get("vinteng:gui-save"), new ActionConsumable(SaveButtonClicked), saveButton, EnumButtonStyle.Normal, "savebutton");
+                // .AddStaticText(Lang.Get("vinteng:gui-save"), whitebigcenter, saveText, "savebtntext");
 
-                // Search Results Window
-                .AddInset(resultsItemsInset, ((int)padding), 0f)
+            // Search Results Window
+            this.SingleComposer.AddInset(resultsItemsInset, ((int)padding), 0f)
                 .BeginClip(resultsItemsClip)
                 .AddFlatList(resultsItemsList, new Action<int>(OnLeftClickSearchEntry), _searchItems, "searchresults")
                 .EndClip()
-                .AddVerticalScrollbar(new Action<float>(OnSearchItemsScroll), resultsItemsScroll, "resultsitemscroll")                
+                .AddVerticalScrollbar(new Action<float>(OnSearchItemsScroll), resultsItemsScroll, "resultsitemscroll");
 
-                .EndChildElements()
-                .Compose(true);
+            this.SingleComposer.EndChildElements();
+            try 
+            { 
+                this.SingleComposer.Compose(true);
+                SetSwitches();
+            }
+            catch(Exception c)
+            {
+                capi.SendChatMessage(c.ToString());
+            }
+        }
+
+        private void SetSwitches()
+        {
+            if (SingleComposer == null) return;
+
+            SingleComposer.GetSwitch("blklisttoggle").On = _filterItem.Attributes.GetBool("isblacklist");
+
+
+            SingleComposer.GetSwitch("optionblocktoggle").On = _canSearchBlocks;
+            SingleComposer.GetSwitch("optionitemtoggle").On = _canSearchItems;
+            SingleComposer.GetSwitch("optionwildcardtoggle").On = _canSearchWildCards;
         }
 
         private void OnTitleBarClose()
@@ -185,6 +207,7 @@ namespace VintageEngineering.Transport
         private void OnBlackListSwitch(bool isenabled)
         {
             _filterItem.Attributes.SetBool("isblacklist", isenabled);
+            //capi.Event.EnqueueMainThreadTask(new Action(SetupDialog), "setuppipefilterdlg");
         }
 
         private void OnSearchBlockSwitch(bool isenabled)
@@ -198,7 +221,7 @@ namespace VintageEngineering.Transport
         private void OnSearchWildcardSwitch(bool isenabled)
         {
             _canSearchWildCards = isenabled;
-            this.SingleComposer.ReCompose();
+            capi.Event.EnqueueMainThreadTask(new Action(SetupDialog), "setuppipefilterdlg");
         }
 
         private void OnLeftClickFilterEntry(int selection)

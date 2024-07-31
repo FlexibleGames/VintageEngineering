@@ -48,6 +48,7 @@ namespace VintageEngineering
         public void RegisterItems(ICoreAPI api)
         {
             api.RegisterItemClass("VEPipeUpgrade", typeof(ItemPipeUpgrade));
+            api.RegisterItemClass("VEPipeFilter", typeof(ItemPipeFilter));
         }
 
         public void RegisterBlocks(ICoreAPI api)
