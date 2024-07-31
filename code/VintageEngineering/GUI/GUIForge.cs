@@ -15,7 +15,7 @@ namespace VintageEngineering
     public class GUIForge : GuiDialogBlockEntity
     {
         private BEForge betestmach;
-        
+
         private ulong _currentPower;
         private ulong _maxPower;
         private float _craftProgress;
@@ -37,7 +37,7 @@ namespace VintageEngineering
             _craftProgress = betestmach.RecipeProgress;
             _currentPower = betestmach.Electric.CurrentPower;
             _maxPower = betestmach.Electric.MaxPower; // set this once as it doesn't/shouldn't change (for now)
-            
+
             this.SetupDialog();
         }
         private void OnSlotModified(int slotid)
@@ -87,7 +87,7 @@ namespace VintageEngineering
                 powerBounds,
                 inputGrid,
                 flames,
-                progressBar,                
+                progressBar,
                 progressText,
                 enableBtn,
                 enableBtnText,
@@ -191,7 +191,7 @@ namespace VintageEngineering
                 }
                 if (!betestmach.OutputSlot.Empty)
                 {
-                    outputhelptext = Lang.Get("vinteng:gui-machine-isfull");   // an output is full...                    
+                    outputhelptext = Lang.Get("vinteng:gui-machine-isfull");   // an output is full...
                 }
             }
             if (betestmach.HeatingBlock)
@@ -291,7 +291,7 @@ namespace VintageEngineering
             gradient.Dispose();
             ctx.Restore();
             //           ctx.Save();
-        }        
+        }
 
         private void OnFlameDraw(Context ctx, ImageSurface surface, ElementBounds currentbounds)
         {

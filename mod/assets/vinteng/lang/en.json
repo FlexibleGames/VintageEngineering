@@ -204,5 +204,17 @@
 	"vinteng:Industrially fires into": "Industrially fires into",
 	"vinteng:Industrially firing": "Industrially firing",
 	"vinteng:Industrially mixes into": "Industrially mixes into",
-	"vinteng:Industrially mixing": "Industrially mixing"
+	"vinteng:Industrially mixing": "Industrially mixing",
+
+	"vinteng:item-vepipefilter": "Pipe Filter",
+	"vinteng:itemdesc-vepipefilter": "The Pipe Filter can be used in upgraded extraction nodes to filter (white-list or black-list) items to pull from the connected inventory. <br>Right click with the filter in your hand to set filter settings.",
+	"vinteng:gui-filtersettings": "Pipe Filter Settings",
+	"vinteng:gui-blacklist": "Blacklist",
+	"vinteng:gui-blocks": "Blocks",
+	"vinteng:gui-items": "Items",
+	"vinteng:gui-wildcards": "Wildcards",
+	"vinteng:gui-search": "Search",
+	"vinteng:gui-add": "Add",
+	"vinteng:gui-cancel": "Cancel",
+	"vinteng:gui-save": "Save"
 }
