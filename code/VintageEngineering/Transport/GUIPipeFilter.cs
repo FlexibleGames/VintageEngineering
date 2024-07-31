@@ -28,6 +28,8 @@ namespace VintageEngineering.Transport
         protected List<IFlatListItem> _filterItems = new List<IFlatListItem>();
         protected List<IFlatListItem> _searchItems = new List<IFlatListItem>();        
 
+
+
         /// <summary>
         /// The Actual filter item we right clicked to edit. Passed in when dialog is created.
         /// </summary>
@@ -182,7 +184,7 @@ namespace VintageEngineering.Transport
 
         private void OnBlackListSwitch(bool isenabled)
         {
-            // TODO
+            _filterItem.Attributes.SetBool("isblacklist", isenabled);
         }
 
         private void OnSearchBlockSwitch(bool isenabled)
@@ -225,6 +227,11 @@ namespace VintageEngineering.Transport
         private void OnSearchTextChange(string text)
         {
             // TODO, all the things here
+            if (_currentSearchText != text) 
+            { 
+                _currentSearchText = text;
+                FilterItems(); 
+            }
         }
         private bool AddButtonClicked()
         {
@@ -240,6 +247,20 @@ namespace VintageEngineering.Transport
         private bool SaveButtonClicked()
         {
             throw new NotImplementedException();
+        }
+
+        public void FilterItems()
+        {
+            // Items
+
+            // Blocks
+
+            // Wildcards
+        }
+
+        public void PopulateFilterItemList()
+        {
+            if (_filterItem == null || _filterItem.Attributes == null || _filterItem.Attributes.Count == 0) return;
         }
     }
 }
