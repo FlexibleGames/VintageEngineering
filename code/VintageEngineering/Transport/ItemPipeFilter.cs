@@ -15,7 +15,7 @@ namespace VintageEngineering.Transport
     {
         private GUIPipeFilter _filterGUI;
         public bool _isBlacklist = false;
-        private ICoreClientAPI capi;
+        private ICoreClientAPI capi;        
 
         public override void OnLoaded(ICoreAPI api)
         {
@@ -59,6 +59,7 @@ namespace VintageEngineering.Transport
             }
             base.OnHeldInteractStart(slot, byEntity, blockSel, entitySel, firstEvent, ref handling);
         }
+        
 
         public virtual void ToTreeAttribute(ITreeAttribute tree)
         {

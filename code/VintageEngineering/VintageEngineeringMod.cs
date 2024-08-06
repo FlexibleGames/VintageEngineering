@@ -7,9 +7,11 @@ using VintageEngineering.Electrical;
 using VintageEngineering.Transport;
 using VintageEngineering.Transport.Pipes;
 using HarmonyLib;
+using System.Collections.Generic;
+using Vintagestory.GameContent;
 
 [assembly: ModInfo("VintageEngineering",
-                    Authors = new string[] { "Flexible Games" },
+                    Authors = new string[] { "Flexible Games", "bluelightning32" },
                     Description = "Late game tech, automation, power, and mining.",
                     Version = "1.0.0")]
 
@@ -20,6 +22,11 @@ namespace VintageEngineering
         ICoreClientAPI capi;
         ICoreServerAPI sapi;
         private Harmony harmony;
+
+        public List<PipeFilterGuiElement> _pipeFilterList = new List<PipeFilterGuiElement>();
+        //public List<PipeFilterGuiElement> _shownFilterElements = new List<PipeFilterGuiElement>();
+
+        public bool _filterListLoaded = false;
 
         public override void Start(ICoreAPI api)
         {
@@ -35,6 +42,7 @@ namespace VintageEngineering
             if (api.Side == EnumAppSide.Client)
             {
                 capi = api as ICoreClientAPI;
+                capi.Event.LevelFinalize += OnLevelFinalize;
             }
             else
             {
@@ -43,6 +51,45 @@ namespace VintageEngineering
             RegisterItems(api);
             RegisterBlocks(api);
             RegisterBlockEntities(api);
+        }
+
+        /// <summary>
+        /// Called on the CLIENT on having received the level finalized packet.
+        /// </summary>
+        private void OnLevelFinalize()
+        {
+            TyronThreadPool.QueueTask(new Action(LoadFilterEntries), "Vintage Engineering Pipe Filter List");
+            capi.Settings.AddWatcher<float>("guiScale", OnScaleChanged);
+        }
+
+        /// <summary>
+        /// Called on a seperate thread to build the master list of Block and Item entries for Pipe Filter search feature.
+        /// </summary>
+        private void LoadFilterEntries()
+        {         
+            foreach (CollectibleObject obj in capi.World.Collectibles)
+            {
+                List<ItemStack> stacks = obj.GetHandBookStacks(capi);
+                if (stacks != null)
+                {
+                    foreach (ItemStack stack in stacks)
+                    {
+                        _pipeFilterList.Add(new PipeFilterGuiElement(capi, stack));
+                    }
+                }
+            }
+            _filterListLoaded = true;
+        }
+        // Called if the GuiScale setting is changed on the client.
+        private void OnScaleChanged(float scale)
+        {
+            if (_filterListLoaded && _pipeFilterList.Count > 0)
+            {
+                foreach (PipeFilterGuiElement entry in _pipeFilterList)
+                {
+                    entry.Dispose();
+                }
+            }
         }
 
         public void RegisterItems(ICoreAPI api)

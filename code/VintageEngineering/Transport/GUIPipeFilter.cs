@@ -7,7 +7,9 @@ using Cairo;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
+using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
+using Vintagestory.API.Util;
 using Vintagestory.GameContent;
 
 namespace VintageEngineering.Transport
@@ -23,6 +25,10 @@ namespace VintageEngineering.Transport
         protected bool _canSearchBlocks = true;
         protected bool _canSearchItems = true;
         protected bool _canSearchWildCards = false;
+        protected bool _showAddButton = true;
+
+        protected int _currentSearchItemSelection = -1;
+        protected int _currentFilterItemSelection = -1;
 
         protected List<IFlatListItem> _filterItems = new List<IFlatListItem>();
         protected List<IFlatListItem> _searchItems = new List<IFlatListItem>();        
@@ -36,11 +42,17 @@ namespace VintageEngineering.Transport
         
         private double _dialogHeight = 516.0;
 
+        private double _filterEntryHeight = 263;
+        private double _filterSearchHeight = 175;
+
+        public override bool PrefersUngrabbedMouse => true;
+
         public GUIPipeFilter(ICoreClientAPI capi, ItemStack filterItem) : base(Lang.Get("vinteng:gui-filtersettings"), capi)
         {            
             _filterItem = filterItem;
-            PopulateFilterItemList();
+            PopulateFilterItemList();            
             SetupDialog();
+            FilterItems();
         }
 
         public override void OnKeyPress(KeyEvent args)
@@ -48,7 +60,7 @@ namespace VintageEngineering.Transport
             
             if (args.KeyCode == ((int)GlKeys.Delete))
             {
-                // Delete was pressed!!
+                capi.ShowChatMessage("Delete Pressed...");
             }
             base.OnKeyPress(args);
         }
@@ -157,7 +169,7 @@ namespace VintageEngineering.Transport
             this.SingleComposer.AddInset(searchTextInset, ((int)padding), 0.6f)
                 .AddStaticText(Lang.Get("vinteng:gui-search") + ":", whiteright, searchTextText, "searchtexttext")
                 .AddTextInput(searchTextInput, new Action<string>(OnSearchTextChange), whiteleft, "searchtextinput")
-                .AddIf(_canSearchWildCards)
+                .AddIf(_showAddButton)
                 .AddSmallButton(Lang.Get("vinteng:gui-add"), new ActionConsumable(AddButtonClicked), searchTextButton, EnumButtonStyle.Normal, "addbutton")
                 //.AddStaticText(Lang.Get("vinteng:gui-add"), whitebigcenter, searchTextButtonText, "searchtextbtntext")
                 .EndIf();
@@ -212,25 +224,29 @@ namespace VintageEngineering.Transport
 
         private void OnSearchBlockSwitch(bool isenabled)
         {
-            // TODO
+            _canSearchBlocks = isenabled;
         }
         private void OnSearchItemSwitch(bool isenabled)
         {
-            // TODO
+            _canSearchItems = isenabled;
         }
         private void OnSearchWildcardSwitch(bool isenabled)
         {
             _canSearchWildCards = isenabled;
-            capi.Event.EnqueueMainThreadTask(new Action(SetupDialog), "setuppipefilterdlg");
+            //capi.Event.EnqueueMainThreadTask(new Action(SetupDialog), "setuppipefilterdlg");
         }
 
         private void OnLeftClickFilterEntry(int selection)
         {
             // Item in SavedFilter was clicked
+            _currentSearchItemSelection = -1; // 'deselect' search item
+            _currentFilterItemSelection = selection;
         }
         private void OnLeftClickSearchEntry(int selection)
         {
             // Item in the Search Results was clicked
+            _currentFilterItemSelection = -1; // 'deselect' filter item
+            _currentSearchItemSelection = selection;
         }
 
         private void OnFilterItemsScroll(float value)
@@ -248,17 +264,18 @@ namespace VintageEngineering.Transport
         }
 
         private void OnSearchTextChange(string text)
-        {
-            // TODO, all the things here
+        {            
             if (_currentSearchText != text) 
             { 
-                _currentSearchText = text;
-                FilterItems(); 
+                _currentSearchText = text;                
+                FilterItems();
+                //capi.Event.EnqueueMainThreadTask(new Action(SetupDialog), "setuppipefilterdlg");
             }
         }
         private bool AddButtonClicked()
         {
-            throw new NotImplementedException();
+            capi.ShowChatMessage("Add Button Clicked");
+            return true;
         }
 
         private bool CancelButtonClicked()
@@ -269,21 +286,84 @@ namespace VintageEngineering.Transport
 
         private bool SaveButtonClicked()
         {
-            throw new NotImplementedException();
+            capi.ShowChatMessage("Save Button Clicked");
+            return true;
         }
 
         public void FilterItems()
         {
-            // Items
+            VintageEngineeringMod vem = capi.ModLoader.GetModSystem<VintageEngineeringMod>(true);
+            if (vem == null) return;
 
-            // Blocks
-
-            // Wildcards
+            string text2 = _currentSearchText;
+            string text = (text2 != null) ? text2.RemoveDiacritics().ToLowerInvariant() : null;
+            string[] array;
+            if (text != null)
+            {
+                array = (from str in text.Split(new string[] { " or " }, StringSplitOptions.RemoveEmptyEntries)
+                         orderby str.Length
+                         select str).ToArray<string>();
+                    
+            }
+            else
+            {
+                array = new string[0];
+            }
+            string[] texts = array;
+            List<WeightedFilterEntry> foundEntries = new List<WeightedFilterEntry>();
+            _searchItems.Clear();
+            if (vem._filterListLoaded)
+            {
+                for (int i = 0; i < vem._pipeFilterList.Count; i++)
+                {
+                    PipeFilterGuiElement entry = vem._pipeFilterList[i];
+                    if ((entry.IsBlock && _canSearchBlocks) || (!entry.IsBlock && _canSearchItems))
+                    {
+                        float weight = 1f;
+                        bool skip = texts.Length != 0;
+                        for (int j = 0; j < texts.Length; j++)
+                        {
+                            weight = entry.GetTextMatchWeight(texts[j]);
+                            if (weight > 0f)
+                            {
+                                skip = false;
+                                break;
+                            }
+                        }
+                        if (!skip)
+                        {
+                            foundEntries.Add(new WeightedFilterEntry
+                            { Entry = entry, Weight = weight });
+                        }
+                    }
+                }
+                foreach (WeightedFilterEntry entry in from wentry in foundEntries
+                                                      orderby wentry.Weight descending
+                                                      select wentry)
+                {
+                    _searchItems.Add(entry.Entry);
+                }
+            }
+            GuiElementFlatList searchlist = this.SingleComposer.GetFlatList("searchresults");
+            searchlist.CalcTotalHeight();
+            this.SingleComposer.GetScrollbar("resultsitemscroll").SetHeights((float)_filterSearchHeight, (float)searchlist.insideBounds.fixedHeight);
         }
 
         public void PopulateFilterItemList()
         {
             if (_filterItem == null || _filterItem.Attributes == null || _filterItem.Attributes.Count == 0) return;
+
+            if (_filterItem.Attributes.HasAttribute("filters"))
+            {
+                TreeArrayAttribute taa = _filterItem.Attributes["filters"] as TreeArrayAttribute;
+                if (taa != null)
+                {
+                    foreach (TreeAttribute entry in taa.value)
+                    {
+                        _filterItems.Add(new PipeFilterGuiElement(capi, entry.GetString("code"), entry.GetBool("isblock")));
+                    }
+                }
+            }
         }
     }
 }
