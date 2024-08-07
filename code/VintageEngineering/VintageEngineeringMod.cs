@@ -27,8 +27,7 @@ namespace VintageEngineering
         public IClientNetworkChannel capi_vechannel;
         public IServerNetworkChannel sapi_vechannel;
 
-        public List<PipeFilterGuiElement> _pipeFilterList = new List<PipeFilterGuiElement>();
-        //public List<PipeFilterGuiElement> _shownFilterElements = new List<PipeFilterGuiElement>();
+        public List<PipeFilterGuiElement> _pipeFilterList = new List<PipeFilterGuiElement>();        
 
         public bool _filterListLoaded = false;
 
