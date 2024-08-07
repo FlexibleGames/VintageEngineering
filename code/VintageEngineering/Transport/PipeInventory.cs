@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
+using Vintagestory.GameContent;
 
 namespace VintageEngineering.Transport
 {
@@ -23,11 +24,12 @@ namespace VintageEngineering.Transport
         public PipeInventory(string inventoryID, int face, ICoreAPI api) : base(inventoryID, api)
         {
             FaceIndex = face;
-            _slots = base.GenEmptySlots(2);
+            _slots = base.GenEmptySlots(3);
             for (int x = 0; x < 2; x++)
             {
                 _slots[x].MaxSlotStackSize = 1;
             }
+            _slots[2] = new ItemSlotLiquidOnly(this, 50f);
         }
 
         public override ItemSlot this[int slotId]
@@ -63,17 +65,21 @@ namespace VintageEngineering.Transport
         public override bool CanContain(ItemSlot sinkSlot, ItemSlot sourceSlot)
         {
             // Upgrades
-            if (GetSlotId(sinkSlot) == 0)
+            int slotnum = GetSlotId(sinkSlot);
+            if (slotnum == 0)
             {
                 string sourcecode = sourceSlot.Itemstack?.Collectible?.FirstCodePart();
                 return sourcecode == "vepipeupgrade";
             }
-            else if (GetSlotId(sinkSlot) == 1) // filter
+            else if (slotnum == 1) // filter
             {
                 string sourcecode = sourceSlot.Itemstack?.Collectible?.FirstCodePart();
                 return sourcecode == "vepipefilter";
             }
-            return false;
+            else
+            {
+                return sourceSlot.Itemstack.Collectible.IsLiquid();
+            }            
         }
 
         public override bool RemoveOnClose { get { return true; } }

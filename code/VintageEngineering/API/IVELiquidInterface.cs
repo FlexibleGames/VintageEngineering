@@ -12,6 +12,16 @@ namespace VintageEngineering.API
     public interface IVELiquidInterface
     {
         /// <summary>
+        /// The set of slotIDs that point to the fluid input tanks.
+        /// </summary>
+        int[] InputLiquidContainerSlotIDs { get; }
+
+        /// <summary>
+        /// The set of slotIDs that point to the fluid output tanks.
+        /// </summary>
+        int[] OutputLiquidContainerSlotIDs { get; }
+
+        /// <summary>
         /// Does this support Pipe Liquid transfer?
         /// </summary>
         bool AllowPipeLiquidTransfer { get; }

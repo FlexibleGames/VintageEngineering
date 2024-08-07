@@ -71,14 +71,5 @@ namespace VintageEngineering.Transport
             }
             base.OnHeldInteractStart(slot, byEntity, blockSel, entitySel, firstEvent, ref handling);
         }
-        
-
-        public virtual void ToTreeAttribute(ITreeAttribute tree)
-        {
-        }
-
-        public virtual void FromTreeAttribute(ITreeAttribute tree, IWorldAccessor world)
-        {
-        }
     }    
 }

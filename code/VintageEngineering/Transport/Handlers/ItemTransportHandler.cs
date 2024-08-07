@@ -6,7 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using VintageEngineering.Transport.API;
 using Vintagestory.API.Common;
+using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
+using Vintagestory.API.Util;
 using Vintagestory.GameContent;
 
 namespace VintageEngineering.Transport.Handlers
@@ -27,11 +29,11 @@ namespace VintageEngineering.Transport.Handlers
             ItemSlot pull;
             if (world.BlockAccessor.GetBlockEntity(connectedto) is BlockEntityGenericTypedContainer)
             {
-                pull = GetGenericInventoryPullSlot(inv);
+                pull = GetPullSlot(inv, node, true);
             }
             else
             { 
-                pull = GetPullSlot(inv, node); 
+                pull = GetPullSlot(inv, node, false); 
             }
             if (pull == null) return;
             if (stacksize == -1)
@@ -48,22 +50,75 @@ namespace VintageEngineering.Transport.Handlers
             if (moved == 0) return;
         }
 
-        public ItemSlot GetPullSlot(InventoryBase inventory, PipeExtractionNode node)
+        public ItemSlot GetPullSlot(InventoryBase inventory, PipeExtractionNode node, bool isGeneric = false)
         {
             if (inventory.Empty || inventory.Count == 0) return null;
-            // TODO all the things
-            // filter stuff, etc
-            return inventory.GetAutoPullFromSlot(BlockFacing.FromCode(node.FaceCode).Opposite);
-        }
-        /// <summary>
-        /// Special case for vanilla inventories that only allow pulling from the DOWN direction.
-        /// </summary>
-        /// <param name="inv"></param>        
-        /// <returns></returns>
-        public ItemSlot GetGenericInventoryPullSlot(InventoryBase inv)
-        {
-            if (inv.Empty || inv.Count == 0) { return null; }
-            return inv.GetAutoPullFromSlot(BlockFacing.DOWN);
+            if (node.Filter.Empty || node.Filter.Itemstack.Attributes == null)
+            {
+                if (isGeneric)
+                {
+                    return inventory.GetAutoPullFromSlot(BlockFacing.DOWN);
+                }
+                return inventory.GetAutoPullFromSlot(BlockFacing.FromCode(node.FaceCode).Opposite);
+            }
+            else
+            {
+                bool isblist = node.Filter.Itemstack.Attributes.GetBool("isblacklist");
+                if (!node.Filter.Itemstack.Attributes.HasAttribute("filters"))
+                {
+                    // empty blacklist? empty whitelist blocks all items                    
+                    if (isblist)
+                    {
+                        // empty blacklist, exclude nothing
+                        if (isGeneric)
+                        {
+                            return inventory.GetAutoPullFromSlot(BlockFacing.DOWN);
+                        }
+                        return inventory.GetAutoPullFromSlot(BlockFacing.FromCode(node.FaceCode).Opposite);
+                    }
+                    else
+                    {
+                        // empty whitelist
+                        return null;
+                    }
+                }
+                else
+                {
+                    // we have a filter, it has filters, now we do the crazy part
+                    TreeArrayAttribute taa = node.Filter.Itemstack.Attributes["filters"] as TreeArrayAttribute;
+                    foreach (ItemSlot slot in inventory)
+                    {
+                        if (slot is ItemSlotLiquidOnly) continue;
+                        else
+                        {
+                            if (slot.Empty) continue;
+                            foreach (TreeAttribute ta in taa.value)
+                            {
+                                string thecode = ta.GetString("code", "error");
+                                if (thecode.Contains('*'))
+                                {
+                                    // wildcard detected
+                                    if (WildcardUtil.Match(new AssetLocation(thecode), slot.Itemstack.Collectible.Code))
+                                    {
+                                        if (isblist) continue;
+                                        return slot;
+                                    }
+                                }
+                                else
+                                {
+                                    // no wildcard
+                                    if (thecode == slot.Itemstack.Collectible.Code.ToString())
+                                    {
+                                        if (isblist) continue;
+                                        return slot;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    return null;
+                }
+            }
         }
 
         /// <summary>

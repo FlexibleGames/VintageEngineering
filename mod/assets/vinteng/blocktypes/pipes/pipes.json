@@ -4,7 +4,8 @@
         "*": "VEPipeBlock"
     },
     "entityClassByType": {
-        "*-item": "VEBEItemPipe"
+        "*-item": "VEBEItemPipe",
+		"*-fluid": "VEBEFluidPipe"
     },
 	"variantgroups": [
 		{ "code": "purpose", "states": [ "item", "fluid"] }
@@ -23,6 +24,7 @@
 	},
 	"texturesByType": {
 		"*-item": { "pipe": { "base": "block/bronze" } },
+		"*-fluid": { "pipe": { "base": "block/wornsteel" } },
 		"*": {}
 	},
 	"selectionBoxes":[
@@ -71,6 +73,7 @@
 		"scale": 2.75
 	},
 	"dropsByType": {
-        "*-item": [{ "type": "block", "code": "pipe-item", "quantity": { "avg": 1 } }]
+        "*-item": [{ "type": "block", "code": "pipe-item", "quantity": { "avg": 1 } }],
+		"*-fluid": [{ "type": "block", "code": "pipe-fluid", "quantity": { "avg": 1 } }]
     }
 }

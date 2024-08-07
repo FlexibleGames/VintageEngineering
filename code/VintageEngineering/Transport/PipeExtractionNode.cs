@@ -174,7 +174,12 @@ namespace VintageEngineering.Transport
             if (Upgrade.Empty) // it IS possible for someone to remove an upgrade.
             {
                 _upgradeRate = 1;
+                if (!Filter.Empty)
+                {
+                    inventory.DropSlots(this._pos.UpCopy(1).ToVec3d(), new int[] { 1 });
+                }
                 listenerID = bep.AddExtractionTickEvent(1000, UpdateTick);
+                SetDistroMode("nearest");
                 canChangeDistro = false;
                 canFilter = false;
             }
@@ -183,7 +188,9 @@ namespace VintageEngineering.Transport
                 ItemPipeUpgrade upgradeitem = (ItemPipeUpgrade)Upgrade.Itemstack.Collectible;
                 int msdelay = upgradeitem.Delay;
                 canChangeDistro = upgradeitem.CanChangeDistro;
+                if (!canChangeDistro) SetDistroMode("nearest");
                 canFilter = upgradeitem.CanFilter;
+                if (!canFilter && !Filter.Empty) inventory.DropSlots(this._pos.UpCopy(1).ToVec3d(), new int[] { 1 });
                 _upgradeRate = upgradeitem.Rate;
                 listenerID = bep.AddExtractionTickEvent(msdelay, UpdateTick);
             }
