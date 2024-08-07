@@ -13,7 +13,7 @@ using Vintagestory.GameContent;
 
 namespace VintageEngineering.Transport
 {
-    public class PipeFilterGuiElement : IFlatListItem
+    public class PipeFilterGuiElement : IFlatListItem, IEquatable<PipeFilterGuiElement>
     {
         private ICoreClientAPI _capi;
         private LoadedTexture _texture;
@@ -32,7 +32,7 @@ namespace VintageEngineering.Transport
         public bool IsBlock = false;
 
         //private InventoryBase _unspoilableInventory;
-        private readonly ItemSlot _dummySlot;
+        public readonly ItemSlot _dummySlot;
 
         public PipeFilterGuiElement(ICoreClientAPI capi, string code, bool isblock = false)
         {
@@ -60,8 +60,7 @@ namespace VintageEngineering.Transport
                     _dummySlot = new DummySlot(stack);//, _unspoilableInventory);
                 }
                 catch (Exception ex)
-                {
-                    int x = 0;
+                {                    
                 }
             }
             IsBlock = isblock; 
@@ -140,6 +139,10 @@ namespace VintageEngineering.Transport
             return 0f;
         }
 
+        public bool Equals(PipeFilterGuiElement other)
+        {
+            return this.Code == other.Code;
+        }
     }
 
     /// <summary>

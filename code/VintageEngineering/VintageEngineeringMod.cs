@@ -9,6 +9,7 @@ using VintageEngineering.Transport.Pipes;
 using HarmonyLib;
 using System.Collections.Generic;
 using Vintagestory.GameContent;
+using System.IO;
 
 [assembly: ModInfo("VintageEngineering",
                     Authors = new string[] { "Flexible Games", "bluelightning32" },
@@ -22,6 +23,9 @@ namespace VintageEngineering
         ICoreClientAPI capi;
         ICoreServerAPI sapi;
         private Harmony harmony;
+
+        public IClientNetworkChannel capi_vechannel;
+        public IServerNetworkChannel sapi_vechannel;
 
         public List<PipeFilterGuiElement> _pipeFilterList = new List<PipeFilterGuiElement>();
         //public List<PipeFilterGuiElement> _shownFilterElements = new List<PipeFilterGuiElement>();
@@ -43,14 +47,33 @@ namespace VintageEngineering
             {
                 capi = api as ICoreClientAPI;
                 capi.Event.LevelFinalize += OnLevelFinalize;
+                capi_vechannel = capi.Network.RegisterChannel("vepipefiltersync")
+                    .RegisterMessageType(typeof(PipeFilterPacket));
             }
             else
             {
                 sapi = api as ICoreServerAPI;
+                sapi_vechannel = sapi.Network.RegisterChannel("vepipefiltersync")
+                    .RegisterMessageType(typeof(PipeFilterPacket))
+                    .SetMessageHandler<PipeFilterPacket>(OnFilterDataSyncFromClient);
             }
             RegisterItems(api);
             RegisterBlocks(api);
             RegisterBlockEntities(api);
+        }
+
+        private void OnFilterDataSyncFromClient(IServerPlayer fromPlayer, PipeFilterPacket packet)
+        {
+            if (packet != null)
+            {
+                if (fromPlayer != null && fromPlayer.InventoryManager != null && fromPlayer.InventoryManager.ActiveHotbarSlot != null)
+                {
+                    if (fromPlayer.InventoryManager.ActiveHotbarSlot.Empty) return;
+
+                    fromPlayer.InventoryManager.ActiveHotbarSlot.Itemstack.FromBytes(new BinaryReader(new MemoryStream(packet.SyncedStack)));
+                    fromPlayer.InventoryManager.ActiveHotbarSlot.MarkDirty();
+                }
+            }
         }
 
         /// <summary>

@@ -53,16 +53,26 @@ namespace VintageEngineering.Transport
             PopulateFilterItemList();            
             SetupDialog();
             FilterItems();
+            
         }
 
-        public override void OnKeyPress(KeyEvent args)
+        //public override bool CaptureAllInputs()
+        //{
+        //    return true;
+        //}
+        public override void OnKeyDown(KeyEvent args)
         {
-            
+            // Debug capi.ShowChatMessage($"KeyCode Pressed...{args.KeyCode}");
+
             if (args.KeyCode == ((int)GlKeys.Delete))
             {
-                capi.ShowChatMessage("Delete Pressed...");
+                if (_currentFilterItemSelection != -1)
+                {
+                    _filterItems.RemoveAt(_currentFilterItemSelection);
+                    _currentFilterItemSelection = -1;
+                }
             }
-            base.OnKeyPress(args);
+            base.OnKeyDown(args);
         }
 
         public void SetupDialog()
@@ -105,6 +115,11 @@ namespace VintageEngineering.Transport
             ElementBounds searchTextButton = ElementStdBounds.ToggleButton(365, 285 + tbh, 68, 34);
             ElementBounds searchTextButtonText = ElementBounds.Fixed(369, 289 + tbh, 60, 26);// searchTextButton.FlatCopy().FixedShrink(padding); //ElementBounds.Fixed(369, 289 + tbh, 60, 26);
 
+            // Selected Box
+            ElementBounds selectedInset = ElementBounds.Fixed(7, 324 + tbh, 76, 107);
+            ElementBounds selectedText = ElementBounds.Fixed(11, 328 + tbh, 68, 26);
+            ElementBounds selectedIcon = ElementBounds.Fixed(21, 368 + tbh, 48, 48);
+
             // Save/Cancel Buttons
             ElementBounds cancelButton = ElementStdBounds.ToggleButton(7, 436 + tbh, 76, 34);
             ElementBounds cancelText = ElementBounds.Fixed(11, 440 + tbh, 68, 26); // cancelButton.FlatCopy().FixedShrink(padding);
@@ -124,6 +139,7 @@ namespace VintageEngineering.Transport
                 optionInset,optionBlockText,optionBlockToggle,optionItemText,optionItemToggle,optionWildcardText,optionWildcardToggle,
                 filterItemsList,filterItemsInset,filterItemsScroll,
                 searchTextInset,searchTextText,searchTextInput,searchTextButton,
+                selectedInset, selectedText, selectedIcon,
                 cancelButton,saveButton,
                 resultsItemsList,resultsItemsInset,resultsItemsScroll
             });
@@ -174,6 +190,13 @@ namespace VintageEngineering.Transport
                 //.AddStaticText(Lang.Get("vinteng:gui-add"), whitebigcenter, searchTextButtonText, "searchtextbtntext")
                 .EndIf();
 
+            // Selected Text and Icon
+            this.SingleComposer.AddInset(selectedInset, 4, 0f)
+                .AddStaticText(Lang.Get("vinteng:gui-selected"), whitecenter, selectedText, "selectedtext")
+                .AddCustomRender(selectedIcon, OnRenderSelectedIcon);
+                //.AddDynamicCustomDraw(selectedIcon, OnDrawSelectedItem, "selectedicon");
+            
+
             // Cancel and Save Buttons
             this.SingleComposer.AddSmallButton(Lang.Get("vinteng:gui-cancel"), new ActionConsumable(CancelButtonClicked), cancelButton, EnumButtonStyle.Normal, "cancelbutton")
                 //.AddStaticText(Lang.Get("vinteng:gui-cancel"), whitebigcenter, cancelText, "cancelbtntext")
@@ -196,6 +219,28 @@ namespace VintageEngineering.Transport
             catch(Exception c)
             {
                 capi.SendChatMessage(c.ToString());
+            }
+        }
+
+        private void OnRenderSelectedIcon(float deltaTime, ElementBounds currentBounds)
+        {
+            double lineHeight = GuiElement.scaled(30);
+            if (_currentSearchItemSelection != -1)
+            {                
+                capi.Render.RenderItemstackToGui((_searchItems[_currentSearchItemSelection] as PipeFilterGuiElement)._dummySlot,
+                    currentBounds.renderX + lineHeight / 2.0 + 1,
+                    currentBounds.renderY + lineHeight / 2.0, 100, ((float)(lineHeight * 0.8f)), ColorUtil.ColorFromRgba(ColorUtil.WhiteArgbVec),
+                    true, false, false);
+            }
+            else
+            {
+                if (_currentFilterItemSelection != -1)
+                {
+                    capi.Render.RenderItemstackToGui((_filterItems[_currentFilterItemSelection] as PipeFilterGuiElement)._dummySlot,
+                         currentBounds.renderX + lineHeight / 2.0 + 1,
+                         currentBounds.renderY + lineHeight / 2.0, 100, ((float)(lineHeight * 0.8f)), ColorUtil.ColorFromRgba(ColorUtil.WhiteArgbVec),
+                         true, false, false);
+                }
             }
         }
 
@@ -274,7 +319,27 @@ namespace VintageEngineering.Transport
         }
         private bool AddButtonClicked()
         {
-            capi.ShowChatMessage("Add Button Clicked");
+            //capi.ShowChatMessage("Add Button Clicked");
+            if (_canSearchWildCards && _currentSearchText.Contains('*'))
+            {
+                PipeFilterGuiElement newfilter = new PipeFilterGuiElement(capi, _currentSearchText, false);
+                if (!_filterItems.Contains(newfilter))
+                {
+                    _filterItems.Add(newfilter);
+                }
+            }
+            else if (_currentSearchItemSelection > -1)
+            {
+                // search item is selected
+                PipeFilterGuiElement clickedon = _searchItems[_currentSearchItemSelection] as PipeFilterGuiElement;
+                if (!_filterItems.Contains(clickedon))
+                {
+                    _filterItems.Add(clickedon);
+                }
+            }
+            GuiElementFlatList savedfilters = this.SingleComposer.GetFlatList("filteritemslist");
+            savedfilters.CalcTotalHeight();
+            this.SingleComposer.GetScrollbar("filteritemsscroll").SetHeights((float)_filterSearchHeight, (float)savedfilters.insideBounds.fixedHeight);
             return true;
         }
 
@@ -286,7 +351,31 @@ namespace VintageEngineering.Transport
 
         private bool SaveButtonClicked()
         {
-            capi.ShowChatMessage("Save Button Clicked");
+            //capi.ShowChatMessage("Save Button Clicked");
+            if (_filterItem.Attributes != null && _filterItem.Attributes.HasAttribute("filters"))
+            {
+                if (_filterItems == null || _filterItems.Count == 0)
+                {
+                    // the filter already had saved entries and now we have none, remove them
+                    _filterItem.Attributes.RemoveAttribute("filters");
+                    this.TryClose();
+                    return true;
+                }
+            }
+            // this simply overwrites any saved filters with the ones in the list
+            List<TreeAttribute> filterset = new List<TreeAttribute>();
+            foreach (PipeFilterGuiElement filter in _filterItems)
+            {
+                TreeAttribute newfilter = new TreeAttribute();
+                newfilter.SetString("code", filter.Code.ToString());
+                newfilter.SetBool("isblock", filter.IsBlock);
+                filterset.Add(newfilter);
+            }
+
+            TreeArrayAttribute taa = new TreeArrayAttribute(filterset.ToArray<TreeAttribute>());
+            _filterItem.Attributes["filters"] = taa;
+
+            this.TryClose();
             return true;
         }
 

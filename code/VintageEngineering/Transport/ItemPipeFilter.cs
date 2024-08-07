@@ -40,6 +40,18 @@ namespace VintageEngineering.Transport
             {
                 _filterGUI.Dispose();
                 _filterGUI = null;
+
+                if (capi != null)
+                {
+                    if (!player.Player.InventoryManager.ActiveHotbarSlot.Empty)
+                    {
+                        ItemSlot pslot = player.Player.InventoryManager.ActiveHotbarSlot;
+                        if (pslot.Itemstack.Attributes != null)
+                        {
+                            capi.Network.GetChannel("vepipefiltersync").SendPacket<PipeFilterPacket>(new PipeFilterPacket { SyncedStack = pslot.Itemstack.ToBytes() });
+                        }
+                    }
+                }
             };
             _filterGUI.TryOpen();
         }
