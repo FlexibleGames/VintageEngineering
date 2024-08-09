@@ -50,7 +50,7 @@ namespace VintageEngineering.Transport.API
         /// What kind of Transport handler does this type of pipe use?<br/>
         /// Handler class must implement the ITransportHandler interface
         /// </summary>
-        public ITransportHandler TransportHandler { get; protected set; }
+        //public virtual ITransportHandler TransportHandler { get; protected set; }
 
         /// <summary>
         /// Used by Extraction nodes to sort and push into based on settings.<br/>
@@ -124,7 +124,7 @@ namespace VintageEngineering.Transport.API
                 if (extractionNodes[f] != null)
                 {
                     extractionNodes[f].Initialize(Api, Pos, ConvertIndexToFace(f).Code);
-                    if (api.Side == EnumAppSide.Server) extractionNodes[f].SetHandler(GetHandler());
+                    //if (api.Side == EnumAppSide.Server) extractionNodes[f].SetHandler(GetHandler());
                 }
             }
 
@@ -236,7 +236,7 @@ namespace VintageEngineering.Transport.API
                             ConvertIndexToFace(faceindex),
                             0);
                         // Update Network
-                        if (pnm != null)
+                        if (pnm != null && NetworkID != 0)
                         {
                             // update network and remove the insert node from the lists on the network.
                             pnm.GetNetwork(NetworkID).QuickUpdateNetwork(world, contoremove, true);
@@ -329,7 +329,7 @@ namespace VintageEngineering.Transport.API
                         insertionSides[faceindex] = false;
                         extractionSides[faceindex] = true;
                         extractionNodes[faceindex] = new PipeExtractionNode();
-                        extractionNodes[faceindex].SetHandler(GetHandler());
+                        //extractionNodes[faceindex].SetHandler(GetHandler());
                         extractionNodes[faceindex].Initialize(Api, Pos, ConvertIndexToFace(faceindex).Code);                         
                         numExtractionConnections++;
                         numInsertionConnections--;
@@ -339,7 +339,7 @@ namespace VintageEngineering.Transport.API
                             Pos.AddCopy(ConvertIndexToFace(faceindex)),
                             ConvertIndexToFace(faceindex),
                             0);
-                        if (pnm != null)
+                        if (pnm != null && NetworkID != 0)
                         {
                             pnm.GetNetwork(NetworkID).QuickUpdateNetwork(world, contoremove, true);
                         }
@@ -380,7 +380,7 @@ namespace VintageEngineering.Transport.API
                                 ConvertIndexToFace(faceindex),
                                 0);
                             // Update Network
-                            if (pnm != null)
+                            if (pnm != null && NetworkID != 0)
                             {
                                 // update network and add the insert node to the lists on the network.
                                 pnm.GetNetwork(NetworkID).QuickUpdateNetwork(world, contoadd, false);
@@ -454,14 +454,16 @@ namespace VintageEngineering.Transport.API
         {
             _shapeDirty = dirtyshape;
             BlockPipeBase us = world.BlockAccessor.GetBlock(Pos) as BlockPipeBase;
+            PipeNetworkManager pnm = Api.ModLoader.GetModSystem<PipeNetworkManager>(true);
+            
             // Check all 6 sides
             // the order is N, E, S, W, U, D
             for (int f = 0; f < BlockFacing.ALLFACES.Length; f++)
             {
                 Block dblock = world.BlockAccessor.GetBlock((Pos.AddCopy(BlockFacing.ALLFACES[f])), BlockLayersAccess.Default);
                 BlockEntity dbe = world.BlockAccessor.GetBlockEntity(Pos.AddCopy(BlockFacing.ALLFACES[f]));
+                BlockFacing fromface = BlockFacing.ALLFACES[f];
 
-                
                 // NEED to track NetworkID's of all faces, merge networks, join networks as needed.
 
                 if (dblock.Id == 0) // face direction is air block, neither solid nor fluid
@@ -476,6 +478,12 @@ namespace VintageEngineering.Transport.API
                         {
                             RemoveExtractionListener(f);
                             penode.OnNodeRemoved();
+                            extractionNodes[f] = null;
+                            if (extractionGUIs != null && extractionGUIs[f] != null)
+                            {
+                                if (extractionGUIs[f].IsOpened()) extractionGUIs[f].TryClose();
+                                extractionGUIs[f].Dispose();
+                            }
                         }
 
                         numExtractionConnections--;
@@ -489,6 +497,9 @@ namespace VintageEngineering.Transport.API
                     }
                     if (insertionSides[f])
                     {
+                        PipeConnection removeinsert = new PipeConnection(Pos.AddCopy(fromface), fromface, 0);
+                        if (pnm != null) pnm.GetNetwork(NetworkID).QuickUpdateNetwork(world, removeinsert, true);
+
                         numInsertionConnections--; // block is now air, nothing to insert into
                         insertionSides[f] = false;
                         _shapeDirty = true;
@@ -529,6 +540,8 @@ namespace VintageEngineering.Transport.API
                         if (!disconnectedSides[f] && !insertionSides[f] && !extractionSides[f])
                         {
                             insertionSides[f] = true;
+                            PipeConnection newinsert = new PipeConnection(Pos.AddCopy(fromface), fromface, 0);
+                            if (pnm != null && NetworkID != 0) pnm.GetNetwork(NetworkID).QuickUpdateNetwork(world, newinsert, false);
                             numInsertionConnections++;
                             _shapeDirty = true;
                         }
@@ -601,6 +614,8 @@ namespace VintageEngineering.Transport.API
             if (alteredpipe == null) return;
             for (int f = 0; f < 6; f++)
             {
+                if (extractionNodes[f] != null) extractionNodes[f].IsSleeping = true;
+
                 if (alteredpipe.insertionSides[f])
                 {
                     PipeConnection con = new PipeConnection(
@@ -624,6 +639,15 @@ namespace VintageEngineering.Transport.API
                     }
                 }
             }
+            for (int f = 0; f < 6; f++)
+            {
+                if (extractionNodes[f] != null)
+                {
+                    // in the case of RoundRobin extraction, altering the list FUBARs the enumerator
+                    extractionNodes[f].ResetEnumerator();
+                    extractionNodes[f].IsSleeping = false;
+                }
+            }
             MarkDirty(true);
         }
         /// <summary>
@@ -635,7 +659,15 @@ namespace VintageEngineering.Transport.API
         /// <param name="isRemove">True to remove the given connections</param>
         public virtual void AlterPushConnections(IWorldAccessor world, PipeConnection[] cons, bool isRemove = false)
         {
-            if (cons == null || cons.Length == 0 || _pushConnections == null) return; // sanity check            
+            if (cons == null || cons.Length == 0 || _pushConnections == null) return; // sanity check
+            for (int f = 0; f < 6; f++)
+            {
+                if (extractionNodes[f] != null)
+                {
+                    // in the case of RoundRobin extraction, altering the list FUBARs the enumerator
+                    extractionNodes[f].IsSleeping = true;
+                }
+            }
             for (int x = 0; x < cons.Length; x++)
             {
                 PipeConnection newcon = cons[x].Copy(Pos.ManhattenDistance(cons[x].Position));
@@ -649,7 +681,16 @@ namespace VintageEngineering.Transport.API
                     {
                         _pushConnections.Add(newcon.Copy());                        
                     }
-                }                
+                }
+            }
+            for (int f = 0; f < 6; f++)
+            {
+                if (extractionNodes[f] != null)
+                {
+                    // in the case of RoundRobin extraction, altering the list FUBARs the enumerator
+                    extractionNodes[f].ResetEnumerator();
+                    extractionNodes[f].IsSleeping = false;
+                }
             }
             MarkDirty(true);
         }

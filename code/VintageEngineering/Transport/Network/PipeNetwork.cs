@@ -147,6 +147,7 @@ namespace VintageEngineering.Transport.Network
         {
             bool isValid = true;
             if (NetworkID <= 0) isValid = false;
+            if (_pipeBlockPositions == null || _pipeBlockPositions.Count == 0) return false;
             foreach (BlockPos pos in _pipeBlockPositions)
             {
                 BlockPipeBase pipe = bacc.GetBlock(pos) as BlockPipeBase;
@@ -224,7 +225,7 @@ namespace VintageEngineering.Transport.Network
         {
             List<BlockPos> insertpos = new List<BlockPos>();
             List<BlockPos> extractpos = new List<BlockPos>();
-
+            if (_pipeBlockPositions == null || _pipeBlockPositions.Count == 0) return;
             foreach (BlockPos pos in _pipeBlockPositions)
             {
                 if (world.BlockAccessor.GetChunkAtBlockPos(pos) == null) { continue; }

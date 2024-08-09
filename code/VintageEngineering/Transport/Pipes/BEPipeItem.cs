@@ -8,16 +8,17 @@ namespace VintageEngineering.Transport.Pipes
 {
     public class BEPipeItem : BEPipeBase
     {
+        private static ItemTransportHandler itemHandler = new();
+
         public override void Initialize(ICoreAPI api)
-        {
-            TransportHandler = new ItemTransportHandler();
-            base.Initialize(api);            
+        {            
+            base.Initialize(api);
         }
 
         public override ITransportHandler GetHandler()
         {
             if (Api == null || Api.Side == EnumAppSide.Client) return null;
-            return TransportHandler;
+            return itemHandler;
         }
 
         public override bool CanConnectTo(IWorldAccessor world, BlockPos pos)

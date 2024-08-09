@@ -15,16 +15,16 @@ namespace VintageEngineering.Transport.Pipes
 {
     public class BEPipeFluid : BEPipeBase
     {
+        private static FluidTransportHandler fluidHandler = new();
         public override void Initialize(ICoreAPI api)
-        {
-            TransportHandler = new FluidTransportHandler();
+        {            
             base.Initialize(api);
         }
 
         public override ITransportHandler GetHandler()
         {
             if (Api == null || Api.Side == EnumAppSide.Client) return null;
-            return TransportHandler;
+            return fluidHandler;
         }
 
         public override bool CanConnectTo(IWorldAccessor world, BlockPos pos)

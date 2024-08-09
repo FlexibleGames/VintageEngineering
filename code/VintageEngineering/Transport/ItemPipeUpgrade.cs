@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VintageEngineering.Transport.Network;
 using Vintagestory.API.Common;
+using Vintagestory.API.Common.Entities;
 
 namespace VintageEngineering.Transport
 {
@@ -63,8 +65,21 @@ namespace VintageEngineering.Transport
         {
             // TODO:            
             // if right clicking on a pipe extraction node, insert (or swap) the upgrade into the extraction node
-
-            base.OnHeldInteractStart(slot, byEntity, blockSel, entitySel, firstEvent, ref handling);
+            IPlayer byPlayer = null;
+            if (byEntity is EntityPlayer ep)
+            {
+                byPlayer = ep.Player;
+                if (byPlayer.WorldData.EntityControls.ShiftKey)
+                {
+                    handling = EnumHandHandling.PreventDefault;
+                    PipeNetworkManager pnm = api.ModLoader.GetModSystem<PipeNetworkManager>(true);
+                    if (pnm != null) pnm.ValidateAllNetworks(api.World);
+                }
+                else
+                {
+                    base.OnHeldInteractStart(slot, byEntity, blockSel, entitySel, firstEvent, ref handling);
+                }
+            }
         }
     }
 }

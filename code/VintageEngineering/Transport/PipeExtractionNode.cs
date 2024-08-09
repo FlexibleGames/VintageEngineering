@@ -22,9 +22,16 @@ namespace VintageEngineering.Transport
         protected long listenerID;
         protected EnumPipeDistribution pipeDistribution = EnumPipeDistribution.Nearest;
         protected bool canFilter = false;
-        protected bool canChangeDistro = false;                
+        protected bool canChangeDistro = false;
+        protected bool _isSleeping = false;
 
-        private static ITransportHandler handler;
+        public bool IsSleeping
+        {
+            get => _isSleeping; 
+            set => _isSleeping = value;
+        }
+
+        private ITransportHandler Handler { get { return _api.World.BlockAccessor.GetBlockEntity<BEPipeBase>(_pos)?.GetHandler(); } }
 
         /// <summary>
         /// The Enumerator set when Node is in RoundRobin mode.
@@ -113,15 +120,12 @@ namespace VintageEngineering.Transport
         public virtual void OnBlockUnloaded(IWorldAccessor world)
         {
         }
-        /// <summary>
-        /// Sets the Transport Handler for this extraction node.<br/>
-        /// Called by the block entity of the pipe.
-        /// </summary>
-        /// <param name="_handler"></param>
-        public void SetHandler( ITransportHandler _handler )
+
+        public virtual void ResetEnumerator()
         {
-            handler = _handler;
+            PushEnumerator.Dispose();
         }
+
         /// <summary>
         /// Sets the Distribution mode of this extraction node.<br/>
         /// String parameter reflects internal GUI Drop down option values.
@@ -219,9 +223,9 @@ namespace VintageEngineering.Transport
         /// <param name="deltatime">Time (in seconds) since last update.</param>
         public virtual void UpdateTick(float deltatime)
         {
-            if (handler == null || _api.Side == EnumAppSide.Client) return;
+            if (_isSleeping || Handler == null || _api.Side == EnumAppSide.Client) return;
 
-            handler.TransportTick(deltatime, _pos, _api.World, this);
+            Handler.TransportTick(deltatime, _pos, _api.World, this);
         }
 
         /// <summary>

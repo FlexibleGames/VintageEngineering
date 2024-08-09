@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 using VintageEngineering.Transport.API;
@@ -179,6 +180,10 @@ namespace VintageEngineering.Transport.Network
             }
             else if (pipecons == 1)
             {
+                if (!_pipeNetworks.ContainsKey(netid))
+                {
+                    return; // bad Buggi bad! Corrupting your test world...
+                }
                 _pipeNetworks[netid].RemovePipe(pos, world);
                 if (pipeinserts > 0)
                 {
@@ -307,6 +312,22 @@ namespace VintageEngineering.Transport.Network
                         // remove those same pipes from the original network
                         _pipeNetworks[splitid].RemovePipes(world, newnet);
                     }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates every pipe network in the world, if a network fails it is removed from the list.<br/>
+        /// To be run after removing all pipes from the world to ensure best results.
+        /// </summary>
+        /// <param name="world">World Accessor</param>
+        public void ValidateAllNetworks(IWorldAccessor world)
+        {
+            foreach (PipeNetwork net in _pipeNetworks.Values)
+            {
+                if (!net.ValidateNetwork(world.BlockAccessor))
+                {
+                    _pipeNetworks.Remove(net.NetworkID);
                 }
             }
         }

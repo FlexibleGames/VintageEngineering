@@ -26,6 +26,7 @@ namespace VintageEngineering.Transport.Handlers
             BlockPos connectedto = pos.AddCopy(BlockFacing.FromCode(node.FaceCode));
             InventoryBase inv = (InventoryBase)((world.BlockAccessor.GetBlock(connectedto)?.GetInterface<IBlockEntityContainer>(world, connectedto))?.Inventory);
             int stacksize = node.UpgradeRate;
+            int numperliter = 0;
             if (inv == null)
             {
                 // check to see if block is a liquid block, for debugging
@@ -39,6 +40,7 @@ namespace VintageEngineering.Transport.Handlers
                         ItemStack portion = wprops.WhenFilled.Stack.Resolve(world, "Filter Pipe", true) ? wprops.WhenFilled.Stack.ResolvedItemstack : null;
                         
                         portion.StackSize = portion.Collectible.MaxStackSize;
+                        numperliter = ((int)wprops.ItemsPerLitre);
                         inv = node.Inventory as InventoryBase;
                         pull = inv[2];
                         pull.Itemstack = portion.Clone();
@@ -67,12 +69,13 @@ namespace VintageEngineering.Transport.Handlers
                 WaterTightContainableProps wprops = BlockLiquidContainerBase.GetContainableProps(pull.Itemstack);
                 if (wprops != null)
                 {
-                    stacksize = ((int)((node.UpgradeRate / (float)wprops.ItemsPerLitre) * pull.Itemstack.Collectible.MaxStackSize));
+                    stacksize = ((int)((node.UpgradeRate / wprops.ItemsPerLitre) * pull.Itemstack.Collectible.MaxStackSize));
+                    numperliter = ((int)wprops.ItemsPerLitre);
                 }
             }
             ItemStackMoveOperation ismo = new ItemStackMoveOperation(world, EnumMouseButton.Left, (EnumModifierKey)0, EnumMergePriority.AutoMerge, stacksize);
 
-            ItemSlot push = GetPushSlot(world, node, us.PushConnections, pull);
+            ItemSlot push = GetPushSlot(world, node, us.PushConnections, pull, numperliter);
 
             if (push == null) return; // sanity check 3
             try
@@ -222,8 +225,9 @@ namespace VintageEngineering.Transport.Handlers
         /// <param name="node">PipeExtractionNode being ticked</param>
         /// <param name="pushcons">PipeConnection list to check for valid push slots.</param>
         /// <param name="pullfrom">ItemSlot that is providing the ItemStack to move.</param>
+        /// <param name="perliter">WProps num items per liter of stack being pushed.</param>
         /// <returns>Valid ItemSlot to push into, or null if no slot is found.</returns>
-        public ItemSlot GetPushSlot(IWorldAccessor world, PipeExtractionNode node, List<PipeConnection> pushcons, ItemSlot pullfrom)
+        public ItemSlot GetPushSlot(IWorldAccessor world, PipeExtractionNode node, List<PipeConnection> pushcons, ItemSlot pullfrom, int perliter = 100)
         {
             if (pushcons == null || pushcons.Count == 0) { return null; }
             
@@ -246,7 +250,9 @@ namespace VintageEngineering.Transport.Handlers
                     IBlockEntityContainer contain = world.BlockAccessor.GetBlock(conarray[x].Position).GetInterface<IBlockEntityContainer>(world, conarray[x].Position);
                     foreach (ItemSlot slot in contain.Inventory)
                     {
-                        if (slot is ItemSlotLiquidOnly) return slot;
+                        if (slot is ItemSlotLiquidOnly && 
+                            (slot.Empty || 
+                            (slot.Itemstack.StackSize < (slot as ItemSlotLiquidOnly).CapacityLitres*perliter && slot.Itemstack.Collectible == pullfrom.Itemstack.Collectible))) return slot;
                         else continue;
                     }
                 }
@@ -268,13 +274,14 @@ namespace VintageEngineering.Transport.Handlers
                     IBlockEntityContainer contain = world.BlockAccessor.GetBlock(conarray[x].Position).GetInterface<IBlockEntityContainer>(world, conarray[x].Position);
                     foreach (ItemSlot slot in contain.Inventory)
                     {
-                        if (slot is ItemSlotLiquidOnly) return slot;
+                        if (slot is ItemSlotLiquidOnly && (slot.Empty || slot.Itemstack.StackSize < (slot as ItemSlotLiquidOnly).CapacityLitres)) return slot;
                         else continue;
                     }
                 }
             }
             else if (node.PipeDistribution == EnumPipeDistribution.RoundRobin)
             {
+                // need to reset or invalidate if a pipe is added at the time of the tick
                 if (node.PushEnumerator.Current == null)
                 {
                     node.PushEnumerator = pushcons.GetEnumerator();
@@ -300,7 +307,7 @@ namespace VintageEngineering.Transport.Handlers
                 IBlockEntityContainer contain = world.BlockAccessor.GetBlock(current.Position).GetInterface<IBlockEntityContainer>(world, current.Position);
                 foreach (ItemSlot slot in contain.Inventory)
                 {
-                    if (slot is ItemSlotLiquidOnly) return slot;
+                    if (slot is ItemSlotLiquidOnly && (slot.Empty || slot.Itemstack.StackSize < (slot as ItemSlotLiquidOnly).CapacityLitres)) return slot;
                     else continue;
                 }
             }
@@ -318,7 +325,7 @@ namespace VintageEngineering.Transport.Handlers
                 IBlockEntityContainer contain = world.BlockAccessor.GetBlock(current.Position).GetInterface<IBlockEntityContainer>(world, current.Position);
                 foreach (ItemSlot slot in contain.Inventory)
                 {
-                    if (slot is ItemSlotLiquidOnly) return slot;
+                    if (slot is ItemSlotLiquidOnly && (slot.Empty || slot.Itemstack.StackSize < (slot as ItemSlotLiquidOnly).CapacityLitres)) return slot;
                     else continue;
                 }
             }
