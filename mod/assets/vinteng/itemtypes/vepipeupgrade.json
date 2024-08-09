@@ -23,7 +23,9 @@
 		"*-tinbronze": 	{ "delay": 1000, "rate": 16, "canfilter": false, "changedistro": false },
 		"*-iron":		{ "delay": 500, "rate": 32, "canfilter": false, "changedistro": true },
 		"*-cupronickel":{ "delay": 250, "rate": 64, "canfilter": true, "changedistro": true },
-		"*-steel": 		{ "delay": 100, "rate": -1, "canfilter": true, "changedistro": true }
+		"*-steel": 		{ "delay": 100, "rate": -1, "canfilter": true, "changedistro": true },
+		"*-silver": 	{ "delay": 1000, "rate": 4, "canfilter": true, "changedistro": false },
+		"*-brass": 		{ "delay": 1000, "rate": 4, "canfilter": false, "changedistro": true }
 	},
 	"behaviors": [{
 		"name": "GroundStorable",
@@ -34,7 +36,7 @@
 		}
 	}],
 	"variantgroups": [
-		{ "code": "tier", "states": ["copper", "tinbronze", "iron", "cupronickel", "steel"] }
+		{ "code": "tier", "states": ["copper", "tinbronze", "iron", "cupronickel", "steel", "silver", "brass"] }
 	],
     "maxstacksizeByType": {
 		"*": 16
@@ -45,6 +47,8 @@
 	},
 	"texturesByType": {
 		"*-copper": { "shinybrass": { "base": "game:block/metal/ingot/copper"} },
+		"*-silver": { "shinybrass": { "base": "game:block/metal/ingot/silver"} },
+		"*-brass": { "shinybrass": { "base": "vinteng:block/shinybrass"} },
 		"*-tinbronze": { "shinybrass": { "base": "game:block/metal/ingot/tinbronze"} },
 		"*-iron": { "shinybrass": { "base": "game:block/metal/ingot/iron"} },
 		"*-cupronickel": { "shinybrass": { "base": "game:block/metal/ingot/cupronickel"} },

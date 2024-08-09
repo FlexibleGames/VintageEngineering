@@ -1,0 +1,15 @@
+{
+	"ingredient": { "type": "item", "code": "game:ingot-*", "name": "metal", "allowedVariants": ["iron"] },
+	"name": "vefluidpipe",
+	"pattern": [
+		[
+			"######",
+			"######",
+			"##  ##",
+			"##  ##",
+			"######",
+			"######"
+		]
+	],
+	"output": { "type": "block", "code": "vinteng:pipe-fluid", "stacksize": 1  }
+}

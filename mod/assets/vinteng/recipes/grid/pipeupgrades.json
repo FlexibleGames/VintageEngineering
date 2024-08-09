@@ -1,0 +1,85 @@
+[{
+	"ingredientPattern": "SWS,WRW,SWS",
+	"ingredients": {
+		"S": { "type": "item", "code": "vinteng:screw-brass", "quantity": 1 },
+		"R": { "type": "item", "code": "game:metalplate-*", "quantity": 1, "name": "metal", "allowedVariants": ["copper"] },
+		"W": { "type": "block", "code": "game:catenary-lvpower", "quantity": 2 }
+	},
+	"width": 3,
+	"height": 3,
+	"output": { "type": "item", "code": "vinteng:vepipeupgrade-copper", "quantity": 1  }
+},
+{
+	"ingredientPattern": "SWS,WRW,SWS",
+	"ingredients": {
+		"S": { "type": "item", "code": "vinteng:screw-brass", "quantity": 1 },
+		"R": { "type": "item", "code": "game:metalplate-*", "quantity": 1, "name": "metal", "allowedVariants": ["silver"] },
+		"W": { "type": "block", "code": "game:catenary-lvpower", "quantity": 2 }
+	},
+	"width": 3,
+	"height": 3,
+	"output": { "type": "item", "code": "vinteng:vepipeupgrade-silver", "quantity": 1  }
+},
+{
+	"ingredientPattern": "SWS,WRW,SWS",
+	"ingredients": {
+		"S": { "type": "item", "code": "vinteng:screw-brass", "quantity": 1 },
+		"R": { "type": "item", "code": "game:metalplate-*", "quantity": 1, "name": "metal", "allowedVariants": ["brass"] },
+		"W": { "type": "block", "code": "game:catenary-lvpower", "quantity": 2 }
+	},
+	"width": 3,
+	"height": 3,
+	"output": { "type": "item", "code": "vinteng:vepipeupgrade-brass", "quantity": 1  }
+},
+{
+	"ingredientPattern": "SMS,WRW,SPS",
+	"ingredients": {
+		"S": { "type": "item",  "code": "vinteng:screw-brass", "quantity": 1 },
+		"M": { "type": "item",  "code": "vinteng:motor-lv", "quantity": 1 },
+		"R": { "type": "item",  "code": "game:metalplate-*", "quantity": 1, "name": "metal", "allowedVariants": ["tinbronze", "bismuthbronze", "blackbronze"] },
+		"W": { "type": "block", "code": "game:catenary-lvpower", "quantity": 2 },
+		"P": { "type": "item",  "code": "vinteng:machineplate-tinbronze", "quantity": 1 }
+	},
+	"width": 3,
+	"height": 3,
+	"output": { "type": "item", "code": "vinteng:vepipeupgrade-tinbronze", "quantity": 1  }
+},
+{
+	"ingredientPattern": "SMS,WRW,SPS",
+	"ingredients": {
+		"S": { "type": "item",  "code": "vinteng:screw-iron", "quantity": 1 },
+		"M": { "type": "item",  "code": "vinteng:motor-mv", "quantity": 1 },
+		"R": { "type": "item",  "code": "game:metalplate-*", "quantity": 1, "name": "metal", "allowedVariants": ["iron"] },
+		"W": { "type": "block", "code": "game:catenary-lvpower", "quantity": 2 },
+		"P": { "type": "item",  "code": "vinteng:machineplate-iron", "quantity": 1 }
+	},
+	"width": 3,
+	"height": 3,
+	"output": { "type": "item", "code": "vinteng:vepipeupgrade-iron", "quantity": 1  }
+},
+{
+	"ingredientPattern": "SMS,WRW,SPS",
+	"ingredients": {
+		"S": { "type": "item",  "code": "vinteng:screw-iron", "quantity": 1 },
+		"M": { "type": "item",  "code": "vinteng:motor-mv", "quantity": 1 },
+		"R": { "type": "item",  "code": "game:metalplate-*", "quantity": 1, "name": "metal", "allowedVariants": ["cupronickel"] },
+		"W": { "type": "block", "code": "game:catenary-lvpower", "quantity": 2 },
+		"P": { "type": "item",  "code": "vinteng:machineplate-iron", "quantity": 1 }
+	},
+	"width": 3,
+	"height": 3,
+	"output": { "type": "item", "code": "vinteng:vepipeupgrade-cupronickel", "quantity": 1  }
+},
+{
+	"ingredientPattern": "SMS,WRW,SPS",
+	"ingredients": {
+		"S": { "type": "item",  "code": "vinteng:screw-steel", "quantity": 1 },
+		"M": { "type": "item",  "code": "vinteng:motor-mv", "quantity": 1 },
+		"R": { "type": "item",  "code": "game:metalplate-*", "quantity": 1, "name": "metal", "allowedVariants": ["steel"] },
+		"W": { "type": "block", "code": "game:catenary-lvpower", "quantity": 2 },
+		"P": { "type": "item",  "code": "vinteng:machineplate-steel", "quantity": 1 }
+	},
+	"width": 3,
+	"height": 3,
+	"output": { "type": "item", "code": "vinteng:vepipeupgrade-steel", "quantity": 1  }
+}]

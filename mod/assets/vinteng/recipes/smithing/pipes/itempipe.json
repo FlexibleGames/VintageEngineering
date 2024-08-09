@@ -1,0 +1,15 @@
+{
+	"ingredient": { "type": "item", "code": "game:ingot-*", "name": "metal", "allowedVariants": ["tinbronze"] },
+	"name": "veitempipe",
+	"pattern": [
+		[
+			"######",
+			"######",
+			"##  ##",
+			"##  ##",
+			"######",
+			"######"
+		]
+	],
+	"output": { "type": "block", "code": "vinteng:pipe-item", "stacksize": 1  }
+}

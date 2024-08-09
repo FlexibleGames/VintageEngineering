@@ -122,7 +122,7 @@ namespace VintageEngineering.Electrical
 
         public virtual bool CanExtractPower { get; private set; }
 
-        public virtual bool IsPowerFull => CurrentPower == MaxPower;
+        public virtual bool IsPowerFull => CurrentPower >= MaxPower; // changed to >= to ensure power rebalancing doesn't break the logic.
 
         public virtual int Priority { get => priority; set => priority = value; }
 
@@ -197,12 +197,14 @@ namespace VintageEngineering.Electrical
         public virtual ulong ReceivePower(ulong powerOffered, float dt, bool simulate = false)
         {
             if (MachineState == EnumBEState.Off || !CanReceivePower) return powerOffered; // machine is off, bounce.
-            if (CurrentPower == MaxPower) return powerOffered; // we're full, bounce fast
+
+            // The == was changed to >= to ensure rebalancing machine power values don't break the system.
+            if (CurrentPower >= MaxPower) return powerOffered; // we're full, bounce fast
 
             // what is the max power transfer of this machine for this DeltaTime update tick?
             ulong pps = (ulong)Math.Round(MaxPPS * dt); // rounding issues abound
 
-            if (pps == 0) pps = ulong.MaxValue; // PPS of 0 means NO LIMIT ***This would break recipes***
+            if (pps == 0) pps = ulong.MaxValue; // PPS of 0 means NO LIMIT ***This would break recipes, aka InstaCraft ***
             else pps += 2;
 
             ulong capacityempty = MaxPower - CurrentPower;

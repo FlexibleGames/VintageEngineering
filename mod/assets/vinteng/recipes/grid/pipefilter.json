@@ -1,0 +1,13 @@
+{
+	"ingredientPattern": "SMS,WRW,SQS",
+	"ingredients": {
+		"S": { "type": "item",  "code": "vinteng:screw-brass", "quantity": 1 },
+		"M": { "type": "item",  "code": "vinteng:motor-mv", "quantity": 1 },
+		"R": { "type": "item",  "code": "game:metalplate-*", "quantity": 1, "name": "metal", "allowedVariants": ["brass"] },
+		"W": { "type": "block", "code": "game:catenary-lvpower", "quantity": 2 },
+		"Q": { "type": "item",  "code": "game:clearquartz", "quantity": 8 }
+	},
+	"width": 3,
+	"height": 3,
+	"output": { "type": "item", "code": "vinteng:vepipefilter", "quantity": 1  }
+}

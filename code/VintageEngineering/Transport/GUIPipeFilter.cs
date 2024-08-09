@@ -339,7 +339,7 @@ namespace VintageEngineering.Transport
             }
             GuiElementFlatList savedfilters = this.SingleComposer.GetFlatList("filteritemslist");
             savedfilters.CalcTotalHeight();
-            this.SingleComposer.GetScrollbar("filteritemsscroll").SetHeights((float)_filterSearchHeight, (float)savedfilters.insideBounds.fixedHeight);
+            this.SingleComposer.GetScrollbar("filteritemsscroll").SetHeights((float)_filterEntryHeight, (float)savedfilters.insideBounds.fixedHeight);
             return true;
         }
 

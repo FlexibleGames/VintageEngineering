@@ -11,22 +11,30 @@ Your block must have the Electric block entity behavior installed on it. In orde
 In your block entities you have access to many variables from the Electric behavior described above.
 CurrentPower, MachineState, MaxPower, MaxPPS, are among the important ones.
 
-Setting the defaults for a machine happens in JSON attributes.
+Setting the defaults for a machine happens in JSON properties of the behavior.
 Check any machine JSON attributes for examples, I'll cover the standard values below:
 
-"craftinganimcode" : This is a built-in system I added for defining what code to use when animating during 'crafting'.
-    Animation code is defined in the shape file, use the name as the code value to ensure no confusion.
-    If using a crafting animation, be sure to add the entityBehavior "Animatable"
+---------------------------------------------------------------------------------------------------------
+-------- Electric Behavior Properties
+---------------------------------------------------------------------------------------------------------
+"canExtractPower": true or false -> Set this to true for machines that produce power
+"canReceivePower": true or false -> Set this to true for machines that consume power
+"maxpower": 1000		   ulong -> What is the max power this block can store?
+    ulong means its max value is 18,446,744,073,709,551,615 and can't be negative
 
-"entitytype" : This value defines what general purpose this machine has.
+"maxpps": 100			   ulong -> What is the max power per second this block can accept and apply to recipes?
+    Recipes in VE take power to make, this is what determines the time it takes a crafting cycle to complete.
+    Currently for a generator it is the amount of power generated per second.
+
+"entitytype": "Producer"  string -> valid types: Producer, Consumer, Storage, Transformer, Toggle, Relay, Other
     "Consumer", "Producer", and "Relay" are the only values tested and working. Others will follow soon.
 
-"maxpower": What is the max power this machine can hold? Power is stored as a ULong,
-    meaning its max value is 18,446,744,073,709,551,615
-    Do not use , in defining this value. "1024" is my standard value for this.
-
-"maxpps": What is the Power Per Second rating of this machine? Meaning how much power is this
-    machine capable of putting toward a recipe? Or if it's a generator, how much power can it produce per second at max efficiency?
+---------------------------------------------------------------------------------------------------------
+-------- Block Attributes for Animation and Wiring System
+---------------------------------------------------------------------------------------------------------
+"craftinganimcode" : This is a built-in system I added for defining what code to use when animating during 'crafting'.
+    Animation code is defined in the shape file, use the name as the code value to ensure no confusion.
+    If using a crafting animation, be sure to add the entityBehavior "Animatable"!
 
 The next section defines the WireNodes of the block, i.e. Which type of wires connect, and where they connect to this block.
 "wireNodes": This is a very important tag that is used by the Catenary mod for wiring up the machine.

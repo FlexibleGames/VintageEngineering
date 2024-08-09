@@ -16,8 +16,8 @@
 				"canExtractPower": false,
 				"canReceivePower": true,
 				"entitytype": "Consumer",
-				"maxpower": 1024,
-				"maxpps": 64
+				"maxpower": 1000,
+				"maxpps": 50
 			}
 		}
 	],

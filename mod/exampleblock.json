@@ -1,6 +1,6 @@
 {
 
-    "class": "ElectricBlock", // MUST be a block that inherits from ElectricBlock
+    "class": "VEElectricBlock", // MUST be a block that inherits from ElectricBlock
 	"behaviors": [
 		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "vecrusher-north" }}} // required to place the block in the direction the player is facing
 	],
@@ -8,20 +8,20 @@
 		{
 			"name": "Electric",
 			"properties": {
-				"canExtractPower": false, // Set this to true for machines that produce power
-				"canReceivePower": true // Set this to true for machines that consume power
+				"canExtractPower": false,// Set this to true for machines that produce power
+				"canReceivePower": true, // Set this to true for machines that consume power
+                "maxpower": 1000,		 // What is the max power this block can store?
+                "maxpps": 100,			 // What is the max power per second this block can accept and apply to recipes?
+                "entitytype": "Producer" // valid types: Producer, Consumer, Storage, Transformer, Toggle, Relay, Other
 			}
 		}
 	],
 	"variantgroups": [
-		{ "code":"side", "loadFromProperties": "abstract/horizontalorientation" } // see behavior above
+		{ "code":"side", "loadFromProperties": "abstract/horizontalorientation" } // see HorizontalOrientation behavior above
 	],
 	"entityBehaviorsByType": { "*": [{ "name": "Animatable" }] }, // enables block to show an animation (set in attributes below) while it's crafting
     "attributes": {
-		"entitytype": "Producer", // valid types: Producer, Consumer, Storage, Transformer, Toggle, Relay, Other
 		"priority": 5,			  // set order to receive or give power, in-game UI should be able to set this, 1 is highest
-		"maxpower": 1024,		  // What is the max power this block can store?
-		"maxpps": 128,			  // What is the max power per second this block can accept and apply to recipes?
         "craftinganimcode": "craft", // animation CODE and name of the animation to play while the machine is crafting
 
         "wireNodes": [ // ALL nodes, regardless of PURPOSE. Can have custom tags for more specific definitions read by other mods.
@@ -44,7 +44,10 @@
                     "*-west": 90
                 }
             }
-        ]
+        ],
+        "recipeMachineByType": {
+            "*-north": [ "metalpress" ] // recipes (if any) for this machine bind to the handbook using this string, see the VERecipeRegistrySystem for details.
+        }
     },
     "shapeByType": {
 		"*-north": 	{ "base": "vinteng:block/lv/crusher", "rotateY":0 }, // rotates the block automatically when placed according to how the player is facing

@@ -1,0 +1,35 @@
+[
+    {
+		"code": "itempipe-from-ingot",
+		"enabled": true,
+		"attributes": {
+			"requires": "vinteng:vediecast-pipe-*",
+			"requiresdurability": true,
+			"requirestemp": -1
+		},
+		"powerpercraft": 500,
+		"ingredients": [
+			{ "type": "item", "code": "game:ingot-*", "quantity": 1, "name":"metal", "allowedVariants": ["tinbronze","bismuthbronze","blackbronze"] }
+		],
+		"outputs": [
+			{ "type": "block", "code": "vinteng:pipe-item", "stacksize": 2 }
+		]
+	},
+    {
+		"code": "fluidpipe-from-ingot",
+		"enabled": true,
+		"attributes": {
+			"requires": "vinteng:vediecast-pipe-*",
+			"requiresvariants": ["meteoriciron", "steel", "titanium"],
+			"requiresdurability": true,
+			"requirestemp": -1
+		},
+		"powerpercraft": 1000,
+		"ingredients": [
+			{ "type": "item", "code": "game:ingot-*", "quantity": 1, "name":"metal", "allowedVariants": ["iron"] }
+		],
+		"outputs": [
+			{ "type": "block", "code": "vinteng:pipe-fluid", "stacksize": 2 }
+		]
+	}
+]

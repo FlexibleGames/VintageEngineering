@@ -1,14 +1,14 @@
 {
-	"code": "vediecast",	
+	"code": "vediecast",
 	"storageFlags": 4097,
 	"attributes": {
-		"rackable": true,				
+		"rackable": true,
 		"toolrackTransform": {
 			"translation": { "x": 0.4, "y": 0.58, "z": 0 },
 			"rotation": { "x": -180, "y": 0, "z": -9 },
 			"origin": { "x": 0.5, "y": 0, "z": 0.5 },
 			"scale": 2.41
-		},					
+		},
 		"groundStorageTransform": {
 			"translation": { "x": 0.02, "y": -0.001, "z": -0.02 },
 			"rotation": { "x": 90, "y": 90, "z": -90 },
@@ -19,26 +19,27 @@
 			"groupBy": ["vediecast-*"]
 		}
 	},
-	"behaviors": [{ 
+	"behaviors": [{
 		"name": "GroundStorable",
 		"properties": {
-			"layout": "Quadrants",			
+			"layout": "Quadrants",
 			"selectionBox": { "x1": 0, "y1": 0, "z1": 0, "x2": 1, "y2": 0.1, "z2": 1 },
 			"collisionBox": { "x1": 0, "y1": 0, "z1": 0, "x2": 0, "y2": 0.1, "z2": 0 }
 		}
 	}],
 	"variantgroups": [
-        { "code": "type", "states": ["lv", "mv", "hv", "rod", "screw" ] },
+        { "code": "type", "states": ["lv", "mv", "hv", "rod", "screw", "pipe" ] },
 		{ "code": "metal", "states": ["tinbronze", "iron", "meteoriciron", "steel", "titanium"] }
-	],		
+	],
     "maxstacksize": 1,
 	"heldTpHitAnimation": "smithing",
-	"shapeByType": { 
+	"shapeByType": {
 		"*-lv-*": { "base": "vinteng:item/vediecast-lv" },
         "*-mv-*": { "base": "vinteng:item/vediecast-mv" },
-		"*-hv-*": { "base": "vinteng:item/vediecast-hv" },		
+		"*-hv-*": { "base": "vinteng:item/vediecast-hv" },
 		"*-rod-*": { "base": "vinteng:item/vediecast-rod" },
-		"*-screw-*": { "base": "vinteng:item/vediecast-lv" }
+		"*-screw-*": { "base": "vinteng:item/vediecast-lv" },
+		"*-pipe-*": { "base": "vinteng:item/vediecast-pipe" }
 	},
 	"texturesByType": {
 		"*": {
@@ -46,8 +47,8 @@
 			"null": { "base": "game:block/metal/plate/{metal}" }
 		}
 	},
-	"durabilitybytype": {		
-		"*-tinbronze": 200,	
+	"durabilitybytype": {
+		"*-tinbronze": 200,
 		"*-iron": 800,
 		"*-meteoriciron": 2000,
 		"*-steel": 4500,

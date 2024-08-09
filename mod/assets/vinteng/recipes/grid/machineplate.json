@@ -2,7 +2,7 @@
     {
         "ingredientPattern": "S_S,_B_,S_S",
         "ingredients": {
-            "B": { "type": "item", "code": "game:metalplate-tinbronze", "quantity": 1 },
+            "B": { "type": "item", "code": "game:metalplate-*", "quantity": 1, "name": "metal", "allowedVariants": ["tinbronze", "bismuthbronze", "blackbronze"] },
             "S": { "type": "item", "code": "vinteng:screw-*", "quantity": 1 }
         },
         "width": 3,

@@ -15,7 +15,7 @@
 				"scale": 0.67
 		},
 		"handbook": {
-			"groupBy": ["vepipefilter-*"]
+			"groupBy": ["vepipefilter"]
 		}
 	},
 	"behaviors": [{

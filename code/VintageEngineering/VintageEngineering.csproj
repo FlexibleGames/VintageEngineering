@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <Version>0.1.4</Version>
+    <Version>0.2.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -80,11 +80,7 @@
           -->
       <TargetFiles Include="$(TargetDir)\*.*" />
     </ItemGroup>
-    <Copy
-      SourceFiles="@(TargetFiles)"
-      DestinationFolder="$(MSBuildProjectDirectory)\..\..\mod"
-      SkipUnchangedFiles="true"
-    />
+    <Copy SourceFiles="@(TargetFiles)" DestinationFolder="$(MSBuildProjectDirectory)\..\..\mod" SkipUnchangedFiles="true" />
   </Target>
 
 </Project>
