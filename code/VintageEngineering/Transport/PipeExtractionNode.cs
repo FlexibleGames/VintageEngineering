@@ -31,7 +31,7 @@ namespace VintageEngineering.Transport
             set => _isSleeping = value;
         }
 
-        private ITransportHandler Handler { get { return _api.World.BlockAccessor.GetBlockEntity<BEPipeBase>(_pos)?.GetHandler(); } }
+        private ITransportHandler Handler { get { return _api?.World?.BlockAccessor?.GetBlockEntity<BEPipeBase>(_pos)?.GetHandler(); } }
 
         /// <summary>
         /// The Enumerator set when Node is in RoundRobin mode.
@@ -157,10 +157,6 @@ namespace VintageEngineering.Transport
             if (slotid == 0)
             {
                 ApplyUpgrade();
-            }
-            else
-            {
-                // pipe filter changed
             }
         }
 

@@ -46,11 +46,6 @@ namespace VintageEngineering.Transport.API
                 return Lang.Get("vinteng:gui-title-pipeextract");
             }
         }
-        /// <summary>
-        /// What kind of Transport handler does this type of pipe use?<br/>
-        /// Handler class must implement the ITransportHandler interface
-        /// </summary>
-        //public virtual ITransportHandler TransportHandler { get; protected set; }
 
         /// <summary>
         /// Used by Extraction nodes to sort and push into based on settings.<br/>
@@ -295,7 +290,7 @@ namespace VintageEngineering.Transport.API
                             }
                             else
                             {
-                                if (CanConnectTo(world, Pos.AddCopy(ConvertIndexToFace(faceindex))))
+                                if (CanConnectTo(world, Pos.AddCopy(ConvertIndexToFace(faceindex)), ConvertIndexToFace(faceindex).Opposite))
                                 {
                                     insertionSides[faceindex] = true;
                                     numInsertionConnections++;
@@ -535,7 +530,7 @@ namespace VintageEngineering.Transport.API
                             continue;
                         }
                     }
-                    else if (CanConnectTo(world, Pos.AddCopy(BlockFacing.ALLFACES[f])))
+                    else if (CanConnectTo(world, Pos.AddCopy(BlockFacing.ALLFACES[f]), BlockFacing.ALLFACES[f].Opposite))
                     {
                         if (!disconnectedSides[f] && !insertionSides[f] && !extractionSides[f])
                         {
@@ -794,8 +789,9 @@ namespace VintageEngineering.Transport.API
         /// </summary>
         /// <param name="world">World Accessor</param>
         /// <param name="pos">Position to check</param>
+        /// <param name="onFace">Which face are we looking to connect to.</param>
         /// <returns>True if pipe connection is supported.</returns>
-        public virtual bool CanConnectTo(IWorldAccessor world, BlockPos pos)
+        public virtual bool CanConnectTo(IWorldAccessor world, BlockPos pos, BlockFacing onFace = null)
         {
             return false;
         }

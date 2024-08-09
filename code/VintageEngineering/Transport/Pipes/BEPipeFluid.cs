@@ -27,7 +27,7 @@ namespace VintageEngineering.Transport.Pipes
             return fluidHandler;
         }
 
-        public override bool CanConnectTo(IWorldAccessor world, BlockPos pos)
+        public override bool CanConnectTo(IWorldAccessor world, BlockPos pos, BlockFacing toFace = null)
         {
             IBlockEntityContainer bec = world.BlockAccessor.GetBlock(pos).GetInterface<IBlockEntityContainer>(world, pos);
             if (bec != null)

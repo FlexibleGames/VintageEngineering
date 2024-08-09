@@ -143,9 +143,12 @@ namespace VintageEngineering.Transport.Handlers
                 {
                     IBlockEntityContainer contain = world.BlockAccessor.GetBlock(conarray[x].Position).GetInterface<IBlockEntityContainer>(world, conarray[x].Position);
                     if (contain.Inventory is InventoryBase inv)
-                    {
+                    {                        
                         ItemSlot push = inv.GetAutoPushIntoSlot(BlockFacing.FromCode(node.FaceCode).Opposite, pullfrom);
-                        if (push == null) continue;
+                        if (push == null) 
+                        {                             
+                            continue; 
+                        }
                         return push;
                     }
                     else continue;
