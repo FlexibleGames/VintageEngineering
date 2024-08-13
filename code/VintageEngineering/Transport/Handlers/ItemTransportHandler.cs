@@ -104,8 +104,15 @@ namespace VintageEngineering.Transport.Handlers
                                     // wildcard detected
                                     if (WildcardUtil.Match(new AssetLocation(thecode), slot.Itemstack.Collectible.Code))
                                     {
+                                        // item is a match
                                         if (isblist) continue;
                                         return slot;
+                                    }
+                                    else
+                                    {
+                                        // not a match
+                                        if (isblist) return slot;
+                                        else continue;
                                     }
                                 }
                                 else
@@ -115,6 +122,11 @@ namespace VintageEngineering.Transport.Handlers
                                     {
                                         if (isblist) continue;
                                         return slot;
+                                    }
+                                    else
+                                    {
+                                        if (isblist) return slot;
+                                        else continue;
                                     }
                                 }
                             }

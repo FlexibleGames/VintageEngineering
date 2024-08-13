@@ -148,6 +148,7 @@ namespace VintageEngineering.Transport.Handlers
                 {
                     // we have a filter, it has filters, now we do the crazy part
                     TreeArrayAttribute taa = node.Filter.Itemstack.Attributes["filters"] as TreeArrayAttribute;
+                    
                     IVELiquidInterface iliq = world.BlockAccessor.GetBlock(node.BlockPosition).GetInterface<IVELiquidInterface>(world, node.BlockPosition);
                     if (iliq != null)
                     {
@@ -165,8 +166,15 @@ namespace VintageEngineering.Transport.Handlers
                                         // wildcard detected
                                         if (WildcardUtil.Match(new AssetLocation(thecode), inventory[slotid].Itemstack.Collectible.Code))
                                         {
+                                            // wildcard matched
                                             if (isblist) continue;
                                             return inventory[slotid];
+                                        }
+                                        else
+                                        {
+                                            // not a match
+                                            if (isblist) return inventory[slotid];
+                                            else continue;
                                         }
                                     }
                                     else
@@ -176,6 +184,11 @@ namespace VintageEngineering.Transport.Handlers
                                         {
                                             if (isblist) continue;
                                             return inventory[slotid];
+                                        }
+                                        else
+                                        {
+                                            if (isblist) return inventory[slotid];
+                                            else continue;
                                         }
                                     }
                                 }
@@ -200,6 +213,11 @@ namespace VintageEngineering.Transport.Handlers
                                         if (isblist) continue;
                                         return slot;
                                     }
+                                    else
+                                    {
+                                        if (isblist) return slot;
+                                        else continue;
+                                    }
                                 }
                                 else
                                 {
@@ -208,6 +226,11 @@ namespace VintageEngineering.Transport.Handlers
                                     {
                                         if (isblist) continue;
                                         return slot;
+                                    }
+                                    else
+                                    {
+                                        if (isblist) return slot;
+                                        else continue;
                                     }
                                 }
                             }
