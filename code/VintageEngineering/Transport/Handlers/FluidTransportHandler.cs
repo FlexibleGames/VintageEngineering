@@ -158,6 +158,7 @@ namespace VintageEngineering.Transport.Handlers
                             else
                             {
                                 if (inventory[slotid].Empty) continue;
+                                bool allowed = true;
                                 foreach (TreeAttribute ta in taa.value)
                                 {
                                     string thecode = ta.GetString("code", "error");
@@ -167,14 +168,12 @@ namespace VintageEngineering.Transport.Handlers
                                         if (WildcardUtil.Match(new AssetLocation(thecode), inventory[slotid].Itemstack.Collectible.Code))
                                         {
                                             // wildcard matched
-                                            if (isblist) continue;
-                                            return inventory[slotid];
+                                            if (isblist) allowed = false;
                                         }
                                         else
                                         {
                                             // not a match
-                                            if (isblist) return inventory[slotid];
-                                            else continue;
+                                            if (!isblist) allowed = false;
                                         }
                                     }
                                     else
@@ -182,16 +181,15 @@ namespace VintageEngineering.Transport.Handlers
                                         // no wildcard
                                         if (thecode == inventory[slotid].Itemstack.Collectible.Code.ToString())
                                         {
-                                            if (isblist) continue;
-                                            return inventory[slotid];
+                                            if (isblist) allowed = false;                                            
                                         }
                                         else
                                         {
-                                            if (isblist) return inventory[slotid];
-                                            else continue;
+                                            if (!isblist) allowed = false;                                            
                                         }
                                     }
                                 }
+                                if (allowed) return inventory[slotid];
                             }
                         }
                         return null;
@@ -202,6 +200,7 @@ namespace VintageEngineering.Transport.Handlers
                         else
                         {
                             if (slot.Empty) continue;
+                            bool allowed = true;
                             foreach (TreeAttribute ta in taa.value)
                             {
                                 string thecode = ta.GetString("code", "error");
@@ -210,13 +209,11 @@ namespace VintageEngineering.Transport.Handlers
                                     // wildcard detected
                                     if (WildcardUtil.Match(new AssetLocation(thecode), slot.Itemstack.Collectible.Code))
                                     {
-                                        if (isblist) continue;
-                                        return slot;
+                                        if (isblist) allowed = false;
                                     }
                                     else
                                     {
-                                        if (isblist) return slot;
-                                        else continue;
+                                        if (!isblist) allowed = false;
                                     }
                                 }
                                 else
@@ -224,16 +221,15 @@ namespace VintageEngineering.Transport.Handlers
                                     // no wildcard
                                     if (thecode == slot.Itemstack.Collectible.Code.ToString())
                                     {
-                                        if (isblist) continue;
-                                        return slot;
+                                        if (isblist) allowed = false;
                                     }
                                     else
                                     {
-                                        if (isblist) return slot;
-                                        else continue;
+                                        if (!isblist) allowed = false;
                                     }
                                 }
                             }
+                            if (allowed) return slot;
                         }
                     }
                     return null;
