@@ -24,6 +24,7 @@ namespace VintageEngineering.Transport.Handlers
             if (us == null) return; // sanity check
             ItemSlot pull = null;
             BlockPos connectedto = pos.AddCopy(BlockFacing.FromCode(node.FaceCode));
+            if (!BEPipeBase.IsChunkLoaded(world, connectedto)) return;
             InventoryBase inv = (InventoryBase)((world.BlockAccessor.GetBlock(connectedto)?.GetInterface<IBlockEntityContainer>(world, connectedto))?.Inventory);
             int stacksize = node.UpgradeRate;
             int numperliter = 0;
@@ -239,6 +240,7 @@ namespace VintageEngineering.Transport.Handlers
 
                 for (int x = 0; x < conarray.Length; x++)
                 {
+                    if (!BEPipeBase.IsChunkLoaded(world, conarray[x].Position)) continue;
                     IVELiquidInterface ivel = world.BlockAccessor.GetBlock(conarray[x].Position).GetInterface<IVELiquidInterface>(world, conarray[x].Position);
                     if (ivel != null)
                     {
@@ -263,6 +265,7 @@ namespace VintageEngineering.Transport.Handlers
                 Array.Sort(conarray, (x, y) => y.Distance.CompareTo(x.Distance));
                 for (int x = 0; x < conarray.Length; x++)
                 {
+                    if (!BEPipeBase.IsChunkLoaded(world, conarray[x].Position)) continue;
                     IVELiquidInterface ivel = world.BlockAccessor.GetBlock(conarray[x].Position).GetInterface<IVELiquidInterface>(world, conarray[x].Position);
                     if (ivel != null)
                     {
@@ -298,6 +301,7 @@ namespace VintageEngineering.Transport.Handlers
                 }
 
                 PipeConnection current = node.PushEnumerator.Current;
+                if (!BEPipeBase.IsChunkLoaded(world, current.Position)) return null;
                 IVELiquidInterface ivel = world.BlockAccessor.GetBlock(current.Position).GetInterface<IVELiquidInterface>(world, current.Position);
                 if (ivel != null)
                 {
@@ -316,6 +320,7 @@ namespace VintageEngineering.Transport.Handlers
                 // this is Random
                 int randomcon = world.Rand.Next(pushcons.Count);
                 PipeConnection current = pushcons[randomcon];
+                if (!BEPipeBase.IsChunkLoaded(world, current.Position)) return null;
                 IVELiquidInterface ivel = world.BlockAccessor.GetBlock(current.Position).GetInterface<IVELiquidInterface>(world, current.Position);
                 if (ivel != null)
                 {
