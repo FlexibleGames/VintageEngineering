@@ -15,7 +15,7 @@ The mod will expand late-game play as steel is the primary material used for its
 - Crushing, smelting, grinding, refining, distilling, etc via multiblock machines.
 - Fluid movement, pumping, tanks.
 - Electrical system, power generation using Coal and oil based combustion, then expanding into more modern power options (nuclear?).
-- Pipez-style system for moving goods and fluids around. At least I hope this won't crush FPS.
+- Pipez-style system for moving goods and fluids around.
 
 ## Building
 Set the VINTAGE_STORY environmental variable before loading or trying to build the project. The [wiki](https://wiki.vintagestory.at/index.php/Modding:Preparing_For_Code_Mods#Creating_an_Environment_Variable) has directions for setting the variable on Windows.
@@ -31,7 +31,8 @@ Press Ctrl + Shift + B to build the mod without starting the debugger.
 Open a developer command prompt (one that has msbuild in the path). From the code\VintageEngineering directory, either run `msbuild` or `dotnet build`, depending on which is installed on your system.
 
 ### Packaging
-After a successful build, the output will be placed in the mod directory. In order to distribute the mod, the contents of the mod directory must be manually zipped. Specifically the zip file should contain modinfo.json at the top level, rather than mod\modinfo.json.
+For personal use: after a successful build, the output will be placed in the mod directory. The contents of the mod directory must be manually zipped. Specifically the zip file should contain modinfo.json at the top level, rather than mod\modinfo.json.
+Offical ModHUB releases will be handled by Flexible Games.
 
 ## Debugging in VS Code
 
@@ -61,13 +62,13 @@ bluelightning32
 - GUIs
 - Translations
 - Recipes
-- Bug Fixing
+- Bug Reporting/Fixing
 
 Ideas are not on that list right now as I have a LOT of work to do before I'll be open to MORE to do. If you want to contribute please reach out to me (Buggi) on the VS discord, I'm in the "Modder" group. Or just submit a pull request. I'll try to post 'Issues' on specific items needed.
 
 ## Pull Request Rules
 Please keep pull request changes simple and single-issue. Please include a description outlining the change. The faster I can merge the faster the project gets awesome.
-Always include code comments outlining the change.
+Always include code comments.
 
 ## Most Needed
 The areas I'll need the most help and will be reaching out to people in hopes of gaining some assistance.

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -121,9 +122,10 @@ namespace VintageEngineering.Transport
         {
         }
 
-        public virtual void ResetEnumerator()
+        public virtual void ResetEnumerator(List<PipeConnection> conlist)
         {
-            PushEnumerator.Dispose();
+            PushEnumerator.Dispose();            
+            PushEnumerator = conlist.GetEnumerator();
         }
 
         /// <summary>
@@ -133,8 +135,6 @@ namespace VintageEngineering.Transport
         /// <param name="distro">Given string from GUI Dropdown option set.</param>
         public void SetDistroMode(string distro)
         {
-            // reset the round-robin enumerator, if it exists
-            if (PushEnumerator.Current != null) PushEnumerator.Dispose();
 
             switch (distro)
             {
@@ -220,8 +220,13 @@ namespace VintageEngineering.Transport
         public virtual void UpdateTick(float deltatime)
         {
             if (_isSleeping || Handler == null || _api.Side == EnumAppSide.Client) return;
-
+            Stopwatch ws = Stopwatch.StartNew();
             Handler.TransportTick(deltatime, _pos, _api.World, this);
+            ws.Stop();
+            if (ws.ElapsedMilliseconds > 100)
+            {
+                _api.World.Logger.Debug($"Transport Handler Tick Took {ws.ElapsedMilliseconds}ms");
+            }
         }
 
         /// <summary>
@@ -229,9 +234,32 @@ namespace VintageEngineering.Transport
         /// </summary>
         /// <param name="player">Player who right clicked</param>
         /// <returns>True if event is handled.</returns>
-        public virtual bool OnRightClick(IPlayer player)
+        public virtual bool OnRightClick(IWorldAccessor world, IPlayer player)
         {
             // auto swap held item in player hotbarslot if valid.
+            if (player.InventoryManager.ActiveHotbarSlot.Itemstack.Collectible is ItemPipeUpgrade)
+            {
+                if (Upgrade.Empty)
+                {
+                    player.InventoryManager.ActiveHotbarSlot.TryPutInto(world, Upgrade, 1);
+                }
+                else
+                {
+                    player.InventoryManager.ActiveHotbarSlot.TryFlipWith(Upgrade);
+                }
+            }
+            else if (player.InventoryManager.ActiveHotbarSlot.Itemstack.Collectible is ItemPipeFilter)
+            {
+                if (Filter.Empty)
+                {
+                    player.InventoryManager.ActiveHotbarSlot.TryPutInto(world, Filter, 1);
+                }
+                else
+                {
+                    player.InventoryManager.ActiveHotbarSlot.TryFlipWith(Filter);
+                }
+            }
+            else { return false; }
             return true;
         }
 
