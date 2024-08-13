@@ -19,6 +19,8 @@ namespace VintageEngineering.Transport.Handlers
 
         public void TransportTick(float deltatime, BlockPos pos, IWorldAccessor world, PipeExtractionNode node)
         {
+            if (!BEPipeBase.IsChunkLoaded(world, pos)) return;
+
             BEPipeBase us = world.BlockAccessor.GetBlockEntity(pos) as BEPipeBase;
             if (us == null) return; // sanity check
 

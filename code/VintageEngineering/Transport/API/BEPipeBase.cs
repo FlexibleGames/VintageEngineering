@@ -1016,5 +1016,22 @@ namespace VintageEngineering.Transport.API
                 default: return null;
             }
         }
+
+        /// <summary>
+        /// A quick check to determine if a chunk at a given position is loaded.
+        /// </summary>
+        /// <param name="world">World Accessor</param>
+        /// <param name="atpos">BlockPos to check.</param>
+        /// <returns>True if chuck is loaded.</returns>
+        public static bool IsChunkLoaded(IWorldAccessor world, BlockPos atpos)
+        {
+            if (world.BlockAccessor.GetChunk(atpos.X / GlobalConstants.ChunkSize,
+                atpos.InternalY / GlobalConstants.ChunkSize,
+                atpos.Z /  GlobalConstants.ChunkSize) == null)
+            {
+                return false;
+            }
+            return true;
+        }
     }
 }

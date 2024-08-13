@@ -38,7 +38,7 @@ namespace VintageEngineering.Transport.Handlers
                     if (wprops != null)
                     {
                         ItemStack portion = wprops.WhenFilled.Stack.Resolve(world, "Filter Pipe", true) ? wprops.WhenFilled.Stack.ResolvedItemstack : null;
-                        
+                        if (portion == null) return;
                         portion.StackSize = portion.Collectible.MaxStackSize;
                         numperliter = ((int)wprops.ItemsPerLitre);
                         inv = node.Inventory as InventoryBase;
