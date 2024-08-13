@@ -390,7 +390,11 @@ namespace VintageEngineering.Transport.API
                 ||
                 player.InventoryManager.ActiveHotbarSlot?.Itemstack?.Collectible is ItemPipeFilter)
             {
-                // TODO AutoSwap hand item into extraction node
+                // AutoSwap hand item into extraction node
+                if (extractionSides[faceindex])
+                {
+                    extractionNodes[faceindex].OnRightClick(player);
+                }
             }
             if (player.InventoryManager.ActiveHotbarSlot.Empty)
             {
@@ -438,6 +442,7 @@ namespace VintageEngineering.Transport.API
                     }
                 }
             }
+            if (_meshData != null) _meshData.Dispose();
             base.OnBlockBroken(byPlayer);
         }
 
@@ -630,7 +635,7 @@ namespace VintageEngineering.Transport.API
                         {
                             _pushConnections = new List<PipeConnection>();
                         }
-                        _pushConnections.Add(con);
+                        if (!_pushConnections.Contains(con)) _pushConnections.Add(con);
                     }
                 }
             }
@@ -639,7 +644,7 @@ namespace VintageEngineering.Transport.API
                 if (extractionNodes[f] != null)
                 {
                     // in the case of RoundRobin extraction, altering the list FUBARs the enumerator
-                    extractionNodes[f].ResetEnumerator();
+                    extractionNodes[f].ResetEnumerator(_pushConnections);
                     extractionNodes[f].IsSleeping = false;
                 }
             }
@@ -683,7 +688,7 @@ namespace VintageEngineering.Transport.API
                 if (extractionNodes[f] != null)
                 {
                     // in the case of RoundRobin extraction, altering the list FUBARs the enumerator
-                    extractionNodes[f].ResetEnumerator();
+                    extractionNodes[f].ResetEnumerator(_pushConnections);
                     extractionNodes[f].IsSleeping = false;
                 }
             }
@@ -857,7 +862,7 @@ namespace VintageEngineering.Transport.API
                     {
                         RemoveExtractionListener(f); // removes the listener and sets ID to 0                        
                     }
-                    if (extractionGUIs[f] != null)
+                    if (extractionGUIs != null && extractionGUIs[f] != null)
                     {
                         if (extractionGUIs[f].IsOpened()) extractionGUIs[f].TryClose();
                         extractionGUIs[f].Dispose();
@@ -865,6 +870,9 @@ namespace VintageEngineering.Transport.API
                     extractionNodes[f].OnBlockUnloaded(Api.World);
                 }
             }
+            // free up memory, just in case.
+            if (numExtractionConnections > 0 && _pushConnections != null) _pushConnections.Clear();
+            if (_meshData != null) _meshData.Dispose();
             base.OnBlockUnloaded(); // base call can also remove tick listeners
         }
 
@@ -920,8 +928,13 @@ namespace VintageEngineering.Transport.API
                     {
                         throw new Exception("Error in PacketID 1003 for Pipe Distribution settings. Face and/or Distro mode is invalid.");
                     }
-                    if (extractionNodes[BlockFacing.FromCode(face).Index] == null) return;
-                    extractionNodes[BlockFacing.FromCode(face).Index].SetDistroMode(distro);
+                    int faceindex = BlockFacing.FromCode(face).Index;
+                    if (extractionNodes[faceindex] == null) return;
+                    extractionNodes[faceindex].SetDistroMode(distro);
+                    if (distro == "robin")
+                    { 
+                        extractionNodes[faceindex].PushEnumerator = _pushConnections.GetEnumerator(); 
+                    }
                 }
             }
         }
@@ -1000,6 +1013,8 @@ namespace VintageEngineering.Transport.API
                 MarkPipeDirty(worldAccessForResolve, true); 
             }
         }
+
+        
 
         /// <summary>
         /// Converts a Face Index int into a BlockFacing direction.<br/>
