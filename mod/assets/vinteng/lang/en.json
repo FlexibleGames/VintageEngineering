@@ -222,6 +222,7 @@
 	"vinteng:item-vepipefilter": "Pipe Filter",
 	"vinteng:itemdesc-vepipefilter": "The Pipe Filter can be used in upgraded extraction nodes to filter (white-list or black-list) items to pull from the connected inventory. <br>Right click with the filter in your hand to set filter settings.",
 	"vinteng:gui-filtersettings": "Pipe Filter Settings",
+	"vinteng:gui-error-filterwildcard": "To add a wildcard, ensure Wildcard is enabled in the Filter Window.",
 	"vinteng:gui-blacklist": "Blacklist",
 	"vinteng:gui-selected": "Selected",
 	"vinteng:gui-blocks": "Blocks",

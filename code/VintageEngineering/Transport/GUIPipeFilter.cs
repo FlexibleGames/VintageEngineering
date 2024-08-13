@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -236,10 +237,22 @@ namespace VintageEngineering.Transport
             {
                 if (_currentFilterItemSelection != -1)
                 {
-                    capi.Render.RenderItemstackToGui((_filterItems[_currentFilterItemSelection] as PipeFilterGuiElement)._dummySlot,
-                         currentBounds.renderX + lineHeight / 2.0 + 1,
-                         currentBounds.renderY + lineHeight / 2.0, 100, ((float)(lineHeight * 0.8f)), ColorUtil.ColorFromRgba(ColorUtil.WhiteArgbVec),
-                         true, false, false);
+                    if (!(_filterItems[_currentFilterItemSelection] as PipeFilterGuiElement).IsWildcard)
+                    {
+                        capi.Render.RenderItemstackToGui((_filterItems[_currentFilterItemSelection] as PipeFilterGuiElement)._dummySlot,
+                             currentBounds.renderX + lineHeight / 2.0 + 1,
+                             currentBounds.renderY + lineHeight / 2.0, 100, ((float)(lineHeight * 0.8f)), ColorUtil.ColorFromRgba(ColorUtil.WhiteArgbVec),
+                             true, false, false);
+                    }
+                    else
+                    {
+                        PipeFilterGuiElement selected = _filterItems[_currentFilterItemSelection] as PipeFilterGuiElement;
+
+                        capi.Render.Render2DTexturePremultipliedAlpha(
+                            selected.Texture.TextureId,
+                            currentBounds.renderX, currentBounds.renderY, selected.Texture.Width, selected.Texture.Height,                            
+                            50f, null);
+                    }
                 }
             }
         }
@@ -320,12 +333,21 @@ namespace VintageEngineering.Transport
         private bool AddButtonClicked()
         {
             //capi.ShowChatMessage("Add Button Clicked");
-            if (_canSearchWildCards && _currentSearchText.Contains('*'))
+            string lowered = _currentSearchText.ToLower();
+            if (_currentSearchText.Contains('*'))
             {
-                PipeFilterGuiElement newfilter = new PipeFilterGuiElement(capi, _currentSearchText, false);
-                if (!_filterItems.Contains(newfilter))
+                if (_canSearchWildCards)
                 {
-                    _filterItems.Add(newfilter);
+                    PipeFilterGuiElement newfilter = new PipeFilterGuiElement(capi, lowered, false);
+                    if (!_filterItems.Contains(newfilter))
+                    {
+                        _filterItems.Add(newfilter);
+                    }
+                }
+                else
+                {
+                    capi.TriggerIngameError(this, "vinteng:gui-error-filterwildcard", Lang.Get("vinteng:gui-error-filterwildcard"));
+                    return false;
                 }
             }
             else if (_currentSearchItemSelection > -1)
