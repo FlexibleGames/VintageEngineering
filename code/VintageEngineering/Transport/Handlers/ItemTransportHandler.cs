@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using VintageEngineering.Transport.API;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
@@ -25,6 +26,7 @@ namespace VintageEngineering.Transport.Handlers
             if (us == null) return; // sanity check
 
             BlockPos connectedto = pos.AddCopy(BlockFacing.FromCode(node.FaceCode));
+            if (!BEPipeBase.IsChunkLoaded(world, connectedto)) return;
             InventoryBase inv = (InventoryBase)((world.BlockAccessor.GetBlock(connectedto).GetInterface<IBlockEntityContainer>(world, connectedto)).Inventory);
             if (inv == null) return; // sanity check 2
             int stacksize = node.UpgradeRate;
@@ -143,6 +145,7 @@ namespace VintageEngineering.Transport.Handlers
 
                 for (int x = 0; x < conarray.Length; x++)
                 {
+                    if (!BEPipeBase.IsChunkLoaded(world, conarray[x].Position)) continue;
                     IBlockEntityContainer contain = world.BlockAccessor.GetBlock(conarray[x].Position).GetInterface<IBlockEntityContainer>(world, conarray[x].Position);
                     if (contain.Inventory is InventoryBase inv)
                     {                        
@@ -162,6 +165,7 @@ namespace VintageEngineering.Transport.Handlers
                 Array.Sort(conarray, (x, y) => y.Distance.CompareTo(x.Distance));
                 for (int x = 0; x < conarray.Length; x++)
                 {
+                    if (!BEPipeBase.IsChunkLoaded(world, conarray[x].Position)) continue;
                     IBlockEntityContainer contain = world.BlockAccessor.GetBlock(conarray[x].Position).GetInterface<IBlockEntityContainer>(world, conarray[x].Position);
                     if (contain.Inventory is InventoryBase inv)
                     {
@@ -190,6 +194,7 @@ namespace VintageEngineering.Transport.Handlers
                 }
 
                 PipeConnection current = node.PushEnumerator.Current;
+                if (!BEPipeBase.IsChunkLoaded(world, current.Position)) return null;
                 IBlockEntityContainer contain = world.BlockAccessor.GetBlock(current.Position).GetInterface<IBlockEntityContainer>(world, current.Position);
                 if (contain.Inventory is InventoryBase inv)
                 {
@@ -199,9 +204,10 @@ namespace VintageEngineering.Transport.Handlers
             }
             else
             {
-                // this is Random
+                // this is Random                
                 int randomcon = world.Rand.Next(pushcons.Count);                
                 PipeConnection current = pushcons[randomcon];
+                if (!BEPipeBase.IsChunkLoaded(world, current.Position)) return null;
                 IBlockEntityContainer contain = world.BlockAccessor.GetBlock(current.Position).GetInterface<IBlockEntityContainer>(world, current.Position);
                 if (contain.Inventory is InventoryBase inv)
                 {

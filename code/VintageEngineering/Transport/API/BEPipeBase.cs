@@ -857,6 +857,11 @@ namespace VintageEngineering.Transport.API
                     {
                         RemoveExtractionListener(f); // removes the listener and sets ID to 0                        
                     }
+                    if (extractionGUIs[f] != null)
+                    {
+                        if (extractionGUIs[f].IsOpened()) extractionGUIs[f].TryClose();
+                        extractionGUIs[f].Dispose();
+                    }
                     extractionNodes[f].OnBlockUnloaded(Api.World);
                 }
             }
