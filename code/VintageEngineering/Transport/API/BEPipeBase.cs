@@ -393,7 +393,7 @@ namespace VintageEngineering.Transport.API
                 // AutoSwap hand item into extraction node
                 if (extractionSides[faceindex])
                 {
-                    extractionNodes[faceindex].OnRightClick(player);
+                    extractionNodes[faceindex].OnRightClick(world, player);
                 }
             }
             if (player.InventoryManager.ActiveHotbarSlot.Empty)

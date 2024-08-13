@@ -250,6 +250,10 @@ namespace VintageEngineering.Transport
             }
             else if (player.InventoryManager.ActiveHotbarSlot.Itemstack.Collectible is ItemPipeFilter)
             {
+                if (!CanFilter)
+                {
+                    return false;
+                }
                 if (Filter.Empty)
                 {
                     player.InventoryManager.ActiveHotbarSlot.TryPutInto(world, Filter, 1);
