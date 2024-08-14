@@ -52,6 +52,7 @@ namespace VintageEngineering.Transport.Handlers
 
             int moved = pull.TryPutInto(push, ref ismo);
             if (moved == 0) return;
+            else pull.MarkDirty();
         }
 
         public ItemSlot GetPullSlot(InventoryBase inventory, PipeExtractionNode node, bool isGeneric = false)

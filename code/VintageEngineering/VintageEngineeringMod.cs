@@ -10,6 +10,8 @@ using HarmonyLib;
 using System.Collections.Generic;
 using Vintagestory.GameContent;
 using System.IO;
+using VintageEngineering.blockentity;
+using VintageEngineering.Blocks;
 
 [assembly: ModInfo("VintageEngineering",
                     Authors = new string[] { "Flexible Games", "bluelightning32" },
@@ -135,6 +137,8 @@ namespace VintageEngineering
             api.RegisterBlockClass("VEMixer", typeof(BlockMixer));
 
             api.RegisterBlockClass("VEPipeBlock", typeof(BlockPipeBase));
+
+            api.RegisterBlockClass("VEBlockFluidTank", typeof(BlockFluidTank));
         }
         public void RegisterBlockEntities(ICoreAPI api)
         {
@@ -153,6 +157,7 @@ namespace VintageEngineering
 
             api.RegisterBlockEntityClass("VEBEItemPipe", typeof(BEPipeItem));
             api.RegisterBlockEntityClass("VEBEFluidPipe", typeof(BEPipeFluid));
+            api.RegisterBlockEntityClass("VEBEFluidTank", typeof(BEFluidTank));
         }
 
         public override void Dispose()

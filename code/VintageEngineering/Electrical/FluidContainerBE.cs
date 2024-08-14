@@ -43,7 +43,7 @@ namespace VintageEngineering.Electrical
         public virtual int[] InputLiquidContainerSlotIDs => new int[] { 0 };
         public virtual int[] OutputLiquidContainerSlotIDs => new int[] { 0 };
 
-        public ItemSlotLiquidOnly GetLiquidAutoPullFromSlot(BlockFacing blockFacing)
+        public virtual ItemSlotLiquidOnly GetLiquidAutoPullFromSlot(BlockFacing blockFacing)
         {
             foreach (int slot in OutputLiquidContainerSlotIDs)
             {
@@ -52,7 +52,7 @@ namespace VintageEngineering.Electrical
             return null;
         }
 
-        public ItemSlotLiquidOnly GetLiquidAutoPushIntoSlot(BlockFacing blockFacing, ItemSlot fromSlot)
+        public virtual ItemSlotLiquidOnly GetLiquidAutoPushIntoSlot(BlockFacing blockFacing, ItemSlot fromSlot)
         {
             foreach (int slot in InputLiquidContainerSlotIDs)
             {

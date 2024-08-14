@@ -222,7 +222,7 @@
 	"vinteng:item-vepipefilter": "Pipe Filter",
 	"vinteng:itemdesc-vepipefilter": "The Pipe Filter can be used in upgraded extraction nodes to filter (white-list or black-list) items to pull from the connected inventory. <br>Right click with the filter in your hand to set filter settings.",
 	"vinteng:gui-filtersettings": "Pipe Filter Settings",
-	"vinteng:gui-error-filterwildcard": "To add a wildcard, ensure Wildcard is enabled in the Filter Window.",
+	"vinteng:gui-error-filterwildcard": "To add a wildcard, ensure Wildcards is enabled in the Filter Window.",
 	"vinteng:gui-blacklist": "Blacklist",
 	"vinteng:gui-selected": "Selected",
 	"vinteng:gui-blocks": "Blocks",
@@ -231,5 +231,17 @@
 	"vinteng:gui-search": "Search",
 	"vinteng:gui-add": "Add",
 	"vinteng:gui-cancel": "Cancel",
-	"vinteng:gui-save": "Save"
+	"vinteng:gui-save": "Save",
+
+	"vinteng:block-vefluidtank-tinbronze": "Fluid Tank (TinBronze)",
+	"vinteng:blockdesc-vefluidtank-tinbronze": "A simple tank for all your fluid movement needs. Keeps fluid on break. 16k L Capacity",
+	"vinteng:block-vefluidtank-iron": "Fluid Tank (Iron)",
+	"vinteng:blockdesc-vefluidtank-iron": "A simple tank for all your fluid movement needs. Keeps fluid on break. 64k L Capacity",
+	"vinteng:block-vefluidtank-steel": "Fluid Tank (Steel)",
+	"vinteng:blockdesc-vefluidtank-steel": "A simple tank for all your fluid movement needs. Keeps fluid on break. 256k L Capacity",
+
+	"vinteng:block-vefluidtank-temporalsteel": "Quantum Fluid Tank",
+	"vinteng:blockdesc-vefluidtank-temporalsteel": "A tank that is quantumly entangled with any tank that shares its channel. Channel set via GUI. 50k L Capacity",
+	"vinteng:block-vefluidtank-infsink": "Infinite Sink/Source",
+	"vinteng:blockdesc-vefluidtank-infsink": "A creative fluid sink or source. Right click with a full bucket to set infinite source fluid portion type."
 }

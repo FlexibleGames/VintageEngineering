@@ -83,11 +83,12 @@ namespace VintageEngineering.Transport.Handlers
             {
                 int moved = pull.TryPutInto(push, ref ismo);
                 if (moved == 0) return;
+                else push.MarkDirty();
             }
             catch (Exception e)
             {
                 return;
-            }            
+            } 
         }
         public ItemSlot GetPullSlot(IWorldAccessor world, InventoryBase inventory, PipeExtractionNode node, bool isbasefluidbe = false)
         {

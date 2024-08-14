@@ -1,0 +1,72 @@
+{
+	"code": "vefluidtank",
+	"classByType": {
+        "*-temporalsteel": "Block",
+        "*-infsink": "Block",
+        "*": "VEBlockFluidTank"
+    },
+	"entityClassByType": {
+
+        "*": "VEBEFluidTank"
+    },
+	"behaviors": [
+        { "name": "RightClickPickup"}
+	],
+	"variantgroups": [
+		{ "code":"tier", "states": ["tinbronze", "iron", "steel", "temporalsteel", "infsink"]  }
+	],
+	"entityBehaviors": [
+
+	],
+	"attributes": {
+		"handbook": {
+			"groupBy": ["vefluidtank-*"],
+			"excludeByType": {
+                "*-infsink": true,
+				"*": false
+			}
+		},
+		"allowHeldLiquidTransfer": true,
+		"allowPipeLiquidTransfer": true
+	},
+    "attributesByType": {
+        "*-tinbronze": { "capacity": 16000 },
+        "*-iron": { "capacity": 64000 },
+        "*-steel": { "capacity": 256000 },
+        "*-temporalsteel": { "capacity": 50000 },
+        "*-infsink": { "capacity": 16000 }
+    },
+	"creativeinventory": { "general": ["vefluidtank-*"], "terrain": ["*"], "mechanics": ["*"] },
+	"shape": { "base": "vinteng:block/fluidtank" },
+	"blockmaterial": "Metal",
+	"texturesByType": {
+        "*-tinbronze": { "bronze": { "base": "block/bronze"}, "machinery": { "base": "block/machinery"} },
+        "*-iron": { "bronze": { "base": "block/wornsteelplate"}, "machinery": { "base": "block/wornsteelplate"} },
+        "*-steel": { "bronze": { "base": "block/shinyiron"}, "machinery": { "base": "block/shinyiron"} },
+        "*-temporalsteel": { "bronze": { "base": "block/temporalsteel"}, "machinery": { "base": "block/temporalsteel"} },
+        "*-infsink": { "bronze": { "base": "block/gold"}, "machinery": { "base": "block/gold"} }
+    },
+	"sidesolid": {
+		"all": false, "down": true, "up": true
+	},
+	"sideopaque": {
+		"all": false
+	},
+	"sounds": {
+		"place": "block/chute",
+		"break": "block/anvil",
+		"hit": "block/anvil",
+		"walk": "game:walk/stone"
+	},
+    "drawtype": "json",
+	"lightAbsorption": 0,
+	"maxStackSize": 8,
+	"replaceable": 600,
+	"resistance": 1.5,
+	"collisionSelectionBoxes": [
+		{ "x1": 0, "y1": 0, "z1": 0, "x2": 1, "y2": 1, "z2": 1 }
+	],
+	"guiTransform": {
+		"rotation": { "x": -22.6, "y": 134, "z": 0 }
+	}
+}
