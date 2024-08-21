@@ -81,12 +81,21 @@ namespace VintageEngineering.Transport.Handlers
             if (push == null) return; // sanity check 3
             try
             {
-                int moved = pull.TryPutInto(push, ref ismo);
+                int moved = 0;
+                if (push is ItemSlotLargeLiquid isll && pull is not ItemSlotLargeLiquid)
+                {
+                    moved = isll.TryTakeFrom(pull, ref ismo);
+                }
+                else
+                { 
+                    moved = pull.TryPutInto(push, ref ismo); 
+                }
                 if (moved == 0) return;
                 else push.MarkDirty();
             }
             catch (Exception e)
             {
+                world.Logger.Error(e);
                 return;
             } 
         }

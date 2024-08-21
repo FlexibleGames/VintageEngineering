@@ -3,89 +3,94 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VintageEngineering.API;
 using VintageEngineering.blockentity;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
+using Vintagestory.GameContent;
 
 namespace VintageEngineering.Blocks
 {
-    public class BlockFluidTank: Block
+    public class BlockFluidTank: BlockLiquidContainerBase
     {
-        public override void OnBlockBroken(IWorldAccessor world, BlockPos pos, IPlayer byPlayer, float dropQuantityMultiplier = 1)
-        {
-            bool preventDefault = false;
-            foreach (BlockBehavior blockBehavior in this.BlockBehaviors)
-            {
-                EnumHandling handled = EnumHandling.PassThrough;
-                blockBehavior.OnBlockBroken(world, pos, byPlayer, ref handled);
-                if (handled == EnumHandling.PreventDefault)
-                {
-                    preventDefault = true;
-                }
-                if (handled == EnumHandling.PreventSubsequent)
-                {
-                    return;
-                }
-            }
-            if (preventDefault)
-            {
-                return;
-            }
-            if (world.Side == EnumAppSide.Server && (byPlayer == null || byPlayer.WorldData.CurrentGameMode != EnumGameMode.Creative))
-            {
-                ItemStack[] drops = new ItemStack[]
-                {
-                    new ItemStack(this, 1)
-                };
-                BEFluidTank beft = world.BlockAccessor.GetBlockEntity(pos) as BEFluidTank;
-                if (beft != null && !beft.Inventory[0].Empty)
-                {
-                    drops[0].Attributes.SetItemstack("contents", beft.Inventory[0].Itemstack);
-                }
-                for (int i = 0; i < drops.Length; i++)
-                {
-                    world.SpawnItemEntity(drops[i], new Vec3d((double)pos.X + 0.5, (double)pos.Y + 0.5, (double)pos.Z + 0.5), null);
-                }
-                world.PlaySoundAt(this.Sounds.GetBreakSound(byPlayer), (double)pos.X, (double)pos.Y, (double)pos.Z, byPlayer, true, 32f, 1f);
-            }
-            if (this.EntityClass != null)
-            {
-                BlockEntity entity = world.BlockAccessor.GetBlockEntity(pos);
-                if (entity != null)
-                {
-                    entity.OnBlockBroken(null);
-                }
-            }
-            world.BlockAccessor.SetBlock(0, pos);            
-        }
-
+  
         public override bool DoPlaceBlock(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel, ItemStack byItemStack)
         {
-            if (base.DoPlaceBlock(world, byPlayer, blockSel, byItemStack))
-            {
-                if (byItemStack.Attributes.HasAttribute("contents"))
-                {
-                    BEFluidTank beft = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEFluidTank;
-                    if (beft != null)
-                    {
-                        ItemStack fluid = byItemStack.Attributes.GetItemstack("contents");
-                        if (fluid != null) fluid.ResolveBlockOrItem(world);
-                        beft.SetFluidOnPlace(fluid);
-                    }
-                }
-            }
+            base.DoPlaceBlock(world, byPlayer, blockSel, byItemStack);
+
             return true;
         }
 
-        public override ItemStack OnPickBlock(IWorldAccessor world, BlockPos pos)
+        public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
         {
-            ItemStack drops =  new ItemStack(this, 1);
-            BEFluidTank beft = world.BlockAccessor.GetBlockEntity(pos) as BEFluidTank;
-            if (beft != null && !beft.Inventory[0].Empty)
+            if (blockSel != null && !world.Claims.TryAccess(byPlayer, blockSel.Position, EnumBlockAccessFlags.Use))
             {
-                drops.Attributes.SetItemstack("contents", beft.Inventory[0].Itemstack);
+                return false;
             }
-            return drops;
+            BEFluidTank betank = null;
+            if (blockSel.Position != null)
+            {
+                betank = (world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEFluidTank);
+            }
+            if (betank == null) return false;
+
+            if (byPlayer != null && byPlayer.InventoryManager.ActiveHotbarSlot != null && !byPlayer.InventoryManager.ActiveHotbarSlot.Empty)
+            {
+                ILiquidSink bucket = byPlayer.InventoryManager.ActiveHotbarSlot.Itemstack.Collectible as ILiquidSink;
+                if (bucket != null)
+                {
+                    ItemStack contents = bucket.GetContent(byPlayer.InventoryManager.ActiveHotbarSlot.Itemstack);
+                    if (contents != null)
+                    {
+                        DummySlot topush = new DummySlot(contents);
+                        IVELiquidInterface ivel = betank as IVELiquidInterface;
+                        ItemSlotLargeLiquid push = (ItemSlotLargeLiquid)ivel.GetLiquidAutoPushIntoSlot(blockSel.Face, topush);
+                        if (push == null) return true;
+                        WaterTightContainableProps props = BlockLiquidContainerBase.GetContainableProps(contents);
+                        int capacityavailable = (int)(push.CapacityLitres * props.ItemsPerLitre) - (int)(push.StackSize);
+                        if (capacityavailable >= contents.StackSize)
+                        {
+                            push.TryTakeFrom(world, topush, topush.StackSize);
+                            //topush.TryPutInto(api.World, push, topush.StackSize);
+                            bucket.SetContent(byPlayer.InventoryManager.ActiveHotbarSlot.Itemstack, null);
+                        }
+                        else
+                        {
+                            int moved = push.TryTakeFrom(world, topush, topush.StackSize); // topush.TryPutInto(api.World, push, topush.StackSize);
+                            contents.StackSize -= moved;
+                            bucket.SetContent(byPlayer.InventoryManager.ActiveHotbarSlot.Itemstack, contents);
+                        }
+                        betank.MarkDirty(true);
+                        return true;
+                    }
+                    else
+                    {
+                        IVELiquidInterface ivel = betank as IVELiquidInterface;
+                        ItemSlotLiquidOnly pull = ivel.GetLiquidAutoPullFromSlot(blockSel.Face);
+                        if (pull == null) return true;
+                        WaterTightContainableProps props = BlockLiquidContainerBase.GetContainableProps(pull.Itemstack);
+                        int cancontain = (int)(bucket.CapacityLitres * props.ItemsPerLitre);
+                        if (cancontain >= pull.Itemstack.StackSize)
+                        {
+                            bucket.SetContent(byPlayer.InventoryManager.ActiveHotbarSlot.Itemstack, pull.Itemstack.Clone());
+                            pull.TakeOutWhole();
+                        }
+                        else
+                        {
+                            ItemStack pulled = pull.Itemstack.Clone();
+                            pulled.StackSize = cancontain;
+                            bucket.SetContent(byPlayer.InventoryManager.ActiveHotbarSlot.Itemstack, pulled.Clone());
+                            pull.TakeOut(cancontain);
+                        }
+                        betank.MarkDirty(true);
+                        return true;
+                    }
+                }
+            }
+
+            bool handled = base.OnBlockInteractStart(world, byPlayer, blockSel);
+
+            return true;
         }
     }
 }

@@ -94,7 +94,7 @@ namespace VintageEngineering
                 }
                 return true;
             }
-            return handled;        
+            return handled;
         }
     }
 }
