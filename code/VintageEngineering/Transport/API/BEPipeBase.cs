@@ -752,7 +752,7 @@ namespace VintageEngineering.Transport.API
                         //MeshData testing = (Api as ICoreClientAPI).TesselatorManager.GetDefaultBlockMesh(conb);
                         if (conb != null)
                         {
-                            MeshData _data = ConnectionMesh(conb.Shape);
+                            MeshData _data = ConnectionMesh(conb.Shape);                            
                             if (_data != null)
                             { 
                                 if (_meshData != null)

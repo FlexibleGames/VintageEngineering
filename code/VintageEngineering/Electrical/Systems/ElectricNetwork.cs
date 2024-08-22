@@ -413,8 +413,9 @@ namespace VintageEngineering.Electrical.Systems
                         // remove all power from generators
                         foreach (IElectricalBlockEntity entity in producerNodes)
                         {
-                            //totalpoweringen = entity.ExtractPower(totalpoweringen, false);
-                            entity.CheatPower(true); // remove all power from generators, does not track or return any value.
+                            totalpoweringen = entity.ExtractPower(totalpoweringen, deltaTime, false);
+                            if (totalpoweringen == 0) break;
+                            //entity.CheatPower(true); // remove all power from generators, does not track or return any value.
                         }
                     }
                     foreach (IElectricalBlockEntity entity in storageNodes)
@@ -431,13 +432,21 @@ namespace VintageEngineering.Electrical.Systems
                     {
                         foreach(IElectricalBlockEntity entity in producerNodes)
                         {
+                            // remove power that we need
                             totalpowerconsumed = entity.ExtractPower(totalpowerconsumed, deltaTime);
+                            if (totalpowerconsumed == 0) break;
                         }
                     }
                     foreach (IElectricalBlockEntity entity in storageNodes)
                     {
-                        //totalstorageavailable = entity.ReceivePower(totalstorageavailable, false);
-                        entity.CheatPower(); // fills power buffer in storage
+                        // add excess available power to storage
+                        totalstorageavailable = entity.ReceivePower(totalstorageavailable, deltaTime, false);
+                        if (totalstorageavailable == 0) break;
+                        //entity.CheatPower(); // fills power buffer in storage
+                    }
+                    if (totalpowerconsumed != 0 && totalstorageavailable != 0)
+                    {
+                        api.World.Logger.Warning($"Error in Electric Network UpdateTick id : {NetworkID}");
                     }
                     // at this point, totalpowerconsumed should = 0 AND totalstorageavailable should = 0
                 }

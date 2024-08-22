@@ -43,7 +43,13 @@ namespace VintageEngineering.Transport.Pipes
 
             // for debugging, until we get a pump
             Block blockat = world.BlockAccessor.GetBlock(pos, BlockLayersAccess.FluidOrSolid);
-            if (blockat != null && blockat.IsLiquid()) return true;
+            if (blockat != null && blockat.IsLiquid())
+            { 
+                if (blockat.LiquidLevel == 7)
+                { 
+                    return true; 
+                }
+            }
 
             return false;
         }
