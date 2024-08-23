@@ -1,0 +1,28 @@
+{
+	"editor": {
+		"allAngles": false,
+		"entityTextureMode": false
+	},
+	"textureWidth": 16,
+	"textureHeight": 16,
+	"textureSizes": {
+	},
+	"textures": {
+	},
+	"elements": [
+		{
+			"name": "liquid",
+			"from": [ 3.0, 1.0, 3.0 ],
+			"to": [ 13.0, 15.0, 13.0 ],
+			"shade": false,
+			"renderPass": 1,
+			"rotationOrigin": [ 3.0, 1.0, 3.0 ],
+			"faces": {
+				"north": { "texture": "#machinery", "uv": [ 0.0, 0.0, 10.0, 14.0 ] },
+				"east": { "texture": "#machinery", "uv": [ 0.0, 0.0, 10.0, 14.0 ] },
+				"south": { "texture": "#machinery", "uv": [ 0.0, 0.0, 10.0, 14.0 ] },
+				"west": { "texture": "#machinery", "uv": [ 0.0, 0.0, 10.0, 14.0 ] },
+				"up": { "texture": "#bronze", "uv": [ 0.0, 0.0, 16.0, 16.0 ], "autoUv": false }
+			}
+		}
+	]}
