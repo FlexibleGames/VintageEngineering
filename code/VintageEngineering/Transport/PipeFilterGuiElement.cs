@@ -60,7 +60,8 @@ namespace VintageEngineering.Transport
                     _dummySlot = new DummySlot(stack);//, _unspoilableInventory);
                 }
                 catch (Exception ex)
-                {                    
+                {
+                    _capi.Logger.Error(ex);
                 }
             }
             IsBlock = isblock; 

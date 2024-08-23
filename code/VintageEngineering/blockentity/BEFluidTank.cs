@@ -24,10 +24,11 @@ namespace VintageEngineering.blockentity
         {            
             inventory = new InventoryGeneric(1, null, null, delegate (int id, InventoryGeneric self)
             {
-                return new ItemSlotLiquidOnly(self, int.MaxValue);
+                return new ItemSlotLargeLiquid(self, 999999);
             });
             inventory.BaseWeight = 1f;
             inventory.SlotModified += OnSlotModified;
+            
         }
 
         public void SetFluidOnPlace(ItemStack fluid)
@@ -36,6 +37,7 @@ namespace VintageEngineering.blockentity
             {
                 if (inventory[0].Empty) inventory[0].Itemstack = fluid;
                 else inventory[0].Itemstack.SetFrom(fluid);
+                
             }
         }
 
@@ -61,7 +63,7 @@ namespace VintageEngineering.blockentity
             base.Initialize(api);
             _capacityLitres = base.Block.Attributes["capacity"].AsInt(1000);
 
-            (inventory[0] as ItemSlotLiquidOnly).CapacityLitres = _capacityLitres;
+            (inventory[0] as ItemSlotLargeLiquid).SetCapacity(_capacityLitres);
 
             // client stuff for rendering content mesh?? Anyone want to tackle that for me?? :)
         }

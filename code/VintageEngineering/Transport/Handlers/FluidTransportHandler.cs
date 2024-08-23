@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using VintageEngineering.API;
@@ -81,12 +82,21 @@ namespace VintageEngineering.Transport.Handlers
             if (push == null) return; // sanity check 3
             try
             {
-                int moved = pull.TryPutInto(push, ref ismo);
+                int moved = 0;
+                if (push is ItemSlotLargeLiquid isll && pull is not ItemSlotLargeLiquid)
+                {
+                    moved = isll.TryTakeFrom(pull, ref ismo);
+                }
+                else
+                { 
+                    moved = pull.TryPutInto(push, ref ismo); 
+                }
                 if (moved == 0) return;
                 else push.MarkDirty();
             }
             catch (Exception e)
             {
+                world.Logger.Error(e);
                 return;
             } 
         }
@@ -270,6 +280,7 @@ namespace VintageEngineering.Transport.Handlers
                     }
 
                     IBlockEntityContainer contain = world.BlockAccessor.GetBlock(conarray[x].Position).GetInterface<IBlockEntityContainer>(world, conarray[x].Position);
+                    if (contain == null) continue;
                     foreach (ItemSlot slot in contain.Inventory)
                     {
                         if (slot is ItemSlotLiquidOnly && 
@@ -295,6 +306,7 @@ namespace VintageEngineering.Transport.Handlers
                     }
 
                     IBlockEntityContainer contain = world.BlockAccessor.GetBlock(conarray[x].Position).GetInterface<IBlockEntityContainer>(world, conarray[x].Position);
+                    if (contain == null) continue;
                     foreach (ItemSlot slot in contain.Inventory)
                     {
                         if (slot is ItemSlotLiquidOnly && (slot.Empty || slot.Itemstack.StackSize < (slot as ItemSlotLiquidOnly).CapacityLitres)) return slot;
@@ -329,10 +341,13 @@ namespace VintageEngineering.Transport.Handlers
                     return slot;
                 }
                 IBlockEntityContainer contain = world.BlockAccessor.GetBlock(current.Position).GetInterface<IBlockEntityContainer>(world, current.Position);
-                foreach (ItemSlot slot in contain.Inventory)
+                if (contain != null) 
                 {
-                    if (slot is ItemSlotLiquidOnly && (slot.Empty || slot.Itemstack.StackSize < (slot as ItemSlotLiquidOnly).CapacityLitres)) return slot;
-                    else continue;
+                    foreach (ItemSlot slot in contain.Inventory)
+                    {
+                        if (slot is ItemSlotLiquidOnly && (slot.Empty || slot.Itemstack.StackSize < (slot as ItemSlotLiquidOnly).CapacityLitres)) return slot;
+                        else continue;
+                    }
                 }
             }
             else
@@ -348,10 +363,13 @@ namespace VintageEngineering.Transport.Handlers
                     return slot;
                 }
                 IBlockEntityContainer contain = world.BlockAccessor.GetBlock(current.Position).GetInterface<IBlockEntityContainer>(world, current.Position);
-                foreach (ItemSlot slot in contain.Inventory)
+                if (contain != null)
                 {
-                    if (slot is ItemSlotLiquidOnly && (slot.Empty || slot.Itemstack.StackSize < (slot as ItemSlotLiquidOnly).CapacityLitres)) return slot;
-                    else continue;
+                    foreach (ItemSlot slot in contain.Inventory)
+                    {
+                        if (slot is ItemSlotLiquidOnly && (slot.Empty || slot.Itemstack.StackSize < (slot as ItemSlotLiquidOnly).CapacityLitres)) return slot;
+                        else continue;
+                    }
                 }
             }
             return null;
