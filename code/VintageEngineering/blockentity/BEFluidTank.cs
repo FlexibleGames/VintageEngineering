@@ -160,5 +160,14 @@ namespace VintageEngineering.blockentity
                 _liquidmesh.Dispose();
             }
         }
+
+        public override void OnBlockBroken(IPlayer byPlayer = null)
+        {
+            if (Api.Side == EnumAppSide.Client && _liquidmesh != null)
+            {
+                _liquidmesh.Dispose();
+            }
+            base.OnBlockBroken(byPlayer);
+        }
     }
 }
