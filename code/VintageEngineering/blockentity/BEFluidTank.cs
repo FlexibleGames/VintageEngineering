@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 using VintageEngineering.API;
+using VintageEngineering.Blocks;
+using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
@@ -19,6 +17,10 @@ namespace VintageEngineering.blockentity
         public int CapacityLitres => _capacityLitres;
         
         public override string InventoryClassName => "vefluidtank";
+        
+        private MeshData _liquidmesh;
+        
+        private BlockFluidTank _ownTankBlock;
 
         public BEFluidTank()
         {            
@@ -41,9 +43,14 @@ namespace VintageEngineering.blockentity
             }
         }
 
-        private void OnSlotModified(int slot)
+        private void OnSlotModified(int slotid)
         {
-            if (Api.Side == EnumAppSide.Server) this.MarkDirty(true);
+            if (Api.Side == EnumAppSide.Client)
+            {
+                _liquidmesh = this.GenFluidMesh();
+                if (_liquidmesh == null) return;
+            }
+            MarkDirty(true, null);
         }
 
         public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
@@ -61,11 +68,23 @@ namespace VintageEngineering.blockentity
         public override void Initialize(ICoreAPI api)
         {
             base.Initialize(api);
+            _ownTankBlock = (Block as BlockFluidTank);
             _capacityLitres = base.Block.Attributes["capacity"].AsInt(1000);
 
             (inventory[0] as ItemSlotLargeLiquid).SetCapacity(_capacityLitres);
 
             // client stuff for rendering content mesh?? Anyone want to tackle that for me?? :)
+
+            if (api.Side != EnumAppSide.Client || _liquidmesh != null) return;
+            _liquidmesh = GenFluidMesh();
+            if (_liquidmesh == null) return;
+            MarkDirty(true, null); // possible to markdirty only the mesh ?
+        }
+
+        private MeshData GenFluidMesh()
+        {
+            MeshData mesh = _ownTankBlock?.GenMesh(this.inventory[0].Itemstack, (inventory[0] as ItemSlotLiquidOnly).CapacityLitres);
+            return mesh;
         }
 
         protected override ItemSlot GetAutoPushIntoSlot(BlockFacing atBlockFace, ItemSlot fromSlot)
@@ -119,6 +138,27 @@ namespace VintageEngineering.blockentity
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldForResolving)
         {
             base.FromTreeAttributes(tree, worldForResolving);
+            if (Api != null && Api.Side == EnumAppSide.Client)
+            {
+                _liquidmesh = GenFluidMesh();
+                if (_liquidmesh == null) return;
+                MarkDirty(true, null);
+            }
+        }
+        public override bool OnTesselation(ITerrainMeshPool mesher, ITesselatorAPI tessThreadTesselator)
+        {
+            base.OnTesselation(mesher, tessThreadTesselator);
+            mesher.AddMeshData(_liquidmesh, 1);
+            return false;
+        }
+
+        public override void OnBlockUnloaded()
+        {
+            base.OnBlockUnloaded();
+            if (Api.Side == EnumAppSide.Client)
+            {
+                _liquidmesh.Dispose();
+            }
         }
     }
 }

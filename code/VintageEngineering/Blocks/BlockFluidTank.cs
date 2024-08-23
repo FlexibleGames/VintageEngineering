@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using VintageEngineering.API;
 using VintageEngineering.blockentity;
+using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
@@ -91,6 +87,36 @@ namespace VintageEngineering.Blocks
             bool handled = base.OnBlockInteractStart(world, byPlayer, blockSel);
 
             return true;
+        }
+        
+        public MeshData GenMesh(ItemStack liquidContentStack, float capacity)
+        {
+            if (liquidContentStack == null || api.Side == EnumAppSide.Server) return null;
+            ICoreClientAPI capi = api as ICoreClientAPI;
+            WaterTightContainableProps props = GetContainableProps(liquidContentStack);
+            ITexPositionSource contentSource;
+            float fillHeight;
+            // if it is not a liquid or the liquid had no texture 
+            if (props?.Texture == null)
+            {
+                return null;
+            }
+
+            contentSource = new ContainerTextureSource(capi, liquidContentStack, props.Texture);
+            fillHeight = (liquidContentStack.StackSize / props.ItemsPerLitre) / capacity;
+
+            if (fillHeight == 0f)
+            {
+                return null;
+            }
+            
+           
+            Shape shape = Vintagestory.API.Common.Shape.TryGet(capi, "vinteng:shapes/block/liquid.json");
+            MeshData liquidmesh;
+            capi!.Tesselator.TesselateShape("Liquid in fluid tank", shape, out liquidmesh, contentSource);
+            liquidmesh.Translate(0f, 0f, 0f);
+            liquidmesh.Scale(new Vec3f(1/16f, 1/16f, 1/16f),1f, fillHeight, 1f);
+            return liquidmesh;
         }
     }
 }
