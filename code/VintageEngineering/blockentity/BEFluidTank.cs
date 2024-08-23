@@ -155,7 +155,7 @@ namespace VintageEngineering.blockentity
         public override void OnBlockUnloaded()
         {
             base.OnBlockUnloaded();
-            if (Api.Side == EnumAppSide.Client)
+            if (Api.Side == EnumAppSide.Client && _liquidmesh != null)
             {
                 _liquidmesh.Dispose();
             }

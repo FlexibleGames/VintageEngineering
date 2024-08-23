@@ -15,8 +15,8 @@
 			"from": [ 3.0, 1.0, 3.0 ],
 			"to": [ 13.0, 15.0, 13.0 ],
 			"shade": false,
-			"renderPass": 1,
-			"rotationOrigin": [ 3.0, 1.0, 3.0 ],
+			"renderPass": 2,
+			"rotationOrigin": [ 3.0, 2.0, 3.0 ],
 			"faces": {
 				"north": { "texture": "#machinery", "uv": [ 0.0, 0.0, 10.0, 14.0 ] },
 				"east": { "texture": "#machinery", "uv": [ 0.0, 0.0, 10.0, 14.0 ] },

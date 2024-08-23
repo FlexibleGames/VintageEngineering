@@ -104,18 +104,18 @@ namespace VintageEngineering.Blocks
 
             contentSource = new ContainerTextureSource(capi, liquidContentStack, props.Texture);
             fillHeight = (liquidContentStack.StackSize / props.ItemsPerLitre) / capacity;
-
+            fillHeight -= fillHeight == 1 ? 0.001f : 0f; // hopefully prevents the top from z-fighting
             if (fillHeight == 0f)
             {
                 return null;
             }
             
            
-            Shape shape = Vintagestory.API.Common.Shape.TryGet(capi, "vinteng:shapes/block/liquid.json");
+            Shape shape = Vintagestory.API.Common.Shape.TryGet(capi, "vinteng:shapes/block/fluidtankliquid.json");
             MeshData liquidmesh;
             capi!.Tesselator.TesselateShape("Liquid in fluid tank", shape, out liquidmesh, contentSource);
             liquidmesh.Translate(0f, 0f, 0f);
-            liquidmesh.Scale(new Vec3f(1/16f, 1/16f, 1/16f),1f, fillHeight, 1f);
+            liquidmesh.Scale(new Vec3f(0.5f, 0.0625f, 0.5f),1f, fillHeight, 1f);
             return liquidmesh;
         }
     }
