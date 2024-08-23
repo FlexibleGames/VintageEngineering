@@ -42,8 +42,8 @@
 				},
 				{
 					"name": "PipeExtractMid",
-					"from": [ -0.5, 1.0, -0.5 ],
-					"to": [ 4.5, 1.5, 4.5 ],
+					"from": [ -0.6, 1.0, -0.6 ],
+					"to": [ 4.6, 1.8, 4.6 ],
 					"rotationOrigin": [ -1.0, 1.0, -1.0 ],
 					"faces": {
 						"north": { "texture": "#cable", "uv": [ 0.0, 0.0, 5.0, 0.5 ] },
@@ -55,5 +55,61 @@
 					}
 				}
 			]
+		},
+		{
+			"name": "Cube2",
+			"from": [ 7.0, 1.0, 5.5 ],
+			"to": [ 9.0, 5.0, 6.0 ],
+			"rotationOrigin": [ 7.0, 1.0, 6.0 ],
+			"faces": {
+				"north": { "texture": "#pipe", "uv": [ 0.0, 0.0, 2.0, 4.0 ] },
+				"east": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 4.0 ] },
+				"south": { "texture": "#pipe", "uv": [ 0.0, 0.0, 2.0, 4.0 ] },
+				"west": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 4.0 ] },
+				"up": { "texture": "#pipe", "uv": [ 0.0, 0.0, 2.0, 0.5 ] },
+				"down": { "texture": "#pipe", "uv": [ 0.0, 0.0, 2.0, 0.5 ] }
+			}
+		},
+		{
+			"name": "Cube3",
+			"from": [ 7.0, 1.0, 10.0 ],
+			"to": [ 9.0, 5.0, 10.5 ],
+			"rotationOrigin": [ 7.0, 1.0, 11.0 ],
+			"faces": {
+				"north": { "texture": "#pipe", "uv": [ 0.0, 0.0, 2.0, 4.0 ] },
+				"east": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 4.0 ] },
+				"south": { "texture": "#pipe", "uv": [ 0.0, 0.0, 2.0, 4.0 ] },
+				"west": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 4.0 ] },
+				"up": { "texture": "#pipe", "uv": [ 0.0, 0.0, 2.0, 0.5 ] },
+				"down": { "texture": "#pipe", "uv": [ 0.0, 0.0, 2.0, 0.5 ] }
+			}
+		},
+		{
+			"name": "Cube4",
+			"from": [ 10.0, 1.0, 7.0 ],
+			"to": [ 10.5, 5.0, 9.0 ],
+			"rotationOrigin": [ 10.0, 2.0, 8.0 ],
+			"faces": {
+				"north": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 4.0 ] },
+				"east": { "texture": "#pipe", "uv": [ 0.0, 0.0, 2.0, 4.0 ] },
+				"south": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 4.0 ] },
+				"west": { "texture": "#pipe", "uv": [ 0.0, 0.0, 2.0, 4.0 ] },
+				"up": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 2.0 ] },
+				"down": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 2.0 ] }
+			}
+		},
+		{
+			"name": "Cube5",
+			"from": [ 5.5, 1.0, 7.0 ],
+			"to": [ 6.0, 5.0, 9.0 ],
+			"rotationOrigin": [ 6.0, 2.0, 8.0 ],
+			"faces": {
+				"north": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 4.0 ] },
+				"east": { "texture": "#pipe", "uv": [ 0.0, 0.0, 2.0, 4.0 ] },
+				"south": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 4.0 ] },
+				"west": { "texture": "#pipe", "uv": [ 0.0, 0.0, 2.0, 4.0 ] },
+				"up": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 2.0 ] },
+				"down": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 2.0 ] }
+			}
 		}
 	]}
