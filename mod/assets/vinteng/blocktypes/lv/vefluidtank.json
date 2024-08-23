@@ -60,7 +60,7 @@
 	},
     "drawtype": "json",
 	"lightAbsorption": 0,
-	"maxStackSize": 8,
+	"maxStackSize": 1,
 	"replaceable": 600,
 	"resistance": 1.5,
 	"collisionSelectionBoxes": [

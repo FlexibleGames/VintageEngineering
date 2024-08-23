@@ -1,0 +1,12 @@
+{
+	"ingredientPattern": "STS,PBP,S_S",
+	"ingredients": {
+		"T": { "type": "item", "code": "game:wiretool-*", "isTool": true },
+		"P": { "type": "item", "code": "vinteng:braidedwire-copper", "quantity": 3},
+		"B": { "type": "block", "code": "vinteng:machineryblock-tinbronze", "quantity": 1},
+		"S": { "type": "item", "code": "vinteng:screw-brass", "quantity": 1 }
+	},
+	"width": 3,
+	"height": 3,
+	"output": { "type": "block", "code": "vinteng:velvbattery", "quantity": 1  }
+}
