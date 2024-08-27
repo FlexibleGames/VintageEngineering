@@ -555,11 +555,16 @@ namespace VintageEngineering
                 {
                     if (inv[slotid].Itemstack.Class == EnumItemClass.Block)
                     {
-                        TranslateMesh(meshData, 0.5f); // shrink a block down to half size
+                        TranslateMesh(meshData, 0.5f, 0.6875f); // shrink a block down to half size
                     }
                     else
                     {
-                        TranslateMesh(meshData, 1f);
+                        if (inv[slotid].Itemstack.Collectible is ItemWorkItem)
+                        {
+                            // workitem already seems to be 'at' the height of the anvil, so just need to bump them up one voxel
+                            TranslateMesh(meshData, 1f, 0.0625f);
+                        }
+                        else { TranslateMesh(meshData, 1f, 0.6875f); }
                     }
                     heatableMesh = meshData;
                     heatableMeshRef = capi.Render.UploadMesh(meshData);
@@ -567,10 +572,10 @@ namespace VintageEngineering
             }
         }
 
-        public void TranslateMesh(MeshData meshData, float scale)
+        public void TranslateMesh(MeshData meshData, float scale, float yoffset)
         {
             meshData.Scale(center, scale, scale, scale);
-            meshData.Translate(0, 0.6875f, 0);
+            meshData.Translate(0, yoffset, 0);
         }
 
         public MeshData GenMesh(ItemStack stack)
@@ -594,6 +599,12 @@ namespace VintageEngineering
                 }
                 else
                 {
+                    if (stack.Collectible is ItemWorkItem)
+                    {
+                        byte[,,] voxels = BlockEntityAnvil.deserializeVoxels(stack.Attributes.GetBytes("voxels", null));
+                        meshData = ItemWorkItem.GenMesh(capi, stack, voxels, out textureId);
+                        return meshData;
+                    }
                     nowTesselatingObj = stack.Collectible;
                     nowTesselatingShape = null;
                     if (stack.Item.Shape != null)
