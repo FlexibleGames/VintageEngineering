@@ -199,9 +199,11 @@ namespace VintageEngineering
                 {
                     if (tempGoal == 0) // if goal = 0, then it's in Auto mode
                     {
-                        if (InputSlot.Itemstack.Collectible.Attributes["workableTemperature"].Exists)
+                        int workable = 0;
+                        if (InputSlot.Itemstack.Collectible.Attributes != null 
+                            && InputSlot.Itemstack.Collectible.Attributes["workableTemperature"].Exists)
                         {
-                            int workable = InputSlot.Itemstack.Collectible.Attributes["workableTemperature"].AsInt();
+                            workable = InputSlot.Itemstack.Collectible.Attributes["workableTemperature"].AsInt();
                             _currentTempGoal = workable;
                             if (CurrentTemp < workable)
                             {
@@ -230,7 +232,8 @@ namespace VintageEngineering
             }
             if (tempGoal == 0 && _cproperties == null) // no props and we're in Auto mode, lets check some attributes
             {
-                if (InputSlot.Itemstack.Collectible.Attributes["workableTemperature"].Exists)
+                if (InputSlot.Itemstack.Collectible.Attributes != null
+                    && InputSlot.Itemstack.Collectible.Attributes["workableTemperature"].Exists)
                 {
                     int workable = InputSlot.Itemstack.Collectible.Attributes["workableTemperature"].AsInt();
                     workable += 50;
@@ -275,7 +278,7 @@ namespace VintageEngineering
         private float ChangeTemperature(float fromTemp, float toTemp, float deltatime)
         {
             float basechange = 0f;
-            if (fromTemp < 350) basechange = HeatPerSecondBase * deltatime;
+            if (fromTemp < 450) basechange = HeatPerSecondBase * deltatime;
             else
             {
                 float diff = Math.Abs(fromTemp - toTemp);
