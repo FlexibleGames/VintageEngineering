@@ -30,17 +30,20 @@ namespace VintageEngineering.Transport
 
         private void OnSlotModified(int slotid)
         {
-            capi.Event.EnqueueMainThreadTask(new Action(SetupDialog), "setuppipedlg");
+            if (slotid == 0 || slotid == 1) 
+            { 
+                capi.Event.EnqueueMainThreadTask(new Action(SetupDialog), "setuppipedlg"); 
+            }
         }
 
         public void SetupDialog()
         {
-            ItemSlot hoveredSlot = capi.World.Player.InventoryManager.CurrentHoveredSlot;
-            if (hoveredSlot != null && hoveredSlot.Inventory == base.Inventory)
-            {
-                capi.Input.TriggerOnMouseLeaveSlot(hoveredSlot);
-            }
-            else hoveredSlot = null;
+            //ItemSlot hoveredSlot = capi.World.Player.InventoryManager.CurrentHoveredSlot;
+            //if (hoveredSlot != null && hoveredSlot.Inventory == base.Inventory)
+            //{
+            //   // capi.Input.TriggerOnMouseLeaveSlot(hoveredSlot);
+            //}
+            //else hoveredSlot = null;
 
             int titlebarheight = 31;
             double slotpadding = GuiElementItemSlotGridBase.unscaledSlotPadding;

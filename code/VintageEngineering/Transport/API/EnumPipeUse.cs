@@ -18,6 +18,7 @@ namespace VintageEngineering.Transport.API
         gas,
         heat,
         signal,
+        casting,
         universal
     }
 
