@@ -21,6 +21,8 @@
 	"vinteng:blockdesc-vecnc-*": "The CNC is an automatic crafter. It's a Clayformer, put in a raw clay object and clay and it will print duplicates of that.<br>This Tier 1 CNC can also use the CNC Program (Grid) to autocraft grid recipes with one input type. [This feature not finished.]",
 	"vinteng:block-velvbattery": "LV Battery",
 	"vinteng:blockdesc-vebattery": "Batteries store excess power until it's needed. The LV battery stores 4000 power and is capable of moving 100 power per second (pps).",
+	"vinteng:block-vepump": "Fluid Pump",
+	"vinteng:blockdesc-vepump": "A pump for extracting fluids from the world. Has a pumping radius of 32, if a water or lava fluid body exceeds # source blocks it will treat that fluid as infinite.",
 
 	"vinteng:item-vepressmold-plate-*": "Plate Mold",
 	"vinteng:itemdesc-vepressmold-plate-*": "Use in a Metal Press to make plates. Harder metals require harder molds. Mold will wear out over time, durability depends on material.",
@@ -245,5 +247,5 @@
 	"vinteng:block-vefluidtank-temporalsteel": "Quantum Fluid Tank",
 	"vinteng:blockdesc-vefluidtank-temporalsteel": "A tank that is quantumly entangled with any tank that shares its channel. Channel set via GUI. 50k L Capacity",
 	"vinteng:block-vefluidtank-infsink": "Infinite Sink/Source",
-	"vinteng:blockdesc-vefluidtank-infsink": "A creative fluid sink or source. Right click with a full bucket to set infinite source fluid portion type.",
+	"vinteng:blockdesc-vefluidtank-infsink": "A creative fluid sink or source. Right click with a full bucket to set infinite source fluid portion type."
 }

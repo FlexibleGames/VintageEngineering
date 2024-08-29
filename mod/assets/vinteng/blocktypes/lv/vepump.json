@@ -1,0 +1,56 @@
+{
+	"code": "vepump",
+	"class": "VEElectricBlock",
+	"entityClass": "VEBELogSplitter",
+	"entityBehaviors": [
+		{ "name": "Animatable" },
+		{
+			"name": "Electric",
+			"properties": {
+				"canExtractPower": false,
+				"canReceivePower": true,
+				"entitytype": "Consumer",
+				"maxpower": 1000,
+				"maxpps": 100
+			}
+		}
+	],
+	"attributes": {
+		"craftinganimcode": "craft",
+		"priority": 5,
+        "wireNodes": [
+            {
+                "index": 0,
+                "wirefunction": "Power",
+				"powertier": "LV",
+				"maxconnections": 1,
+                "x1": 0.25,
+                "y1": 0.671875,
+                "z1": 0.25,
+                "x2": 0.4375,
+                "y2": 0.796875,
+                "z2": 0.4375
+            }
+        ]
+	},
+	"creativeinventory": { "general": ["vepump"], "terrain": ["*"], "mechanics": ["*"] },
+	"shapeByType": { "base": "vinteng:block/lv/pump" },
+	"blockmaterial": "Metal",
+	"textures": {},
+	"sidesolid": {
+		"all": false, "down": true
+	},
+	"sideopaque": {
+		"all": false
+	},
+	"lightAbsorption": 1,
+	"maxStackSize": 8,
+	"replaceable": 600,
+	"resistance": 1.5,
+	"collisionSelectionBoxes": [
+		{ "x1": 0, "y1": 0, "z1": 0, "x2": 1, "y2": 1, "z2": 1 }
+	],
+	"guiTransform": {
+		"rotation": { "x": -22.6, "y": -149, "z": 0 }
+	}
+}
