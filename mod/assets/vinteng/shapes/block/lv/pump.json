@@ -1,6 +1,6 @@
 {
 	"editor": {
-		"collapsedPaths": "Root/PipeConNorth6/pistenBace,Root/PipeConNorth11,Root/PipeConNorth6/pistenBace2,Root/PipeConNorth6/pistenBace3,Root/PipeConNorth6/pistenBace4",
+		"collapsedPaths": "Root/PipeConNorth11,Root/center",
 		"allAngles": false,
 		"entityTextureMode": false
 	},
@@ -607,21 +607,6 @@
 							}
 						}
 					]
-				},
-				{
-					"name": "baseB2",
-					"from": [ -3.0, -4.0, 5.0 ],
-					"to": [ 5.0, -3.5, 13.0 ],
-					"rotationOrigin": [ -3.0, -4.0, 5.0 ],
-					"rotationY": 89.98,
-					"faces": {
-						"north": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 8.0, 0.5 ] },
-						"east": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 8.0, 0.5 ] },
-						"south": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 8.0, 0.5 ] },
-						"west": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 8.0, 0.5 ] },
-						"up": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 8.0, 8.0 ] },
-						"down": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 8.0, 8.0 ] }
-					}
 				}
 			]
 		},
@@ -636,6 +621,20 @@
 				"south": { "texture": "#gold", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
 				"west": { "texture": "#gold", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
 				"up": { "texture": "#gold", "uv": [ 0.0, 0.0, 1.0, 1.0 ] }
+			}
+		},
+		{
+			"name": "baseB2",
+			"from": [ 4.0, 10.0, 4.0 ],
+			"to": [ 12.0, 10.5, 12.0 ],
+			"rotationOrigin": [ 4.0, 10.0, 4.0 ],
+			"faces": {
+				"north": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 8.0, 0.5 ] },
+				"east": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 8.0, 0.5 ] },
+				"south": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 8.0, 0.5 ] },
+				"west": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 8.0, 0.5 ] },
+				"up": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 8.0, 8.0 ] },
+				"down": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 8.0, 8.0 ] }
 			}
 		}
 	],
