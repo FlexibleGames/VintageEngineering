@@ -453,61 +453,6 @@
 					},
 					"children": [
 						{
-							"name": "Rivet13",
-							"from": [ 0.5, -0.25, 0.5 ],
-							"to": [ 1.0, 0.75, 1.0 ],
-							"faces": {
-								"north": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
-								"east": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
-								"south": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
-								"west": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
-								"up": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
-								"down": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 0.5 ] }
-							}
-						},
-						{
-							"name": "Rivet14",
-							"from": [ 0.5, -0.25, 4.0 ],
-							"to": [ 1.0, 0.75, 4.5 ],
-							"rotationOrigin": [ 1.0, 0.0, 4.0 ],
-							"faces": {
-								"north": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
-								"east": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
-								"south": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
-								"west": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
-								"up": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
-								"down": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 0.5 ] }
-							}
-						},
-						{
-							"name": "Rivet15",
-							"from": [ 4.0, -0.25, 4.0 ],
-							"to": [ 4.5, 0.75, 4.5 ],
-							"rotationOrigin": [ 4.0, 0.0, 4.0 ],
-							"faces": {
-								"north": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
-								"east": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
-								"south": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
-								"west": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
-								"up": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
-								"down": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 0.5 ] }
-							}
-						},
-						{
-							"name": "Rivet16",
-							"from": [ 4.0, -0.25, 0.5 ],
-							"to": [ 4.5, 0.75, 1.0 ],
-							"rotationOrigin": [ 4.0, 0.0, 1.0 ],
-							"faces": {
-								"north": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
-								"east": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
-								"south": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
-								"west": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
-								"up": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
-								"down": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 0.5 ] }
-							}
-						},
-						{
 							"name": "Cube14",
 							"from": [ 0.25, -4.5, 0.2503 ],
 							"to": [ 4.75, 0.0, 4.7503 ],
@@ -536,12 +481,12 @@
 								{
 									"name": "Rivet17",
 									"from": [ 0.5, -0.25, 0.5 ],
-									"to": [ 1.0, 0.75, 1.0 ],
+									"to": [ 1.0, 5.75, 1.0 ],
 									"faces": {
-										"north": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
-										"east": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
-										"south": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
-										"west": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
+										"north": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 6.0 ] },
+										"east": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 6.0 ] },
+										"south": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 6.0 ] },
+										"west": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 6.0 ] },
 										"up": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
 										"down": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 0.5 ] }
 									}
@@ -549,13 +494,13 @@
 								{
 									"name": "Rivet18",
 									"from": [ 0.5, -0.25, 4.0 ],
-									"to": [ 1.0, 0.75, 4.5 ],
+									"to": [ 1.0, 5.75, 4.5 ],
 									"rotationOrigin": [ 1.0, 0.0, 4.0 ],
 									"faces": {
-										"north": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
-										"east": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
-										"south": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
-										"west": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
+										"north": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 6.0 ] },
+										"east": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 6.0 ] },
+										"south": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 6.0 ] },
+										"west": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 6.0 ] },
 										"up": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
 										"down": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 0.5 ] }
 									}
@@ -563,13 +508,13 @@
 								{
 									"name": "Rivet19",
 									"from": [ 4.0, -0.25, 4.0 ],
-									"to": [ 4.5, 0.75, 4.5 ],
+									"to": [ 4.5, 5.75, 4.5 ],
 									"rotationOrigin": [ 4.0, 0.0, 4.0 ],
 									"faces": {
-										"north": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
-										"east": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
-										"south": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
-										"west": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
+										"north": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 6.0 ] },
+										"east": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 6.0 ] },
+										"south": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 6.0 ] },
+										"west": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 6.0 ] },
 										"up": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
 										"down": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 0.5 ] }
 									}
@@ -577,13 +522,13 @@
 								{
 									"name": "Rivet20",
 									"from": [ 4.0, -0.25, 0.5 ],
-									"to": [ 4.5, 0.75, 1.0 ],
+									"to": [ 4.5, 5.75, 1.0 ],
 									"rotationOrigin": [ 4.0, 0.0, 1.0 ],
 									"faces": {
-										"north": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
-										"east": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
-										"south": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
-										"west": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
+										"north": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 6.0 ] },
+										"east": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 6.0 ] },
+										"south": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 6.0 ] },
+										"west": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 6.0 ] },
 										"up": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
 										"down": { "texture": "#pipe", "uv": [ 0.0, 0.0, 0.5, 0.5 ] }
 									}
