@@ -1,6 +1,5 @@
 {
 	"editor": {
-		"collapsedPaths": "Root/PipeConNorth11,Root/center",
 		"allAngles": false,
 		"entityTextureMode": false
 	},
@@ -693,9 +692,9 @@
 		},
 		{
 			"name": "WireConnection",
-			"from": [ 5.13, 10.0, 5.13 ],
-			"to": [ 6.13, 11.0, 6.13 ],
-			"rotationOrigin": [ 5.0, 10.0, 4.5 ],
+			"from": [ 5.13, 10.25, 5.13 ],
+			"to": [ 6.13, 11.25, 6.13 ],
+			"rotationOrigin": [ 5.13, 10.25, 5.13 ],
 			"faces": {
 				"north": { "texture": "#gold", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
 				"east": { "texture": "#gold", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
