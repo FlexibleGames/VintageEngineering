@@ -247,5 +247,8 @@
 	"vinteng:block-vefluidtank-temporalsteel": "Quantum Fluid Tank",
 	"vinteng:blockdesc-vefluidtank-temporalsteel": "A tank that is quantumly entangled with any tank that shares its channel. Channel set via GUI. 50k L Capacity",
 	"vinteng:block-vefluidtank-infsink": "Infinite Sink/Source",
-	"vinteng:blockdesc-vefluidtank-infsink": "A creative fluid sink or source. Right click with a full bucket to set infinite source fluid portion type."
+	"vinteng:blockdesc-vefluidtank-infsink": "A creative fluid sink or source. Right click with a full bucket to set infinite source fluid portion type.",
+	"vinteng:gui-word-pumping": "Pumping",
+	"vinteng:gui-word-not": "Not",
+	"vinteng:gui-word-remaining": "Remaining"
 }

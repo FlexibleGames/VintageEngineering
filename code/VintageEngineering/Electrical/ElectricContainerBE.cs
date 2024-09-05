@@ -39,7 +39,7 @@ namespace VintageEngineering.Electrical
             base.OnBlockPlaced(byItemStack);
             // <see cref="BlockEntityContainer.OnBlockPlaced"/> has a bug where it doesn't call the
             // block entity behaviors. So call them here to work around the bug.
-            foreach (var behavior in Behaviors)
+            foreach (BlockEntityBehavior behavior in Behaviors)
             {
                 behavior.OnBlockPlaced(byItemStack);
             }

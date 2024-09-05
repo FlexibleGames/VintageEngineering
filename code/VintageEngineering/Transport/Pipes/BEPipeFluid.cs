@@ -29,6 +29,14 @@ namespace VintageEngineering.Transport.Pipes
 
         public override bool CanConnectTo(IWorldAccessor world, BlockPos pos, BlockFacing toFace = null)
         {
+            IVELiquidInterface liq = world.BlockAccessor.GetBlock(pos).GetInterface<IVELiquidInterface>(world, pos);
+            if (liq != null)
+            {
+                ItemSlot pull = liq.GetLiquidAutoPullFromSlot(toFace);
+                ItemSlot push = liq.GetLiquidAutoPushIntoSlot(toFace);
+                if (pull != null || push != null) return true;
+            }
+
             IBlockEntityContainer bec = world.BlockAccessor.GetBlock(pos).GetInterface<IBlockEntityContainer>(world, pos);
             if (bec != null)
             {
@@ -38,8 +46,6 @@ namespace VintageEngineering.Transport.Pipes
                     if (slot is ItemSlotLiquidOnly) return true;
                 }
             }
-            IVELiquidInterface liq = world.BlockAccessor.GetBlock(pos).GetInterface<IVELiquidInterface>(world, pos);
-            if (liq != null) return true;
 
             // for debugging, until we get a pump
             Block blockat = world.BlockAccessor.GetBlock(pos, BlockLayersAccess.FluidOrSolid);

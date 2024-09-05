@@ -159,6 +159,7 @@ namespace VintageEngineering
             api.RegisterBlockEntityClass("VEBEItemPipe", typeof(BEPipeItem));
             api.RegisterBlockEntityClass("VEBEFluidPipe", typeof(BEPipeFluid));
             api.RegisterBlockEntityClass("VEBEFluidTank", typeof(BEFluidTank));
+            api.RegisterBlockEntityClass("VEBELVPump", typeof(BELVPump));
         }
 
         public override void Dispose()

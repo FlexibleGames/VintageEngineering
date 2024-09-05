@@ -36,15 +36,17 @@ namespace VintageEngineering.API
         float TransferSizeLitresPerSecond { get; }
 
         /// <summary>
-        /// Returns ItemSlot for pushing liquid into.
+        /// Returns ItemSlot for pushing liquid into.<br/>
+        /// blockFacing and fromSlot can be null.
         /// </summary>
         /// <param name="blockFacing">Block Facing</param>
         /// <param name="fromSlot">Slot containing source liquid.</param>
         /// <returns>ItemSlot for pushing into.</returns>
-        ItemSlotLiquidOnly GetLiquidAutoPushIntoSlot(BlockFacing blockFacing, ItemSlot fromSlot);
+        ItemSlotLiquidOnly GetLiquidAutoPushIntoSlot(BlockFacing blockFacing, ItemSlot fromSlot = null);
 
         /// <summary>
-        /// Returns ItemSlot for pulling liquids OUT.
+        /// Returns ItemSlot for pulling liquids OUT.<br/>
+        /// blockFacing can be null
         /// </summary>
         /// <param name="blockFacing">Block Facing</param>
         /// <returns>ItemSlot to pull from.</returns>

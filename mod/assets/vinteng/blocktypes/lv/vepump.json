@@ -1,7 +1,7 @@
 {
 	"code": "vepump",
 	"class": "VEElectricBlock",
-	"entityClass": "VEBELogSplitter",
+	"entityClass": "VEBELVPump",
 	"entityBehaviors": [
 		{ "name": "Animatable" },
 		{

@@ -17,12 +17,12 @@ namespace VintageEngineering.API
             this.MaxSlotStackSize = (int)(capacityLitres * 100);
         }
 
-        public void SetCapacity(int capacity)
+        public void SetCapacity(int capacity, int itemperliter = 100)
         {
             if (CapacityLitres != capacity)
             {
                 CapacityLitres = capacity;
-                MaxSlotStackSize = capacity * 100; // as a default, gets specific when you put something in here
+                MaxSlotStackSize = capacity * itemperliter; // as a default, gets specific when you put something in here
             }
         }
 

@@ -115,7 +115,7 @@ namespace VintageEngineering.Transport.Handlers
                 }
                 else
                 {
-                    IVELiquidInterface iliq = world.BlockAccessor.GetBlock(node.BlockPosition).GetInterface<IVELiquidInterface>(world, node.BlockPosition);
+                    IVELiquidInterface iliq = world.BlockAccessor.GetBlock(node.BlockPosition.AddCopy(BlockFacing.FromCode(node.FaceCode), 1)).GetInterface<IVELiquidInterface>(world, node.BlockPosition.AddCopy(BlockFacing.FromCode(node.FaceCode), 1));
                     if (iliq != null)
                     {
                         return iliq.GetLiquidAutoPullFromSlot(BlockFacing.FromCode(node.FaceCode).Opposite);

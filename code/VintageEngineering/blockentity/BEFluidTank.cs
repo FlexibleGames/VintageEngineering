@@ -113,18 +113,12 @@ namespace VintageEngineering.blockentity
         }
 
         public ItemSlotLiquidOnly GetLiquidAutoPushIntoSlot(BlockFacing blockFacing, ItemSlot fromSlot)
-        {
+        {            
             foreach (int slot in InputLiquidContainerSlotIDs)
             {
                 if (Inventory[slot].Empty) continue;
-                if (fromSlot.Itemstack.Equals(Api.World, Inventory[slot].Itemstack, GlobalConstants.IgnoredStackAttributes))
-                {
-                    //WaterTightContainableProps props = BlockLiquidContainerBase.GetContainableProps(Inventory[slot].Itemstack);
-                    //if (props != null)
-                    //{
-                    //    int perliter = (int)props.ItemsPerLitre;
-
-                    //}
+                if (fromSlot != null && fromSlot.Itemstack.Equals(Api.World, Inventory[slot].Itemstack, GlobalConstants.IgnoredStackAttributes))
+                {                    
                     if (Inventory[slot].Itemstack.StackSize == Inventory[slot].MaxSlotStackSize) continue;
 
                     return Inventory[slot] as ItemSlotLiquidOnly;
@@ -134,6 +128,7 @@ namespace VintageEngineering.blockentity
             {
                 if (Inventory[slot].Empty) return Inventory[slot] as ItemSlotLiquidOnly;
             }
+            if (InputLiquidContainerSlotIDs.Length == 1) return Inventory[0] as ItemSlotLiquidOnly;
             return null;
         }
         #endregion

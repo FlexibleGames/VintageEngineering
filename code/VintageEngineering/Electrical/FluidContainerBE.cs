@@ -57,7 +57,7 @@ namespace VintageEngineering.Electrical
             foreach (int slot in InputLiquidContainerSlotIDs)
             {
                 if (Inventory[slot].Empty) continue;
-                if (fromSlot.Itemstack.Equals(Api.World, Inventory[slot].Itemstack, GlobalConstants.IgnoredStackAttributes))
+                if (fromSlot != null && fromSlot.Itemstack.Equals(Api.World, Inventory[slot].Itemstack, GlobalConstants.IgnoredStackAttributes))
                 {
                     return Inventory[slot] as ItemSlotLiquidOnly;
                 }
