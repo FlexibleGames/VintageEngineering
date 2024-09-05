@@ -106,7 +106,7 @@ namespace VintageEngineering.blockentity
             
             if (api.Side == EnumAppSide.Server) 
             {
-                if (CheckForFluid()) TyronThreadPool.QueueTask(GetFluids, "VELVPump");
+                if (CheckForFluid() && !_isinfinite) TyronThreadPool.QueueTask(GetFluids, "VELVPump");
                 else _ischeckingfluid = false;
             }
         }
@@ -236,6 +236,10 @@ namespace VintageEngineering.blockentity
                     }
                 }
             }
+            if (!inventory[0].Empty && IsTankOnTop()) // need to call this even if we didn't pump anything this tick
+            {
+                TryPushIntoTank(); // will try to push whatever it can into a tank...
+            }            
         }
 
         public static WaterTightContainableProps GetWPropsFromPos(IWorldAccessor world, BlockPos pos)
@@ -248,6 +252,31 @@ namespace VintageEngineering.blockentity
                 return props;
             }
             return null;
+        }
+
+        public bool IsTankOnTop()
+        {
+            BlockPos above = Pos.UpCopy(1);
+            return Api.World.BlockAccessor.GetBlockEntity(above) is BEFluidTank;
+        }
+
+        public void TryPushIntoTank()
+        {
+            if (inventory[0].Empty) return; // sanity check 1
+            WaterTightContainableProps wprops = BlockLiquidContainerBase.GetContainableProps(inventory[0].Itemstack);
+            if (wprops == null) return; // sanity check 2
+            BEFluidTank tank = Api.World.BlockAccessor.GetBlockEntity(Pos.UpCopy(1)) as BEFluidTank;
+            if (tank == null) return; // sanity check 3
+            int amounttomove = 0;
+            if (!tank.Inventory[0].Empty) { amounttomove = tank.Inventory[0].MaxSlotStackSize - tank.Inventory[0].Itemstack.StackSize; }
+            else amounttomove = tank.Inventory[0].MaxSlotStackSize;
+            if (amounttomove == 0f) return; // sanity check 4
+            if (inventory[0].Itemstack.StackSize < amounttomove) amounttomove = inventory[0].Itemstack.StackSize;
+            ItemStackMoveOperation ismo = new ItemStackMoveOperation(Api.World, EnumMouseButton.Left, (EnumModifierKey)0, EnumMergePriority.AutoMerge, amounttomove);
+            int moved = 0;
+            moved = (tank.Inventory[0] as ItemSlotLargeLiquid).TryTakeFrom(inventory[0], ref ismo);
+            if (moved == 0) return;  
+            else MarkDirty(true);
         }
 
         /// <summary>
@@ -301,7 +330,10 @@ namespace VintageEngineering.blockentity
                                 BlockPos end = bpos.AddCopy(1, 1, 1);
                                 Api.World.BlockAccessor.WalkBlocks(start, end, delegate (Block dblock, int x, int y, int z)
                                 {
-                                    if (dblock.BlockId != 0 && dblock.IsLiquid() && dblock.LiquidCode == blockbelow.LiquidCode)
+                                    // TODO some sort of infinite fluid blacklist check
+                                    if (_fluidpositions.Count == 10000) return;
+
+                                    if (dblock.BlockId != 0 && dblock.IsLiquid() && dblock.LiquidCode == _fluidtype)
                                     {
                                         BlockPos bcheck = new BlockPos(x, y, z, 0);
                                         // TODO make pump range a config value check
@@ -320,11 +352,9 @@ namespace VintageEngineering.blockentity
                                                 if (!_fluidsubs.Contains(bcheck))
                                                 {
                                                     _fluidsubs.Add(bcheck);
-                                                    _toadd.Add(bcheck);
+                                                    _toadd.Add(bcheck); // ONLY add to check if we haven't already checked it, prevents infinite loop
                                                 }
                                             }                                            
-                                            // TODO some sort of infinite fluid blacklist check
-                                            if (_fluidpositions.Count == 10000) return;
                                         }
                                     }
                                 }, false);
@@ -337,6 +367,7 @@ namespace VintageEngineering.blockentity
                             }
                             _toadd.Clear();
                         }
+                        _fluidsubs.Clear();
                     }
                 }
             }
