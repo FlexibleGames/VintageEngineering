@@ -10,13 +10,15 @@
 				"canExtractPower": false,
 				"canReceivePower": true,
 				"entitytype": "Consumer",
-				"maxpower": 1000,
-				"maxpps": 200
+				"maxpower": 2000,
+				"maxpps": 1200
 			}
 		}
 	],
 	"attributes": {
 		"craftinganimcode": "craft",
+		"powerperblockpumped": 200,
+		"powerpertankpush": 50,
 		"priority": 5,
         "wireNodes": [
             {

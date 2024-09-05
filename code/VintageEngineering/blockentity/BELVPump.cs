@@ -50,6 +50,9 @@ namespace VintageEngineering.blockentity
         private bool _isinfinite = false;
         private int _pumpcount = 0; // used only on client
 
+        private int _powerPerBlockPumped = 200;
+        private int _powerPerTankPush = 50;
+
         public ItemSlotLargeLiquid Tank => inventory[0] as ItemSlotLargeLiquid;
 
         protected BlockEntityAnimationUtil AnimUtil
@@ -103,7 +106,8 @@ namespace VintageEngineering.blockentity
             }
             inventory.Pos = this.Pos;
             inventory.LateInitialize($"{InventoryClassName}-{this.Pos.X}/{this.Pos.Y}/{this.Pos.Z}", api);
-            
+            _powerPerBlockPumped = base.Block.Attributes["powerperblockpumped"].AsInt(200);
+            _powerPerTankPush = base.Block.Attributes["powerpertankpush"].AsInt(50);
             if (api.Side == EnumAppSide.Server) 
             {
                 if (CheckForFluid() && !_isinfinite) TyronThreadPool.QueueTask(GetFluids, "VELVPump");
@@ -123,7 +127,7 @@ namespace VintageEngineering.blockentity
                 return; 
             }
             // we don't have enough power
-            if (Electric.CurrentPower < Electric.MaxPPS)
+            if (Electric.CurrentPower < ((ulong)_powerPerBlockPumped))
             {
                 SetState(EnumBEState.Paused);
                 return; 
@@ -191,7 +195,7 @@ namespace VintageEngineering.blockentity
                                 Api.World.BlockAccessor.TriggerNeighbourBlockUpdate(last.Position);
                                 _fluidpositions.Remove(last);
                             }
-                            Electric.electricpower -= Electric.MaxPPS;
+                            Electric.electricpower -= ((ulong)_powerPerBlockPumped);
                             MarkDirty(true);
                         }
                     }
@@ -231,7 +235,7 @@ namespace VintageEngineering.blockentity
                             _fluidpositions.Remove(last);
                         }
                         if (Electric.MachineState != EnumBEState.On) SetState(EnumBEState.On);
-                        Electric.electricpower -= Electric.MaxPPS;
+                        Electric.electricpower -= ((ulong)_powerPerBlockPumped);
                         MarkDirty(true);
                     }
                 }
@@ -270,13 +274,19 @@ namespace VintageEngineering.blockentity
             int amounttomove = 0;
             if (!tank.Inventory[0].Empty) { amounttomove = tank.Inventory[0].MaxSlotStackSize - tank.Inventory[0].Itemstack.StackSize; }
             else amounttomove = tank.Inventory[0].MaxSlotStackSize;
-            if (amounttomove == 0f) return; // sanity check 4
+            if (amounttomove == 0) return; // sanity check 4
+            
+            if (Electric.CurrentPower < ((ulong)_powerPerTankPush)) return; // not enough power to push
             if (inventory[0].Itemstack.StackSize < amounttomove) amounttomove = inventory[0].Itemstack.StackSize;
             ItemStackMoveOperation ismo = new ItemStackMoveOperation(Api.World, EnumMouseButton.Left, (EnumModifierKey)0, EnumMergePriority.AutoMerge, amounttomove);
             int moved = 0;
             moved = (tank.Inventory[0] as ItemSlotLargeLiquid).TryTakeFrom(inventory[0], ref ismo);
             if (moved == 0) return;  
-            else MarkDirty(true);
+            else 
+            {
+                Electric.electricpower -= ((ulong)_powerPerTankPush);
+                MarkDirty(true); 
+            }
         }
 
         /// <summary>
