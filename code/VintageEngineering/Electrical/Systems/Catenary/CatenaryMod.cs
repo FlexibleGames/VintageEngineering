@@ -118,16 +118,16 @@ namespace VintageEngineering.Electrical.Systems.Catenary
                 capi = api as ICoreClientAPI;
                 clientChannel = capi.Network.RegisterChannel("catenarymod")
                     .RegisterMessageType(typeof(WireConnectionData))
-                    .SetMessageHandler<WireConnectionData>(onDataFromServer)
+                    .SetMessageHandler<WireConnectionData>(OnDataFromServer)
                     .RegisterMessageType(typeof(CatenaryData))
-                    .SetMessageHandler<CatenaryData>(onWireDataFromServer);
+                    .SetMessageHandler<CatenaryData>(OnWireDataFromServer);
             }
             else
             {
                 sapi = api as ICoreServerAPI;
                 serverChannel = sapi.Network.RegisterChannel("catenarymod")
                     .RegisterMessageType(typeof(WireConnectionData))
-                    .SetMessageHandler<WireConnectionData>(onDataFromClient)
+                    .SetMessageHandler<WireConnectionData>(OnDataFromClient)
                     .RegisterMessageType(typeof(CatenaryData));
             }
             api.RegisterBlockClass("CatenaryBlockWire", typeof(BlockWire));            
@@ -138,7 +138,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
         /// Update client with fresh catenary data, this will not contain meshes or meshrefs.
         /// </summary>
         /// <param name="packet">CatenaryData</param>
-        private void onWireDataFromServer(CatenaryData packet)
+        private void OnWireDataFromServer(CatenaryData packet)
         {
             // the wire renderer holds a copy of this data that contains the mesh and VAO meshrefs
             // as the server doesn't care about those.
@@ -151,7 +151,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
         /// </summary>
         /// <param name="fromPlayer">Player who sent the packet</param>
         /// <param name="packet">The packet of type WireConnectionData</param>
-        private void onDataFromClient(IServerPlayer fromPlayer, WireConnectionData packet)
+        private void OnDataFromClient(IServerPlayer fromPlayer, WireConnectionData packet)
         {
             if (packet != null)
             {
@@ -177,7 +177,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
             }
         }
 
-        private void onDataFromServer(WireConnectionData packet)
+        private void OnDataFromServer(WireConnectionData packet)
         {
             throw new NotImplementedException();
         }
