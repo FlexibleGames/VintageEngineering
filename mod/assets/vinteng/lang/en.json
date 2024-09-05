@@ -250,5 +250,7 @@
 	"vinteng:blockdesc-vefluidtank-infsink": "A creative fluid sink or source. Right click with a full bucket to set infinite source fluid portion type.",
 	"vinteng:gui-word-pumping": "Pumping",
 	"vinteng:gui-word-not": "Not",
-	"vinteng:gui-word-remaining": "Remaining"
+	"vinteng:gui-word-remaining": "Remaining",
+	"vinteng:gui-ischecking": "Checking Fluid Volume...",
+	"vinteng:gui-isinfinite": "Source is considered infinite."
 }
