@@ -213,9 +213,11 @@ namespace VintageEngineering.Electrical.Systems.Catenary
 
         private void Event_SaveGameLoaded()
         {
+            byte[] bdata = sapi.WorldManager.SaveGame.GetData("catenarydata");
             try
             {
-                data = SerializerUtil.Deserialize<CatenaryData>(sapi.WorldManager.SaveGame.GetData("catenarydata"));
+                if (bdata != null) data = SerializerUtil.Deserialize<CatenaryData>(bdata);
+                else data = new CatenaryData();
             }
             catch (Exception e)
             {
