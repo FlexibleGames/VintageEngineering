@@ -13,9 +13,9 @@ A mod for Vintage Story inspired by Immersive Engineering. A massive project tha
 The mod will expand late-game play as steel is the primary material used for its machines. Players will be expected to produce steel via the vanilla mechanics several times before they have enough for the alloy process using coke and iron.
 
 - Crushing, smelting, grinding, refining, distilling, etc via multiblock machines.
-- Fluid movement, pumping, tanks.
-- Electrical system, power generation using Coal and oil based combustion, then expanding into more modern power options (nuclear?).
-- Pipez-style system for moving goods and fluids around.
+- Fluid movement, pumping, tanks. (DONE)
+- Electrical system (DONE), power generation using Coal and oil based combustion, then expanding into more modern power options (nuclear?).
+- Pipez-style system for moving goods and fluids around. (DONE)
 
 ## Building
 Set the VINTAGE_STORY environmental variable before loading or trying to build the project. The [wiki](https://wiki.vintagestory.at/index.php/Modding:Preparing_For_Code_Mods#Creating_an_Environment_Variable) has directions for setting the variable on Windows.
