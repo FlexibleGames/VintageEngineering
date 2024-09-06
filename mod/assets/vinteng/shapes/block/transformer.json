@@ -10,7 +10,7 @@
 	"textures": {
 		"castiron": "block/castiron",
 		"gold": "block/gold",
-		"machinery": "block/machinery",
+		"machinery": "block/lv_machinery/machinery",
 		"wornsteel": "block/wornsteel",
 		"copperspoolrotated": "block/copperspoolrotated"
 	},

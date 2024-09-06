@@ -11,9 +11,9 @@
 	"textures": {
 		"castiron": "block/castironport",
 		"gold": "block/gold",
-		"machinery": "block/machinery",
-		"machinery-back": "block/machinery-back",
-		"machinery-firebox": "block/machinery-firebox",
+		"machinery": "block/lv_machinery/machinery",
+		"machinery-back": "block/lv_machinery/machinery-back",
+		"machinery-firebox": "block/lv_machinery/machinery-firebox",
 		"wires": "block/tin-wires"
 	},
 	"elements": [
