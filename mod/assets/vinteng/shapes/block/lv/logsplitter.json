@@ -11,7 +11,7 @@
 		"castiron": "block/castiron",
 		"roundgauge-0": "block/gauge/roundgauge-0",
 		"gold": "block/gold",
-		"machinery": "block/machinery",
+		"machinery": "block/lv_machinery/machinery",
 		"oak1": "block/oak1",
 		"shinyiron": "block/shinyiron"
 	},

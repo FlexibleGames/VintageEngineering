@@ -11,7 +11,7 @@
 		"castiron": "block/castiron",
 		"gold": "block/gold",
 		"industrialglass-plain": "block/industrialglass-plain",
-		"machinery": "block/machinery",
+		"machinery": "block/lv_machinery/machinery",
 		"wornsteel": "block/wornsteel"
 	},
 	"elements": [

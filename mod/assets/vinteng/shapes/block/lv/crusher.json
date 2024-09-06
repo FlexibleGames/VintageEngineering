@@ -12,8 +12,8 @@
 		"castiron": "block/castiron",
 		"castiron-fence": "block/castiron-fence",
 		"gold": "block/gold",
-		"machinery-border-small": "block/macerator-border-small",
-		"machinery": "block/machinery-back"
+		"machinery-border-small": "block/lv_machinery/macerator-border-small",
+		"machinery": "block/lv_machinery/machinery-back"
 	},
 	"elements": [
 		{
