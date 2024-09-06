@@ -11,8 +11,8 @@
 	"textures": {
 		"castiron": "block/castiron",
 		"gold": "block/gold",
-		"machinery-back": "block/machinery-back",
-		"machinery-border-small": "block/machinery-border-small",
+		"machinery-back": "block/lv_machinery/machinery-back",
+		"machinery-border-small": "block/lv_machinery/machinery-border-small",
 		"wires": "block/tin-wires"
 	},
 	"elements": [

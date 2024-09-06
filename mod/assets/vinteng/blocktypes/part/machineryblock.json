@@ -17,10 +17,10 @@
 	"sideopaque": { "all": true },
 	"maxStackSize": 8,
 	"texturesByType": {
-		"*-tinbronze": { "all": { "base": "vinteng:block/machinery" }},
-		"*-iron": { "all": { "base": "vinteng:block/castiron" }},
-		"*-steel": { "all": { "base": "vinteng:block/wornsteelplate" }},
-		"*-temporalsteel": { "all": { "base": "vinteng:block/temporalsteel" }}
+		"*-tinbronze": { "all": { "base": "vinteng:block/lv_machinery/machinery" }},
+		"*-iron": { "all": { "base": "vinteng:block/lv_machinery/castiron" }},
+		"*-steel": { "all": { "base": "vinteng:block/lv_machinery/wornsteelplate" }},
+		"*-temporalsteel": { "all": { "base": "vinteng:block/lv_machinery/temporalsteel" }}
 	},
 	"resistance": 2,
 	"lightAbsorption": 1,

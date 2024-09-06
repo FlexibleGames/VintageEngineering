@@ -40,7 +40,7 @@
 	"shape": { "base": "vinteng:block/fluidtank" },
 	"blockmaterial": "Metal",
 	"texturesByType": {
-        "*-tinbronze": { "bronze": { "base": "block/bronze"}, "machinery": { "base": "block/machinery"} },
+        "*-tinbronze": { "bronze": { "base": "block/bronze"}, "machinery": { "base": "block/lv_machinery/machinery"} },
         "*-iron": { "bronze": { "base": "block/wornsteelplate"}, "machinery": { "base": "block/wornsteelplate"} },
         "*-steel": { "bronze": { "base": "block/shinyiron"}, "machinery": { "base": "block/shinyiron"} },
         "*-temporalsteel": { "bronze": { "base": "block/temporalsteel"}, "machinery": { "base": "block/temporalsteel"} },
