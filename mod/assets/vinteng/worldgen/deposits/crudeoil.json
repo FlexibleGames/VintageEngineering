@@ -1,0 +1,18 @@
+[
+	{
+		"code": "crudeoil",
+		"triesPerChunk": 6,
+		"withBlockCallback": false,
+		"generator": "disc-followsealevel",
+		"handbookPageCode": "crudeoil",
+		"attributes": {
+			"inblock": { "code": "rock-*", "name": "rock", "allowedVariants": ["claystone", "sandstone", "shale", "chalk", "limestone", "chert", "conglomerate"] },
+			"placeblock":   { "code": "vinteng:crudeoil-still-7" },
+			"surfaceBlock": { "code": "game:looseores-bituminouscoal-{rock}-free" },
+			"surfaceBlockChance": 0.30,
+			"radius": { "dist": "gaussian", "avg": 12, "var": 6 },
+			"yPosRel": { "dist": "gaussian", "avg": 0.6, "var": 0.2 },
+			"thickness": { "dist": "uniform", "avg": 8, "var": 4 }
+		}
+	}
+]

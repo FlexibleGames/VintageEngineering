@@ -1,0 +1,37 @@
+[
+	{
+		"code": "crudeoilwell",
+		"triesPerChunk": 0.06,
+		"withBlockCallback": true,
+		"generator": "disc-followsealevel",
+		"handbookPageCode": "crudeoilwell",
+		"attributes": {
+			"inblock": { "code": "rock-*" },
+			"placeblock":   { "code": "vinteng:crudeoilwell" },
+			"radius": { "dist": "uniform", "avg": 1, "var": 0 },
+			"yPosRel": { "dist": "uniform", "avg": 0.0, "var": 0.01 },
+			"thickness": { "dist": "uniform", "avg": 1, "var": 0 }
+		}
+	},
+	{
+		"code": "crudeoilwell_desert",
+		"triesPerChunk": 0.2,
+		"withBlockCallback": true,
+		"generator": "disc-followsealevel",
+		"handbookPageCode": "crudeoilwell",
+		"attributes": {
+			"inblock": { "code": "rock-*" },
+			"placeblock":   { "code": "vinteng:crudeoilwell" },
+			"radius": { "dist": "uniform", "avg": 1, "var": 0 },
+			"yPosRel": { "dist": "uniform", "avg": 0.0, "var": 0.01 },
+			"thickness": { "dist": "uniform", "avg": 1, "var": 0 }
+		},
+		"climate": {
+			"minRain": 0.0,
+			"maxRain": 0.4,
+			"minTemp": 18,
+			"maxTemp": 50,
+			"maxY": 0.01
+		}
+	}
+]

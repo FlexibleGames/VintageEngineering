@@ -139,6 +139,8 @@ namespace VintageEngineering
             api.RegisterBlockClass("VEPipeBlock", typeof(BlockPipeBase));
 
             api.RegisterBlockClass("VEBlockFluidTank", typeof(BlockFluidTank));
+
+            api.RegisterBlockClass("BlockCrudeOil", typeof(BlockCrudeOil));
         }
         public void RegisterBlockEntities(ICoreAPI api)
         {

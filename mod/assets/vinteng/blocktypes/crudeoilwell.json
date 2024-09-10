@@ -1,0 +1,44 @@
+{
+	"code": "crudeoilwell",
+	"class": "BlockCrudeOilWell",
+	"entityClass": "VEBECrudeOilWell",
+	"drawtype": "cube",
+	"shape": { "base": "game:block/basic/cube" },
+	"sidesolid": { "all": true },
+	"sideopaque": { "all": true },
+	"attributes": {
+		"maxDepositRadius": 8,
+		"minDepositRadius": 3,
+		"minTempForLarge": 28,
+		"maxTempForLarge": 50,
+		"minRainForLarge": 0,
+		"maxRainForLarge": 0.4,
+		"extraRadiusLarge": 4,
+		"oddsForLarge": 0.25,
+		"oilblockcode": "vinteng:crudeoil",
+		"oilportioncode": "vinteng:crudeoilportion",
+		"trickleportions": 100,
+		"canbeinfinite": true,
+		"maxdepositblocks": 200000,
+		"mindepositblocks": 1500
+	},
+	"blockmaterial": "Metal",
+	"creativeinventory": { "general": ["*"] },
+	"replaceable": 0,
+	"resistance": 10000,
+	"requiredMiningTier": 50,
+	"lightAbsorption": 1,
+	"emitSideAo": {
+		"all": false
+	},
+	"textures": {
+		"all": {"base": "block/darkiron" }
+	},
+	"sounds": {
+		"place": "game:block/anvil",
+		"break": "game:block/anvil",
+		"hit": "game:block/rock-hit-pickaxe",
+		"walk": "game:walk/stone"
+	},
+	"drops": []
+}

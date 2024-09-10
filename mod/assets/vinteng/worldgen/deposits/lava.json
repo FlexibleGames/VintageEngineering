@@ -1,0 +1,18 @@
+[
+	{
+		"code": "lava",
+		"triesPerChunk": 4,
+		"withBlockCallback": false,
+		"generator": "disc-followsealevel",
+		"handbookPageCode": "lava",
+		"attributes": {
+			"inblock": { "code": "rock-*", "name": "rock", "allowedVariants": ["basalt"] },
+			"placeblock": { "code": "game:lava-still-7" },
+			"surfaceBlock": { "code": "game:loosestones-obsidian-free" },
+			"surfaceBlockChance": 0.40,
+			"radius": { "dist": "gaussian", "avg": 14, "var": 6 },
+			"yPosRel": { "dist": "invexp", "avg": 0.05, "var": 0.2 },
+			"thickness": { "dist": "uniform", "avg": 4, "var": 2 }
+		}
+	}
+]

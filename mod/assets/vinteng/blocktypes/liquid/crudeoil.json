@@ -1,0 +1,179 @@
+{
+	"code": "crudeoil",
+	"class": "BlockCrudeOil",
+	"behaviors":
+	[
+		{
+			"name": "FiniteSpreadingLiquid",
+			"properties":
+			{
+				"spreadDelay": 1000,
+				"liquidCollisionSound": "sizzle",
+				"sourceReplacementCode": "game:rock-obsidian",
+				"flowingReplacementCode": "game:rock-basalt",
+				"collidesWith": "lava"
+			}
+		},
+		{
+			"name": "FiniteSpreadingLiquid",
+			"properties":
+			{
+				"spreadDelay": 1000,
+				"liquidCollisionSound": "sizzle",
+				"sourceReplacementCode": "game:sludgygravel",
+				"flowingReplacementCode": "game:sludgygravel",
+				"collidesWith": "water"
+			}
+		}
+	],
+	"attributes": {
+		"pushVectorByType": {
+			"*-n-*": { "x": 0, "y": 0, "z": -0.0015 },
+			"*-ne-*": { "x": 0.0015, "y": 0, "z": -0.0015 },
+			"*-e-*": { "x": 0.0015, "y": 0, "z": 0 },
+			"*-se-*": { "x": 0.0015, "y": 0, "z": 0.0015 },
+			"*-s-*": { "x": 0, "y": 0, "z": 0.0015 },
+			"*-sw-*": { "x": -0.0015, "y": 0, "z": 0.0015 },
+			"*-w-*": { "x": -0.0015, "y": 0, "z": 0 },
+			"*-nw-*": { "x": -0.0015, "y": 0, "z": -0.0015 },
+			"*-d-*": { "x": 0, "y": -0.003, "z": 0 },
+		},
+		"waterTightContainerProps": {
+			"containable": true,
+			"itemsPerLitre": 0.001,
+			"whenFilled": { "stack": { "type": "item", "code": "vinteng:crudeoilportion" } },
+			"allowSpill": true,
+			"whenSpilled": {
+				"action": "DropContents",
+				"stack": { "type": "item", "code": "vinteng:crudeoilportion" }
+			}
+		}
+	},
+	"shape": { "base": "game:block/basic/cube" },
+	"variantgroups": [
+		{ "code": "flow", "states": ["n", "ne", "e", "se", "s", "sw", "w", "nw", "d", "still"] },
+		{ "code": "height", "states": ["1", "2", "3", "4", "5", "6", "7"] }
+	],
+	"drawtype": "liquid",
+	"renderpass": "liquid",
+	"matterstate": "liquid",
+	"blockmaterial": "liquid",
+	"faceCullMode": "liquid",
+	"liquidCode": "crudeoil",
+	"snowCoverage": false,
+	"materialdensity": 3000,
+	"creativeinventory": { "general": ["crudeoil-still-7"], "terrain": ["crudeoil-still-7"] },
+	"replaceable": 9500,
+	"lightAbsorption": 2,
+	"drops": [],
+	"liquidLevelByType": {
+		"*-1": 1,
+		"*-2": 2,
+		"*-3": 3,
+		"*-4": 4,
+		"*-5": 5,
+		"*-6": 6,
+		"*-7": 7
+	},
+	"textures": {
+		"all": { "base": "vinteng:block/liquid/crudeoil" },
+		"specialSecondTexture": { "base": "vinteng:block/liquid/crudeoil2" }
+	},
+	"sidesolid": {
+		"all": false
+	},
+	"sideopaque": {
+		"all": false
+	},
+	"collisionbox": null,
+	"selectionbox": null,
+	"soundsByType": {
+		"crudeoil-still-*": {
+			"place": "game:block/water",
+			"inside": "game:walk/water",
+			"ambient": "game:environment/waterwaves",
+			"ambientBlockCount": 50
+		},
+		"crudeoil-d-*": { "place": "game:block/water", "inside": "game:walk/water", "ambient": "game:environment/waterfall" },
+		"*": { "place": "game:block/water", "inside": "game:walk/water", "ambient": "game:environment/creek" }
+	},
+	"particlePropertiesByType": {
+		"crudeoil-still-*": [],
+		"crudeoil-d-*":
+			[
+			{
+				"comment": "North side",
+				"hsvaColor": [{ "avg": 10, "var": 0 }, { "avg": 0, "var": 0 }, { "avg": 3, "var": 2 },  { "avg": 150, "var": 25 }],
+				"opacityEvolve": { "transform": "quadratic", "factor": -16 },
+				"gravityEffect": { "avg": 0.2, "var": 0 },
+				"posOffset": [ { "avg": -0.1, "var": 0.5 }, { "avg": 0.8, "var": 0.2 }, { "avg": -0.55, "var": 0.05 }],
+				"velocity": [ { "avg": 0, "var": 0.1 }, { "avg": 2, "var": 0 }, { "avg": 0, "var": 0.1 }],
+				"quantity": { "avg": 0.2 },
+				"lifeLength": { "avg": 0.5 },
+				"size": { "avg": 0.4, "var": 0.05 },
+				"sizeEvolve": { "transform": "linear", "factor": 0.7 },
+				"particleModel": "Quad"
+			},
+			{
+				"comment": "East side",
+				"hsvaColor": [{ "avg": 10, "var": 0 }, { "avg": 0, "var": 0 }, { "avg": 3, "var": 2 },  { "avg": 150, "var": 25 }],
+				"opacityEvolve": { "transform": "quadratic", "factor": -16 },
+				"gravityEffect": { "avg": 0.2, "var": 0 },
+				"posOffset": [ { "avg": 0.55, "var": 0.05 }, { "avg": 0.8, "var": 0.2 }, { "avg": 0, "var": 0.5 }],
+				"velocity": [ { "avg": 0, "var": 0.1 }, { "avg": 2, "var": 0 }, { "avg": 0, "var": 0.1 }],
+				"quantity": { "avg": 0.2 },
+				"lifeLength": { "avg": 0.5 },
+				"size": { "avg": 0.4, "var": 0.05 },
+				"sizeEvolve": { "transform": "linear", "factor": 0.7 },
+				"particleModel": "Quad"
+			},
+			{
+				"comment": "South side",
+				"hsvaColor": [{ "avg": 10, "var": 0 }, { "avg": 0, "var": 0 }, { "avg": 3, "var": 2 },  { "avg": 150, "var": 25 }],
+				"opacityEvolve": { "transform": "quadratic", "factor": -16 },
+				"gravityEffect": { "avg": 0.2, "var": 0 },
+				"posOffset": [ { "avg": 0, "var": 0.5 }, { "avg": 0.8, "var": 0.2 }, { "avg": 0.55, "var": 0.05 }],
+				"velocity": [ { "avg": 0, "var": 0.1 }, { "avg": 2, "var": 0 }, { "avg": 0, "var": 0.1 }],
+				"quantity": { "avg": 0.2 },
+				"lifeLength": { "avg": 0.5 },
+				"size": { "avg": 0.4, "var": 0.05 },
+				"sizeEvolve": { "transform": "linear", "factor": 0.7 },
+				"particleModel": "Quad"
+			},
+			{
+				"comment": "West side",
+				"hsvaColor": [{ "avg": 10, "var": 0 }, { "avg": 0, "var": 0 }, { "avg": 3, "var": 2 },  { "avg": 150, "var": 25 }],
+				"opacityEvolve": { "transform": "quadratic", "factor": -16 },
+				"gravityEffect": { "avg": 0.2, "var": 0 },
+				"posOffset": [ { "avg": -0.55, "var": 0.05 }, { "avg": 0.8, "var": 0.2 }, { "avg": 0, "var": 0.5 }],
+				"velocity": [ { "avg": 0, "var": 0.1 }, { "avg": 2, "var": 0 }, { "avg": 0, "var": 0.1 }],
+				"quantity": { "avg": 0.2 },
+				"lifeLength": { "avg": 0.5 },
+				"size": { "avg": 0.4, "var": 0.05 },
+				"sizeEvolve": { "transform": "linear", "factor": 0.7 },
+				"particleModel": "Quad"
+			}
+		],
+		"*": [
+			{
+				"comment": "Up side",
+				"hsvaColor": [{ "avg": 10, "var": 0 }, { "avg": 0, "var": 0 }, { "avg": 3, "var": 2 },  { "avg": 150, "var": 25 }],
+				"opacityEvolve": { "transform": "quadratic", "factor": -16 },
+				"gravityEffect": { "avg": 0.2, "var": 0 },
+				"posOffset": [ { "avg": 0.5, "var": 0.5 }, { "avg": 0.7, "var": 0.2 }, { "avg": 0.5, "var": 0.5 }],
+				"velocity": [ { "avg": 0, "var": 0.1 }, { "avg": 2, "var": 0 }, { "avg": 0, "var": 0.1 }],
+				"quantity": { "avg": 0.2 },
+				"lifeLength": { "avg": 0.5 },
+				"size": { "avg": 0.4, "var": 0.15 },
+				"sizeEvolve": { "transform": "linear", "factor": 0.4 },
+				"particleModel": "Quad"
+			}
+		]
+	},
+	"heldTpIdleAnimation": "holdbothhandslarge", "heldTpUseAnimation": "twohandplaceblock",
+	"tpHandtransform": {
+		"translation": { "x": -1.2, "y": -1.1, "z": -0.8 },
+		"rotation": { "x": -2, "y": 25, "z": -78 },
+		"scale": 0.37
+	}
+}
