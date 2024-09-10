@@ -7,6 +7,9 @@
 	"sidesolid": { "all": true },
 	"sideopaque": { "all": true },
 	"attributes": {
+		"depositgen": true,
+		"spoutgen": true,
+		"poolgen": true,
 		"maxDepositRadius": 8,
 		"minDepositRadius": 3,
 		"minTempForLarge": 28,
@@ -15,12 +18,13 @@
 		"maxRainForLarge": 0.4,
 		"extraRadiusLarge": 4,
 		"oddsForLarge": 0.25,
-		"oilblockcode": "vinteng:crudeoil",
+		"oilblockcode": "vinteng:crudeoil-still-7",
 		"oilportioncode": "vinteng:crudeoilportion",
 		"trickleportions": 100,
 		"canbeinfinite": true,
 		"maxdepositblocks": 200000,
-		"mindepositblocks": 1500
+		"mindepositblocks": 1500,
+		"portionpersecond": 50000
 	},
 	"blockmaterial": "Metal",
 	"creativeinventory": { "general": ["*"] },

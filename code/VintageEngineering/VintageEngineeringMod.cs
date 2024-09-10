@@ -141,6 +141,7 @@ namespace VintageEngineering
             api.RegisterBlockClass("VEBlockFluidTank", typeof(BlockFluidTank));
 
             api.RegisterBlockClass("BlockCrudeOil", typeof(BlockCrudeOil));
+            api.RegisterBlockClass("BlockCrudeOilWell", typeof(BlockCrudeOilWell));
         }
         public void RegisterBlockEntities(ICoreAPI api)
         {
@@ -162,6 +163,8 @@ namespace VintageEngineering
             api.RegisterBlockEntityClass("VEBEFluidPipe", typeof(BEPipeFluid));
             api.RegisterBlockEntityClass("VEBEFluidTank", typeof(BEFluidTank));
             api.RegisterBlockEntityClass("VEBELVPump", typeof(BELVPump));
+
+            api.RegisterBlockEntityClass("VEBECrudeOilWell", typeof(BECrudeOilWell));
         }
 
         public override void Dispose()

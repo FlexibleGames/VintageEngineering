@@ -42,6 +42,11 @@ namespace VintageEngineering.Blocks
             this.Height = ((h != null) ? h.ToInt(0) : 7);            
         }
 
+        public override int GetColor(ICoreClientAPI capi, BlockPos pos)
+        {
+            return ColorUtil.BlackArgb;
+        }
+
         public override bool ShouldPlayAmbientSound(IWorldAccessor world, BlockPos pos)
         {
             return world.BlockAccessor.GetBlockId(pos.UpCopy(1)) == 0 &&

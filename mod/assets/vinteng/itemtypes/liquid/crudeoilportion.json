@@ -2,6 +2,7 @@
 	"code": "crudeoilportion",
 	"class": "ItemLiquidPortion",
 	"matterState": "liquid",
+	"liquidCode": "crudeoil",
 	"attributes": {
 		"handbook": {
 			"ignoreCreativeInvStacks": true
@@ -9,7 +10,7 @@
 		"waterTightContainerProps": {
 			"containable": true,
 			"itemsPerLitre": 100,
-			"texture": { "base": "vinteng:block/liquid/oilportion" },
+			"texture": { "base": "vinteng:block/liquid/crudeoilportion" },
 			"tintIndex": 2,
 			"whenSpilled": {
 				"action": "DropContents",
@@ -18,10 +19,10 @@
 		}
 	},
 	"shape": { "base": "game:item/liquid" },
-	"texture": { "base": "vinteng:block/liquid/oilportion" },
-	"creativeinventoryStacks": [ { "tabs": ["general", "liquids"], "stacks": [ { "type": "block", "code": "woodbucket", "attributes": { "ucontents": [ { "type":"item", "code": "crudeoilportion", "makefull": true } ] } } ] } ],
+	"texture": { "base": "vinteng:block/liquid/crudeoilportion" },
+	"creativeinventoryStacks": [ { "tabs": ["general", "liquids"], "stacks": [ { "type": "block", "code": "game:woodbucket", "attributes": { "ucontents": [ { "type":"item", "code": "vinteng:crudeoilportion", "makefull": true } ] } } ] } ],
 	"maxstacksize": 5000,
-	"materialDensity": 200,
+	"materialDensity": 500,
 	"guiTransform": {
 		"translation": { "x": 0, "y": 1, "z": 0 },
 		"rotation": { "x": 123, "y": -33, "z": -13 },

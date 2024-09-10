@@ -9,13 +9,13 @@
 	},
 	"textures": {
 		"shinybrass": "block/shinybrass",
-		"machinery": "block/machinery"
+		"machinery": "block/lv_machinery/machinery"
 	},
 	"elements": [
 		{
 			"name": "Base",
-			"from": [ 5.0, 0.0, 5.0 ], 
-			"to": [ 11.0, 1.0, 11.0 ], 
+			"from": [ 5.0, 0.0, 5.0 ],
+			"to": [ 11.0, 1.0, 11.0 ],
 			"rotationOrigin": [ 5.0, 0.0, 5.0 ],
 			"faces": {
 				"north": { "texture": "#machinery", "uv": [ 0.0, 0.0, 16.0, 1.0 ], "autoUv": false },
@@ -28,8 +28,8 @@
 		},
 		{
 			"name": "shaftorigin",
-			"from": [ 8.0, 2.0, 5.75 ], 
-			"to": [ 8.0, 2.0, 5.75 ], 
+			"from": [ 8.0, 2.0, 5.75 ],
+			"to": [ 8.0, 2.0, 5.75 ],
 			"rotationOrigin": [ 8.0, 3.0, 4.0 ],
 			"faces": {
 				"north": { "texture": "#shinybrass", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
@@ -42,8 +42,8 @@
 			"children": [
 				{
 					"name": "shaft",
-					"from": [ -0.5, 0.375, -0.5 ], 
-					"to": [ 0.0, 0.875, 6.5 ], 
+					"from": [ -0.5, 0.375, -0.5 ],
+					"to": [ 0.0, 0.875, 6.5 ],
 					"rotationOrigin": [ 0.0, 0.875, -1.0 ],
 					"rotationZ": 44.99999632180179,
 					"faces": {
@@ -57,8 +57,8 @@
 					"children": [
 						{
 							"name": "Winding",
-							"from": [ -0.75, 0.0, 1.0 ], 
-							"to": [ 1.25, 0.5, 4.0 ], 
+							"from": [ -0.75, 0.0, 1.0 ],
+							"to": [ 1.25, 0.5, 4.0 ],
 							"rotationOrigin": [ -0.75, 0.25, 0.5 ],
 							"faces": {
 								"north": { "texture": "#machinery", "uv": [ 7.0, 8.0, 9.0, 8.5 ] },
@@ -71,8 +71,8 @@
 						},
 						{
 							"name": "Winding8",
-							"from": [ 0.25, -1.0, 1.0 ], 
-							"to": [ 2.25, -0.5, 4.0 ], 
+							"from": [ 0.25, -1.0, 1.0 ],
+							"to": [ 2.25, -0.5, 4.0 ],
 							"rotationOrigin": [ 0.25, -0.75, 0.5 ],
 							"rotationZ": 90.0,
 							"faces": {
@@ -88,8 +88,8 @@
 				},
 				{
 					"name": "Base9",
-					"from": [ -1.5, -1.0, -1.0 ], 
-					"to": [ 1.5, -0.5, 5.5 ], 
+					"from": [ -1.5, -1.0, -1.0 ],
+					"to": [ 1.5, -0.5, 5.5 ],
 					"rotationOrigin": [ -2.0, -1.0, -1.0 ],
 					"faces": {
 						"north": { "texture": "#machinery", "uv": [ 0.0, 0.0, 16.0, 1.0 ], "autoUv": false },
@@ -102,8 +102,8 @@
 				},
 				{
 					"name": "Base8",
-					"from": [ -1.5, 1.5, -1.0 ], 
-					"to": [ 1.5, 2.0, 5.5 ], 
+					"from": [ -1.5, 1.5, -1.0 ],
+					"to": [ 1.5, 2.0, 5.5 ],
 					"rotationOrigin": [ -2.0, 1.0, -1.0 ],
 					"faces": {
 						"north": { "texture": "#machinery", "uv": [ 0.0, 0.0, 16.0, 1.0 ], "autoUv": false },
@@ -116,8 +116,8 @@
 				},
 				{
 					"name": "ShaftCap",
-					"from": [ -1.0, -0.5, 4.5 ], 
-					"to": [ 1.0, 1.5, 5.5 ], 
+					"from": [ -1.0, -0.5, 4.5 ],
+					"to": [ 1.0, 1.5, 5.5 ],
 					"rotationOrigin": [ -1.0, 0.0, 4.0 ],
 					"faces": {
 						"north": { "texture": "#shinybrass", "uv": [ 0.0, 0.0, 2.0, 2.0 ] },
@@ -130,8 +130,8 @@
 				},
 				{
 					"name": "shaft end",
-					"from": [ -1.0, -0.5, -1.0 ], 
-					"to": [ 1.0, 1.5, 0.0 ], 
+					"from": [ -1.0, -0.5, -1.0 ],
+					"to": [ 1.0, 1.5, 0.0 ],
 					"rotationOrigin": [ -1.0, 0.0, -2.0 ],
 					"faces": {
 						"north": { "texture": "#shinybrass", "uv": [ 0.0, 0.0, 2.0, 2.0 ] },

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using VintageEngineering.API;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
@@ -43,21 +45,22 @@ namespace VintageEngineering.Blocks
 
                 _extraRadiusLarge = Attributes["extraRadiusLarge"].AsInt(4);
                 _oddsForLarge = Attributes["oddsForLarge"].AsFloat(0.25f);
-                _oilblockloc = new AssetLocation(Attributes["oilblockcode"].AsString("vinteng:crudeoil"));
+                _oilblockloc = new AssetLocation(Attributes["oilblockcode"].AsString("vinteng:crudeoil-still-7"));
                 _oilBlock = api.World.GetBlock(_oilblockloc);
             }
         }
-
+        
         public override bool TryPlaceBlockForWorldGen(IBlockAccessor access, BlockPos pos, BlockFacing face, LCGRandom wrand)
         {
             if (pos.Y > 5) return false;
-            if (_oilBlock.Id == 0) return false;
-            access.SetBlock(this.BlockId, pos);
+            if (_oilBlock == null || _oilBlock.Id == 0) return false;
+            access.SetBlock(this.BlockId, pos.Copy());
             if (this.EntityClass != null)
             {
-                access.SpawnBlockEntity(this.EntityClass, pos, null);
+                access.SpawnBlockEntity(this.EntityClass, pos.Copy(), null);
             }
-            return true;            
+            BuildOilSpout(access, pos, face, wrand);
+            return true;
         }
 
         public void BuildOilSpout(IBlockAccessor access, BlockPos pos, BlockFacing face, LCGRandom wrand)
@@ -70,6 +73,14 @@ namespace VintageEngineering.Blocks
                 float wrain = climate.Rainfall;
                 if (wtemp < _minTempForLarge || wtemp > _maxTempForLarge) isLarge = false;
                 if (wrain < _minRainForLarge || wrain > _maxRainForLarge) isLarge = false;
+            }
+            IOilWell bewell = access.GetBlockEntity(pos) as IOilWell; // grab the BE of the well
+            if (bewell != null)
+            {
+                // initalize the well object
+                bewell.InitDeposit(isLarge, this.api);
+                access.MarkBlockDirty(pos);
+                access.MarkBlockEntityDirty(pos);
             }
             int largeRad = isLarge ? wrand.NextInt(_extraRadiusLarge + 1) : 0;
             int radius = wrand.NextInt(_maxDepositRadius + 1); // grab a radius
@@ -85,7 +96,7 @@ namespace VintageEngineering.Blocks
             int spoutmaxy = surfacey + spoutheight + 1;
             BlockPos poolcenter = new BlockPos(pos.X, surfacey, pos.Z, BlockLayersAccess.Default);
             // Place the spout
-            for (int y = pos.Y + 1; y < spoutmaxy; y++)
+            for (int y = 1; y < spoutmaxy - pos.Y; y++)
             {
                 access.SetBlock(_oilBlock.Id, pos.UpCopy(y));
                 if (isLarge)
@@ -94,7 +105,7 @@ namespace VintageEngineering.Blocks
                     access.SetBlock(_oilBlock.Id, pos.UpCopy(y).AddCopy(BlockFacing.EAST));
                     access.SetBlock(_oilBlock.Id, pos.UpCopy(y).AddCopy(BlockFacing.SOUTH));
                     access.SetBlock(_oilBlock.Id, pos.UpCopy(y).AddCopy(BlockFacing.WEST));
-                }
+                }                
             }
             List<BlockPos> bubble = BuildBubble(access, bubblepos, radius);
             foreach (BlockPos bub in bubble)
@@ -105,6 +116,7 @@ namespace VintageEngineering.Blocks
             foreach (BlockPos bub in pool)
             {
                 access.SetBlock(_oilBlock.Id, bub);
+                access.TriggerNeighbourBlockUpdate(bub);
             }
         }
 
@@ -149,7 +161,7 @@ namespace VintageEngineering.Blocks
             }
             foreach (BlockPos pos in disc)
             {
-                if (wrand.NextFloat() > 0.9f) continue; // skip 10% of the disc
+                if (wrand.NextFloat() > 0.9f) continue; // skip 10% of the disc, should prevent it from being a perfect circle
                 Block blockat = access.GetBlock(pos);
                 if (blockat.IsLiquid() && blockat.LiquidCode.Contains("oil")) continue; // skip existing oil blocks
                 int topblocky = access.GetTerrainMapheightAt(pos);
