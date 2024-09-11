@@ -39,14 +39,13 @@ namespace VintageEngineering.Blocks
             }
             this.FlowNormali = flowNormali;
             string h = this.Variant["height"];
-            this.Height = ((h != null) ? h.ToInt(0) : 7);            
+            this.Height = ((h != null) ? h.ToInt(0) : 7);
         }
 
         public override int GetColor(ICoreClientAPI capi, BlockPos pos)
         {
-            return ColorUtil.BlackArgb;
+            return base.GetColorWithoutTint(capi, pos);
         }
-
         public override bool ShouldPlayAmbientSound(IWorldAccessor world, BlockPos pos)
         {
             return world.BlockAccessor.GetBlockId(pos.UpCopy(1)) == 0 &&

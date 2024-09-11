@@ -64,7 +64,7 @@
 	"materialdensity": 3000,
 	"creativeinventory": { "general": ["vinteng:crudeoil-still-7"], "terrain": ["vinteng:crudeoil-still-7"] },
 	"replaceable": 9500,
-	"lightAbsorption": 30,
+	"lightAbsorption": 99,
 	"drops": [],
 	"liquidLevelByType": {
 		"*-1": 1,
@@ -98,75 +98,54 @@
 		"*": { "place": "game:block/water", "inside": "game:walk/water", "ambient": "game:environment/creek" }
 	},
 	"particlePropertiesByType": {
-		"crudeoil-still-*": [],
-		"crudeoil-d-*":
-			[
+		"crudeoil-*": [
 			{
-				"comment": "North side",
-				"hsvaColor": [{ "avg": 10, "var": 0 }, { "avg": 0, "var": 0 }, { "avg": 3, "var": 2 },  { "avg": 150, "var": 25 }],
-				"opacityEvolve": { "transform": "quadratic", "factor": -16 },
-				"gravityEffect": { "avg": 0.2, "var": 0 },
-				"posOffset": [ { "avg": -0.1, "var": 0.5 }, { "avg": 0.8, "var": 0.2 }, { "avg": -0.55, "var": 0.05 }],
-				"velocity": [ { "avg": 0, "var": 0.1 }, { "avg": 2, "var": 0 }, { "avg": 0, "var": 0.1 }],
-				"quantity": { "avg": 0.2 },
-				"lifeLength": { "avg": 0.5 },
-				"size": { "avg": 0.4, "var": 0.05 },
-				"sizeEvolve": { "transform": "linear", "factor": 0.7 },
-				"particleModel": "Quad"
-			},
-			{
-				"comment": "East side",
-				"hsvaColor": [{ "avg": 10, "var": 0 }, { "avg": 0, "var": 0 }, { "avg": 3, "var": 2 },  { "avg": 150, "var": 25 }],
-				"opacityEvolve": { "transform": "quadratic", "factor": -16 },
-				"gravityEffect": { "avg": 0.2, "var": 0 },
-				"posOffset": [ { "avg": 0.55, "var": 0.05 }, { "avg": 0.8, "var": 0.2 }, { "avg": 0, "var": 0.5 }],
-				"velocity": [ { "avg": 0, "var": 0.1 }, { "avg": 2, "var": 0 }, { "avg": 0, "var": 0.1 }],
-				"quantity": { "avg": 0.2 },
-				"lifeLength": { "avg": 0.5 },
-				"size": { "avg": 0.4, "var": 0.05 },
-				"sizeEvolve": { "transform": "linear", "factor": 0.7 },
-				"particleModel": "Quad"
-			},
-			{
-				"comment": "South side",
-				"hsvaColor": [{ "avg": 10, "var": 0 }, { "avg": 0, "var": 0 }, { "avg": 3, "var": 2 },  { "avg": 150, "var": 25 }],
-				"opacityEvolve": { "transform": "quadratic", "factor": -16 },
-				"gravityEffect": { "avg": 0.2, "var": 0 },
-				"posOffset": [ { "avg": 0, "var": 0.5 }, { "avg": 0.8, "var": 0.2 }, { "avg": 0.55, "var": 0.05 }],
-				"velocity": [ { "avg": 0, "var": 0.1 }, { "avg": 2, "var": 0 }, { "avg": 0, "var": 0.1 }],
-				"quantity": { "avg": 0.2 },
-				"lifeLength": { "avg": 0.5 },
-				"size": { "avg": 0.4, "var": 0.05 },
-				"sizeEvolve": { "transform": "linear", "factor": 0.7 },
-				"particleModel": "Quad"
-			},
-			{
-				"comment": "West side",
-				"hsvaColor": [{ "avg": 10, "var": 0 }, { "avg": 0, "var": 0 }, { "avg": 3, "var": 2 },  { "avg": 150, "var": 25 }],
-				"opacityEvolve": { "transform": "quadratic", "factor": -16 },
-				"gravityEffect": { "avg": 0.2, "var": 0 },
-				"posOffset": [ { "avg": -0.55, "var": 0.05 }, { "avg": 0.8, "var": 0.2 }, { "avg": 0, "var": 0.5 }],
-				"velocity": [ { "avg": 0, "var": 0.1 }, { "avg": 2, "var": 0 }, { "avg": 0, "var": 0.1 }],
-				"quantity": { "avg": 0.2 },
-				"lifeLength": { "avg": 0.5 },
-				"size": { "avg": 0.4, "var": 0.05 },
-				"sizeEvolve": { "transform": "linear", "factor": 0.7 },
-				"particleModel": "Quad"
-			}
-		],
-		"*": [
-			{
-				"comment": "Up side",
-				"hsvaColor": [{ "avg": 10, "var": 0 }, { "avg": 0, "var": 0 }, { "avg": 3, "var": 2 },  { "avg": 150, "var": 25 }],
-				"opacityEvolve": { "transform": "quadratic", "factor": -16 },
-				"gravityEffect": { "avg": 0.2, "var": 0 },
+				"hsvaColor": [{ "avg": 10, "var": 0 }, { "avg": 0, "var": 0 }, { "avg": 3, "var": 2 },  { "avg": 255, "var": 10 }],
+				"gravityEffect": { "avg": 0.0, "var": 0 },
 				"posOffset": [ { "avg": 0.5, "var": 0.5 }, { "avg": 0.7, "var": 0.2 }, { "avg": 0.5, "var": 0.5 }],
-				"velocity": [ { "avg": 0, "var": 0.1 }, { "avg": 2, "var": 0 }, { "avg": 0, "var": 0.1 }],
-				"quantity": { "avg": 0.2 },
+				"velocity": [ { "avg": 0, "var": 0.9 }, { "avg": 4, "var": 0 }, { "avg": 0, "var": 0.9 }],
+				"quantity": { "avg": 0.002 },
 				"lifeLength": { "avg": 0.5 },
-				"size": { "avg": 0.4, "var": 0.15 },
-				"sizeEvolve": { "transform": "linear", "factor": 0.4 },
-				"particleModel": "Quad"
+				"size": { "avg": 0.5, "var": 0.2 },
+				"sizeEvolve": { "transform": "quadratic", "factor": -0.7 },
+				"secondaryParticles": [
+					{
+						"hsvaColor": [{ "avg": 0, "var": 0 }, { "avg": 0, "var": 0 }, { "avg": 3, "var": 2 },  { "avg": 220, "var": 50 }],
+						"opacityEvolve": { "transform": "quadratic", "factor": -16 },
+						"gravityEffect": { "avg": 0, "var": 0 },
+						"posOffset": [ { "avg": 0, "var": 0.1 }, { "avg": 0, "var": 0 }, { "avg": 0, "var": 0.1 }],
+						"velocity": [ { "avg": 0, "var": 0.025 }, { "avg": 0.15, "var": 0.1 }, { "avg": 0, "var": 0.025 }],
+						"quantity": { "avg": 1, "var": 1 },
+						"size": { "avg": 0.25, "var": 0.1 },
+						"sizeEvolve": { "transform": "linear", "factor": 0.5 },
+						"dieInLiquid": true,
+						"particleModel": "Quad",
+						"secondarySpawnInterval": {"avg": 0.15, "var": 0}
+					}
+				]
+			},
+			{
+				"hsvaColor": [{ "avg": 10, "var": 0 }, { "avg": 0, "var": 0 }, { "avg": 3, "var": 2 },  { "avg": 255, "var": 0 }],
+				"gravityEffect": { "avg": 0, "var": 0 },
+				"posOffset": [ { "avg": 0, "var": 0.3 }, { "avg": -0.14, "var": 0 }, { "avg": 0, "var": 0.3 }],
+				"velocity": [ { "avg": 0 }, { "avg": 0 }, { "avg": 0 }],
+				"quantity": { "avg": 0.0005, "var": 0.0005 },
+				"size": { "avg": 0.1, "var": 0 },
+				"lifeLength": { "avg": 0.9, "var": 0.4 },
+				"vertexFlags": 196,
+				"sizeEvolve": { "transform": "quadratic", "factor": 1.5 },
+				"deathParticles": [
+					{
+						"hsvaColor": [{ "avg": 30, "var": 20 }, { "avg": 255, "var": 50 }, { "avg": 255, "var": 50 },  { "avg": 255, "var": 0 }],
+						"gravityEffect": { "avg": 0.3, "var": 0 },
+						"posOffset": [ { "avg": 0, "var": 0.1 }, { "avg": -0.1, "var": 0.1 }, { "avg": 0, "var": 0.1 }],
+						"velocity": [ { "avg": 0, "var": 2 }, { "avg": 3.3, "var": 0.5, "dist": "GAUSSIAN" }, { "avg": 0, "var": 2 }],
+						"quantity": { "avg": 10, "var": 6 },
+						"size": { "avg": 0.4, "var": 0.25 },
+						"vertexFlags": 128,
+						"sizeEvolve": { "transform": "quadratic", "factor": -0.5 }
+					}
+				]
 			}
 		]
 	},

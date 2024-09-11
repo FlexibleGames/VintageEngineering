@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using VintageEngineering.API;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
+using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 
@@ -34,8 +35,7 @@ namespace VintageEngineering
         public override void Initialize(ICoreAPI api)
         {
             base.Initialize(api);
-            if (api.Side == EnumAppSide.Server) sapi = api as ICoreServerAPI;
-            _fluidportions = 0;
+            if (api.Side == EnumAppSide.Server) sapi = api as ICoreServerAPI;            
         }
 
         public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
@@ -60,17 +60,15 @@ namespace VintageEngineering
             }
         }
 
-        public void InitDeposit(bool isLarge, ICoreAPI api)
+        public void InitDeposit(bool isLarge, IBlockAccessor access, LCGRandom wgenrand, Block wellblock, ICoreAPI l_api)
         {
-            if (this.Api == null) Initialize(api);
-            if (sapi == null) return; // this should never trigger
-                                                  
-            long numblocks = sapi.World.Rand.NextInt64(MinDepositBlocks, MaxDepositBlocks+1);
+            long numblocks = l_api.World.Rand.NextInt64(MinDepositBlocks, MaxDepositBlocks+1);
             if (isLarge) numblocks *= 2;
+            if (numblocks < 0) numblocks = long.MaxValue; // value overrun, make it effectively infinite
             try
             {
                 AssetLocation portion = new AssetLocation(OilPortionCode);
-                ItemStack portionstack = new ItemStack(sapi.World.GetItem(portion));
+                ItemStack portionstack = new ItemStack(l_api.World.GetItem(portion));
                 WaterTightContainableProps props = BlockLiquidContainerBase.GetContainableProps(portionstack);
                 if (props != null)
                 {
@@ -80,12 +78,12 @@ namespace VintageEngineering
                 {
                     _fluidportions = 1000 * numblocks * 100;
                 }
+                MarkDirty(true);
             }
             catch (Exception ex)
             {
-                sapi.Logger.Error(ex);
-            }
-            MarkDirty(true);
+                l_api.Logger.Error(ex);
+            }            
         }
 
         public long PumpTick(float dt)
@@ -96,10 +94,10 @@ namespace VintageEngineering
             {
                 amount = (long)(MaxPPS * dt);
                 if (amount > _fluidportions) amount = _fluidportions;
-                _fluidportions -= amount;                
+                _fluidportions -= amount;
             }
             else
-            {                
+            {
                 amount = (long)(TricklePortions * dt);
                 if (!CanBeInfinite) amount = 0;
             }
@@ -109,13 +107,13 @@ namespace VintageEngineering
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldAccessForResolve)
         {
             base.FromTreeAttributes(tree, worldAccessForResolve);
-            _fluidportions = tree.GetLong("fluidleft", 0);
+            this._fluidportions = tree.GetLong("fluidleft", 25);
         }
 
         public override void ToTreeAttributes(ITreeAttribute tree)
         {
             base.ToTreeAttributes(tree);
-            tree.SetLong("fluidleft", _fluidportions);
+            tree.SetLong("fluidleft", this._fluidportions);
         }
     }
 }

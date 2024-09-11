@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Vintagestory.API.Common;
+using Vintagestory.API.MathTools;
 
 namespace VintageEngineering.API
 {
@@ -53,7 +54,10 @@ namespace VintageEngineering.API
         /// Called once when the block is spawned while the terrain is generated.
         /// </summary>
         /// <param name="isLarge">Is this a large deposit?</param>
-        void InitDeposit(bool isLarge, ICoreAPI api);
+        /// <param name="access">IBlockAccessor from the block</param>
+        /// <param name="wgenrand">WorldGen Random Object</param>
+        /// <param name="wellblock">Well Block Calling this</param>
+        void InitDeposit(bool isLarge, IBlockAccessor access, LCGRandom wgenrand, Block wellblock, ICoreAPI api);
         /// <summary>
         /// A pump tick, returns a non-negative value of amount of portions returned
         /// </summary>
