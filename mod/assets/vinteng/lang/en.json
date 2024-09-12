@@ -248,9 +248,16 @@
 	"vinteng:blockdesc-vefluidtank-temporalsteel": "A tank that is quantumly entangled with any tank that shares its channel. Channel set via GUI. 50k L Capacity",
 	"vinteng:block-vefluidtank-infsink": "Infinite Sink/Source",
 	"vinteng:blockdesc-vefluidtank-infsink": "A creative fluid sink or source. Right click with a full bucket to set infinite source fluid portion type.",
+	"vinteng:block-crudeoilwell": "Crude Oil Well Source",
+	"vinteng:blockdesc-crudeoilwell": "A crude oil source block. Tap into this with an oil pump-jack using an oil derrick to place steel pipe down from the surface.",
+	"vinteng:block-crudeoil-*": "Crude Oil",
+	"vinteng:blockdesc-crudeoil-*": "Texas Tea! A potent source of potential energy.",
+	"vinteng:item-crudeoilportion": "Crude Oil (Portion)",
+	"vinteng:itemdesc-crudeoilportion": "A little portion of crude oil, try not to get it on your cloths.",
 	"vinteng:gui-word-pumping": "Pumping",
 	"vinteng:gui-word-not": "Not",
 	"vinteng:gui-word-remaining": "Remaining",
 	"vinteng:gui-ischecking": "Checking Fluid Volume...",
-	"vinteng:gui-isinfinite": "Source is considered infinite."
+	"vinteng:gui-isinfinite": "Source is considered infinite.",
+	"vinteng:gui-depleted": "Well Depleted"
 }

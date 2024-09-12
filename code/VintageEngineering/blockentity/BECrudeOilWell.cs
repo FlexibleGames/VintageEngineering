@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using VintageEngineering.API;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
@@ -52,18 +53,22 @@ namespace VintageEngineering
                     perliter = (int)props.ItemsPerLitre;
                 }
             }
-            if (RemainingPortions > 0) dsc.AppendLine($"{RemainingPortions / perliter} Litres Remaining");
+            if (RemainingPortions > 0) dsc.AppendLine($"{RemainingPortions / perliter}L {Lang.Get("vinteng:gui-word-remaining")}");
             else 
             {
-                if (CanBeInfinite) dsc.AppendLine($"Well Depleted, infinite source.");
-                else dsc.AppendLine("Well Depleted");
+                if (CanBeInfinite) dsc.AppendLine($"{Lang.Get("vinteng:gui-depleted")}, {Lang.Get("vinteng:gui-isinfinite")}");
+                else dsc.AppendLine($"{Lang.Get("vinteng:gui-depleted")}");
             }
         }
 
         public void InitDeposit(bool isLarge, IBlockAccessor access, LCGRandom wgenrand, Block wellblock, ICoreAPI l_api)
         {
-            long numblocks = l_api.World.Rand.NextInt64(MinDepositBlocks, MaxDepositBlocks+1);
-            if (isLarge) numblocks *= 2;
+            long minblocks = MinDepositBlocks;
+            if (isLarge) minblocks = (long)(MaxDepositBlocks * 0.8);
+            long maxblocks = MaxDepositBlocks;
+            if (isLarge) maxblocks *= 2;
+            long numblocks = l_api.World.Rand.NextInt64(minblocks, maxblocks+1);
+            
             if (numblocks < 0) numblocks = long.MaxValue; // value overrun, make it effectively infinite
             try
             {

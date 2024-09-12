@@ -8,6 +8,7 @@ using VintageEngineering.API;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
+using Vintagestory.ServerMods;
 
 namespace VintageEngineering.Blocks
 {
@@ -63,6 +64,21 @@ namespace VintageEngineering.Blocks
         {
             if (pos.Y > 5) return false;
             if (_oilBlock == null || _oilBlock.Id == 0) return false;
+            int surfacey = access.GetTerrainMapheightAt(pos); // surface
+            if (Math.Abs(surfacey - TerraGenConfig.seaLevel) > 40) return false;
+            BlockPos watercheck1 = new BlockPos(pos.X, surfacey + 1, pos.Z, BlockLayersAccess.Fluid);
+            Block waterblock1 = access.GetBlock(watercheck1);
+            if (waterblock1.Id != 0 && waterblock1.IsLiquid() && waterblock1.LiquidCode.Contains("water")) return false;
+
+            foreach (BlockFacing bface in BlockFacing.HORIZONTALS)
+            {
+                BlockPos tocheck = pos.AddCopy(bface, 4);
+                tocheck.Y = access.GetTerrainMapheightAt(tocheck) + 1;
+                if (Math.Abs(tocheck.Y - surfacey) > 4) return false;
+                Block bcheck = access.GetBlock(tocheck);
+                if (bcheck.Id != 0 && bcheck.IsLiquid() && bcheck.LiquidCode.Contains("water")) return false;
+            }
+
             bool isLarge = wrand.NextFloat() <= _oddsForLarge; // first check on large deposits
             access.SetBlock(this.BlockId, pos.Copy());
             if (this.EntityClass != null)
@@ -89,15 +105,15 @@ namespace VintageEngineering.Blocks
                 if (wtemp < _minTempForLarge || wtemp > _maxTempForLarge) isLarge = false;
                 if (wrain < _minRainForLarge || wrain > _maxRainForLarge) isLarge = false;
             }
+            int surfacey = access.GetTerrainMapheightAt(pos); // surface            
             
             int radius = wrand.NextInt(_maxDepositRadius + 1); // grab a radius
             if (radius < _minDepositRadius) radius = _minDepositRadius; // ensure it's at least minimum size
             radius += isLarge ? _extraRadiusLarge : 0; // add on any bonus for deserts
             int pooldepth = wrand.NextInt(3) + 1; // surface pool depth
             int spoutheight = isLarge ? wrand.NextInt(8) + 6 : wrand.NextInt(4) + 4; // height of the spout
-            if (!_genSpouts) spoutheight = 0;
-            int surfacey = access.GetTerrainMapheightAt(pos); // surface
-
+            if (!_genSpouts) spoutheight = 0;            
+            
             int bubblecentery = surfacey / 2;
             BlockPos bubblepos = new BlockPos(pos.X, bubblecentery, pos.Z, BlockLayersAccess.Default);
             int spoutmaxy = surfacey + spoutheight;

@@ -11,7 +11,7 @@
 			"surfaceBlock": { "code": "game:loosestones-obsidian-free" },
 			"surfaceBlockChance": 0.40,
 			"radius": { "dist": "gaussian", "avg": 14, "var": 6 },
-			"yPosRel": { "dist": "invexp", "avg": 0.05, "var": 0.2 },
+			"yPosRel": { "dist": "invexp", "avg": 0.05, "var": 0.05 },
 			"thickness": { "dist": "uniform", "avg": 4, "var": 2 }
 		}
 	}

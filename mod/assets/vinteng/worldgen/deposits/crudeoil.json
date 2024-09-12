@@ -1,7 +1,7 @@
 [
 	{
 		"code": "crudeoil",
-		"triesPerChunk": 6,
+		"triesPerChunk": 4,
 		"withBlockCallback": false,
 		"generator": "disc-followsealevel",
 		"handbookPageCode": "crudeoil",

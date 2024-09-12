@@ -9,5 +9,5 @@
 	},
 	"width": 3,
 	"height": 3,
-	"output": { "type": "block", "code": "vinteng:vemixer-north", "quantity": 1  }
+	"output": { "type": "block", "code": "vinteng:vecnc-north", "quantity": 1  }
 }
