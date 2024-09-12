@@ -87,7 +87,14 @@ namespace VintageEngineering.Electrical.Systems.Catenary
         /// <summary>
         /// What chunk is this wire in, starting wires only.
         /// </summary>
-        public Vec3i ChunkPos;
+        public Vec3i ChunkPos
+        {
+            get
+            {
+                Vec3i output = new Vec3i(NodeStart.blockPos.X / 32, NodeStart.blockPos.InternalY / 32, NodeStart.blockPos.Z / 32);
+                return output;
+            }
+        }
 
         public WireConnection() { }
 
