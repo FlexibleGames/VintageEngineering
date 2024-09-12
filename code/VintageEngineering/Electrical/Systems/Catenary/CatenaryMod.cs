@@ -143,7 +143,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
             // the wire renderer holds a copy of this data that contains the mesh and VAO meshrefs
             // as the server doesn't care about those.
             this.data = packet;
-            WireRenderer.UpdateWireMeshes(data); // this generates the meshes and uploads them for rendering.            
+            WireRenderer.UpdateWireMeshes(data); // this generates the meshes and uploads them for rendering.                        
         }
 
         /// <summary>
@@ -237,7 +237,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
         {
             if (reason == EnumChunkDirtyReason.NewlyLoaded)
             {
-                WireRenderer.UpdateWireMeshes(data); // only when loading chunks, not generating them
+                WireRenderer.UpdateWireMeshes(data, chunkCoord); // only when loading chunks, not generating them
             }
         }
         private void onLoaded()
