@@ -11,7 +11,9 @@ using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
+using Vintagestory.Common.Database;
 using Vintagestory.GameContent;
+using Vintagestory.Server;
 using Vintagestory.ServerMods;
 
 namespace VintageEngineering.Transport.API
@@ -127,12 +129,23 @@ namespace VintageEngineering.Transport.API
             if (pnm == null) return;
 
             if (numExtractionConnections > 0) 
-            { 
+            {
                 RebuildPushConnections(api.World, pnm.GetNetwork(NetworkID).PipeBlockPositions.ToArray());
                 api.World.BlockAccessor.MarkBlockEntityDirty(Pos);
             }
-            if (api.Side == EnumAppSide.Server) MarkDirty(true);
-        }        
+            if (api.Side == EnumAppSide.Server)
+            {
+                // MagicNum.ServerChunkSize always = 32 some of the game code don't use MagicNum and just use 32 so IDk if it is usefull
+                BlockPos inChunkPos = new (Pos.X%MagicNum.ServerChunkSize, Pos.Y%MagicNum.ServerChunkSize, Pos.Z%MagicNum.ServerChunkSize, Pos.dimension);
+                if (inChunkPos.X is 0 or 31 || inChunkPos.Y is 0 or 31 || inChunkPos.Z is 0 or 31)
+                {
+                    (api.World as ServerMain)?.TriggerNeighbourBlocksUpdate(Pos);
+                    pnm.GetNetwork(NetworkID).MarkNetworkDirty(api.World); // no sure if it is the best to do here but resolve the issue with pipe not exporting when on multiple chunks
+                }
+                //MarkPipeDirty(api.World, true);
+                MarkDirty(true);
+            }
+        }
 
         public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
         {
@@ -438,7 +451,7 @@ namespace VintageEngineering.Transport.API
                     if (extractionNodes[f] != null)
                     {
                         RemoveExtractionListener(f);
-                        extractionNodes[f].OnNodeRemoved();                        
+                        extractionNodes[f].OnNodeRemoved();
                     }
                 }
             }
@@ -452,9 +465,15 @@ namespace VintageEngineering.Transport.API
         /// <param name="world">WorldAccessor object</param>
         public virtual void MarkPipeDirty(IWorldAccessor world, bool dirtyshape = false)
         {
+            if (Api == null) return; // I really don't like that fix: When we do a OnNeighbourBlockChange() for pipe in the chunk border it will call pipesBE that exist but not initialize yet ???
             _shapeDirty = dirtyshape;
             BlockPipeBase us = world.BlockAccessor.GetBlock(Pos) as BlockPipeBase;
             PipeNetworkManager pnm = Api.ModLoader.GetModSystem<PipeNetworkManager>(true);
+            if (Api.Side == EnumAppSide.Client && _shapeDirty)
+            {
+                MarkDirty(true);
+                return;
+            }
             
             // Check all 6 sides
             // the order is N, E, S, W, U, D

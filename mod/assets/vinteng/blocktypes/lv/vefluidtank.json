@@ -53,9 +53,9 @@
 		"all": false
 	},
 	"sounds": {
-		"place": "block/chute",
-		"break": "block/anvil",
-		"hit": "block/anvil",
+		"place": "game:block/chute",
+		"break": "game:block/anvil",
+		"hit": "game:block/anvil",
 		"walk": "game:walk/stone"
 	},
     "drawtype": "json",

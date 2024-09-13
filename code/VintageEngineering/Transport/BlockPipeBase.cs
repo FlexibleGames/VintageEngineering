@@ -61,9 +61,9 @@ namespace VintageEngineering.Transport
         {
             // Redetect any potential connections as something changed.
             BEPipeBase pipebe = api.World.BlockAccessor.GetBlockEntity(pos) as BEPipeBase;
-            if (pipebe != null)
-            {                
-                pipebe.MarkPipeDirty(world, true);                 
+            if (pipebe != null) // pipebe exist but can be not initialize( so Api is not set ) IDK why or if it is a bug or not; maybe add a bool in BEPipeBase true when fully initialised
+            {
+                pipebe.MarkPipeDirty(world, true);
             }
             base.OnNeighbourBlockChange(world, pos, neibpos);
         }
