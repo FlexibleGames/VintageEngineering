@@ -10,13 +10,15 @@
 				"canExtractPower": false,
 				"canReceivePower": true,
 				"entitytype": "Consumer",
-				"maxpower": 1000,
-				"maxpps": 100
+				"maxpower": 2000,
+				"maxpps": 1200
 			}
 		}
 	],
 	"attributes": {
 		"craftinganimcode": "craft",
+		"powerperblockpumped": 200,
+		"powerpertankpush": 50,
 		"priority": 5,
         "wireNodes": [
             {
@@ -25,10 +27,10 @@
 				"powertier": "LV",
 				"maxconnections": 1,
                 "x1": 0.258125,
-                "y1": 0.640625,
+                "y1": 0.625,
                 "z1": 0.258125,
                 "x2": 0.445625,
-                "y2": 0.765625,
+                "y2": 0.75,
                 "z2": 0.445625
             }
         ]

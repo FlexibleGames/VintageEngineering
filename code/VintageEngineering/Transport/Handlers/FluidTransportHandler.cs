@@ -83,7 +83,7 @@ namespace VintageEngineering.Transport.Handlers
             try
             {
                 int moved = 0;
-                if (push is ItemSlotLargeLiquid isll && pull is not ItemSlotLargeLiquid)
+                if (push is ItemSlotLargeLiquid isll)// && pull is not ItemSlotLargeLiquid)
                 {
                     moved = isll.TryTakeFrom(pull, ref ismo);
                 }

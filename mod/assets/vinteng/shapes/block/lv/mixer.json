@@ -12,7 +12,7 @@
 		"bluepaintedwornsteelplate": "block/bluepaintedwornsteelplate",
 		"castiron-bar": "block/castiron-bar",
 		"gold": "block/gold",
-		"machinery": "block/machinery"
+		"machinery": "block/lv_machinery/machinery"
 	},
 	"elements": [
 		{

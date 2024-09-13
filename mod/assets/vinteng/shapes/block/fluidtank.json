@@ -9,7 +9,7 @@
 	},
 	"textures": {
 		"bronze": "block/bronze",
-		"machinery": "block/machinery",
+		"machinery": "block/lv_machinery/machinery",
 		"tankglassm": "block/tankglassm"
 	},
 	"elements": [

@@ -10,9 +10,9 @@
 	"textures": {
 		"castiron": "block/castiron",
 		"gold": "block/gold",
-		"machinery": "block/machinery",
-		"machinery-openhatch": "block/machinery-openhatch",
-		"machinery-pileup": "block/machinery-pileup"
+		"machinery": "block/lv_machinery/machinery",
+		"machinery-openhatch": "block/lv_machinery/machinery-openhatch",
+		"machinery-pileup": "block/lv_machinery/machinery-pileup"
 	},
 	"elements": [
 		{

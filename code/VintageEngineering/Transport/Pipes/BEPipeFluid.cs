@@ -35,6 +35,7 @@ namespace VintageEngineering.Transport.Pipes
                 ItemSlot pull = liq.GetLiquidAutoPullFromSlot(toFace);
                 ItemSlot push = liq.GetLiquidAutoPushIntoSlot(toFace);
                 if (pull != null || push != null) return true;
+                else return false;
             }
 
             IBlockEntityContainer bec = world.BlockAccessor.GetBlock(pos).GetInterface<IBlockEntityContainer>(world, pos);

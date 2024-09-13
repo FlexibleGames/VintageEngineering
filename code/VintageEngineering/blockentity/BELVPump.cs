@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using VintageEngineering.API;
 using VintageEngineering.Electrical;
+using VintageEngineering.Transport.API;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -43,11 +44,14 @@ namespace VintageEngineering.blockentity
         protected ICoreClientAPI capi;
         protected ICoreServerAPI sapi;
         private float _clientupdatedelay = 0f;
-        private ItemStack _fluidtype;
+        private string _fluidtype;
         private List<FluidPosition> _fluidpositions;
         private bool _ischeckingfluid = true;
         private bool _isinfinite = false;
         private int _pumpcount = 0; // used only on client
+
+        private int _powerPerBlockPumped = 200;
+        private int _powerPerTankPush = 50;
 
         public ItemSlotLargeLiquid Tank => inventory[0] as ItemSlotLargeLiquid;
 
@@ -102,10 +106,12 @@ namespace VintageEngineering.blockentity
             }
             inventory.Pos = this.Pos;
             inventory.LateInitialize($"{InventoryClassName}-{this.Pos.X}/{this.Pos.Y}/{this.Pos.Z}", api);
-            
+            _powerPerBlockPumped = base.Block.Attributes["powerperblockpumped"].AsInt(200);
+            _powerPerTankPush = base.Block.Attributes["powerpertankpush"].AsInt(50);
             if (api.Side == EnumAppSide.Server) 
             {
-                if (CheckForFluid()) TyronThreadPool.QueueTask(GetFluids, "VELVPump");
+                if (CheckForFluid() && !_isinfinite) TyronThreadPool.QueueTask(GetFluids, "VELVPump");
+                else _ischeckingfluid = false;
             }
         }
 
@@ -113,19 +119,44 @@ namespace VintageEngineering.blockentity
         {
             _clientupdatedelay += dt;
             if (_ischeckingfluid || _fluidpositions == null) return;
-            if (_clientupdatedelay > 60)
+            if (_clientupdatedelay > 10) _clientupdatedelay = 0;
+            if (_fluidpositions.Count == 0 && !_isinfinite) 
             {
-                if (Electric.MachineState != EnumBEState.Sleeping) SetState(EnumBEState.Sleeping);
-                _clientupdatedelay = 0;
-                return;
+                // we are out of blocks to pump... sleep now
+                SetState(EnumBEState.Sleeping);
+                return; 
             }
-            else 
-            { 
-                if (Electric.MachineState != EnumBEState.On) SetState(EnumBEState.On); 
+            // we don't have enough power
+            if (Electric.CurrentPower < ((ulong)_powerPerBlockPumped))
+            {
+                SetState(EnumBEState.Paused);
+                return; 
             }
-            if (_fluidpositions.Count == 0 && !_isinfinite) return;
+            else
+            {
+                if (Electric.MachineState == EnumBEState.Paused)
+                {
+                    SetState(EnumBEState.On);
+                }
+            }
 
             FluidPosition last = _isinfinite ? new FluidPosition(Pos.DownCopy(1), 0) : _fluidpositions.Last<FluidPosition>();
+
+            if (!BEPipeBase.IsChunkLoaded(Api.World, last.Position))
+            {
+                if (_isinfinite) return; // the one block we look at is right below the pump and it isn't loaded... this shouldn't be possible
+                _fluidpositions.Remove(last);
+                while (true)
+                {
+                    last = _fluidpositions.Last<FluidPosition>();
+                    if (BEPipeBase.IsChunkLoaded(Api.World, last.Position)) break;
+                    else 
+                    { 
+                        _fluidpositions.Remove(last);
+                        if (_fluidpositions.Count == 0) break;
+                    }
+                }
+            }
 
             if (Api.World.BlockAccessor.GetChunk(last.Position.X / GlobalConstants.ChunkSize, 
                                                  last.Position.Y / GlobalConstants.ChunkSize, 
@@ -138,7 +169,6 @@ namespace VintageEngineering.blockentity
                 if (props != null)
                 {
                     int literperblock = 1000;// ((int)(1.0f / props.ItemsPerLitre));
-
 
                     if (props.WhenFilled.Stack.ResolvedItemstack == null)
                     {
@@ -155,7 +185,9 @@ namespace VintageEngineering.blockentity
 
                         if (Tank.Itemstack.StackSize <= portionperblock)
                         {
-                            // tank has room for another 'block'  
+                            // internal tank has room for another 'block' of fluid
+                            if (Electric.MachineState != EnumBEState.On) SetState(EnumBEState.On);
+                            
                             Tank.Itemstack.StackSize += (int)portionperblock; // add fluid to tank
                             if (!_isinfinite)
                             {
@@ -163,6 +195,8 @@ namespace VintageEngineering.blockentity
                                 Api.World.BlockAccessor.TriggerNeighbourBlockUpdate(last.Position);
                                 _fluidpositions.Remove(last);
                             }
+                            Electric.electricpower -= ((ulong)_powerPerBlockPumped);
+                            MarkDirty(true);
                         }
                     }
                 }
@@ -200,9 +234,16 @@ namespace VintageEngineering.blockentity
                             Api.World.BlockAccessor.TriggerNeighbourBlockUpdate(last.Position);
                             _fluidpositions.Remove(last);
                         }
+                        if (Electric.MachineState != EnumBEState.On) SetState(EnumBEState.On);
+                        Electric.electricpower -= ((ulong)_powerPerBlockPumped);
+                        MarkDirty(true);
                     }
                 }
             }
+            if (!inventory[0].Empty && IsTankOnTop()) // need to call this even if we didn't pump anything this tick
+            {
+                TryPushIntoTank(); // will try to push whatever it can into a tank...
+            }            
         }
 
         public static WaterTightContainableProps GetWPropsFromPos(IWorldAccessor world, BlockPos pos)
@@ -217,6 +258,37 @@ namespace VintageEngineering.blockentity
             return null;
         }
 
+        public bool IsTankOnTop()
+        {
+            BlockPos above = Pos.UpCopy(1);
+            return Api.World.BlockAccessor.GetBlockEntity(above) is BEFluidTank;
+        }
+
+        public void TryPushIntoTank()
+        {
+            if (inventory[0].Empty) return; // sanity check 1
+            WaterTightContainableProps wprops = BlockLiquidContainerBase.GetContainableProps(inventory[0].Itemstack);
+            if (wprops == null) return; // sanity check 2
+            BEFluidTank tank = Api.World.BlockAccessor.GetBlockEntity(Pos.UpCopy(1)) as BEFluidTank;
+            if (tank == null) return; // sanity check 3
+            int amounttomove = 0;
+            if (!tank.Inventory[0].Empty) { amounttomove = tank.Inventory[0].MaxSlotStackSize - tank.Inventory[0].Itemstack.StackSize; }
+            else amounttomove = tank.Inventory[0].MaxSlotStackSize;
+            if (amounttomove == 0) return; // sanity check 4
+            
+            if (Electric.CurrentPower < ((ulong)_powerPerTankPush)) return; // not enough power to push
+            if (inventory[0].Itemstack.StackSize < amounttomove) amounttomove = inventory[0].Itemstack.StackSize;
+            ItemStackMoveOperation ismo = new ItemStackMoveOperation(Api.World, EnumMouseButton.Left, (EnumModifierKey)0, EnumMergePriority.AutoMerge, amounttomove);
+            int moved = 0;
+            moved = (tank.Inventory[0] as ItemSlotLargeLiquid).TryTakeFrom(inventory[0], ref ismo);
+            if (moved == 0) return;  
+            else 
+            {
+                Electric.electricpower -= ((ulong)_powerPerTankPush);
+                MarkDirty(true); 
+            }
+        }
+
         /// <summary>
         /// Checks to ensure this is on top of a valid fluid block.
         /// </summary>
@@ -227,7 +299,7 @@ namespace VintageEngineering.blockentity
             Block blockbelow = Api.World.BlockAccessor.GetBlock(below, BlockLayersAccess.Fluid);
             // TODO check for Blacklist block types
 
-            return blockbelow.Id != 0;
+            return blockbelow.Id != 0 && blockbelow.IsLiquid();
         }
 
         public void GetFluids()
@@ -245,13 +317,17 @@ namespace VintageEngineering.blockentity
                 if (props != null && props.WhenFilled != null)
                 {
                     ItemStack portion = props.WhenFilled.Stack.Resolve(Api.World, "LVPump", true) ? props.WhenFilled.Stack.ResolvedItemstack : null;
-                    _fluidtype = portion.Clone();
+                    _fluidtype = blockbelow.LiquidCode;
                     if (portion != null)
                     {
                         // fluid is good, we have liftoff!
-                        _fluidpositions.Add(new FluidPosition(below, 0));
+                        if (blockbelow.LiquidLevel == 7) // ONLY add full height fluids
+                        { 
+                            _fluidpositions.Add(new FluidPosition(below, 0)); 
+                        }
 
                         List<BlockPos> _tocheck = new List<BlockPos>();
+                        List<BlockPos> _fluidsubs = new List<BlockPos>();
                         _tocheck.Add(below);
                         // TODO Some sort of infinite fluid blacklist support here...
                         while (_tocheck.Count > 0 && _fluidpositions.Count < 10001)
@@ -264,7 +340,10 @@ namespace VintageEngineering.blockentity
                                 BlockPos end = bpos.AddCopy(1, 1, 1);
                                 Api.World.BlockAccessor.WalkBlocks(start, end, delegate (Block dblock, int x, int y, int z)
                                 {
-                                    if (dblock.BlockId != 0 && dblock.BlockId == blockbelow.BlockId)
+                                    // TODO some sort of infinite fluid blacklist check
+                                    if (_fluidpositions.Count == 10000) return;
+
+                                    if (dblock.BlockId != 0 && dblock.IsLiquid() && dblock.LiquidCode == _fluidtype)
                                     {
                                         BlockPos bcheck = new BlockPos(x, y, z, 0);
                                         // TODO make pump range a config value check
@@ -273,10 +352,19 @@ namespace VintageEngineering.blockentity
                                         FluidPosition bfpos = new FluidPosition(bcheck, below.ManhattenDistance(bcheck));
                                         if (!_fluidpositions.Contains(bfpos))
                                         {
-                                            _fluidpositions.Add(bfpos);
-                                            _toadd.Add(bcheck);
-                                            // TODO some sort of infinite fluid blacklist check
-                                            if (_fluidpositions.Count == 10000) return;
+                                            if (dblock.LiquidLevel == 7)
+                                            { 
+                                                _fluidpositions.Add(bfpos);
+                                                _toadd.Add(bcheck);
+                                            }
+                                            else
+                                            {
+                                                if (!_fluidsubs.Contains(bcheck))
+                                                {
+                                                    _fluidsubs.Add(bcheck);
+                                                    _toadd.Add(bcheck); // ONLY add to check if we haven't already checked it, prevents infinite loop
+                                                }
+                                            }                                            
                                         }
                                     }
                                 }, false);
@@ -289,6 +377,7 @@ namespace VintageEngineering.blockentity
                             }
                             _toadd.Clear();
                         }
+                        _fluidsubs.Clear();
                     }
                 }
             }
@@ -313,6 +402,7 @@ namespace VintageEngineering.blockentity
                 _clientupdatedelay = 0;
                 MarkDirty(true);
             }
+            if (inventory[slotid].Empty) MarkDirty(true);
         }
 
         public override void CreateBehaviors(Block block, IWorldAccessor worldForResolve)
@@ -328,7 +418,8 @@ namespace VintageEngineering.blockentity
 
         protected virtual void SetState(EnumBEState newstate)
         {
-            Electric.MachineState = newstate;
+            if (Electric.MachineState != newstate) { Electric.MachineState = newstate; }
+            //else return;
 
             if (Electric.MachineState == EnumBEState.On)
             {
@@ -381,16 +472,16 @@ namespace VintageEngineering.blockentity
             base.GetBlockInfo(forPlayer, dsc);
             if (_ischeckingfluid)
             {
-                dsc.AppendLine($"Checking Fluid Volume...");
+                dsc.AppendLine(Lang.Get("vinteng:gui-ischecking"));
             }
             else
             {
                 if (_fluidtype != null)
                 {
-                    dsc.AppendLine($"{Lang.Get("vinteng:gui-word-pumping")} {_fluidtype.GetName()}");
+                    dsc.AppendLine($"{Lang.Get("vinteng:gui-word-pumping")} {_fluidtype}");
                     if (_isinfinite)
                     {
-                        dsc.AppendLine($"Source is considered infinite.");
+                        dsc.AppendLine(Lang.Get("vinteng:gui-isinfinite"));
                     }
                     else dsc.AppendLine($"{_pumpcount} {Lang.Get("vinteng:gui-blocks")} {Lang.Get("vinteng:gui-word-remaining")}");
                 }
@@ -400,7 +491,16 @@ namespace VintageEngineering.blockentity
                 }
                 if (inventory[0].Itemstack != null)
                 {
-                    dsc.AppendLine($"{inventory[0].Itemstack.StackSize}/{inventory[0].MaxSlotStackSize}");
+                    WaterTightContainableProps wprops = BlockLiquidContainerBase.GetContainableProps(inventory[0].Itemstack);
+                    float perliter = wprops != null ? wprops.ItemsPerLitre : 100f;
+                    dsc.AppendLine($"{inventory[0].Itemstack.StackSize/perliter}L/{inventory[0].MaxSlotStackSize/perliter}L");
+                }
+            }
+            if (Electric.MachineState == EnumBEState.Paused)
+            {
+                if (Electric.CurrentPower < Electric.MaxPPS)
+                {
+                    dsc.AppendLine(Lang.Get("vinteng:gui-machine-lowpower"));
                 }
             }
         }
@@ -412,7 +512,7 @@ namespace VintageEngineering.blockentity
             inventory.ToTreeAttributes(invtree);
             tree["inventory"] = invtree;
             tree.SetBool("isinfinite", _isinfinite);
-            tree.SetItemstack("fluidtype", _fluidtype);
+            tree.SetString("fluidtype", _fluidtype);
             tree.SetInt("pumpcount", _fluidpositions == null ? 0 : _fluidpositions.Count);
             tree.SetBool("ischeckingfluid", _ischeckingfluid);
         }
@@ -423,11 +523,11 @@ namespace VintageEngineering.blockentity
             inventory.FromTreeAttributes(tree.GetTreeAttribute("inventory"));
             if (Api != null) inventory.AfterBlocksLoaded(worldAccessForResolve);
             _isinfinite = tree.GetBool("isinfinite");
-            _fluidtype = tree.GetItemstack("fluidtype");
-            if (_fluidtype != null) _fluidtype.ResolveBlockOrItem(worldAccessForResolve);
+            _fluidtype = tree.GetString("fluidtype");
+            
             _pumpcount = tree.GetInt("pumpcount");
             _ischeckingfluid = tree.GetBool("ischeckingfluid", false);
-            SetState(Electric.MachineState);
+            if (Api != null && Api.Side == EnumAppSide.Client) SetState(Electric.MachineState);
         }
 
         public void DropContents(Vec3d atPos)
