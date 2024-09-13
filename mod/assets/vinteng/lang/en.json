@@ -259,5 +259,9 @@
 	"vinteng:gui-word-remaining": "Remaining",
 	"vinteng:gui-ischecking": "Checking Fluid Volume...",
 	"vinteng:gui-isinfinite": "Source is considered infinite.",
-	"vinteng:gui-depleted": "Well Depleted"
+	"vinteng:gui-depleted": "Well Depleted",
+
+	"vinteng:block-velvcharger-*": "Item Charger (LV)",
+	"vinteng:blockdesc-velvcharger-*": "Charges items placed inside it. Chargable items should either have the JSON attribute \"chargable:true\" which will use base-game durability or the Item class can implement the IChargable interface from the VE API for more fine-tuned and controlable charging.",
+	"vinteng:gui-word-charging": "Charging"
 }
