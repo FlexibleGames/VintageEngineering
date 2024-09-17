@@ -396,7 +396,7 @@ namespace VintageEngineering.Transport.API
                     extractionNodes[faceindex].OnRightClick(world, player);
                 }
             }
-            if (player.InventoryManager.ActiveHotbarSlot.Empty)
+            else if (player.InventoryManager.ActiveHotbarSlot.Empty)
             {
                 // player right clicked with an empty hand                
                 // Open GUI if it is an extraction node
