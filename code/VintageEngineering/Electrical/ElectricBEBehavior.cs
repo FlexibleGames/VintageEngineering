@@ -342,7 +342,7 @@ namespace VintageEngineering.Electrical
         /// <returns>Rotate value</returns>
         public int GetRotation()
         {
-            string side = Block.Variant["side"];
+            string side = Block.Variant["side"];            
             // The BlockFacing horiztonal index goes counter-clockwise from east. That needs to be converted so that
             // it goes counter-clockwise from north instead.
             int adjustedIndex = ((BlockFacing.FromCode(side)?.HorizontalAngleIndex ?? 1) + 3) & 3;
