@@ -532,6 +532,10 @@ namespace VintageEngineering.Transport.API
                                     _shapeDirty = true;
                                 }
                             }
+                            if (connectionSides[f] && !bepb.ConnectionSides[BlockFacing.ALLFACES[f].Opposite.Index])
+                            {
+                                bepb.MarkPipeDirty(world, true);
+                            }
                             continue;
                         }
                     }
