@@ -158,6 +158,7 @@ namespace VintageEngineering
             api.RegisterBlockEntityClass("VEBECNC", typeof(BECNC));
             api.RegisterBlockEntityClass("VEBEMixer", typeof(BEMixer));
             api.RegisterBlockEntityClass("VEBELVBattery", typeof(BELVBattery));
+            api.RegisterBlockEntityClass("VEBELVCharger", typeof(BELVCharger));
 
             api.RegisterBlockEntityClass("VEBEItemPipe", typeof(BEPipeItem));
             api.RegisterBlockEntityClass("VEBEFluidPipe", typeof(BEPipeFluid));

@@ -32,19 +32,35 @@ namespace VintageEngineering.inventory
         }
         public override ItemSlot GetAutoPushIntoSlot(BlockFacing atBlockFace, ItemSlot fromSlot)
         {
-            return _slot;
+            if (_slot.Empty) return _slot;
+            else return null;
         }
 
         public override ItemSlot GetAutoPullFromSlot(BlockFacing atBlockFace)
         {
-            return _slot;
+            if (!_slot.Empty)
+            {
+                bool chargable = _slot.Itemstack.Attributes.GetBool("chargable", false);
+                IChargeableItem chargeableItem = _slot.Itemstack.Collectible as IChargeableItem;
+                if (chargable)
+                {
+                    int curcharge = _slot.Itemstack.Collectible.GetRemainingDurability(_slot.Itemstack);
+                    int maxcharge = _slot.Itemstack.Collectible.Durability;
+                    if (curcharge == maxcharge) return _slot;
+                }
+                else
+                {
+                    if (chargeableItem.CurrentPower == chargeableItem.MaxPower) return _slot;
+                }
+            }
+            return null;
         }
 
         public override bool CanContain(ItemSlot sinkSlot, ItemSlot sourceSlot)
         {
             if (sourceSlot.Empty) return false;
 
-            bool chargable = sourceSlot.Itemstack.Attributes.GetBool("chargable", false);
+            bool chargable = sourceSlot.Itemstack.Collectible.Attributes["chargable"].AsBool(false);
             bool ichargable = sourceSlot.Itemstack.Collectible is IChargeableItem;
 
             if (chargable || ichargable) return true;

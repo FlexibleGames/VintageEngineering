@@ -77,14 +77,14 @@ namespace VintageEngineering
         internal int tempGoal; // this will be set in the gui
         public float environmentTemp;
         private float environmentTempDelay = 0f;
-        public float CurrentTemp 
-        { 
-            get 
+        public float CurrentTemp
+        {
+            get
             {
                 if (InputSlot.Empty) return 0;
                 // will return 20 if temp attribute does not exist.
                 return InputSlot.Itemstack.Collectible.GetTemperature(Api.World, InputSlot.Itemstack);
-            } 
+            }
         }
         public float RecipeProgress
         {
@@ -162,7 +162,7 @@ namespace VintageEngineering
             if (inv[slotid].Empty) return true;
             return false;
         }
-        
+
         /// <summary>
         /// If the input slot contains something we can heat, then return true.<br/>
         /// If a temp goal was set in GUI, will try to heat ANYTHING up to that temp.
@@ -170,7 +170,7 @@ namespace VintageEngineering
         /// <returns>True if item can be heated.</returns>
         public bool FindMatchingRecipe()
         {
-            if (Api == null) return false; // we're running this WAY too soon, bounce.            
+            if (Api == null) return false; // we're running this WAY too soon, bounce.
             if (Electric.MachineState == EnumBEState.Off) // if the machine is off, bounce.
             {
                 isHeating = false;
@@ -200,7 +200,7 @@ namespace VintageEngineering
                     if (tempGoal == 0) // if goal = 0, then it's in Auto mode
                     {
                         int workable = 0;
-                        if (InputSlot.Itemstack.Collectible.Attributes != null 
+                        if (InputSlot.Itemstack.Collectible.Attributes != null
                             && InputSlot.Itemstack.Collectible.Attributes["workableTemperature"].Exists)
                         {
                             workable = InputSlot.Itemstack.Collectible.Attributes["workableTemperature"].AsInt();
@@ -247,7 +247,7 @@ namespace VintageEngineering
                 }
                 else
                 {
-                    // no Combustable props, auto temp, no workabletemp attributes... 
+                    // no Combustable props, auto temp, no workabletemp attributes...
                     // whatever we have it can't be heated in this mode.
                     _currentTempGoal = 0;
                     isHeating = false;
@@ -263,13 +263,13 @@ namespace VintageEngineering
                 return true;
             }
             _currentTempGoal = 0;
-            isHeating = false;            
+            isHeating = false;
             SetState(EnumBEState.Sleeping);
             return false;
         }
 
         /// <summary>
-        /// Returns an adjusted fromTemp temperature 
+        /// Returns an adjusted fromTemp temperature
         /// </summary>
         /// <param name="fromTemp">Starting Temp</param>
         /// <param name="toTemp">Temp Goal</param>
@@ -290,20 +290,7 @@ namespace VintageEngineering
             float newtemp = fromTemp + basechange;
             if (newtemp < -273) return toTemp; // something odd happened, can't go below absolute 0.
             return newtemp;
-        }        
-
-        //private float ChangeTemperature(float fromTemp, float toTemp, float deltatime)
-        //{
-        //    float basechange = 0f;
-        //    if (fromTemp <= 600) basechange = HeatPerSecondBase;
-        //    else basechange = (1 / (fromTemp - fromTemp / 2)) * 30000; // base change per second
-        //    basechange = Math.Min(basechange, HeatPerSecondBase); // ensure change is <= HeatPerSecondBase
-        //    float tickchange = basechange * deltatime;
-        //    if (fromTemp > toTemp) tickchange = -tickchange;
-        //    if (Math.Abs(fromTemp - toTemp) < 1f) return toTemp; // if it's within a degree, return totemp
-        //    return fromTemp + tickchange;
-        //}
-
+        }
         #endregion
 
         public void OnSimTick(float dt)
@@ -324,7 +311,7 @@ namespace VintageEngineering
                 {
                     if (InputSlot.Itemstack.Collectible.HasTemperature(InputSlot.Itemstack))
                     {
-                        InputSlot.Itemstack.Collectible.SetTemperature(Api.World, 
+                        InputSlot.Itemstack.Collectible.SetTemperature(Api.World,
                                         InputSlot.Itemstack,
                                         ChangeTemperature(CurrentTemp, environmentTemp, dt),
                                         true);
@@ -347,7 +334,7 @@ namespace VintageEngineering
                         desired *= 1.1f; // bump desired temp 10%
                         float basintemp = heatable.GetTemperature();
                         if (desired > 0f)
-                        {                            
+                        {
                             heatable.SetTemperature(ChangeTemperature(basintemp, desired, dt));
                         }
                         else
@@ -367,7 +354,7 @@ namespace VintageEngineering
                         }
                     }
                     else
-                    { 
+                    {
                         FindMatchingRecipe(); // how'd this happen?
                         return;
                     }
@@ -401,7 +388,7 @@ namespace VintageEngineering
 
         protected virtual void SetState(EnumBEState newstate)
         {
-            //if (MachineState == newstate) return; // no change, nothing to see here.            
+            //if (MachineState == newstate) return; // no change, nothing to see here.
             Electric.MachineState = newstate;
 
             if (Electric.MachineState == EnumBEState.On)
@@ -489,7 +476,7 @@ namespace VintageEngineering
 
         public void Dispose()
         {
-            if (capi != null) 
+            if (capi != null)
             {
                 capi.Event.UnregisterRenderer(this, EnumRenderStage.Opaque);
                 if (heatableMesh != null) heatableMesh.Dispose();

@@ -14,6 +14,12 @@ namespace VintageEngineering.Electrical
     public interface IChargeableItem
     {
         /// <summary>
+        /// What is the max power this machine can hold?
+        /// <br>Type : Unsigned Long (ulong)</br>
+        /// <br>Max Value : 18,446,744,073,709,551,615</br>
+        /// </summary>
+        ulong MaxPower { get; }
+        /// <summary>
         /// Current power held by this Item.
         /// </summary>
         ulong CurrentPower { get; }

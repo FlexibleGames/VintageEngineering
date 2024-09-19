@@ -37,6 +37,8 @@ namespace VintageEngineering
         {
             _updateBouncer = 0f;
             UpdateMesh(rotator);
+            if (InputSlot.Empty) SetState(EnumBEState.Sleeping);
+            else SetState(EnumBEState.On);
             MarkDirty(true);
         }
 
@@ -74,7 +76,7 @@ namespace VintageEngineering
             {
                 _updateBouncer += dt;
                 if (_updateBouncer < 5f) return;
-                _updateBouncer = 0f;
+                 _updateBouncer = 0f;
             }
             if (Electric.RatedPower(dt, false) > Electric.CurrentPower)
             {
@@ -83,7 +85,7 @@ namespace VintageEngineering
             }
             // first lets check to see if it has the attribute, this is used if base-game durability
             // represents the 'charge' of the item...
-            bool chargable = InputSlot.Itemstack.Attributes.GetBool("chargable", false);
+            bool chargable = InputSlot.Itemstack.Collectible.Attributes["chargable"].AsBool(false);
             IChargeableItem chargeableItem = InputSlot.Itemstack.Collectible as IChargeableItem;
 
             if (chargeableItem == null && !chargable) return; // nothing to do with this. It shouldn't have been allowed into the inventory
@@ -103,7 +105,7 @@ namespace VintageEngineering
                     curcharge += torestore;
                     if (curcharge > maxcharge) curcharge = maxcharge;
                     InputSlot.Itemstack.Attributes.SetInt("durability", curcharge);
-                    Electric.electricpower -= powertouse;
+                    Electric.electricpower -= powertouse;                    
                 }
                 else
                 {
@@ -113,11 +115,58 @@ namespace VintageEngineering
             else
             {
                 // use the interface!
+                int curcharge = ((int)chargeableItem.CurrentPower);
+                int maxcharge = ((int)chargeableItem.MaxPower);
+                if (curcharge < maxcharge)
+                {
+                    if (Electric.MachineState != EnumBEState.On) { SetState(EnumBEState.On); }
+                    ulong powertopush = chargeableItem.RatedPower(dt, false);
+                    ulong powertouse = Electric.RatedPower(dt, false);                    
+                    if (powertouse > powertopush) powertouse = powertopush;
+                    ulong remaining = chargeableItem.ReceivePower(powertouse, dt, false);
+                    if (remaining > 0) powertouse -= remaining;
+                    Electric.electricpower -= powertouse;
+                }
+                else
+                {
+                    SetState(EnumBEState.Paused);
+                }
+            }
+            UpdateClient(dt);
+        }
+
+        private float _clientUpdate = 0f;
+        /// <summary>
+        /// Push updated information to client on a delay.
+        /// </summary>
+        /// <param name="dt">DeltaTime</param>
+        private void UpdateClient(float dt)
+        {
+            if (Api.Side == EnumAppSide.Client) return;
+
+            _clientUpdate += dt;
+            if (_clientUpdate >= 1.0f)
+            {
+                MarkDirty(true);
+                _clientUpdate = 0.0f;
             }
         }
 
         public override bool OnPlayerRightClick(IPlayer byPlayer, BlockSelection blockSel)
         {
+            if (byPlayer.InventoryManager.ActiveHotbarSlot.Empty)
+            {
+                if (InputSlot.Empty) return true;
+                //ItemSlot getfrom = inventory.GetAutoPullFromSlot(blockSel.Face);
+                InputSlot.TryPutInto(Api.World, byPlayer.InventoryManager.ActiveHotbarSlot);
+            }
+            else
+            {
+                if (inventory.CanContain(InputSlot, byPlayer.InventoryManager.ActiveHotbarSlot))
+                {
+                    byPlayer.InventoryManager.ActiveHotbarSlot.TryFlipWith(InputSlot);
+                }
+            }
             return true;
         }
 
@@ -150,7 +199,7 @@ namespace VintageEngineering
         protected int textureId;
         private Vec3f center = new Vec3f(0.5f, 0, 0.5f);
         private float rotator = 0f;
-        private float degpersecond = 5f;
+        private float degpersecond = 10f;
 
         public double RenderOrder { get => 0.5; }
         public int RenderRange { get => 24; }
@@ -253,7 +302,7 @@ namespace VintageEngineering
                 rotator += rotation;
                 if (rotator >= 360f) rotator = 0f;
                 TranslateMesh(renderedMesh, 1f, 0f, rotation);
-                capi.Render.UpdateMesh(renderedMeshRef, renderedMesh);
+                capi.Render.UpdateMesh(renderedMeshRef, renderedMesh);                
             }
             else
             {
