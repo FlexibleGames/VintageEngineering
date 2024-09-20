@@ -49,10 +49,7 @@
                     "*-west": 90
                 }
             }
-        ],
-        "recipeMachineByType": {
-            "*-north": [ "velvcharger" ]
-        }
+        ]
 	},
 	"creativeinventory": { "general": ["velvcharger-north"], "terrain": ["*"], "mechanics": ["*"] },
 	"shapeByType": {

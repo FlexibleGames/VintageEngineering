@@ -1,0 +1,13 @@
+{
+	"ingredientPattern": "STS,PBP,SMS",
+	"ingredients": {
+		"T": { "type": "item", "code": "game:wiretool-*", "isTool": true },
+		"P": { "type": "item", "code": "vinteng:metalgear-copper", "quantity": 1},
+		"B": { "type": "block", "code": "vinteng:machineryblock-iron", "quantity": 1},
+		"M": { "type": "item", "code": "vinteng:motor-lv", "quantity": 1},
+		"S": { "type": "item", "code": "vinteng:screw-*", "quantity": 1}
+	},
+	"width": 3,
+	"height": 3,
+	"output": { "type": "block", "code": "vinteng:velvcharger-north", "quantity": 1  }
+}
