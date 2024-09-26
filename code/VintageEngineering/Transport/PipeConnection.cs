@@ -54,6 +54,12 @@ namespace VintageEngineering.Transport
 
         public PipeConnection() {}
 
+        /// <summary>
+        /// A PipeConnection object
+        /// </summary>
+        /// <param name="bpos">BlockPos of block this Connection is TO, NOT the position of the pipe itself.</param>
+        /// <param name="bfacing">BlockFacing TOWARD the block connected to.</param>
+        /// <param name="dist">Distance TO this connection, as calculated by the Extraction nodes that contain this connection.</param>
         public PipeConnection(BlockPos bpos, BlockFacing bfacing, int dist = 0)
         {
             _pos = bpos;

@@ -131,6 +131,23 @@ namespace VintageEngineering.Transport.API
                 RebuildPushConnections(api.World, pnm.GetNetwork(NetworkID).PipeBlockPositions.ToArray());
                 api.World.BlockAccessor.MarkBlockEntityDirty(Pos);
             }
+            if (numInsertionConnections > 0 && NetworkID != 0)
+            {
+                List<PipeConnection> inserts = new List<PipeConnection>(numInsertionConnections);
+                for (int f = 0; f < 6; f++)
+                {
+                    if (insertionSides[f])
+                    {
+                        PipeConnection newcon = new PipeConnection(this.Pos.AddCopy(BlockFacing.ALLFACES[f]), BlockFacing.ALLFACES[f], 0);
+                        inserts.Add(newcon);
+                    }
+                }
+                if (inserts.Count != numInsertionConnections)
+                {
+                    Api.Logger.Error("VE Pipe Insert count not equal to numInsertionConnections");
+                }
+                pnm.GetNetwork(NetworkID).QuickUpdateNetwork(api.World, inserts.ToArray(), false);
+            }
             if (api.Side == EnumAppSide.Server) MarkDirty(true);
         }        
 
@@ -398,7 +415,7 @@ namespace VintageEngineering.Transport.API
             }
             else if (player.InventoryManager.ActiveHotbarSlot.Empty)
             {
-                // player right clicked with an empty hand                
+                // player right clicked with an empty hand
                 // Open GUI if it is an extraction node
                 if (ExtractionSides[faceindex] && extractionNodes[faceindex] != null)
                 {
@@ -544,8 +561,8 @@ namespace VintageEngineering.Transport.API
                         if (!disconnectedSides[f] && !insertionSides[f] && !extractionSides[f])
                         {
                             insertionSides[f] = true;
-                            PipeConnection newinsert = new PipeConnection(Pos.AddCopy(fromface), fromface, 0);
-                            if (pnm != null && NetworkID != 0) pnm.GetNetwork(NetworkID).QuickUpdateNetwork(world, newinsert, false);
+                            //PipeConnection newinsert = new PipeConnection(Pos.AddCopy(fromface), fromface, 0);
+                            //if (pnm != null && NetworkID != 0) pnm.GetNetwork(NetworkID).QuickUpdateNetwork(world, newinsert, false);
                             numInsertionConnections++;
                             _shapeDirty = true;
                         }
@@ -578,7 +595,7 @@ namespace VintageEngineering.Transport.API
         /// <param name="pipenetwork">BlockPos array of all pipes in this network that have an insert connection.</param>
         public virtual void RebuildPushConnections(IWorldAccessor world, BlockPos[] pipenetwork)
         {
-            if (pipenetwork != null && pipenetwork.Length > 0)
+            if (pipenetwork != null)
             {
                 if (_pushConnections != null) _pushConnections.Clear();
                 else _pushConnections = new List<PipeConnection>();
@@ -586,7 +603,10 @@ namespace VintageEngineering.Transport.API
                 foreach (BlockPos p in pipenetwork)
                 {
                     BEPipeBase bep = world.BlockAccessor.GetBlockEntity(p) as BEPipeBase;
-                    if (bep == null) continue;
+                    if (bep == null)
+                    {                        
+                        continue; 
+                    }
                     for (int f = 0; f < 6; f++)
                     {
                         if (bep.insertionSides[f])
@@ -625,7 +645,7 @@ namespace VintageEngineering.Transport.API
                     PipeConnection con = new PipeConnection(
                         altered.AddCopy(ConvertIndexToFace(f)),
                         ConvertIndexToFace(f),
-                        Pos.ManhattenDistance(altered));
+                        Pos.ManhattenDistance(altered.AddCopy(BlockFacing.ALLFACES[f])));
                     if (isRemove)
                     {
                         if (_pushConnections != null && _pushConnections.Count > 0)

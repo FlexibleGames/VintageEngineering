@@ -310,9 +310,10 @@ namespace VintageEngineering.Transport.Network
                         _pipeNetworks[newid].AddPipes(world, newnet);
                         _pipeNetworks[newid].MarkNetworkDirty(world); // rebuilds insert list for all extraction nodes
                         // remove those same pipes from the original network
-                        _pipeNetworks[splitid].RemovePipes(world, newnet);
+                        _pipeNetworks[splitid].RemovePipes(world, newnet);                        
                     }
                 }
+                _pipeNetworks[splitid].MarkNetworkDirty(world); // update other side of network split.
             }
         }
 
