@@ -1,0 +1,30 @@
+{
+	"editor": {
+		"allAngles": false,
+		"entityTextureMode": false
+	},
+	"textureWidth": 16,
+	"textureHeight": 16,
+	"textureSizes": {
+	},
+	"textures": {
+		"castiron": "block/castiron",
+		"blue1": "block/creosoteoven/blue1",
+		"front": "block/creosoteoven/front"
+	},
+	"elements": [
+		{
+			"name": "Cube2",
+			"from": [ 1.0, 0.0, 1.0 ],
+			"to": [ 15.0, 16.0, 15.0 ],
+			"rotationOrigin": [ 1.0, 0.0, 1.0 ],
+			"faces": {
+				"north": { "texture": "#blue1", "uv": [ 0.0, 0.0, 16.0, 16.0 ], "autoUv": false },
+				"east": { "texture": "#blue1", "uv": [ 0.0, 0.0, 16.0, 16.0 ], "autoUv": false },
+				"south": { "texture": "#front", "uv": [ 0.0, 0.0, 16.0, 16.0 ], "autoUv": false },
+				"west": { "texture": "#blue1", "uv": [ 0.0, 0.0, 16.0, 16.0 ], "autoUv": false },
+				"up": { "texture": "#castiron", "uv": [ 0.0, 0.0, 16.0, 16.0 ], "autoUv": false },
+				"down": { "texture": "#castiron", "uv": [ 0.0, 0.0, 16.0, 16.0 ], "autoUv": false }
+			}
+		}
+	]}

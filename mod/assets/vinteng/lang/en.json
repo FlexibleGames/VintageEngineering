@@ -268,5 +268,7 @@
 	"vinteng:item-creosoteportion-wood": "Wood-Tar Creosote",
 	"vinteng:itemdesc-creosoteportion-wood": "Creosote derrived from wood in a Creosote Oven, ideally Beechwood, is an excellent food preservative and flavoring. Add a little BBQ smokey flavor to your meal!",
 	"vinteng:item-creosoteportion-coal": "Coal-Tar Creosote",
-	"vinteng:itemdesc-creosoteportion-coal": "Creosote derrived from coal in a Creosote Oven, ideally bituminous coal, makes an excellent wood preservative and protector. Treat any boards with this to make treated boards and wood products."
+	"vinteng:itemdesc-creosoteportion-coal": "Creosote derrived from coal in a Creosote Oven, ideally bituminous coal, makes an excellent wood preservative and protector. Treat any boards with this to make treated boards and wood products.",
+	"vinteng:block-vecreosoteoven-*": "Creosote Oven",
+	"vinteng:blockdesc-vecreosoteoven-*": "A simple machine that bakes input ingredient like wood or coal and turns it into Creosote."
 }
