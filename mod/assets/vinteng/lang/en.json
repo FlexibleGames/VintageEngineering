@@ -263,5 +263,10 @@
 
 	"vinteng:block-velvcharger-*": "Item Charger (LV)",
 	"vinteng:blockdesc-velvcharger-*": "Charges items placed inside it. Chargable items should either have the JSON attribute \"chargable:true\" which will use base-game durability or the Item class can implement the IChargable interface from the VE API for more fine-tuned and controlable charging.",
-	"vinteng:gui-word-charging": "Charging"
+	"vinteng:gui-word-charging": "Charging",
+
+	"vinteng:item-creosoteportion-wood": "Wood-Tar Creosote",
+	"vinteng:itemdesc-creosoteportion-wood": "Creosote derrived from wood in a Creosote Oven, ideally Beechwood, is an excellent food preservative and flavoring. Add a little BBQ smokey flavor to your meal!",
+	"vinteng:item-creosoteportion-coal": "Coal-Tar Creosote",
+	"vinteng:itemdesc-creosoteportion-coal": "Creosote derrived from coal in a Creosote Oven, ideally bituminous coal, makes an excellent wood preservative and protector. Treat any boards with this to make treated boards and wood products."
 }
