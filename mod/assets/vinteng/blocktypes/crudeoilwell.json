@@ -1,6 +1,6 @@
 {
 	"code": "crudeoilwell",
-	"class": "BlockCrudeOilWell",
+	"class": "VEBlockCrudeOilWell",
 	"entityClass": "VEBECrudeOilWell",
 	"drawtype": "cube",
 	"shape": { "base": "game:block/basic/cube" },

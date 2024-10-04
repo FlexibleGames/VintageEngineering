@@ -155,7 +155,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
         /// <param name="api">Api</param>
         /// <param name="inputslots">InputSlots</param>
         /// <param name="outputslots">2 Output Slots, id= 0 item, 1 fluid</param>
-        /// <returns></returns>
+        /// <returns>True if successful</returns>
         public bool TryCraftNow(ICoreAPI api, ItemSlot[] inputslots, ItemSlot[] outputslots)
         {
             List<KeyValuePair<ItemSlot, BarrelRecipeIngredient>> matched = PairInput(inputslots);
@@ -186,7 +186,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
             foreach (BarrelOutputStack output in Outputs)
             {
                 if (ShouldBeInLiquidSlot(output.ResolvedItemstack))
-                {
+                {                    
                     output.ResolvedItemstack.StackSize = output.Quantity;
                     if (outputslots[1].Empty) outputslots[1].Itemstack = output.ResolvedItemstack.Clone();
                     else outputslots[1].Itemstack.StackSize += output.ResolvedItemstack.StackSize;

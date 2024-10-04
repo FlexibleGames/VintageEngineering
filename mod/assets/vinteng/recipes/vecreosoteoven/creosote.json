@@ -1,0 +1,28 @@
+[
+{
+	"code": "coaltarcreosote",
+	"powerpercraft": 2,
+	"attributes": {
+		"mintemp": 205
+	},
+	"ingredients": [
+		{ "type": "block", "code": "game:ore-*", "name": "type", "allowedVariants":["lignite", "bituminouscoal", "anthracite"], "quantity": 1 }
+	],
+	"outputs": [
+		{ "type": "item", "code": "vinteng:creosoteportion-coal", "litres": 2 }
+	]
+},
+{
+	"code": "woodtarcreosote",
+	"powerpercraft": 2,
+	"attributes": {
+		"mintemp": 205
+	},
+	"ingredients": [
+		{ "type": "block", "code": "game:log-placed-*-ud", "name": "wood", "allowedVariants":["pine", "oak"], "quantity": 1 }
+	],
+	"outputs": [
+		{ "type": "item", "code": "vinteng:creosoteportion-wood", "litres": 1 }
+	]
+}
+]

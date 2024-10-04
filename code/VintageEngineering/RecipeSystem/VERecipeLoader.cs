@@ -67,6 +67,10 @@ namespace VintageEngineering.RecipeSystem
             {
                 verrs.RegisterMixerRecipe(r);
             });
+            this.LoadRecipes<RecipeCreosoteOven>("ve creosoteoven recipe", "recipes/vecreosoteoven", delegate (RecipeCreosoteOven r)
+            {
+                verrs.RegisterCreosoteOvenRecipe(r);
+            });
 
             sapi.World.Logger.StoryEvent(Lang.Get("vinteng:storyevent-recipes", Array.Empty<object>()));
         }

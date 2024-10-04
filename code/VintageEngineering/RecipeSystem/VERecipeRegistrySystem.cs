@@ -50,7 +50,7 @@ namespace VintageEngineering.RecipeSystem
         /// <summary>
         /// Turn Combustable things into other things
         /// </summary>
-        public List<RecipeCokeOven>     CokeOvenRecipes = new List<RecipeCokeOven>();
+        public List<RecipeCreosoteOven>     CreosoteOvenRecipes = new List<RecipeCreosoteOven>();
         /// <summary>
         /// Smelt things into other things
         /// </summary>
@@ -171,27 +171,27 @@ namespace VintageEngineering.RecipeSystem
         {
             if (!VERecipeRegistrySystem.canRegister)
             {
-                throw new InvalidOperationException("VintEng | RecipeRegistrySystem: Can no longer register CNC recipes. Register during AssetsLoaded/AssetsFinalize and with ExecuteOrder < 99999");
+                throw new InvalidOperationException("VintEng | RecipeRegistrySystem: Can no longer register VE recipes. Register during AssetsLoaded/AssetsFinalize and with ExecuteOrder < 99999");
             }
             recipeKilnRecipes.RecipeID = KilnRecipes.Count + 1;
             this.KilnRecipes.Add(recipeKilnRecipes);
         }
 
-        public void RegisterCokeOvenRecipe(RecipeCokeOven recipeCokeOven)
+        public void RegisterCreosoteOvenRecipe(RecipeCreosoteOven recipeCreosoteOven)
         {
             if (!VERecipeRegistrySystem.canRegister)
             {
-                throw new InvalidOperationException("VintEng | RecipeRegistrySystem: Can no longer register CNC recipes. Register during AssetsLoaded/AssetsFinalize and with ExecuteOrder < 99999");
+                throw new InvalidOperationException("VintEng | RecipeRegistrySystem: Can no longer register VE recipes. Register during AssetsLoaded/AssetsFinalize and with ExecuteOrder < 99999");
             }
-            recipeCokeOven.RecipeID = CokeOvenRecipes.Count + 1;
-            this.CokeOvenRecipes.Add(recipeCokeOven);
+            recipeCreosoteOven.RecipeID = CreosoteOvenRecipes.Count + 1;
+            this.CreosoteOvenRecipes.Add(recipeCreosoteOven);
         }
 
         public void RegisterAlloyOvenRecipe(RecipeAlloyOven recipeAlloyOven)
         {
             if (!VERecipeRegistrySystem.canRegister)
             {
-                throw new InvalidOperationException("VintEng | RecipeRegistrySystem: Can no longer register CNC recipes. Register during AssetsLoaded/AssetsFinalize and with ExecuteOrder < 99999");
+                throw new InvalidOperationException("VintEng | RecipeRegistrySystem: Can no longer register VE recipes. Register during AssetsLoaded/AssetsFinalize and with ExecuteOrder < 99999");
             }
             recipeAlloyOven.RecipeID = AlloyOvenRecipes.Count + 1;
             this.AlloyOvenRecipes.Add(recipeAlloyOven);

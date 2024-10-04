@@ -160,6 +160,7 @@
 	"vinteng:gui-machine-sleeping": "Machine is sleeping.",
 	"vinteng:gui-machine-heating": "Machine is heating up.",
 	"vinteng:gui-machine-heatingblock": "Forge is heating machine above it.",
+	"vinteng:gui-machine-nofuel": "No Fuel in Fuel Slot.",
 	"vinteng:gui-machine-lowpower":"Machine power low.",
 	"vinteng:gui-is-sleeping-short": "Zzzz",
 	"vinteng:gui-machine-ingredients": "Recipe ingredients needed!",
@@ -178,6 +179,7 @@
 	"vinteng:gui-title-forge": "Electric Forge",
 	"vinteng:gui-title-mixer": "Industrial Mixer",
 	"vinteng:gui-title-cnc": "CNC",
+	"vinteng:gui-title-creosote": "Creosote Oven",
 
 	"vinteng:block-pipe-item": "Item Pipe",
 	"vinteng:blockdesc-pipe-item": "Move items around your factory. Upgradable. Right-click with a wrench on a connection node to put into extraction mode. Shift+right-click with a wrench to remove a connection node.",

@@ -9,13 +9,15 @@ using System.Threading.Tasks;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.Util;
+using Vintagestory.GameContent;
 
 namespace VintageEngineering.RecipeSystem.Recipes
 {
     /// <summary>
-    /// Extruder will have 1 input, 1 die slot, and 1 output
+    /// A very slow way of making coal coke or charcoal and Creosote (a useful fluid).<br/>
+    /// 2 item input, 1 item & 1 fluid output, 1 slot for a bucket under output fluid bar.
     /// </summary>
-    public class RecipeExtruder : IByteSerializable, IVEMachineRecipeBase<RecipeExtruder>
+    public class RecipeCreosoteOven : IByteSerializable, IVEMachineRecipeBase<RecipeCreosoteOven>
     {
         /// <summary>
         /// Increases as recipes are added, first recipe added is ID=1, second is ID=2 and so on.
@@ -28,38 +30,49 @@ namespace VintageEngineering.RecipeSystem.Recipes
 
         /// <summary>
         /// Set in attributes => requires, what item Code must be present for this recipe to progress?<br/>
-        /// For the Extruder, it is the specific diecast placed into the press. Extruder inventory will have a special slot for this.
+        /// For the Metal Press, it is the specific mold placed into the press. Metal press inventory will have a special slot for this mold.
         /// </summary>
         public AssetLocation Requires { get; set; }
 
         /// <summary>
         /// Set in attributes => requirevariants, what variants, if any, are allowed of this type for this recipe.<br/>
-        /// For example, for the Extruder to make Steel Rods, only the steel and titanium die could be required.
+        /// For example, for the metal press to make Titanium Plate, only the steel and titanium plate mold could be allowed.
         /// </summary>
         public string[] RequiresVariants { get; set; }
 
-        /// <summary>
-        /// Specifies whether the item this recipe requires consumes durability every craft.
-        /// </summary>
-        public bool RequiresDurability { get; set; }
-
-        /// <summary>
-        /// If set, what temp does the input have to be for the recipe to progress?
-        /// </summary>
-        public int RequiresTemp { get; set; }
-
         public string Code { get; set; }
 
+        /// <summary>
+        /// For this machine, this value = CraftTimePerItem (in seconds)<br/>
+        /// Total crafting time, is then This value * StackSize of input
+        /// </summary>
         public long PowerPerCraft { get; set; }
+
+        /// <summary>
+        /// Craft time per input item in seconds for this recipe, set via the "powerpercraft" JSON attribute.
+        /// </summary>
+        public long CraftTimePerItem => PowerPerCraft;
+        /// <summary>
+        /// What is the minimum temperature required to start the craft.<br/>
+        /// Machine Temperature gets reduced every time something is added to the input stack.
+        /// </summary>
+        public int MinTemp { get; set; }
+        /// <summary>
+        /// (Currently Unused) What is the maximum temp for this recipe, beyond which the craft stops or changes to 
+        /// something that supports the higher temps (if recipe exists).<br/>
+        /// Not supported at this time as there is no way to manage the temp of the oven.
+        /// </summary>
+        public int MaxTemp { get; set; }
 
         [JsonProperty]
         [JsonConverter(typeof(JsonAttributesConverter))]
         public JsonObject Attributes { get; set; }
 
+
         public CraftingRecipeIngredient[] Ingredients;
         public VERecipeVariableOutput[] Outputs;
 
-        IRecipeIngredient[] IVEMachineRecipeBase<RecipeExtruder>.Ingredients
+        IRecipeIngredient[] IVEMachineRecipeBase<RecipeCreosoteOven>.Ingredients
         {
             get
             {
@@ -68,7 +81,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
         }
 
 
-        IRecipeOutput[] IVEMachineRecipeBase<RecipeExtruder>.Outputs
+        IRecipeOutput[] IVEMachineRecipeBase<RecipeCreosoteOven>.Outputs
         {
             get
             {
@@ -76,8 +89,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
             }
         }
 
-        public bool SatisfiesAsIngredient(int index, ItemStack inputStack, bool checkStacksize = true)
-        {
+        public bool SatisfiesAsIngredient(int index, ItemStack inputStack, bool checkStacksize = true) {
             return Ingredients[index].SatisfiesAsIngredient(inputStack, checkStacksize);
         }
 
@@ -90,20 +102,32 @@ namespace VintageEngineering.RecipeSystem.Recipes
         }
 
         /// <summary>
-        /// Checks the validity of given ingredient and "requires" item to this recipe.<br/>        
+        /// Check whether the given itemStack is a liquid.
         /// </summary>
+        /// <param name="itemStack">ItemStack to check</param>
+        /// <returns>true if it is a liquid</returns>
+        public bool ShouldBeInLiquidSlot(ItemStack itemStack)
+        {
+            if (itemStack == null) return false;
+            JsonObject itemAttributes = itemStack.ItemAttributes;
+            return itemAttributes != null ? itemAttributes["waterTightContainerProps"].Exists : false;
+        }
+
+        /// <summary>
+        /// Checks the validity of given ingredient and "requires" item to this recipe.<br/>        
+        /// </summary>        
         /// <param name="ingredient">ItemSlot input ingredient</param>
         /// <param name="requireslot">Required Die Cast Code if aplicable.</param>
         /// <returns>True if valid.</returns>
         public bool Matches(ItemSlot ingredient, ItemSlot requireslot)
         {
             if (ingredient.Empty) return false; // no ingredient to even check, bounce
-            // only ever one input ingredient, fuel is managed by the BE
+
             if (!Ingredients[0].SatisfiesAsIngredient(ingredient.Itemstack, true)) return false;
 
-            if (Requires != null) // if this recipe requires something, we need to check for it in the requires slot
+            if (Requires != null) // unused, but left in... if this recipe requires something, we need to check for it in the requires slot
             {
-                if (requireslot.Empty) return false;
+                if (requireslot == null || requireslot.Empty) return false;
                 if (Requires.IsWildCard)
                 {
                     // TODO check for variants
@@ -124,30 +148,129 @@ namespace VintageEngineering.RecipeSystem.Recipes
             }
         }
 
-        public RecipeExtruder Clone()
+
+        /// <summary>
+        /// Tries to craft the recipe based on input slots to push into output slots.
+        /// </summary>
+        /// <param name="api">Api</param>
+        /// <param name="inputslots">InputSlots</param>
+        /// <param name="outputslots">2 Output Slots, id= 0 item, 1 fluid</param>
+        /// <returns></returns>
+        public bool TryCraftNow(ICoreAPI api, ItemSlot[] inputslots, ItemSlot[] outputslots)
         {
-            CraftingRecipeIngredient[] cloned = new CraftingRecipeIngredient[Ingredients.Length];
+            List<KeyValuePair<ItemSlot, CraftingRecipeIngredient>> matched = PairInput(inputslots);
+            if (matched == null) return false;
+
+            ItemStack mainoutput = Outputs[0].ResolvedItemstack.Clone();
+            ItemStack secondaryoutput = null;
+            if (Outputs.Length > 1)
+            {
+                secondaryoutput = Outputs[1].ResolvedItemstack.Clone();
+            }
+            if (secondaryoutput != null && mainoutput.Collectible.IsLiquid() && secondaryoutput.Collectible.IsLiquid())
+            {
+                // if we have a second output and both are liquid, it's a bad recipe
+                return false;
+            }
+            foreach (KeyValuePair<ItemSlot, CraftingRecipeIngredient> val in matched)
+            {
+                val.Key.TakeOut(val.Value.Quantity);
+                val.Key.MarkDirty();
+            }
+            foreach (VERecipeVariableOutput output in Outputs)
+            {
+                int quantity = output.VariableResolve(api.World, "CreosoteOven TryCraftNow");
+                output.ResolvedItemstack.StackSize = quantity;
+                if (ShouldBeInLiquidSlot(output.ResolvedItemstack))
+                {
+                    if (outputslots[1].Empty) outputslots[1].Itemstack = output.ResolvedItemstack.Clone();
+                    else outputslots[1].Itemstack.StackSize += output.ResolvedItemstack.StackSize;
+                    outputslots[1].MarkDirty();
+                }
+                else
+                {
+                    if (outputslots[0].Empty) outputslots[0].Itemstack = output.ResolvedItemstack.Clone();
+                    else outputslots[0].Itemstack.StackSize += output.ResolvedItemstack.StackSize;
+                    outputslots[0].MarkDirty();
+                }
+            }
+            return true;
+        }
+
+
+        /// <summary>
+        /// Checks all inputSlots and compares to recipe Ingredients that match type.
+        /// </summary>
+        /// <param name="inputStacks">Input Slots to check</param>
+        /// <returns>Matched Pair List</returns>
+        public List<KeyValuePair<ItemSlot, CraftingRecipeIngredient>> PairInput(ItemSlot[] inputStacks)
+        {
+            List<CraftingRecipeIngredient> ingredientList = new List<CraftingRecipeIngredient>(this.Ingredients);
+            Queue<ItemSlot> inputSlotsList = new Queue<ItemSlot>();
+            foreach (ItemSlot val in inputStacks)
+            {
+                if (!val.Empty)
+                {
+                    inputSlotsList.Enqueue(val);
+                }
+            }
+            if (inputSlotsList.Count != this.Ingredients.Length)
+            {
+                return null;
+            }
+            List<KeyValuePair<ItemSlot, CraftingRecipeIngredient>> matched = new List<KeyValuePair<ItemSlot, CraftingRecipeIngredient>>();
+            while (inputSlotsList.Count > 0)
+            {
+                ItemSlot inputSlot = inputSlotsList.Dequeue();
+                bool found = false;
+                for (int i = 0; i < ingredientList.Count; i++)
+                {
+                    CraftingRecipeIngredient ingred = ingredientList[i];
+                    if (ingred.SatisfiesAsIngredient(inputSlot.Itemstack, true))
+                    {
+                        matched.Add(new KeyValuePair<ItemSlot, CraftingRecipeIngredient>(inputSlot, ingred));
+                        found = true;
+                        ingredientList.RemoveAt(i);
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    return null;
+                }
+            }
+            if (ingredientList.Count > 0)
+            {
+                return null;
+            }
+            return matched;
+        }
+
+        public RecipeCreosoteOven Clone()
+        {
+            CraftingRecipeIngredient[] inclone = new CraftingRecipeIngredient[Ingredients.Length];
             for (int i = 0; i < Ingredients.Length; i++)
             {
-                cloned[i] = Ingredients[i].Clone();
+                inclone[i] = Ingredients[i].Clone();
             }
             VERecipeVariableOutput[] outclone = new VERecipeVariableOutput[Outputs.Length];
             for (int i = 0; i < Outputs.Length; i++)
             {
                 outclone[i] = Outputs[i].Clone();
             }
-            return new RecipeExtruder
+            return new RecipeCreosoteOven
             {
                 RecipeID = this.RecipeID,
                 Name = this.Name,
                 Enabled = this.Enabled,
                 Requires = Requires != null ? this.Requires.Clone() : null,
                 RequiresVariants = this.RequiresVariants != null ? this.RequiresVariants.FastCopy(RequiresVariants.Length) : null,
-                RequiresTemp = this.RequiresTemp,
+                MinTemp = this.MinTemp,
+                MaxTemp = this.MaxTemp,
                 Code = this.Code,
                 PowerPerCraft = this.PowerPerCraft,
                 Attributes = this.Attributes?.Clone(),
-                Ingredients = cloned,
+                Ingredients = inclone,
                 Outputs = outclone
             };
         }
@@ -157,7 +280,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
             Dictionary<string, string[]> mappings = new Dictionary<string, string[]>();
             foreach (CraftingRecipeIngredient val in this.Ingredients)
             {
-                if (val.Name != null && val.Name.Length != 0 && val.Code.Path.Contains('*'))
+                if (val.Name != null && val.Name.Length != 0 && val.Code.Path.Contains("*"))
                 {
                     int wildcardStartLen = val.Code.Path.IndexOf("*");
                     int wildcardEndLen = val.Code.Path.Length - wildcardStartLen - 1;
@@ -196,13 +319,14 @@ namespace VintageEngineering.RecipeSystem.Recipes
 
         public bool Resolve(IWorldAccessor world, string sourceForErrorLogging)
         {
+            bool ok = true;
             for (int i = 0; i < this.Ingredients.Length; i++)
-            {
-                Ingredients[i].Resolve(world, sourceForErrorLogging);
+            {                
+                ok &= this.Ingredients[i].Resolve(world, sourceForErrorLogging);
             }
-            for (int i = 0; i < this.Outputs.Length; i++)
+            for (int i = 0; i < Outputs.Length; i++)
             {
-                Outputs[i].Resolve(world, sourceForErrorLogging);
+                ok &= this.Outputs[i].Resolve(world, sourceForErrorLogging, true);
             }
             if (Attributes != null)
             {
@@ -221,17 +345,10 @@ namespace VintageEngineering.RecipeSystem.Recipes
                         RequiresVariants = new string[1] { Attributes["requiresvariants"].AsString() };
                     }
                 }
-                if (Attributes["requiresdurability"].Exists)
-                {
-                    RequiresDurability = Attributes["requiresdurability"].AsBool(false);
-                }
-                if (Attributes["requirestemp"].Exists)
-                {
-                    RequiresTemp = Attributes["requirestemp"].AsInt();
-                }
+                if (Attributes["mintemp"].Exists) MinTemp = Attributes["mintemp"].AsInt(0);
+                if (Attributes["maxtemp"].Exists) MaxTemp = Attributes["maxtemp"].AsInt(0);
             }
-
-            return true;
+            return ok;
         }
         public void FromBytes(BinaryReader reader, IWorldAccessor resolver)
         {
@@ -245,14 +362,14 @@ namespace VintageEngineering.RecipeSystem.Recipes
             {
                 Ingredients[i] = new CraftingRecipeIngredient();
                 Ingredients[i].FromBytes(reader, resolver);
-                Ingredients[i].Resolve(resolver, "VE Extruder Recipe (FromBytes)");
+                Ingredients[i].Resolve(resolver, "VE Creosote Oven Recipe (FromBytes)");
             }
             Outputs = new VERecipeVariableOutput[reader.ReadInt32()];
             for (int i = 0; i < Outputs.Length; i++)
             {
                 Outputs[i] = new VERecipeVariableOutput();
                 Outputs[i].FromBytes(reader, resolver.ClassRegistry);
-                Outputs[i].Resolve(resolver, "VE Extruder Recipe (FromBytes)");
+                Outputs[i].Resolve(resolver, "VE Creosote Oven Recipe (FromBytes)");
             }
             if (Attributes != null)
             {
@@ -269,7 +386,8 @@ namespace VintageEngineering.RecipeSystem.Recipes
                         RequiresVariants = new string[1] { Attributes["requiresvariants"].AsString() };
                     }
                 }
-                if (Attributes["requirestemp"].Exists) RequiresTemp = Attributes["requirestemp"].AsInt(0);
+                if (Attributes["mintemp"].Exists) MinTemp = Attributes["mintemp"].AsInt(0);
+                if (Attributes["maxtemp"].Exists) MaxTemp = Attributes["maxtemp"].AsInt(0);
             }
         }
 

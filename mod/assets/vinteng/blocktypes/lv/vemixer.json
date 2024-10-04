@@ -1,6 +1,6 @@
 {
 	"code": "vemixer",
-	"class": "VEMixer",
+	"class": "VEBlockFluidIO",
 	"entityClass": "VEBEMixer",
 	"behaviors": [
 		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "vemixer-north" }}}

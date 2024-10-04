@@ -15,7 +15,10 @@ using Vintagestory.GameContent;
 
 namespace VintageEngineering
 {
-    public class BlockMixer : ElectricBlock
+    /// <summary>
+    /// A generic Fluid Containing Block for Bucket interaction.
+    /// </summary>
+    public class BlockFluidIO : ElectricBlock
     {        
 
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
@@ -24,12 +27,12 @@ namespace VintageEngineering
             {
                 return false;
             }
-            BEMixer bemix = null;
+            BlockEntity bemix = null;
             if (blockSel.Position != null)
             {
-                bemix = (world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEMixer);
+                bemix = world.BlockAccessor.GetBlockEntity(blockSel.Position);
             }
-            if (bemix == null) return false;
+            if (bemix == null || bemix is not IVELiquidInterface) return false;
             
             if (byPlayer != null && byPlayer.InventoryManager.ActiveHotbarSlot != null && !byPlayer.InventoryManager.ActiveHotbarSlot.Empty)
             {
@@ -88,9 +91,9 @@ namespace VintageEngineering
 
             if (!handled && !byPlayer.WorldData.EntityControls.ShiftKey && blockSel.Position != null)
             {
-                if (bemix != null)
-                {
-                    bemix.OnPlayerRightClick(byPlayer, blockSel);
+                if (bemix != null && bemix is BlockEntityOpenableContainer beoc)
+                {                    
+                    beoc.OnPlayerRightClick(byPlayer, blockSel);
                 }
                 return true;
             }

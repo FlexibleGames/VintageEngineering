@@ -1,6 +1,6 @@
 {
 	"code": "crudeoil",
-	"class": "BlockCrudeOil",
+	"class": "VEBlockCrudeOil",
 	"behaviors":
 	[
 		{
