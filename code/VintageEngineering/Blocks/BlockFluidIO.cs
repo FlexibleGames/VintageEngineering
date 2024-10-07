@@ -27,12 +27,12 @@ namespace VintageEngineering
             {
                 return false;
             }
-            BlockEntity bemix = null;
+            BlockEntity bentity = null;
             if (blockSel.Position != null)
             {
-                bemix = world.BlockAccessor.GetBlockEntity(blockSel.Position);
+                bentity = world.BlockAccessor.GetBlockEntity(blockSel.Position);
             }
-            if (bemix == null || bemix is not IVELiquidInterface) return false;
+            if (bentity == null || bentity is not IVELiquidInterface) return false;
             
             if (byPlayer != null && byPlayer.InventoryManager.ActiveHotbarSlot != null && !byPlayer.InventoryManager.ActiveHotbarSlot.Empty)
             {
@@ -43,7 +43,7 @@ namespace VintageEngineering
                     if (contents != null)
                     {
                         DummySlot topush = new DummySlot(contents);
-                        IVELiquidInterface ivel = bemix as IVELiquidInterface;
+                        IVELiquidInterface ivel = bentity as IVELiquidInterface;
                         ItemSlotLiquidOnly push = ivel.GetLiquidAutoPushIntoSlot(blockSel.Face, topush);
                         if (push == null) return true;
                         WaterTightContainableProps props = BlockLiquidContainerBase.GetContainableProps(contents);
@@ -59,12 +59,12 @@ namespace VintageEngineering
                             contents.StackSize -= moved;
                             bucket.SetContent(byPlayer.InventoryManager.ActiveHotbarSlot.Itemstack, contents);
                         }
-                        bemix.MarkDirty(true);
+                        bentity.MarkDirty(true);
                         return true;
                     }
                     else
                     {
-                        IVELiquidInterface ivel = bemix as IVELiquidInterface;
+                        IVELiquidInterface ivel = bentity as IVELiquidInterface;
                         ItemSlotLiquidOnly pull = ivel.GetLiquidAutoPullFromSlot(blockSel.Face);
                         if (pull == null) return true;
                         WaterTightContainableProps props = BlockLiquidContainerBase.GetContainableProps(pull.Itemstack);
@@ -81,7 +81,7 @@ namespace VintageEngineering
                             bucket.SetContent(byPlayer.InventoryManager.ActiveHotbarSlot.Itemstack, pulled.Clone());
                             pull.TakeOut(cancontain);
                         }
-                        bemix.MarkDirty(true);
+                        bentity.MarkDirty(true);
                         return true;
                     }
                 }
@@ -91,8 +91,8 @@ namespace VintageEngineering
 
             if (!handled && !byPlayer.WorldData.EntityControls.ShiftKey && blockSel.Position != null)
             {
-                if (bemix != null && bemix is BlockEntityOpenableContainer beoc)
-                {                    
+                if (bentity != null && bentity is BlockEntityOpenableContainer beoc)
+                {
                     beoc.OnPlayerRightClick(byPlayer, blockSel);
                 }
                 return true;

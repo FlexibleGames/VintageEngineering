@@ -83,18 +83,18 @@ namespace VintageEngineering.RecipeSystem.Recipes
                 // output is a fluid, scale output according to items per litre
                 props = BlockLiquidContainerBase.GetContainableProps(this.ResolvedItemstack);
                 perliter = props != null ? (int)props.ItemsPerLitre : 1;
-                this.ResolvedItemstack.StackSize = Litres.Value;
+                this.ResolvedItemstack.StackSize = (int)Litres.Value * perliter; // stacksize is now number of portions, not total litres
             }
 
             if (this.ResolvedItemstack != null && Variable != null && Variable.Value != 0)
             {
-                newstack = resolver.Rand.Next(Math.Max(0, this.ResolvedItemstack.StackSize*perliter - Variable.Value*perliter), this.ResolvedItemstack.StackSize*perliter + Variable.Value*perliter + 1);
+                newstack = resolver.Rand.Next(Math.Max(0, this.ResolvedItemstack.StackSize - Variable.Value*perliter), this.ResolvedItemstack.StackSize + Variable.Value*perliter + 1);
 
                 if (newstack < 0) newstack = 0;
             }
             else if (this.ResolvedItemstack != null && Variable == null)
             {
-                return this.ResolvedItemstack.StackSize*perliter;
+                return this.ResolvedItemstack.StackSize;
             }
             else
             {
@@ -117,6 +117,6 @@ namespace VintageEngineering.RecipeSystem.Recipes
         /// <summary>
         /// Optional, instead of quantity or stacksize, output should be considered a fluid.
         /// </summary>
-        public int? Litres;
+        public float? Litres;
     }
 }

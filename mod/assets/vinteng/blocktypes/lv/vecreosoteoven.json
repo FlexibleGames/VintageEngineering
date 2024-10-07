@@ -1,14 +1,25 @@
 {
 	"code": "vecreosoteoven",
 	"class": "VEBlockFluidIO",
-	"entityClass": "VEBELogSplitter",
+	"entityClass": "VEBECreosoteOven",
 	"behaviors": [
+		{ "name": "Multiblock", "properties": { "sizex": 3, "sizey": 4, "sizez": 3, "cposition": { "x": 1, "y": 0, "z": 1 } } },
 		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "vecreosoteoven-north" }}}
 	],
 	"variantgroups": [
 		{ "code":"side", "loadFromProperties": "abstract/horizontalorientation" }
 	],
 	"entityBehaviors": [
+		{
+			"name": "Electric",
+			"properties": {
+				"canExtractPower": false,
+				"canReceivePower": false,
+				"entitytype": "Consumer",
+				"maxpower": 0,
+				"maxpps": 0
+			}
+		}
 	],
 	"attributes": {
 		"handbook": {
@@ -21,8 +32,9 @@
 		"allowHeldLiquidTransfer": true,
 		"allowPipeLiquidTransfer": true,
 		"transferLitresPerSecond": 5,
+		"heatpersecond": 180,
         "recipeMachineByType": {
-            "*-north": [ "vecreosoteoven" ]
+            "*-north": [ "creosoteoven" ]
         }
 	},
 	"shapeinventory": { "base": "block/lv/creosoteoven-inventory" },
@@ -46,7 +58,7 @@
 	"replaceable": 600,
 	"resistance": 1.5,
 	"collisionSelectionBoxes": [
-		{ "x1": -1, "y1": 0, "z1": -1, "x2": 2, "y2": 4, "z2": 2 }
+		{ "x1": 0, "y1": 0, "z1": 0, "x2": 1, "y2": 1, "z2": 1 }
 	],
 	"guiTransform": {
 		"rotation": { "x": -22.6, "y": -149, "z": 0 }

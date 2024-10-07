@@ -155,7 +155,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
         /// <param name="api">Api</param>
         /// <param name="inputslots">InputSlots</param>
         /// <param name="outputslots">2 Output Slots, id= 0 item, 1 fluid</param>
-        /// <returns></returns>
+        /// <returns>True if craft happened</returns>
         public bool TryCraftNow(ICoreAPI api, ItemSlot[] inputslots, ItemSlot[] outputslots)
         {
             List<KeyValuePair<ItemSlot, CraftingRecipeIngredient>> matched = PairInput(inputslots);
@@ -163,35 +163,64 @@ namespace VintageEngineering.RecipeSystem.Recipes
 
             ItemStack mainoutput = Outputs[0].ResolvedItemstack.Clone();
             ItemStack secondaryoutput = null;
+            WaterTightContainableProps wprops = null;
+            int outputslotidmain = 0;
+            int outputslotidsecondary = 1;
+            if (mainoutput.Collectible.IsLiquid())
+            {
+                // outputslots[1] is target if a fluid
+                wprops = BlockLiquidContainerBase.GetContainableProps(mainoutput);
+                outputslotidmain = 1;
+                outputslotidsecondary = 0; // secondary output might not exist, but if it does it has to be an item
+            }
             if (Outputs.Length > 1)
             {
                 secondaryoutput = Outputs[1].ResolvedItemstack.Clone();
             }
             if (secondaryoutput != null && mainoutput.Collectible.IsLiquid() && secondaryoutput.Collectible.IsLiquid())
             {
-                // if we have a second output and both are liquid, it's a bad recipe
+                // if we have a second output and both are liquid, bad recipe, bounce.
                 return false;
             }
-            foreach (KeyValuePair<ItemSlot, CraftingRecipeIngredient> val in matched)
+            if (secondaryoutput != null && secondaryoutput.Collectible.IsLiquid())
             {
-                val.Key.TakeOut(val.Value.Quantity);
-                val.Key.MarkDirty();
+                // we have two outputs, and secondary is the liquid
+                wprops = BlockLiquidContainerBase.GetContainableProps(secondaryoutput);
             }
-            foreach (VERecipeVariableOutput output in Outputs)
+            if (secondaryoutput != null && !mainoutput.Collectible.IsLiquid() && !secondaryoutput.Collectible.IsLiquid())
+            { 
+                // two outputs but neither is a liquid, bad recipe, bounce.
+                return false; 
+            }
+            while (!inputslots[0].Empty)
             {
-                int quantity = output.VariableResolve(api.World, "CreosoteOven TryCraftNow");
-                output.ResolvedItemstack.StackSize = quantity;
-                if (ShouldBeInLiquidSlot(output.ResolvedItemstack))
+                if ((!outputslots[0].Empty && outputslots[0].Itemstack.Collectible.MaxStackSize - outputslots[0].Itemstack.StackSize > 0)
+                   || (!outputslots[1].Empty && outputslots[1].Itemstack.Collectible.MaxStackSize - outputslots[1].Itemstack.StackSize > 0) )
                 {
-                    if (outputslots[1].Empty) outputslots[1].Itemstack = output.ResolvedItemstack.Clone();
-                    else outputslots[1].Itemstack.StackSize += output.ResolvedItemstack.StackSize;
-                    outputslots[1].MarkDirty();
+                    // if either output is full, stop crafting
+                    break; 
+                }            
+                foreach (KeyValuePair<ItemSlot, CraftingRecipeIngredient> val in matched)
+                {
+                    val.Key.TakeOut(val.Value.Quantity);
+                    val.Key.MarkDirty();
                 }
-                else
+                foreach (VERecipeVariableOutput output in Outputs)
                 {
-                    if (outputslots[0].Empty) outputslots[0].Itemstack = output.ResolvedItemstack.Clone();
-                    else outputslots[0].Itemstack.StackSize += output.ResolvedItemstack.StackSize;
-                    outputslots[0].MarkDirty();
+                    int quantity = output.VariableResolve(api.World, "CreosoteOven TryCraftNow");
+                    output.ResolvedItemstack.StackSize = quantity;
+                    if (ShouldBeInLiquidSlot(output.ResolvedItemstack))
+                    {
+                        if (outputslots[1].Empty) outputslots[1].Itemstack = output.ResolvedItemstack.Clone();
+                        else outputslots[1].Itemstack.StackSize += output.ResolvedItemstack.StackSize;
+                        outputslots[1].MarkDirty();
+                    }
+                    else
+                    {
+                        if (outputslots[0].Empty) outputslots[0].Itemstack = output.ResolvedItemstack.Clone();
+                        else outputslots[0].Itemstack.StackSize += output.ResolvedItemstack.StackSize;
+                        outputslots[0].MarkDirty();
+                    }
                 }
             }
             return true;

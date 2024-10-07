@@ -220,10 +220,10 @@ namespace VintageEngineering
         private string GetHelpText()
         {
             string outputhelptext = "";
-            outputhelptext += $"{Lang.Get("vinteng:gui-word-temp")}{_currenttemp}°C";
+            outputhelptext += $"{Lang.Get("vinteng:gui-word-temp")}{_currenttemp:N1}°C";
             if (_recipe != null)
             {
-                outputhelptext += $" / {Lang.Get("vinteng: gui - word - needed")} {_recipe.MinTemp}°C";
+                outputhelptext += $" / {Lang.Get("vinteng:gui-word-needed")} {_recipe.MinTemp:N1}°C";
             }
             outputhelptext += Environment.NewLine;
             // Temp: 25°C / Needed 205°C

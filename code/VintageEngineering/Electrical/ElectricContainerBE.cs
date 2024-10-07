@@ -30,7 +30,7 @@ namespace VintageEngineering.Electrical
             if (Electric == null)
             {
                 worldForResolve.Logger.Fatal("The Electric behavior is required on {0}", Block.Code);
-                throw new FormatException("The Electric behavior is required on ${Block.Code}");
+                throw new FormatException($"The Electric behavior is required on {Block.Code}");
             }
         }
 

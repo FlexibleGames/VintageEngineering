@@ -86,6 +86,8 @@ namespace VintageEngineering.RecipeSystem
             AddRecipesToHandbook(api, this.KilnRecipes, "kiln", "vinteng:Industrially fires into", "vinteng:Industrially firing");
             this.MixerRecipes = api.RegisterRecipeRegistry<RecipeRegistryGeneric<RecipeMixer>>("vemixerrecipes").Recipes;
             AddRecipesToHandbook(api, this.MixerRecipes, "mixer", "vinteng:Industrially mixes into", "vinteng:Industrially mixing");
+            this.CreosoteOvenRecipes = api.RegisterRecipeRegistry<RecipeRegistryGeneric<RecipeCreosoteOven>>("vecreosoteoven").Recipes;
+            AddRecipesToHandbook(api, this.CreosoteOvenRecipes, "creosoteoven", "vinteng:Industrially bakes into", "vinteng:Industrially baking");
         }
 
         public override void AssetsLoaded(ICoreAPI api)
