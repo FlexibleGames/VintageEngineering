@@ -70,7 +70,7 @@ namespace VintageEngineering
                 flames,
                 inputFuelGrid,
                 progressBar,
-                progressText,                
+                progressText,
                 outputGrid,
                 fluidoutput,
                 outputtxtinset,
@@ -186,11 +186,20 @@ namespace VintageEngineering
             Matrix i = ctx.Matrix;
             i.Scale(GuiElement.scaled(0.25), GuiElement.scaled(0.25));
             ctx.Matrix = i;
-            capi.Gui.Icons.DrawFlame(ctx, 3, true, true); // draws the outline
+            capi.Gui.Icons.DrawFlame(ctx, 3, true, true); // draws the outline            
 
             if (_bentity.IsHeating)
             {
-                LinearGradient gradient = new LinearGradient(0.0, GuiElement.scaled(60), 0.0, 0.0);
+                float curTime = _bentity.RemainingFuel;
+                float totalTime = _bentity.FuelTotalBurnTime;
+                double percentFilled = (double)curTime / (double)totalTime;
+                // 52 is the height of the flames
+                double dy = (double)(52f - (52f * percentFilled)); // should give you the remaining height based on 
+                
+                ctx.Rectangle(0, dy*4, 37*4, (52 - dy)*4);
+                ctx.Clip();
+
+                LinearGradient gradient = new LinearGradient(0.0, GuiElement.scaled(52*4), 0.0, 0.0);
                 gradient.AddColorStop(0.0, new Color(1.0, 1.0, 0.0, 1.0));
                 gradient.AddColorStop(1.0, new Color(1.0, 0.0, 0.0, 1.0));
                 ctx.SetSource(gradient);

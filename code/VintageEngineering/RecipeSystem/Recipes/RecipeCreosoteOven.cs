@@ -194,8 +194,8 @@ namespace VintageEngineering.RecipeSystem.Recipes
             }
             while (!inputslots[0].Empty)
             {
-                if ((!outputslots[0].Empty && outputslots[0].Itemstack.Collectible.MaxStackSize - outputslots[0].Itemstack.StackSize > 0)
-                   || (!outputslots[1].Empty && outputslots[1].Itemstack.Collectible.MaxStackSize - outputslots[1].Itemstack.StackSize > 0) )
+                if ((!outputslots[0].Empty && outputslots[0].Itemstack.Collectible.MaxStackSize - outputslots[0].Itemstack.StackSize == 0)
+                   || (!outputslots[1].Empty && outputslots[1].Itemstack.Collectible.MaxStackSize - outputslots[1].Itemstack.StackSize == 0) )
                 {
                     // if either output is full, stop crafting
                     break; 

@@ -1,0 +1,77 @@
+[
+	{
+		"code": "fruitcider",
+		"powerpercraft": 128,
+		"ingredients": [
+			{ "type": "item", "code": "game:juiceportion-*",  "name": "fruit", "litres": 1 }
+		],
+		"outputs": [
+            { "type": "item", "code": "game:ciderportion-{fruit}", "litres": 1 }
+        ]
+	},
+	{
+		"code": "mead",
+		"powerpercraft": 128,
+		"ingredients": [
+			{ "type": "item", "code": "game:honeyportion", "litres": 1 }
+		],
+		"outputs": [
+            { "type": "item", "code": "game:ciderportion-mead", "litres": 1 }
+        ]
+	},
+	{
+		"code": "spelt",
+		"powerpercraft": 128,
+		"ingredients": [
+			{ "type": "item", "code": "game:waterportion",  "litres": 1 },
+			{ "type": "item", "code": "game:flour-spelt", "quantity": 1 }
+		],
+		"outputs": [
+          { "type": "item", "code": "game:ciderportion-spelt", "litres": 0.2 }
+          ]
+	},
+	{
+		"code": "rice",
+		"powerpercraft": 128,
+		"ingredients": [
+			{ "type": "item", "code": "game:waterportion",  "litres": 1 },
+			{ "type": "item", "code": "game:flour-rice", "quantity": 1 }
+		],
+		"outputs": [
+          { "type": "item", "code": "game:ciderportion-rice", "litres": 0.2 }
+          ]
+	},
+	{
+		"code": "rye",
+		"powerpercraft": 128,
+		"ingredients": [
+			{ "type": "item", "code": "game:waterportion",  "litres": 1 },
+			{ "type": "item", "code": "game:flour-rye", "quantity": 1 }
+		],
+		"outputs": [
+          { "type": "item", "code": "game:ciderportion-rye", "litres": 0.2 }
+          ]
+	},
+	{
+		"code": "amaranth",
+		"powerpercraft": 128,
+		"ingredients": [
+			{ "type": "item", "code": "game:waterportion",  "litres": 1 },
+			{ "type": "item", "code": "game:flour-amaranth", "quantity": 1 }
+		],
+		"outputs": [
+          { "type": "item", "code": "game:ciderportion-amaranth", "litres": 0.2 }
+          ]
+	},
+	{
+		"code": "cassava",
+		"powerpercraft": 128,
+		"ingredients": [
+			{ "type": "item", "code": "game:waterportion",  "litres": 1 },
+			{ "type": "item", "code": "game:flour-cassava", "quantity": 1 }
+		],
+		"outputs": [
+          { "type": "item", "code": "game:ciderportion-cassava", "litres": 0.2 }
+          ]
+	}
+]

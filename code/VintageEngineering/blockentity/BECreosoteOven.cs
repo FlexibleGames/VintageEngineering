@@ -194,7 +194,9 @@ namespace VintageEngineering
         private float _updateBouncer = 0f;
         private int _heatPerSecondBase = 1;
         private float _environmentTemp = 20f;
+        private float _environmentTempDelay = 0f;
         private float _remainingBurnTime = 0f;
+        private float _fuelTotalBurnTime = 0f;
 
         public float RecipeProgress
         {
@@ -208,10 +210,11 @@ namespace VintageEngineering
             }
         }
         public float CurrentTemp => _currentTemp;
-        public bool IsHeating => IsCrafting;
+        public bool IsHeating => _remainingBurnTime > 0;
         public RecipeCreosoteOven CurrentRecipe => _currentRecipe;
 
         public float RemainingFuel => _remainingBurnTime;
+        public float FuelTotalBurnTime => _fuelTotalBurnTime;
 
         public bool FindMatchingRecipe()
         {
@@ -265,7 +268,19 @@ namespace VintageEngineering
         {
             _inventory = new InvCreosoteOven(null, null);
             _inventory.SlotModified += SlotModified;
-        } 
+        }
+
+        public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
+        {
+            //base.GetBlockInfo(forPlayer, dsc); // we do NOT need power information as this machine isn't powered.
+            dsc.AppendLine($"{MachineState}");
+            if (MachineState == EnumBEState.On && CurrentRecipe != null)
+            {
+                dsc.AppendLine($"|{Lang.Get("vinteng:gui-word-crafting")}: {CurrentRecipe.Outputs[0].ResolvedItemstack.GetName()}");
+            }
+            dsc.AppendLine().AppendLine($"{Lang.Get("vinteng:gui-word-temp")}{_currentTemp:N1}°C");
+            dsc.AppendLine().AppendLine($"{Lang.Get("vinteng:gui-word-fuel")} {Lang.Get("vinteng:gui-word-remaining")}:{_remainingBurnTime:N1} {Lang.Get("vinteng:gui-word-seconds")}");            
+        }
 
         public override void Initialize(ICoreAPI api)
         {
@@ -275,8 +290,6 @@ namespace VintageEngineering
                 sapi = api as ICoreServerAPI;
                 RegisterGameTickListener(new Action<float>(OnSimTick), 100, 0);
                 _heatPerSecondBase = base.Block.Attributes["heatpersecond"].AsInt(0);
-                _environmentTemp = Api.World.BlockAccessor.GetClimateAt(this.Pos, EnumGetClimateMode.ForSuppliedDate_TemperatureOnly,
-                    Api.World.Calendar.TotalDays).Temperature;
             }
             else
             {
@@ -294,19 +307,28 @@ namespace VintageEngineering
         public void OnSimTick(float dt)
         {
             if (this.Api.Side != EnumAppSide.Server) return;
+
+            _environmentTempDelay += dt;
+            if (_environmentTempDelay > 300)
+            {
+                // environment Temp update every 5 minutes
+                _environmentTemp = Api.World.BlockAccessor.GetClimateAt(this.Pos, EnumGetClimateMode.ForSuppliedDate_TemperatureOnly,
+                    Api.World.Calendar.TotalDays).Temperature;
+                _environmentTempDelay = 0f;
+            }    
+
             if (_state == EnumBEState.Sleeping)
             {
                 _updateBouncer += dt;
                 if (_updateBouncer > 2f)
                 {
-                    _environmentTemp = Api.World.BlockAccessor.GetClimateAt(this.Pos, EnumGetClimateMode.ForSuppliedDate_TemperatureOnly,
-                        Api.World.Calendar.TotalDays).Temperature;
-                    _currentTemp = ChangeTemperature(_currentTemp, _tempgoal, _updateBouncer);
+                    _currentTemp = ChangeTemperature(_currentTemp, _environmentTemp, dt);
                     if (!InputSlot.Empty)
                     {
                         InputSlot.Itemstack.Collectible.SetTemperature(Api.World, InputSlot.Itemstack, _currentTemp, true);
                     }
-                    _updateBouncer = 0f; 
+                    _updateBouncer = 0f;
+                    MarkDirty(true);
                 }
                 else return;
             }
@@ -321,6 +343,7 @@ namespace VintageEngineering
                     {
                         InputSlot.Itemstack.Collectible.SetTemperature(Api.World, InputSlot.Itemstack, _currentTemp, true);
                     }
+                    MarkDirty(true); // debugging, need client updates!
                     if (_currentRecipe.MinTemp > 0)
                     {
                         if (_currentTemp < _currentRecipe.MinTemp) return;
@@ -362,6 +385,14 @@ namespace VintageEngineering
             }
             return true;
         }
+
+        public override void OnBlockPlaced(ItemStack byItemStack = null)
+        {
+            base.OnBlockPlaced(byItemStack);
+            _environmentTemp = Api.World.BlockAccessor.GetClimateAt(Pos, EnumGetClimateMode.ForSuppliedDate_TemperatureOnly,
+                Api.World.Calendar.TotalDays).Temperature;
+            _currentTemp = _environmentTemp;
+        }
         public int GetRotation()
         {
             string side = Block.Variant["side"];
@@ -401,26 +432,24 @@ namespace VintageEngineering
         /// <param name="dt">DeltaTime</param>
         public void BurnTick(float dt)
         {            
-            if (_remainingBurnTime > 0) 
+            if (_remainingBurnTime > 0f) 
             {
                 _remainingBurnTime -= dt;
                 _currentTemp = ChangeTemperature(_currentTemp, _tempgoal, dt);
-                if (_remainingBurnTime < 0) _remainingBurnTime = 0f;
+                if (_remainingBurnTime < 0f) _remainingBurnTime = 0f; // next tick will look for more fuel
                 return; // we're already burning, don't need a new fuel yet
             }
             CombustibleProperties fuelProps = FuelSlot.Itemstack?.Collectible.CombustibleProps;
             if (fuelProps == null) 
-            {
-                _environmentTemp = Api.World.BlockAccessor.GetClimateAt(Pos, EnumGetClimateMode.ForSuppliedDate_TemperatureOnly,
-                    Api.World.Calendar.TotalDays).Temperature;
-                _tempgoal = _environmentTemp;
-                _currentTemp = ChangeTemperature(_currentTemp, _tempgoal, dt);
+            {                
+                _currentTemp = ChangeTemperature(_currentTemp, _environmentTemp, dt);
                 return; 
             }
 
             if (fuelProps.BurnTemperature > 0f && fuelProps.BurnDuration > 0f)
             {
                 _remainingBurnTime = fuelProps.BurnDuration;
+                _fuelTotalBurnTime = _remainingBurnTime;
                 _maxBurnTemp = fuelProps.BurnTemperature;
                 _tempgoal = _maxBurnTemp;
                 FuelSlot.TakeOut(1); // will invalidate itemstack if its the last one.                
@@ -451,6 +480,7 @@ namespace VintageEngineering
             tree.SetFloat("recipetime", _recipeTime);
             tree.SetFloat("envtemp", _environmentTemp);
             tree.SetFloat("burnleft", _remainingBurnTime);
+            tree.SetFloat("burntotal", _fuelTotalBurnTime);
             tree.SetFloat("currenttemp", _currentTemp);
             tree.SetFloat("tempgoal", _tempgoal);
         }
@@ -464,6 +494,7 @@ namespace VintageEngineering
             _recipeTime = tree.GetFloat("recipetime", 0f);
             _environmentTemp = tree.GetFloat("envtemp", 20f);
             _remainingBurnTime = tree.GetFloat("burnleft", 0f);
+            _fuelTotalBurnTime = tree.GetFloat("burntotal", 0f);
             _currentTemp = tree.GetFloat("currenttemp", 0f);
             _tempgoal = tree.GetFloat("tempgoal", 0f);
             

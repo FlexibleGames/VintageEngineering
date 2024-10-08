@@ -9,6 +9,7 @@
 	"textureSizes": {
 	},
 	"textures": {
+		"null": "block/castiron",
 		"castiron": "block/castiron",
 		"blue1": "block/creosoteoven/blue1",
 		"blue2": "block/creosoteoven/blue2",

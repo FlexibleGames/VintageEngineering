@@ -6,7 +6,7 @@
 		"mintemp": 215
 	},
 	"ingredients": [
-		{ "type": "block", "code": "game:ore-*", "name": "type", "allowedVariants":["lignite", "bituminouscoal", "anthracite"], "quantity": 1 }
+		{ "type": "item", "code": "game:ore-*", "name": "type", "allowedVariants":["lignite", "bituminouscoal", "anthracite"], "quantity": 1 }
 	],
 	"outputs": [
 		{ "type": "item", "code": "vinteng:creosoteportion-coal", "litres": 0.5 }

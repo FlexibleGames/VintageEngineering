@@ -83,7 +83,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
                 // output is a fluid, scale output according to items per litre
                 props = BlockLiquidContainerBase.GetContainableProps(this.ResolvedItemstack);
                 perliter = props != null ? (int)props.ItemsPerLitre : 1;
-                this.ResolvedItemstack.StackSize = (int)Litres.Value * perliter; // stacksize is now number of portions, not total litres
+                this.ResolvedItemstack.StackSize = (int)(Litres.Value * perliter); // stacksize is now number of portions, not total litres
             }
 
             if (this.ResolvedItemstack != null && Variable != null && Variable.Value != 0)
