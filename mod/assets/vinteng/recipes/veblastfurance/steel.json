@@ -3,14 +3,13 @@
 		"code": "blasting-steel",
 		"enabled": true,
 		"attributes": {
-			"requiresstack": "game:coke",
-			"requiresstackcount": 1,
-			"requiresblower": true,
+			"requireblowers": true,
 			"blowercount": 2
 		},
-		"craftingtime": 30,
+		"powerpercraft": 30,
 		"ingredients": [
-			{ "type": "item", "code": "game:ingot-iron", "quantity": 1 }
+			{ "type": "item", "code": "game:ingot-iron", "quantity": 1 },
+			{ "type": "item", "code": "game:coke", "quantity": 1 }
 		],
 		"outputs": [
 			{ "type": "item", "code": "game:ingot-steel", "stacksize": 1 }

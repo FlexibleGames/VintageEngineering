@@ -72,6 +72,11 @@ namespace VintageEngineering.RecipeSystem
                 verrs.RegisterCreosoteOvenRecipe(r);
             });
 
+            this.LoadRecipes<RecipeBlastFurnace>("ve blastfurnace recipe", "recipes/veblastfurnace", delegate (RecipeBlastFurnace r)
+            {
+                verrs.RegisterBlastFurnaceRecipe(r);
+            });
+
             sapi.World.Logger.StoryEvent(Lang.Get("vinteng:storyevent-recipes", Array.Empty<object>()));
         }
 

@@ -226,6 +226,8 @@
 	"vinteng:Industrially mixing": "Industrially mixing",
 	"vinteng:Industrially bakes into": "Industrially bakes into",
 	"vinteng:Industrially baking": "Industrially baking",
+	"vinteng:Smelts into": "Smelts into",
+	"vinteng:Smelting": "Smelting",
 
 	"vinteng:item-vepipefilter": "Pipe Filter",
 	"vinteng:itemdesc-vepipefilter": "The Pipe Filter can be used in upgraded extraction nodes to filter (white-list or black-list) items to pull from the connected inventory. <br>Right click with the filter in your hand to set filter settings.",
@@ -277,5 +279,7 @@
 	"vinteng:block-vecreosoteoven-*": "Creosote Oven",
 	"vinteng:blockdesc-vecreosoteoven-*": "A simple machine that bakes input ingredient like wood or coal and turns it into Creosote.",
 	"vinteng:incontainer-item-creosoteportion-wood": "Wood-Tar Creosote",
-	"vinteng:incontainer-item-creosoteportion-coal": "Coal-Tar Creosote"
+	"vinteng:incontainer-item-creosoteportion-coal": "Coal-Tar Creosote",
+	"vinteng:block-veblastfurnace-*": "Blast Furnace",
+	"vinteng:blockdesc-veblastfurnace-*": "A self-contained way to craft ingots directly from metal nuggets or bits. Works with base-game alloy recipes as well as custom recipes. Add powered blowers to each side to increase crafting speed and crafting temperatures."
 }

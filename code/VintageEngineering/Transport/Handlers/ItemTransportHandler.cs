@@ -42,7 +42,7 @@ namespace VintageEngineering.Transport.Handlers
             if (pull == null) return;
             if (stacksize == -1)
             {
-                stacksize = pull.Itemstack.Collectible.MaxStackSize;
+                stacksize = pull.Itemstack?.Collectible.MaxStackSize ?? 1;
             }
             ItemStackMoveOperation ismo = new ItemStackMoveOperation(world, EnumMouseButton.Left, (EnumModifierKey)0, EnumMergePriority.AutoMerge, stacksize);            
 

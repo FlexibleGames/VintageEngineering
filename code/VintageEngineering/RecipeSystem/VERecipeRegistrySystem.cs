@@ -54,7 +54,7 @@ namespace VintageEngineering.RecipeSystem
         /// <summary>
         /// Smelt things into other things
         /// </summary>
-        public List<RecipeAlloyOven>    AlloyOvenRecipes = new List<RecipeAlloyOven>();
+        public List<RecipeBlastFurnace>    BlastFurnaceRecipes = new List<RecipeBlastFurnace>();
 
         private readonly Dictionary<string, List<Block>> recipeMachines = new();
 
@@ -88,6 +88,9 @@ namespace VintageEngineering.RecipeSystem
             AddRecipesToHandbook(api, this.MixerRecipes, "mixer", "vinteng:Industrially mixes into", "vinteng:Industrially mixing");
             this.CreosoteOvenRecipes = api.RegisterRecipeRegistry<RecipeRegistryGeneric<RecipeCreosoteOven>>("vecreosoteoven").Recipes;
             AddRecipesToHandbook(api, this.CreosoteOvenRecipes, "creosoteoven", "vinteng:Industrially bakes into", "vinteng:Industrially baking");
+            this.BlastFurnaceRecipes = api.RegisterRecipeRegistry<RecipeRegistryGeneric<RecipeBlastFurnace>>("veblastfurnace").Recipes;
+            //AddRecipesToHandbook(api, this.BlastFurnaceRecipes, "blastfurnace", "vinteng:Smelts into", "vinteng:Smelting");
+
         }
 
         public override void AssetsLoaded(ICoreAPI api)
@@ -189,14 +192,14 @@ namespace VintageEngineering.RecipeSystem
             this.CreosoteOvenRecipes.Add(recipeCreosoteOven);
         }
 
-        public void RegisterAlloyOvenRecipe(RecipeAlloyOven recipeAlloyOven)
+        public void RegisterBlastFurnaceRecipe(RecipeBlastFurnace recipeBlastFurnace)
         {
             if (!VERecipeRegistrySystem.canRegister)
             {
                 throw new InvalidOperationException("VintEng | RecipeRegistrySystem: Can no longer register VE recipes. Register during AssetsLoaded/AssetsFinalize and with ExecuteOrder < 99999");
             }
-            recipeAlloyOven.RecipeID = AlloyOvenRecipes.Count + 1;
-            this.AlloyOvenRecipes.Add(recipeAlloyOven);
+            recipeBlastFurnace.RecipeID = BlastFurnaceRecipes.Count + 1;
+            this.BlastFurnaceRecipes.Add(recipeBlastFurnace);
         }
 
         /// <summary>
