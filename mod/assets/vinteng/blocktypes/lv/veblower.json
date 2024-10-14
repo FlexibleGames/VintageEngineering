@@ -1,7 +1,7 @@
 {
 	"code": "veblower",
 	"class": "VEElectricBlock",
-	"entityClass": "VEBEExtruder",
+	"entityClass": "VEBEBlower",
 	"behaviors": [
 		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "veblower-north" }}}
 	],
@@ -17,7 +17,7 @@
 				"canReceivePower": true,
 				"entitytype": "Consumer",
 				"maxpower": 1000,
-				"maxpps": 100
+				"maxpps": 50
 			}
 		}
 	],

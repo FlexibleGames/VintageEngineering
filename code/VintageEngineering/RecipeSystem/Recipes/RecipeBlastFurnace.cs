@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.Util;
+using Vintagestory.GameContent;
 
 namespace VintageEngineering.RecipeSystem.Recipes
 {
@@ -140,35 +141,69 @@ namespace VintageEngineering.RecipeSystem.Recipes
         /// Checks the validity of given ingredients BE state (Blowers) to recipe.<br/>        
         /// </summary>        
         /// <param name="ingredients">ItemSlot[] input ingredients</param>
-        /// <param name="requireslot">Required Die Cast Code if aplicable.</param>
+        /// <param name="furnace">Furnace Entity calling the function.</param>
         /// <returns>True if valid.</returns>
         public bool Matches(ItemSlot[] ingredients, BEBlastFurnace furnace)
         {
             if (ingredients == null || furnace == null) return false; // no ingredients to even check, bounce
+            int numactiveblowers = furnace.NumActiveBlowers; // grab this once so we don't recalculate it every time
 
-            if (!Ingredients[0].SatisfiesAsIngredient(ingredient.Itemstack, true)) return false;
+            if (RequireBlowers && numactiveblowers == 0) return false;
+            if (RequireBlowers && numactiveblowers < RequireBlowerCount) return false;
 
-            if (Requires != null) // unused, but left in... if this recipe requires something, we need to check for it in the requires slot
+
+            List<KeyValuePair<ItemSlot, CraftingRecipeIngredient>> matched = PairInput(ingredients);
+            if (matched == null) return false;
+
+            return true;
+        }
+
+        /// <summary>
+        /// Checks all inputSlots and compares to recipe Ingredients that match type.
+        /// </summary>
+        /// <param name="inputStacks">Input Slots to check</param>
+        /// <returns>Matched Pair List</returns>
+        public List<KeyValuePair<ItemSlot, CraftingRecipeIngredient>> PairInput(ItemSlot[] inputStacks)
+        {
+            List<CraftingRecipeIngredient> ingredientList = new List<CraftingRecipeIngredient>(this.Ingredients);
+            Queue<ItemSlot> inputSlotsList = new Queue<ItemSlot>();
+            foreach (ItemSlot val in inputStacks)
             {
-                if (requireslot == null || requireslot.Empty) return false;
-                if (Requires.IsWildCard)
-                {                    
-                    if (RequiresVariants != null)
-                    {
-                        return WildcardUtil.Match(Requires, requireslot.Itemstack.Collectible.Code, RequiresVariants);
-                    }
-                    return WildcardUtil.Match(Requires, requireslot.Itemstack.Collectible.Code);
-                }
-                else
+                if (!val.Empty)
                 {
-                    return Requires.Equals(requireslot.Itemstack.Collectible.Code);
+                    inputSlotsList.Enqueue(val);
                 }
-                
             }
-            else
+            if (inputSlotsList.Count != this.Ingredients.Length)
             {
-                return true;
+                return null;
             }
+            List<KeyValuePair<ItemSlot, CraftingRecipeIngredient>> matched = new List<KeyValuePair<ItemSlot, CraftingRecipeIngredient>>();
+            while (inputSlotsList.Count > 0)
+            {
+                ItemSlot inputSlot = inputSlotsList.Dequeue();
+                bool found = false;
+                for (int i = 0; i < ingredientList.Count; i++)
+                {
+                    CraftingRecipeIngredient ingred = ingredientList[i];
+                    if (ingred.SatisfiesAsIngredient(inputSlot.Itemstack, true))
+                    {
+                        matched.Add(new KeyValuePair<ItemSlot, CraftingRecipeIngredient>(inputSlot, ingred));
+                        found = true;
+                        ingredientList.RemoveAt(i);
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    return null;
+                }
+            }
+            if (ingredientList.Count > 0)
+            {
+                return null;
+            }
+            return matched;
         }
 
         public RecipeBlastFurnace Clone()

@@ -180,6 +180,7 @@
 	"vinteng:gui-title-mixer": "Industrial Mixer",
 	"vinteng:gui-title-cnc": "CNC",
 	"vinteng:gui-title-creosote": "Creosote Oven",
+	"vinteng:gui-title-blastfurnace": "Blast Furnace",
 
 	"vinteng:block-pipe-item": "Item Pipe",
 	"vinteng:blockdesc-pipe-item": "Move items around your factory. Upgradable. Right-click with a wrench on a connection node to put into extraction mode. Shift+right-click with a wrench to remove a connection node.",
@@ -281,5 +282,7 @@
 	"vinteng:incontainer-item-creosoteportion-wood": "Wood-Tar Creosote",
 	"vinteng:incontainer-item-creosoteportion-coal": "Coal-Tar Creosote",
 	"vinteng:block-veblastfurnace-*": "Blast Furnace",
-	"vinteng:blockdesc-veblastfurnace-*": "A self-contained way to craft ingots directly from metal nuggets or bits. Works with base-game alloy recipes as well as custom recipes. Add powered blowers to each side to increase crafting speed and crafting temperatures."
+	"vinteng:blockdesc-veblastfurnace-*": "A self-contained way to craft ingots directly from metal nuggets or bits. Works with base-game alloy recipes as well as custom recipes. Add powered blowers to each side to increase crafting speed and crafting temperatures.",
+	"vinteng:block-veblower-*": "Air Blower",
+	"vinteng:blockdesc-veblower-*": "Pushes large amounts of air into the machine it points into to augment the functionality of that machine. Used to enhance the Blast Furnace."
 }

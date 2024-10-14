@@ -33,7 +33,7 @@
             "*-north": [ "veblastfurnace" ]
         }
 	},
-	"shapeinventory": { "base": "block/lv/creosoteoven-inventory" },
+	"shapeinventory": { "base": "block/lv/blastfurnace-inventory" },
 	"creativeinventory": { "general": ["veblastfurnace-north"], "terrain": ["*"], "mechanics": ["*"] },
 	"shapeByType": {
 		"*-north": 	{ "base": "vinteng:block/lv/blastfurnace", "rotateY":0 },
