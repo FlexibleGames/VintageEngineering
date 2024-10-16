@@ -12,7 +12,7 @@
 			{ "type": "item", "code": "game:coke", "quantity": 1 }
 		],
 		"outputs": [
-			{ "type": "item", "code": "game:ingot-steel", "stacksize": 1 }
+			{ "type": "item", "code": "game:ingot-blistersteel", "stacksize": 1 }
 		]
 	}
 ]

@@ -1,7 +1,7 @@
 {
 	"code": "veblastfurnace",
 	"class": "VEElectricBlock",
-	"entityClass": "VEBECreosoteOven",
+	"entityClass": "VEBEBlastFurnace",
 	"behaviors": [
 		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "veblastfurnace-north" }}}
 	],

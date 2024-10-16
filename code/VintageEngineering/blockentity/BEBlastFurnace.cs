@@ -45,6 +45,16 @@ namespace VintageEngineering
                 };
             }
         }
+        /// <summary>
+        /// True if all input slots are empty
+        /// </summary>
+        public bool InputsEmpty
+        {
+            get
+            {
+                return _inventory[0].Empty && _inventory[1].Empty && _inventory[2].Empty && _inventory[3].Empty;
+            }
+        }
 
         public ItemSlot FuelSlot => _inventory[4];
 
@@ -199,7 +209,7 @@ namespace VintageEngineering
         {
             get
             {
-                if (_inventory[0].Empty || _currentRecipe == null) return 0f;
+                if (InputsEmpty || (_currentRecipe == null && _alloyRecipe == null && _smeltableStack == null)) return 0f;
                 else
                 {
                     return _recipeTime / _totalCraftTime;
@@ -215,7 +225,7 @@ namespace VintageEngineering
         /// <summary>
         /// If not null, machine is crafting this Alloy
         /// </summary>
-        public AlloyRecipe AlloyRecipe => _alloyRecipe;
+        public AlloyRecipe CurrentAlloyRecipe => _alloyRecipe;
         /// <summary>
         /// If not null, machine is crafting this Metal
         /// </summary>
@@ -226,16 +236,8 @@ namespace VintageEngineering
         public bool FindMatchingRecipe()
         {
             if (Api == null) return false; // we're running this WAY too soon, bounce.
-
-            bool noinput = true;
-            for (int s = 0; s < 4; s++)
-            {
-                if (!InputSlots[s].Empty)
-                {
-                    noinput = false;
-                }
-            }
-            if (noinput)
+            
+            if (InputsEmpty)
             {
                 // inputs are empty, reset
                 _currentRecipe = null;
@@ -249,15 +251,18 @@ namespace VintageEngineering
             {
                 if (CanSmelt(Api.World, InputSlots)) // this not only checks validity, it also sets the recipe of the proper type
                 {
-                    int blowers = NumActiveBlowers;                    
+                    int blowers = NumActiveBlowers;
                     _totalCraftTime = GetMeltingDuration(Api.World, InputSlots);
-                    _totalCraftTime = _totalCraftTime * (float)(1f - (blowers * 0.1f)); // 10% faster for each active blower
+                    _totalCraftTime *= (float)(1f - (blowers * 0.1f)); // 10% faster for each active blower
+                    _tempgoal = GetMeltingPoint(Api.World, InputSlots);
                     SetState(EnumBEState.On);
                     return true;
                 }
                 else
                 {
                     _recipeTime = 0;
+                    _tempgoal = _environmentTemp;
+                    _totalCraftTime = 0f;
                     SetState(EnumBEState.Sleeping);
                 }
             }            
@@ -304,6 +309,21 @@ namespace VintageEngineering
             return lowestTemp;
         }
         /// <summary>
+        /// Simple function to set the temperature to all the itemstacks in input slots.
+        /// </summary>
+        /// <param name="world">World Accessor</param>
+        /// <param name="temperature">Temperature to set</param>
+        public void SetIngredientTemperature(IWorldAccessor world, float temperature)
+        {
+            for (int i = 0; i < InputSlots.Length; i++)
+            {
+                if (!InputSlots[i].Empty && InputSlots[i].Itemstack != null)
+                {
+                    InputSlots[i].Itemstack.Collectible.SetTemperature(world, InputSlots[i].Itemstack, temperature, true);
+                }
+            }
+        }
+        /// <summary>
         /// Checks all given slots and returns the highest melting point value.
         /// </summary>
         /// <param name="world">World Accessor</param>
@@ -321,6 +341,11 @@ namespace VintageEngineering
                     meltpoint = Math.Max(meltpoint, tocheck);
                 }
             }
+            if (meltpoint == 0f && _currentRecipe != null)
+            {
+                // special edge case of a temp being defined in the recipe
+                meltpoint = _currentRecipe.MinTemp;
+            }
             return meltpoint;
         }
         /// <summary>
@@ -334,7 +359,7 @@ namespace VintageEngineering
             if (world == null || slots == null || slots.Length == 0) return 0f;
             float duration = 0f;
             ItemStack[] stacks = GetIngredientStacks(world, slots);
-            for (int i = 0; i <= stacks.Length; i++)
+            for (int i = 0; i < stacks.Length; i++)
             {
                 if (stacks[i] != null)
                 {
@@ -395,6 +420,12 @@ namespace VintageEngineering
             {
                 _currentRecipe = null;
                 _alloyRecipe = null;
+                if (NumActiveBlowers == 2 && matched.output.Collectible.Code.Path.Contains("ironbloom"))
+                {
+                    // a special case for iron while using blowers, make ingots and not blooms.
+                    ItemStack ironingot = new ItemStack(Api.World.GetItem(new AssetLocation("game:ingot-iron")), matched.output.StackSize);
+                    matched.output = ironingot.Clone();
+                }
                 _smeltableStack = matched;
                 return true; 
             }
@@ -408,7 +439,7 @@ namespace VintageEngineering
                 {
                     _alloyRecipe = null;
                     _smeltableStack = null;
-                    _currentRecipe = mrecipe;                    
+                    _currentRecipe = mrecipe;
                     return true;
                 }
             }
@@ -439,14 +470,14 @@ namespace VintageEngineering
         }
 
         public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
-        {
+        {            
             //base.GetBlockInfo(forPlayer, dsc); // we do NOT need power information as this machine isn't powered.
             dsc.AppendLine($"{MachineState}");
             if (MachineState == EnumBEState.On)
             {
-                if (CurrentRecipe != null) dsc.AppendLine($"|{Lang.Get("vinteng:gui-word-crafting")}: {CurrentRecipe.Outputs[0].ResolvedItemstack.GetName()}");
-                if (AlloyRecipe != null) dsc.AppendLine($"|{Lang.Get("vinteng:gui-word-crafting")}: {AlloyRecipe.Output.ResolvedItemstack.GetName()}");
-                if (SmeltableStackRecipe != null) dsc.AppendLine($"|{Lang.Get("vinteng:gui-word-crafting")}: {SmeltableStackRecipe.output.GetName()}");
+                if (CurrentRecipe != null) dsc.AppendLine($"|{Lang.Get("vinteng:gui-word-crafting")}:{CurrentRecipe.Outputs[0].ResolvedItemstack.StackSize} {CurrentRecipe.Outputs[0].ResolvedItemstack.GetName()}");
+                if (CurrentAlloyRecipe != null) dsc.AppendLine($"|{Lang.Get("vinteng:gui-word-crafting")}:{CurrentAlloyRecipe.GetTotalOutputQuantity(GetIngredientStacks(Api.World, InputSlots))} {CurrentAlloyRecipe.Output.ResolvedItemstack.GetName()}");
+                if (SmeltableStackRecipe != null) dsc.AppendLine($"|{Lang.Get("vinteng:gui-word-crafting")}:{SmeltableStackRecipe.stackSize} {SmeltableStackRecipe.output.GetName()}");
             }
             dsc.AppendLine().AppendLine($"{Lang.Get("vinteng:gui-word-temp")}{_currentTemp:N1}°C");
             dsc.AppendLine().AppendLine($"{Lang.Get("vinteng:gui-word-fuel")} {Lang.Get("vinteng:gui-word-remaining")}:{_remainingBurnTime:N1} {Lang.Get("vinteng:gui-word-seconds")}");
@@ -487,59 +518,87 @@ namespace VintageEngineering
                 _environmentTempDelay = 0f;
             }
 
-            //if (_state == EnumBEState.Sleeping)
-            //{
-            //    _updateBouncer += dt;
-            //    if (_updateBouncer > 2f)
-            //    {
-            //        _currentTemp = ChangeTemperature(_currentTemp, _environmentTemp, dt);
-            //        if (!InputSlot.Empty)
-            //        {
-            //            InputSlot.Itemstack.Collectible.SetTemperature(Api.World, InputSlot.Itemstack, _currentTemp, true);
-            //        }
-            //        _updateBouncer = 0f;
-            //        MarkDirty(true);
-            //    }
-            //    else return;
-            //}
-            //if (_state == EnumBEState.On) // machine is on and actively crafting something
-            //{
-            //    if (IsCrafting && RecipeProgress < 1f)
-            //    {
-            //        if (!HasRoomInOutput(0, null)) return;
-            //        Heating stuff
-            //        BurnTick(dt);
-            //        if (!InputSlot.Empty)
-            //        {
-            //            InputSlot.Itemstack.Collectible.SetTemperature(Api.World, InputSlot.Itemstack, _currentTemp, true);
-            //        }
-            //        MarkDirty(true); // debugging, need client updates!
-            //        if (_currentRecipe.MinTemp > 0)
-            //        {
-            //            if (_currentTemp < _currentRecipe.MinTemp) return;
-            //            else
-            //            {
-            //                _recipeTime += dt;
-            //            }
-            //        }
-            //    }
-            //    else if (RecipeProgress >= 1f)
-            //    {
-            //        if (_currentRecipe != null)
-            //        {
-            //            used a CreosoteOven Recipe
-            //            _currentRecipe.TryCraftNow(Api, new[] { InputSlot }, OutputSlots);
-            //        }
+            if (_state == EnumBEState.Sleeping)
+            {
+                _updateBouncer += dt;
+                if (_updateBouncer > 2f)
+                {
+                    _currentTemp = ChangeTemperature(_currentTemp, _environmentTemp, dt);
+                    if (!InputsEmpty)
+                    {
+                        SetIngredientTemperature(Api.World, _currentTemp);                        
+                    }
+                    _updateBouncer = 0f;
+                    MarkDirty(true);
+                }
+                else return;
+            }
+            if (_state == EnumBEState.On) // machine is on and actively crafting something
+            {
+                if (IsCrafting && RecipeProgress < 1f)
+                {
+                    if (!HasRoomInOutput(0, null)) return;
+                    //Heating stuff
+                    BurnTick(dt);
+                    if (!InputsEmpty)
+                    {
+                        SetIngredientTemperature(Api.World, _currentTemp);
+                    }
+                    MarkDirty(true); // debugging, need client updates!
+                    if (_tempgoal > 0)
+                    {
+                        if (_currentTemp < _tempgoal) return;
+                        else
+                        {
+                            _recipeTime += dt;
+                        }
+                    }
+                }
+                else if (RecipeProgress >= 1f)
+                {
+                    if (_currentRecipe != null)
+                    {
+                        //used a BlastingFurnace Recipe
+                        _currentRecipe.TryCraftNow(Api, InputSlots, OutputSlots);                        
+                    }
+                    if (_alloyRecipe != null)
+                    {
+                        // dump it all at once for now, polish later
+                        // TODO create a hidden slot to hold the melted fluid and push ingots out one at a time
+                        ItemStack output = _alloyRecipe.Output.ResolvedItemstack.Clone();
+                        output.StackSize = (int)_alloyRecipe.GetTotalOutputQuantity(GetIngredientStacks(Api.World, InputSlots));
+                        output.Collectible.SetTemperature(Api.World, output, _currentTemp);
+                        if (OutputSlots[0].Empty) OutputSlots[0].Itemstack = output;
+                        else OutputSlots[0].Itemstack.StackSize += output.StackSize;
+                        for (int i = 0; i < InputSlots.Length;i++)
+                        {
+                            if (!InputSlots[i].Empty) InputSlots[i].TakeOutWhole();
+                        }
+                    }
+                    if (_smeltableStack != null)
+                    {
+                        // dump it all at once for now, polish later
+                        // TODO create a hidden slot to hold the melted fluid and push ingots out one at a time
+                        ItemStack output = _smeltableStack.output.Clone();
+                        output.StackSize = (int)_smeltableStack.stackSize;
+                        output.Collectible.SetTemperature(Api.World, output, _currentTemp);
+                        if (OutputSlots[0].Empty) OutputSlots[0].Itemstack = output;
+                        else OutputSlots[0].Itemstack.StackSize += output.StackSize;
+                        for (int i = 0; i < InputSlots.Length; i++)
+                        {
+                            if (!InputSlots[i].Empty) InputSlots[i].TakeOutWhole();
+                        }
+                    }
 
-            //        if (!FindMatchingRecipe())
-            //        {
-            //            SetState(EnumBEState.Sleeping);
-            //        }
-            //        _recipeTime = 0f;
-            //        MarkDirty(true, null);
-            //        Api.World.BlockAccessor.MarkBlockEntityDirty(this.Pos);
-            //    }
-            //}
+                    _recipeTime = 0f;
+                    if (!FindMatchingRecipe())
+                    {
+                        SetState(EnumBEState.Sleeping);
+                    }                    
+                    MarkDirty(true, null);
+                    Api.World.BlockAccessor.MarkBlockEntityDirty(this.Pos);
+                }
+            }
         }
 
         public override bool OnPlayerRightClick(IPlayer byPlayer, BlockSelection blockSel)
@@ -589,6 +648,7 @@ namespace VintageEngineering
                 float diff = Math.Abs(fromTemp - toTemp);
                 basechange = deltatime + deltatime * (diff / 6); // 30 seconds to hit 1100
                 if (diff < basechange) return toTemp;
+                if (basechange > toTemp) return toTemp; // probably debugging for this to be extreme
             }
             if (fromTemp > toTemp) basechange = -basechange;
             if (Math.Abs(fromTemp - toTemp) < 1f) return toTemp;
@@ -611,7 +671,7 @@ namespace VintageEngineering
                 _remainingBurnTime -= dt * (1f + (float)(numblowers * 0.1));
                 // active blowers increase the burn temperature by 25% each (for a total of 150% increase in temperature)
                 // for vanilla coal coke at 1340, with 2 blowers = 1340 * 1.5 = 2010 degrees
-                _currentTemp = ChangeTemperature(_currentTemp, _tempgoal * (1f + (float)(numblowers * 0.25)), dt);
+                _currentTemp = ChangeTemperature(_currentTemp, _maxBurnTemp * (1f + (float)(numblowers * 0.25)), dt);
                 if (_remainingBurnTime < 0f) _remainingBurnTime = 0f; // next tick will look for more fuel
                 return; // we're already burning, don't need a new fuel yet
             }
@@ -627,7 +687,7 @@ namespace VintageEngineering
                 _remainingBurnTime = fuelProps.BurnDuration;
                 _fuelTotalBurnTime = _remainingBurnTime;
                 _maxBurnTemp = fuelProps.BurnTemperature;
-                _tempgoal = _maxBurnTemp;
+                //_tempgoal = _maxBurnTemp;
                 FuelSlot.TakeOut(1); // will invalidate itemstack if its the last one.                
                 FuelSlot.MarkDirty();
                 MarkDirty(true);
@@ -659,6 +719,7 @@ namespace VintageEngineering
             tree.SetFloat("burntotal", _fuelTotalBurnTime);
             tree.SetFloat("currenttemp", _currentTemp);
             tree.SetFloat("tempgoal", _tempgoal);
+            tree.SetFloat("maxburntemp", _maxBurnTemp);
         }
 
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldForResolving)
@@ -673,6 +734,7 @@ namespace VintageEngineering
             _fuelTotalBurnTime = tree.GetFloat("burntotal", 0f);
             _currentTemp = tree.GetFloat("currenttemp", 0f);
             _tempgoal = tree.GetFloat("tempgoal", 0f);
+            _maxBurnTemp = tree.GetFloat("maxburntemp", 0f);
 
             if (Api != null && Api.Side == EnumAppSide.Client) SetState(_state);
             if (_clientDialog != null)

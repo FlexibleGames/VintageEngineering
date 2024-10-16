@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using VintageEngineering.RecipeSystem.Recipes;
@@ -9,6 +10,7 @@ using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
+using Vintagestory.GameContent;
 
 namespace VintageEngineering.GUI
 {
@@ -86,9 +88,9 @@ namespace VintageEngineering.GUI
             double[] yellow = new double[3] { 1, 1, 0 };
             CairoFont leftyellow = CairoFont.WhiteDetailText().WithWeight(FontWeight.Normal).WithOrientation(EnumTextOrientation.Left).WithColor(yellow);
 
-            this.SingleComposer = capi.Gui.CreateCompo("vecreosoteovendlg" + blockPos?.ToString(), window)
+            this.SingleComposer = capi.Gui.CreateCompo("veblastfurnacedlg" + blockPos?.ToString(), window)
                 .AddShadedDialogBG(dialog, true, 5)
-                .AddDialogTitleBar(Lang.Get("vinteng:gui-title-creosote"), new Action(OnTitleBarClosed), null, null)
+                .AddDialogTitleBar(Lang.Get("vinteng:gui-title-blastfurnace"), new Action(OnTitleBarClosed), null, null)
                 .BeginChildElements(dialog)
 
                 .AddItemSlotGrid(Inventory, new Action<object>(SendInvPacket), 4, new int[] { 0,1,2,3 }, inputGrid, "inputSlot")
@@ -182,16 +184,38 @@ namespace VintageEngineering.GUI
         {
             string outputhelptext = "";
             outputhelptext += $"{Lang.Get("vinteng:gui-word-temp")}{_currenttemp:N1}°C";
-            if (_recipe != null)
-            {
-               outputhelptext += $" / {Lang.Get("vinteng:gui-word-needed")} {_recipe.MinTemp:N1}°C";
-            }
             outputhelptext += Environment.NewLine;
-            // Temp: 25°C / Needed 205°C
-            if (_recipe != null)
+            float craftstacksize = 0f;
+            if (_bentity.CurrentRecipe != null)
+            { 
+                outputhelptext += $"{Lang.Get("vinteng:gui-word-crafting")}:{_bentity.CurrentRecipe.Outputs[0].ResolvedItemstack.StackSize} {_bentity.CurrentRecipe.Outputs[0].ResolvedItemstack.GetName()}";
+                craftstacksize = _bentity.CurrentRecipe.Outputs[0].ResolvedItemstack.StackSize;
+            }
+            if (_bentity.CurrentAlloyRecipe != null)
             {
-                ItemStack outputstack = _recipe.Outputs[0].ResolvedItemstack;
-                outputhelptext += $"{Lang.Get("vinteng:gui-word-crafting")} {outputstack.Collectible.GetHeldItemName(outputstack)}";
+                craftstacksize = (float)_bentity.CurrentAlloyRecipe.GetTotalOutputQuantity(_bentity.GetIngredientStacks(capi.World, _bentity.InputSlots));
+                outputhelptext += $"{Lang.Get("vinteng:gui-word-crafting")}:{craftstacksize} {_bentity.CurrentAlloyRecipe.Output.ResolvedItemstack.GetName()}";
+            }
+            if (_bentity.SmeltableStackRecipe != null)
+            {
+                craftstacksize = (float)_bentity.SmeltableStackRecipe.stackSize;
+                outputhelptext += $"{Lang.Get("vinteng:gui-word-crafting")}:{craftstacksize} {_bentity.SmeltableStackRecipe.output.GetName()}";
+            }
+
+            if (_bentity.CurrentRecipe != null || _bentity.CurrentAlloyRecipe != null || _bentity.SmeltableStackRecipe != null)
+            {
+                bool isfraction = (craftstacksize * 100) % 100 > 0;
+                if (!isfraction)
+                {
+                    outputhelptext += Environment.NewLine;
+                    outputhelptext += $"{Lang.Get("vinteng:Smelting")} {Lang.Get("vinteng:gui-word-temp")} {_bentity.GetMeltingPoint(capi.World, _bentity.InputSlots)}";
+                    outputhelptext += Environment.NewLine;
+                    outputhelptext += $"{Lang.Get("vinteng:Smelting")} {Lang.Get("vinteng:gui-word-time")}: {_bentity.GetMeltingDuration(capi.World, _bentity.InputSlots)}";
+                }                
+                else
+                {
+                    outputhelptext += Environment.NewLine + $"{Lang.Get("vinteng:gui-error-unbalancedinput")}";
+                }
             }
             else
             {
@@ -199,11 +223,11 @@ namespace VintageEngineering.GUI
                 {
                     outputhelptext += Lang.Get("vinteng:gui-no-valid-recipe");    // third is a VALID recipe
                 }
-                else if (Inventory[0].Empty)
+                else if (_bentity.InputsEmpty)
                 {
                     outputhelptext += Lang.Get("vinteng:gui-machine-ingredients");// second priority is an ingredient
                 }
-                else if (Inventory[1].Empty)
+                else if (_bentity.FuelSlot.Empty)
                 {
                     outputhelptext += Lang.Get("vinteng:gui-machine-nofuel");// third priority is fuel
                 }

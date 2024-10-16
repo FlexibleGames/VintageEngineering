@@ -51,7 +51,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
                 if (temp == 0)
                 {
                     // none of the 4 ingredients have CombustableProps, use MinTemp attribute
-                    temp = Attributes != null ? Attributes["mintemp"].AsInt(0) : 0;
+                    temp = Attributes != null ? Attributes["mintemp"].AsInt(100) : 100;
                 }
                 return temp;
             }
@@ -154,6 +154,54 @@ namespace VintageEngineering.RecipeSystem.Recipes
 
             List<KeyValuePair<ItemSlot, CraftingRecipeIngredient>> matched = PairInput(ingredients);
             if (matched == null) return false;
+
+            return true;
+        }
+
+        /// <summary>
+        /// Tries to craft the recipe based on input slots to push into output slots.<br/>
+        /// Crafts ONE iteration of the recipe.
+        /// </summary>
+        /// <param name="api">Api</param>
+        /// <param name="inputslots">InputSlots</param>
+        /// <param name="outputslots">1 Output Slot, id = 0 item</param>
+        /// <returns>True if craft happened</returns>
+        public bool TryCraftNow(ICoreAPI api, ItemSlot[] inputslots, ItemSlot[] outputslots)
+        {
+            if (outputslots.Length > 1 || outputslots.Length == 0) return false; // odd
+            if (inputslots.Length > 4 || inputslots.Length == 0) return false;  // very odd
+
+            List<KeyValuePair<ItemSlot, CraftingRecipeIngredient>> matched = PairInput(inputslots);
+            if (matched == null) return false;
+
+            ItemStack mainoutput = Outputs[0].ResolvedItemstack.Clone();
+            mainoutput.StackSize = Outputs[0].VariableResolve(api.World, "BlastFurnace TryCraftNow");
+            if (mainoutput.StackSize == -1)
+            {
+                Outputs[0].Resolve(api.World, "BlastFurnace TryCraftNow");
+                mainoutput.StackSize = Outputs[0].VariableResolve(api.World, "BlastFurnace TryCraftNow");
+            }
+            float inputtemp = inputslots[0].Itemstack.Collectible.GetTemperature(api.World, inputslots[0].Itemstack);
+            mainoutput.Collectible.SetTemperature(api.World, mainoutput, inputtemp, true);
+
+            
+            foreach (KeyValuePair<ItemSlot, CraftingRecipeIngredient> pair in matched)
+            {
+                if (pair.Value.Quantity > 0)
+                {
+                    pair.Key.TakeOut(pair.Value.Quantity);
+                    pair.Key.MarkDirty();
+                }
+            }
+            if (outputslots[0].Empty)
+            { 
+                outputslots[0].Itemstack = mainoutput.Clone(); 
+            }
+            else
+            {
+                outputslots[0].Itemstack.StackSize += mainoutput.StackSize;
+            }
+            outputslots[0].MarkDirty();
 
             return true;
         }

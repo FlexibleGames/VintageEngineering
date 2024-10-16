@@ -1,0 +1,19 @@
+[
+	{
+		"code": "kiln-blistersteel",
+		"enabled": true,
+		"attributes": {
+			"requirestemp": 1200,
+			"requirestime": 30,
+			"_comment": "requirestime overrides powerpercraft and is a duration in seconds after the kiln reaches requirestemp temperature."
+		},
+		"powerpercraft": 256,
+		"ingredients": [
+			{ "type": "item", "code": "game:ingot-blistersteel", "quantity": 1 }
+		],
+		"outputs": [
+			{ "type": "item", "code": "game:ingot-steel", "stacksize": 1 },
+			{ "type": "item", "code": "game:metalbit-blistersteel", "stacksize": 4, "variable": 3 }
+		]
+	}
+]
