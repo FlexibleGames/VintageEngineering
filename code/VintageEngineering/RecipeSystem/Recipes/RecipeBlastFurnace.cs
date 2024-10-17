@@ -181,7 +181,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
                 Outputs[0].Resolve(api.World, "BlastFurnace TryCraftNow");
                 mainoutput.StackSize = Outputs[0].VariableResolve(api.World, "BlastFurnace TryCraftNow");
             }
-            float inputtemp = inputslots[0].Itemstack.Collectible.GetTemperature(api.World, inputslots[0].Itemstack);
+            float inputtemp = GetInputTemperature(api, inputslots);
             mainoutput.Collectible.SetTemperature(api.World, mainoutput, inputtemp, true);
 
             
@@ -206,6 +206,20 @@ namespace VintageEngineering.RecipeSystem.Recipes
             return true;
         }
 
+        public float GetInputTemperature(ICoreAPI api, ItemSlot[] inputs)
+        {
+            float outputtemp = 0f;
+            for (int i = 0; i < inputs.Length; i++)
+            {
+                if (inputs[i] != null && !inputs[i].Empty)
+                {
+                    float itemtemp = inputs[i].Itemstack.Collectible.GetTemperature(api.World, inputs[i].Itemstack);
+                    if (outputtemp < itemtemp) outputtemp = itemtemp;
+                }
+            }
+            return outputtemp;
+        }
+
         /// <summary>
         /// Checks all inputSlots and compares to recipe Ingredients that match type.
         /// </summary>
@@ -217,7 +231,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
             Queue<ItemSlot> inputSlotsList = new Queue<ItemSlot>();
             foreach (ItemSlot val in inputStacks)
             {
-                if (!val.Empty)
+                if (!(val == null) && !val.Empty)
                 {
                     inputSlotsList.Enqueue(val);
                 }

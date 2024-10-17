@@ -193,11 +193,11 @@ namespace VintageEngineering
                 BEBlower rightside = Api.World.BlockAccessor.GetBlockEntity(this.Pos.AddCopy(ccwface)) as BEBlower;
 
                 int output = 0;
-                if (leftside != null && leftside.Block.Variant["side"] == cwface.Code)
+                if (leftside != null && leftside.Block.Variant["side"] == ccwface.Code)
                 {
                     if (leftside.IsActive) output++;
                 }
-                if (rightside != null && rightside.Block.Variant["side"] == ccwface.Code)
+                if (rightside != null && rightside.Block.Variant["side"] == cwface.Code)
                 {
                     if (rightside.IsActive) output++;
                 }
@@ -401,6 +401,21 @@ namespace VintageEngineering
             if (world == null || slots == null || slots.Length == 0) return false;
             ItemStack[] stacks = GetIngredientStacks(world, slots);
             if (stacks == null || stacks.Length == 0) return false;
+
+            List<RecipeBlastFurnace> mrecipes = Api?.ModLoader?.GetModSystem<VERecipeRegistrySystem>(true)?.BlastFurnaceRecipes;
+            if (mrecipes == null) return false;
+
+            foreach (RecipeBlastFurnace mrecipe in mrecipes)
+            {
+                if (mrecipe.Enabled && mrecipe.Matches(slots, this))
+                {
+                    _alloyRecipe = null;
+                    _smeltableStack = null;
+                    _currentRecipe = mrecipe;
+                    return true;
+                }
+            }
+
             AlloyRecipe alloy = GetMatchingAlloy(world, stacks);
             if (alloy != null)
             {
@@ -426,24 +441,32 @@ namespace VintageEngineering
                     ItemStack ironingot = new ItemStack(Api.World.GetItem(new AssetLocation("game:ingot-iron")), matched.output.StackSize);
                     matched.output = ironingot.Clone();
                 }
-                _smeltableStack = matched;
+                if (ValidateInputs(world, stacks, matched.output)) _smeltableStack = matched;
+                else
+                {
+                    _smeltableStack = null;
+                    return false;
+                }
                 return true; 
             }
 
-            List<RecipeBlastFurnace> mrecipes = Api?.ModLoader?.GetModSystem<VERecipeRegistrySystem>(true)?.BlastFurnaceRecipes;
-            if (mrecipes == null) return false;
+            return false;
+        }
 
-            foreach (RecipeBlastFurnace mrecipe in mrecipes)
+        public bool ValidateInputs(IWorldAccessor world, ItemStack[] inputs, ItemStack output)
+        {
+            string inputcode = string.Empty;
+            for (int i = 0; i < inputs.Length; i++)
             {
-                if (mrecipe.Enabled && mrecipe.Matches(slots, this))
+                if (inputs[i] != null)
                 {
-                    _alloyRecipe = null;
-                    _smeltableStack = null;
-                    _currentRecipe = mrecipe;
-                    return true;
+                    if (inputcode == string.Empty) inputcode = inputs[i].Collectible.Code.Path;
+                    else if (inputcode != inputs[i].Collectible.Code.Path) return false;
                 }
             }
-            return false;
+            if (inputcode == output.Collectible.Code.Path) return false;
+
+            return true;
         }
 
         #endregion
@@ -550,7 +573,13 @@ namespace VintageEngineering
                         if (_currentTemp < _tempgoal) return;
                         else
                         {
-                            _recipeTime += dt;
+                            float tempdiff = _currentTemp - _tempgoal;
+                            float mult = 1f;
+                            if (tempdiff > 100f) mult = 1.1f;
+                            if (tempdiff > 250f) mult = 1.334f;
+                            if (tempdiff > 500f) mult = 2.0f;
+                            if (tempdiff > 900f) mult = 3.0f;
+                            _recipeTime += dt * mult;
                         }
                     }
                 }
@@ -566,7 +595,8 @@ namespace VintageEngineering
                         // dump it all at once for now, polish later
                         // TODO create a hidden slot to hold the melted fluid and push ingots out one at a time
                         ItemStack output = _alloyRecipe.Output.ResolvedItemstack.Clone();
-                        output.StackSize = (int)_alloyRecipe.GetTotalOutputQuantity(GetIngredientStacks(Api.World, InputSlots));
+                        
+                        output.StackSize = (int)Math.Round(_alloyRecipe.GetTotalOutputQuantity(GetIngredientStacks(Api.World, InputSlots)), 0);
                         output.Collectible.SetTemperature(Api.World, output, _currentTemp);
                         if (OutputSlots[0].Empty) OutputSlots[0].Itemstack = output;
                         else OutputSlots[0].Itemstack.StackSize += output.StackSize;
@@ -594,7 +624,7 @@ namespace VintageEngineering
                     if (!FindMatchingRecipe())
                     {
                         SetState(EnumBEState.Sleeping);
-                    }                    
+                    }
                     MarkDirty(true, null);
                     Api.World.BlockAccessor.MarkBlockEntityDirty(this.Pos);
                 }
@@ -642,15 +672,23 @@ namespace VintageEngineering
             float basechange = 0f;
             int numblowers = NumActiveBlowers;
             // with active blowers, increase heat per second by a LOT
-            if (fromTemp < 480) basechange = (_heatPerSecondBase * (numblowers+1)) * deltatime;
+            if (fromTemp < 480) basechange = (_heatPerSecondBase * (1f + (float)(numblowers * 0.5f))) * deltatime;
             else
             {
                 float diff = Math.Abs(fromTemp - toTemp);
                 basechange = deltatime + deltatime * (diff / 6); // 30 seconds to hit 1100
+                basechange *= (1f + (float)(numblowers * 0.5f));
                 if (diff < basechange) return toTemp;
-                if (basechange > toTemp) return toTemp; // probably debugging for this to be extreme
             }
-            if (fromTemp > toTemp) basechange = -basechange;
+            if (fromTemp > toTemp) 
+            {
+                if (basechange > fromTemp) basechange = fromTemp - toTemp; // we are probably debugging, dt goes crazy
+                basechange = -basechange; // we're cooling off
+            }
+            else
+            {
+                if (basechange > toTemp) basechange = toTemp - fromTemp;
+            }
             if (Math.Abs(fromTemp - toTemp) < 1f) return toTemp;
             float newtemp = fromTemp + basechange;
             if (newtemp < -273) return toTemp; // something odd happened, can't go below absolute 0.

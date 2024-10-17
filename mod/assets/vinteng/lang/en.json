@@ -236,6 +236,7 @@
 	"vinteng:gui-filtersettings": "Pipe Filter Settings",
 	"vinteng:gui-error-filterwildcard": "To add a wildcard, ensure Wildcards is enabled in the Filter Window.",
 	"vinteng:gui-error-unbalancedinput": "WARNING: Input isn't balanced! Some input items will be wasted.",
+	"vinteng:gui-error-airblocked": "Requires empty (air) block in front to operate!",
 	"vinteng:gui-blacklist": "Blacklist",
 	"vinteng:gui-selected": "Selected",
 	"vinteng:gui-blocks": "Blocks",
@@ -286,5 +287,5 @@
 	"vinteng:block-veblastfurnace-*": "Blast Furnace",
 	"vinteng:blockdesc-veblastfurnace-*": "A self-contained way to craft ingots directly from metal nuggets or bits. Works with base-game alloy recipes as well as custom recipes. Add powered blowers to each side to increase crafting speed and crafting temperatures.",
 	"vinteng:block-veblower-*": "Air Blower",
-	"vinteng:blockdesc-veblower-*": "Pushes large amounts of air into the machine it points into to augment the functionality of that machine. Used to enhance the Blast Furnace."
+	"vinteng:blockdesc-veblower-*": "Pushes large amounts of air into the machine it points into to augment the functionality of that machine. Used to enhance the Blast Furnace by speeding up heating (10% per blower) burning the fuel faster, speeds up crafting 10% per blower, and pushes the max heat up 25% per blower above what fuel is used."
 }

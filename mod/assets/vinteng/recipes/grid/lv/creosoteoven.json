@@ -1,0 +1,10 @@
+{
+	"ingredientPattern": "XXX,XMX,XXX",
+	"ingredients": {
+		"X": { "type": "block", "code": "game:claybricks-blue", "quantity": 2 },
+		"M": { "type": "block", "code": "vinteng:machineryblock-*", "allowedVariants": ["tinbronze"], "quantity": 1 }
+	},
+	"width": 3,
+	"height": 3,
+	"output": { "type": "block", "code": "vinteng:vecreosoteoven-north", "quantity": 1  }
+}

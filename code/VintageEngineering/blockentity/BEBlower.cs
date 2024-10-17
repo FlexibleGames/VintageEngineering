@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Text;
 using VintageEngineering.Electrical;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
@@ -27,14 +29,7 @@ namespace VintageEngineering
         private ICoreServerAPI sapi;
         private ICoreClientAPI capi;
         private float _updateBouncer = 0f;
-
-        public BlockEntityAnimationUtil AnimUtil
-        {
-            get
-            {
-                return this.GetBehavior<BEBehaviorAnimatable>()?.animUtil;
-            }
-        }
+        private long _clientUpdateMS = 0L;
 
         public override void Initialize(ICoreAPI api)
         {
@@ -47,11 +42,12 @@ namespace VintageEngineering
             else
             {
                 capi = api as ICoreClientAPI;
-                if (AnimUtil != null)
+                if (Electric.AnimUtil != null)
                 {
-                    AnimUtil.InitializeAnimator("veblower", null, null, new Vec3f(0, GetRotation(), 0f));
+                    Electric.AnimUtil.InitializeAnimator("veblower", null, null, new Vec3f(0, GetRotation(), 0f));
                 }
             }
+            _clientUpdateMS = api.World.ElapsedMilliseconds;
         }
 
         public void OnSimTick(float dt)
@@ -62,18 +58,29 @@ namespace VintageEngineering
                 _updateBouncer += dt;
                 if (_updateBouncer < 2f) return;
                 _updateBouncer = 0f;
-            }
-            ulong rated = Electric.RatedPower(dt);
-            if (Electric.CurrentPower >= rated)
+            }            
+
+            float ratedpower = Electric.MaxPPS * dt;
+            if (Electric.CurrentPower > ratedpower)
             {
+                if (!CheckForAir()) 
+                {
+                    SetState(EnumBEState.Sleeping);
+                    return; 
+                }
                 // power is good, we can tick
                 if (Electric.MachineState != EnumBEState.On) SetState(EnumBEState.On);
-                Electric.electricpower -= rated;
+                Electric.electricpower -= (ulong)Math.Round(ratedpower, 0);
             }
             else
             {
                 // not enough power, go to sleep
                 if (Electric.MachineState != EnumBEState.Sleeping) SetState(EnumBEState.Sleeping);
+            }
+            if (Api.World.ElapsedMilliseconds - _clientUpdateMS > 500L)
+            {
+                _clientUpdateMS = Api.World.ElapsedMilliseconds;
+                MarkDirty(true);
             }
         }
 
@@ -85,36 +92,35 @@ namespace VintageEngineering
                 Electric.MachineState = state;
                 if (state != EnumBEState.On)
                 {
-                    IsActive = false;
-                    MarkDirty(true);
+                    IsActive = false;                    
                 }
                 else 
                 { 
-                    IsActive = true;
-                    MarkDirty(true);
-                }
-                if (Electric.MachineState == EnumBEState.On)
+                    IsActive = true;                    
+                }                
+            }
+            if (Electric.MachineState == EnumBEState.On)
+            {
+                if (Electric.AnimUtil != null && base.Block.Attributes["craftinganimcode"].Exists)
                 {
-                    if (AnimUtil != null && base.Block.Attributes["craftinganimcode"].Exists)
+                    Electric.AnimUtil.StartAnimation(new AnimationMetaData
                     {
-                        AnimUtil.StartAnimation(new AnimationMetaData
-                        {
-                            Animation = base.Block.Attributes["craftinganimcode"].AsString(),
-                            Code = base.Block.Attributes["craftinganimcode"].AsString(),
-                            AnimationSpeed = 1f,
-                            EaseOutSpeed = 4f,
-                            EaseInSpeed = 1f
-                        });
-                    }
-                }
-                else
-                {
-                    if (AnimUtil != null && AnimUtil.activeAnimationsByAnimCode.Count > 0)
-                    {
-                        AnimUtil.StopAnimation(base.Block.Attributes["craftinganimcode"].AsString());
-                    }
+                        Animation = base.Block.Attributes["craftinganimcode"].AsString(),
+                        Code = base.Block.Attributes["craftinganimcode"].AsString(),
+                        AnimationSpeed = 1f,
+                        EaseOutSpeed = 4f,
+                        EaseInSpeed = 1f
+                    });
                 }
             }
+            else
+            {
+                if (Electric.AnimUtil != null && Electric.AnimUtil.activeAnimationsByAnimCode.Count > 0)
+                {
+                    Electric.AnimUtil.StopAnimation(base.Block.Attributes["craftinganimcode"].AsString());
+                }
+            }
+            MarkDirty(true);
         }
 
         public int GetRotation()
@@ -134,6 +140,22 @@ namespace VintageEngineering
             {
                 worldForResolve.Logger.Fatal("The Electric behavior is required on {0}", Block.Code);
                 throw new FormatException($"The Electric behavior is required on {Block.Code}");
+            }
+        }
+
+        public bool CheckForAir()
+        {
+            Block frontof = Api.World.BlockAccessor.GetBlock(this.Pos.AddCopy(BlockFacing.FromCode(this.Block.Variant["side"]).Opposite));
+            return frontof.Id == 0;
+        }
+
+        public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
+        {
+            base.GetBlockInfo(forPlayer, dsc);
+            if (!CheckForAir())
+            {
+                dsc.AppendLine();
+                dsc.AppendLine(Lang.Get("vinteng:gui-error-airblocked"));
             }
         }
 

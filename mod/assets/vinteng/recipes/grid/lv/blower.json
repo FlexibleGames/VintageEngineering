@@ -1,0 +1,12 @@
+{
+	"ingredientPattern": "XSX,_M_,XCX",
+	"ingredients": {
+		"X": { "type": "item", "code": "vinteng:screw-*", "allowedVariants": ["steel"], "quantity": 3 },
+		"M": { "type": "item", "code": "vinteng:motor-mv", "quantity": 1 },
+		"S": { "type": "block", "code": "vinteng:machineryblock-*", "allowedVariants": ["steel"], "quantity": 1 },
+		"C": { "type": "item", "code": "vinteng:braidedwire-copper", "quantity": 2 }
+	},
+	"width": 3,
+	"height": 3,
+	"output": { "type": "block", "code": "vinteng:veblower-north", "quantity": 1  }
+}

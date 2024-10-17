@@ -1,0 +1,10 @@
+{
+	"ingredientPattern": "XXX,XMX,XXX",
+	"ingredients": {
+		"X": { "type": "block", "code": "game:refractorybricks-good-tier3", "quantity": 4 },
+		"M": { "type": "block", "code": "vinteng:machineryblock-*", "allowedVariants": ["steel"], "quantity": 1 }
+	},
+	"width": 3,
+	"height": 3,
+	"output": { "type": "block", "code": "vinteng:veblastfurnace-north", "quantity": 1  }
+}

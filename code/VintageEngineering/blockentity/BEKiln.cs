@@ -197,6 +197,20 @@ namespace VintageEngineering
             List<RecipeKiln> mprecipes = Api?.ModLoader?.GetModSystem<VERecipeRegistrySystem>(true)?.KilnRecipes;
 
             _cproperties = InputSlot.Itemstack.Collectible.CombustibleProps;
+
+            if (_cproperties == null && mprecipes == null) return false;
+
+            foreach (RecipeKiln mprecipe in mprecipes)
+            {
+                if (mprecipe.Enabled && mprecipe.Matches(InputSlot))
+                {
+                    currentRecipe = mprecipe;
+                    if (mprecipe.RequiresTemp > currentTemp) isHeating = true;
+                    else isCrafting = true;
+                    SetState(EnumBEState.On);
+                    return true;
+                }
+            }
             if (_cproperties != null && _cproperties.SmeltingType != EnumSmeltType.Cook)
             {
                 BakingProperties bakingProperties = BakingProperties.ReadFrom(InputSlot.Itemstack);
@@ -214,19 +228,6 @@ namespace VintageEngineering
                 _cproperties = null; // a baking thing or not enough items, ignore the combustable props
             }
 
-            if (_cproperties == null && mprecipes == null) return false;
-
-            foreach (RecipeKiln mprecipe in mprecipes)
-            {
-                if (mprecipe.Enabled && mprecipe.Matches(InputSlot))
-                {
-                    currentRecipe = mprecipe;
-                    if (mprecipe.RequiresTemp > currentTemp) isHeating = true;
-                    else isCrafting = true;
-                    SetState(EnumBEState.On);
-                    return true;
-                }
-            }
             currentRecipe = null;
             isCrafting = false;
             isHeating = false;
