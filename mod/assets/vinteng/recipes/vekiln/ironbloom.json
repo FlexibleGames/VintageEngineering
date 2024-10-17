@@ -3,7 +3,7 @@
 		"code": "kiln-ironbloom",
 		"enabled": true,
 		"attributes": {
-			"requirestemp": 1100,
+			"requirestemp": 1400,
 			"requirestime": 30,
 			"_comment": "requirestime overrides powerpercraft and is a duration in seconds after the kiln reaches requirestemp temperature."
 		},
