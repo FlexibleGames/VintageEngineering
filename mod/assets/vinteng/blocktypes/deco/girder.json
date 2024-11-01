@@ -1,0 +1,18 @@
+{
+	"code": "girder",
+	"creativeinventory": {
+		"vinteng-decor": [ "*" ]
+	},
+	"blockmaterial": "Wood",
+	"drawtype": "json",
+	"shape": { "base": "block/deco/girder" },
+	"resistance": 2,
+	"sideopaque": {
+		"all": false
+	},
+	"climbable":  true,
+	"sounds": {
+		"place": "game:block/planks",
+		"walk": "game:walk/wood"
+	}
+}

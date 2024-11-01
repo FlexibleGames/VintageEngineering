@@ -1,0 +1,47 @@
+[
+{
+    "ingredientPattern": "S",
+    "ingredients": {
+        "S": { "type": "block", "code": "vinteng:concrete-*-plain", "name": "color", "allowedVariants": ["blue","red","yellow","purple","brown","green","orange","black","gray","pink","white","internal"], "quantity": 1 }
+    },
+    "width": 1,
+    "height": 1,
+    "output": { "type": "block", "code": "vinteng:concrete-{color}-tiles", "quantity": 1 }
+},
+{
+    "ingredientPattern": "S",
+    "ingredients": {
+        "S": { "type": "block", "code": "vinteng:concrete-*-tiles", "name": "color", "allowedVariants": ["blue","red","yellow","purple","brown","green","orange","black","gray","pink","white","internal"], "quantity": 1 }
+    },
+    "width": 1,
+    "height": 1,
+    "output": { "type": "block", "code": "vinteng:concrete-{color}-lattice", "quantity": 1 }
+},
+{
+    "ingredientPattern": "S",
+    "ingredients": {
+        "S": { "type": "block", "code": "vinteng:concrete-*-lattice", "name": "color", "allowedVariants": ["blue","red","yellow","purple","brown","green","orange","black","gray","pink","white","internal"], "quantity": 1 }
+    },
+    "width": 1,
+    "height": 1,
+    "output": { "type": "block", "code": "vinteng:concrete-{color}-path", "quantity": 1 }
+},
+{
+    "ingredientPattern": "S",
+    "ingredients": {
+        "S": { "type": "block", "code": "vinteng:concrete-*-path", "name": "color", "allowedVariants": ["blue","red","yellow","purple","brown","green","orange","black","gray","pink","white","internal"], "quantity": 1 }
+    },
+    "width": 1,
+    "height": 1,
+    "output": { "type": "block", "code": "vinteng:concrete-{color}-holiday", "quantity": 1 }
+},
+{
+    "ingredientPattern": "S",
+    "ingredients": {
+        "S": { "type": "block", "code": "vinteng:concrete-*-holiday", "name": "color", "allowedVariants": ["blue","red","yellow","purple","brown","green","orange","black","gray","pink","white","internal"], "quantity": 1 }
+    },
+    "width": 1,
+    "height": 1,
+    "output": { "type": "block", "code": "vinteng:concrete-{color}-plain", "quantity": 1 }
+}
+]

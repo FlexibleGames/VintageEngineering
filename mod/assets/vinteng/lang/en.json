@@ -287,5 +287,26 @@
 	"vinteng:block-veblastfurnace-*": "Blast Furnace",
 	"vinteng:blockdesc-veblastfurnace-*": "A self-contained way to craft ingots directly from metal nuggets or bits. Works with base-game alloy recipes as well as custom recipes. Add powered blowers to each side to increase crafting speed and crafting temperatures.",
 	"vinteng:block-veblower-*": "Air Blower",
-	"vinteng:blockdesc-veblower-*": "Pushes large amounts of air into the machine it points into to augment the functionality of that machine. Used to enhance the Blast Furnace by speeding up heating (10% per blower) burning the fuel faster, speeds up crafting 10% per blower, and pushes the max heat up 25% per blower above what fuel is used."
+	"vinteng:blockdesc-veblower-*": "Pushes large amounts of air into the machine it points into to augment the functionality of that machine. Used to enhance the Blast Furnace by speeding up heating (10% per blower) burning the fuel faster, speeds up crafting 10% per blower, and pushes the max heat up 25% per blower above what fuel is used.",
+
+	"vinteng:block-concrete-*-plain": "Concrete Plain",
+	"vinteng:blockdesc-concrete-reinforced-*": "Reinforced Concrete is an even more sturdy building material able to withstand immense forces. For the most industrial looking builds.",
+	"vinteng:blockdesc-concrete-*": "Concrete is a sturdy building material able to withstand immense forces. Comes in a variety of styles.",
+	"vinteng:block-concrete-*-tiles": "Concrete Tiles",
+	"vinteng:block-concrete-*-lattice": "Concrete Lattice",
+	"vinteng:block-concrete-*-path": "Concrete Path",
+	"vinteng:block-concrete-*-holiday": "Concrete Festive",
+	"vinteng:block-concrete-reinforced-*": "Reinforced Concrete",
+
+	"vinteng:vinteng-decor": "Vintage Decor",
+	"vinteng:block-girder": "Wood Scaffold",
+	"vinteng:blockdesc-girder": "A support for vertical building.",
+	"vinteng:block-scaffold": "Metal Scaffold",
+	"vinteng:blockdesc-scaffold": "A sturdy industrial-looking support for vertical building.",
+	"vinteng:block-industrialglass-*": "Industrial Glass",
+	"vinteng:blockdesc-industrialglass-*": "A tough glass resistant to shattering.",
+	"vinteng:block-metalplatform": "Metal Platform",
+	"vinteng:blockdesc-metalplatform": "Metal Platform or Scaffold is used for industrial walkways and platforms.",
+	"vinteng:block-metalstairs-*": "Metal Stairs",
+	"vinteng:blockdesc-metalstairs-*": "No industrial build is complete without gritty-looking metal stairs."
 }

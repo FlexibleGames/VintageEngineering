@@ -1,0 +1,13 @@
+{
+	"ingredientPattern": "TBC,_C_,C__",
+	"ingredients": {
+		"C": { "type": "item", "code": "vinteng:machineplate-iron", "quantity": 1 },
+		"B": { "type": "item", "code": "vinteng:screw-iron", "quantity": 3 },
+		"T": { "type": "item", "code": "game:hammer-*", "isTool": true }
+
+
+	},
+	"width": 3,
+	"height": 3,
+	"output": { "type": "block", "code": "vinteng:metalstairs-north", "quantity": 3  }
+}

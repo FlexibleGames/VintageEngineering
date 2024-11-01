@@ -1,0 +1,18 @@
+[
+	{
+		"code": "kiln-industrialglass",
+		"enabled": true,
+		"attributes": {
+			"requirestemp": 1100,
+			"requirestime": 30,
+			"_comment": "requirestime overrides powerpercraft and is a duration in seconds after the kiln reaches requirestemp temperature."
+		},
+		"powerpercraft": 200,
+		"ingredients": [
+			{ "type": "item", "code": "game:crushed-quartz", "quantity": 8 }
+		],
+		"outputs": [
+			{ "type": "block", "code": "vinteng:industrialglass-plain", "stacksize": 2 }
+		]
+	}
+]

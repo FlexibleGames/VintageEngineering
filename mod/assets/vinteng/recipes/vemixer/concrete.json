@@ -1,0 +1,68 @@
+[
+	{
+		"code": "concrete-internal-plain",
+		"powerpercraft": 75,
+		"ingredients": [
+			{ "type": "item", "code": "game:waterportion",  "litres": 1 },
+			{ "type": "item", "code": "game:quicklime", "quantity": 1 },
+			{ "type": "block", "code": "game:gravel-*", "quantity": 1, "name": "type", "allowedVariants": ["andesite", "chalk", "chert", "conglomerate", "limestone", "claystone", "granite", "sandstone", "shale", "basalt", "peridotite", "phyllite", "slate"] }
+		],
+		"outputs": [
+          { "type": "block", "code": "vinteng:concrete-internal-plain", "quantity": 1 }
+          ]
+	},
+	{
+		"code": "concrete-dyed-plain",
+		"powerpercraft": 75,
+		"ingredients": [
+			{ "type": "item", "code": "game:waterportion",  "litres": 1 },
+			{ "type": "item", "code": "game:quicklime", "quantity": 1 },
+			{ "type": "item", "code": "game:dye-*", "name": "color", "allowedVariants":["blue", "red", "yellow", "purple", "green", "orange", "black", "gray", "pink", "white"], "litres": 0.1 },
+			{ "type": "block", "code": "game:gravel-*", "quantity": 1, "name": "type", "allowedVariants": ["andesite", "chalk", "chert", "conglomerate", "limestone", "claystone", "granite", "sandstone", "shale", "basalt", "peridotite", "phyllite", "slate"] }
+		],
+		"outputs": [
+          { "type": "block", "code": "vinteng:concrete-{color}-plain", "quantity": 1 }
+          ]
+	},
+	{
+		"code": "concrete-dyed-woad",
+		"powerpercraft": 75,
+		"ingredients": [
+			{ "type": "item", "code": "game:waterportion",  "litres": 1 },
+			{ "type": "item", "code": "game:quicklime", "quantity": 1 },
+			{ "type": "item", "code": "game:dye-woad", "litres": 0.1 },
+			{ "type": "block", "code": "game:gravel-*", "quantity": 1, "name": "type", "allowedVariants": ["andesite", "chalk", "chert", "conglomerate", "limestone", "claystone", "granite", "sandstone", "shale", "basalt", "peridotite", "phyllite", "slate"] }
+		],
+		"outputs": [
+          { "type": "block", "code": "vinteng:concrete-blue-plain", "quantity": 1 }
+          ]
+	},
+	{
+		"code": "concrete-dyed-brown",
+		"powerpercraft": 75,
+		"ingredients": [
+			{ "type": "item", "code": "game:strongtanninportion",  "litres": 1 },
+			{ "type": "item", "code": "game:quicklime", "quantity": 1 },
+			{ "type": "block", "code": "game:gravel-*", "quantity": 1, "name": "type", "allowedVariants": ["andesite", "chalk", "chert", "conglomerate", "limestone", "claystone", "granite", "sandstone", "shale", "basalt", "peridotite", "phyllite", "slate"] }
+		],
+		"outputs": [
+          { "type": "block", "code": "vinteng:concrete-brown-plain", "quantity": 1 }
+          ]
+	},
+	{
+		"code": "concrete-reinforced",
+		"attributes": {
+			"requirestemp": 200
+		},
+		"powerpercraft": 75,
+		"ingredients": [
+			{ "type": "item", "code": "game:waterportion",  "litres": 1 },
+			{ "type": "item", "code": "game:quicklime", "quantity": 1 },
+			{ "type": "item", "code": "vinteng:metalrod-iron", "quantity": 4 },
+			{ "type": "block", "code": "game:gravel-*", "quantity": 1, "name": "type", "allowedVariants": ["andesite", "granite", "basalt", "peridotite", "phyllite", "slate"] }
+		],
+		"outputs": [
+          { "type": "block", "code": "vinteng:concrete-reinforced-uncolored", "quantity": 2 }
+        ]
+	}
+]

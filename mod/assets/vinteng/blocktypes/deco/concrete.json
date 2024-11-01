@@ -1,0 +1,31 @@
+{
+	"code": "concrete",
+	"creativeinventory": {
+		"general": [ "*" ],
+		"vinteng-decor": [ "*" ]
+	},
+	"variantgroups": [
+		{
+			"code": "color",
+			"states": [ "blue","red","yellow","purple","brown","green","orange","black","gray","pink","white","internal"]
+		},
+		{
+			"code": "style",
+			"states": ["plain", "tiles", "lattice", "path", "holiday"]
+		}
+	],
+	"maxStackSize": 32,
+	"blockmaterial": "Stone",
+	"drawtype": "Cube",
+	"texturesByType": {
+		"*": {
+			"all": { "base": "block/stone/concrete-{color}-{style}" }
+		}
+	},
+	"resistance": 1,
+	"sounds": {
+		"place": "game:block/stone",
+		"walk": "game:walk/stone"
+	},
+	"walkspeedmultiplier": 1.35
+}

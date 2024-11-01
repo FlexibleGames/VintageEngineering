@@ -1,0 +1,18 @@
+{
+	"code": "scaffold",
+	"creativeinventory": {
+		"vinteng-decor": [ "*" ]
+	},
+	"blockmaterial": "Metal",
+	"drawtype": "json",
+	"shape": { "base": "block/deco/metalgirder" },
+	"resistance": 4,
+	"sideopaque": {
+		"all": false
+	},
+	"climbable":  true,
+	"sounds": {
+		"place": "game:block/chute",
+		"walk": "game:walk/stone"
+	}
+}

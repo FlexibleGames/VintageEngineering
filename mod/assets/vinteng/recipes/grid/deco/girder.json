@@ -1,0 +1,21 @@
+[{
+	"ingredientPattern": "CBC,BCB,CBC",
+	"ingredients": {
+		"C": { "type": "item", "code": "game:stick", "quantity": 1 },
+		"B": { "type": "item", "code": "game:rope", "quantity": 1 }
+	},
+	"width": 3,
+	"height": 3,
+	"output": { "type": "block", "code": "vinteng:girder", "quantity": 4  }
+},
+{
+	"ingredientPattern": "CBC,BCB,CBC",
+	"ingredients": {
+		"C": { "type": "item", "code": "vinteng:metalrod-iron", "quantity": 1 },
+		"B": { "type": "item", "code": "vinteng:screw-iron", "quantity": 1 }
+	},
+	"width": 3,
+	"height": 3,
+	"output": { "type": "block", "code": "vinteng:scaffold", "quantity": 8  }
+}
+]

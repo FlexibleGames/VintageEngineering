@@ -1,0 +1,34 @@
+{
+	"code": "concrete-reinforced",
+	"creativeinventory": {
+		"general": [ "*" ],
+		"vinteng-decor": [ "*" ]
+	},
+	"variantgroups": [
+		{
+			"code": "type",
+			"states": [ "uncolored" ]
+		}
+	],
+	"maxStackSize": 32,
+	"blockmaterial": "Stone",
+	"drawtype": "Cube",
+	"texturesByType": {
+		"*-uncolored": {
+			"all": {
+				"base": "block/stone/concrete-reinforced-side-{type}"
+			},
+			"up": {
+				"base": "block/stone/concrete-reinforced-top-{type}"
+			},
+			"down": {
+				"base": "block/stone/concrete-reinforced-top-{type}"
+			}
+		}
+	},
+	"resistance": 1,
+	"sounds": {
+		"place": "game:block/stone",
+		"walk": "game:walk/stone"
+	}
+}

@@ -1,0 +1,106 @@
+{
+	"code": "metalstairs",
+	"class": "BlockStairs",
+	"behaviors": [
+		{ "name": "WrenchOrientable", "properties": { "baseCode": "metalstairs-*" } }
+	],
+	"variantgroups": [
+		{ "loadFromProperties": "abstract/horizontalorientation" }
+	],
+	"attributes": {
+		"canChisel": false,
+		"chiselShapeFromCollisionBox": false,
+		"partialAttachable": true,
+		"handbook": {
+			"groupBy": [ "metalstairs-*-north" ]
+		}
+	},
+	"creativeinventory": {
+		"vinteng-decor": [ "*-north" ]
+	},
+	"climbable": true,
+	"sidesolidByType": {
+		"*-north": {
+			"all": false,
+			"down": true,
+			"north": true
+		},
+		"*-west": {
+			"all": false,
+			"down": true,
+			"west": true
+		},
+		"*-south": {
+			"all": false,
+			"down": true,
+			"south": true
+		},
+		"*-east": {
+			"all": false,
+			"down": true,
+			"east": true
+		}
+	},
+	"sideopaqueByType": {
+		"*": {
+			"all": false
+		}
+	},
+	"shapebytype": {
+		"*-north": {
+			"base": "block/deco/metalstair",
+			"rotateY": 0
+		},
+		"*-west": {
+			"base": "block/deco/metalstair",
+			"rotateY": 90
+		},
+		"*-south": {
+			"base": "block/deco/metalstair",
+			"rotateY": 180
+		},
+		"*-east": {
+			"base": "block/deco/metalstair",
+			"rotateY": 270
+		}
+	},
+	"blockmaterial": "Metal",
+	"textures": {
+		"metal": { "base": "block/deco/stairs" }
+	},
+	"replaceable": 160,
+	"resistance": 4,
+	"emitSideAo": { "all": true },
+	"sounds": {
+		"place": "game:block/anvil",
+		"walk": "game:walk/stone"
+	},
+	"collisionSelectionBoxesByType": {
+		"*": [
+			{ "x1": 0, "y1": 0, "z1": 0, "x2": 1, "y2": 0.5, "z2": 1 },
+			{ "x1": 0, "y1": 0.5, "z1": 0.5, "x2": 1, "y2": 1, "z2": 1,
+				"rotateYByType": {
+					"*-north": 180,
+					"*-east": 90,
+					"*-south": 0,
+					"*-west": 270
+				}
+			}
+		]
+	},
+	"heldTpIdleAnimation": "holdbothhandslarge",
+	"heldTpUseAnimation": "twohandplaceblock",
+	"tpHandTransform": {
+		"translation": {
+			"x": -1.2,
+			"y": -1.1,
+			"z": -0.8
+		},
+		"rotation": {
+			"x": -2,
+			"y": 25,
+			"z": -78
+		},
+		"scale": 0.37
+	}
+}

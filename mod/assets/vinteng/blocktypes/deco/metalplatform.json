@@ -1,0 +1,25 @@
+{
+	"code": "metalplatform",
+	"creativeinventory": {
+		"vinteng-decor": [ "*" ]
+	},
+	"attributes": {
+		"canChisel": false
+	},
+	"climbable": true,
+	"blockmaterial": "Metal",
+	"drawtype": "json",
+	"shape": { "base": "block/deco/metalplatform" },
+
+	"resistance": 4,
+	"sideopaque": {
+		"all": false
+	},
+	"sounds": {
+		"place": "game:block/anvil",
+		"walk": "game:walk/stone"
+	},
+	"collisionSelectionBoxes": [
+		{ "x1": 0, "y1": 0, "z1": 0, "x2": 1, "y2": 0.1875, "z2": 1 }
+	]
+}
