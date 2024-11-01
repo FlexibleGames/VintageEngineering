@@ -273,7 +273,14 @@ namespace VintageEngineering.Transport
         /// <param name="atPos">Position to drop at.</param>
         public virtual void DropContents(Vec3d atPos)
         {
-            inventory.DropAll(atPos);
+            try
+            {
+                if (inventory != null) inventory.DropAll(atPos);
+            }
+            catch (Exception ex)
+            {
+                _api.Logger.Error(ex);
+            }
         }
 
         /// <summary>
