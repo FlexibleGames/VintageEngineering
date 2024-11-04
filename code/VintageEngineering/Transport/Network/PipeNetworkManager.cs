@@ -174,6 +174,7 @@ namespace VintageEngineering.Transport.Network
             {
                 if (bep.ConnectionSides[f]) pipecons++;                
             }
+            world.Logger.VerboseDebug($"Pipe Network: OnPipeBroken: Connection Count: {pipecons}");
             if (pipecons == 0)
             {
                 _pipeNetworks.Remove(netid);
@@ -272,6 +273,8 @@ namespace VintageEngineering.Transport.Network
             if (bep == null || pipeblock == null) return; // something is wrong
 
             long splitid = bep.NetworkID; // the networkID of the source of the split
+
+            world.Logger.VerboseDebug($"Pipe Network: Splitting Network ID {splitid}");
 
             for (int f = 0; f < 6; f++)
             {
