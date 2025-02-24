@@ -474,7 +474,7 @@ namespace VintageEngineering
         public double RenderOrder { get => 0.5; }
         public int RenderRange { get => 24; }
 
-        public void Dispose()
+        public override void Dispose()
         {
             if (capi != null)
             {
@@ -482,6 +482,7 @@ namespace VintageEngineering
                 if (heatableMesh != null) heatableMesh.Dispose();
                 if (heatableMeshRef != null) heatableMeshRef.Dispose();
             }
+            base.Dispose();
         }
 
         public void OnRenderFrame(float delta, EnumRenderStage stage)

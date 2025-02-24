@@ -65,6 +65,9 @@
 	"creativeinventory": { "general": ["vinteng:crudeoil-still-7"], "terrain": ["vinteng:crudeoil-still-7"] },
 	"replaceable": 9500,
 	"lightAbsorption": 99,
+	"vertexFlags": {
+		"windMode": "Bend"
+	},
 	"drops": [],
 	"liquidLevelByType": {
 		"*-1": 1,

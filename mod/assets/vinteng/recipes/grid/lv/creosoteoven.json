@@ -1,7 +1,7 @@
 {
 	"ingredientPattern": "XXX,XMX,XXX",
 	"ingredients": {
-		"X": { "type": "block", "code": "game:claybricks-blue", "quantity": 2 },
+		"X": { "type": "block", "code": "game:brickcourse-four-running-gray", "quantity": 2 },
 		"M": { "type": "block", "code": "vinteng:machineryblock-*", "allowedVariants": ["tinbronze"], "quantity": 1 }
 	},
 	"width": 3,

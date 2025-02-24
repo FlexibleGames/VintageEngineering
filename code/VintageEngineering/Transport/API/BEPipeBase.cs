@@ -865,12 +865,12 @@ namespace VintageEngineering.Transport.API
                 {
                     extractionGUIs[faceindex].Dispose();
                     extractionGUIs[faceindex] = null;
-                    capi.Network.SendBlockEntityPacket(Pos.X, Pos.Y, Pos.Z, 1001, facebytes);
+                    capi.Network.SendBlockEntityPacket(Pos, 1001, facebytes);
                     capi.Network.SendPacketClient(extractionNodes[faceindex].Inventory.Close(player));
                 };
                 extractionGUIs[faceindex].TryOpen();
                 capi.Network.SendPacketClient(extractionNodes[faceindex].Inventory.Open(player));
-                capi.Network.SendBlockEntityPacket(Pos.X, Pos.Y, Pos.Z, 1000, facebytes);
+                capi.Network.SendBlockEntityPacket(Pos, 1000, facebytes);
                 return;
             }
             extractionGUIs[faceindex].TryClose();

@@ -197,7 +197,7 @@ namespace VintageEngineering.Transport
             custompacket.SetBytes("packet", Packet_ClientSerializer.SerializeToBytes(obj as Packet_Client));
             custompacket.SetInt("pid", (obj as Packet_Client).Id);
 
-            this.capi.Network.SendBlockEntityPacket(BlockEntityPosition.X, BlockEntityPosition.Y, BlockEntityPosition.Z, 1005, custompacket.ToBytes());
+            this.capi.Network.SendBlockEntityPacket(BlockEntityPosition, 1005, custompacket.ToBytes());
         }
 
         private void OnTitleBarClosed()

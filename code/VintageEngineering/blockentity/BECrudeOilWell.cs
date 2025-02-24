@@ -61,7 +61,7 @@ namespace VintageEngineering
             }
         }
 
-        public void InitDeposit(bool isLarge, IBlockAccessor access, LCGRandom wgenrand, Block wellblock, ICoreAPI l_api)
+        public void InitDeposit(bool isLarge, IBlockAccessor access, IRandom wgenrand, Block wellblock, ICoreAPI l_api)
         {
             long minblocks = MinDepositBlocks;
             if (isLarge) minblocks = (long)(MaxDepositBlocks * 0.8);

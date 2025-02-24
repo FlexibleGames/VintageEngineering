@@ -63,7 +63,7 @@ namespace VintageEngineering.Transport
             BEPipeBase pipebe = api.World.BlockAccessor.GetBlockEntity(pos) as BEPipeBase;
             if (pipebe != null)
             {                
-                pipebe.MarkPipeDirty(world, true);                 
+                pipebe.MarkPipeDirty(world, true);
             }
             base.OnNeighbourBlockChange(world, pos, neibpos);
         }

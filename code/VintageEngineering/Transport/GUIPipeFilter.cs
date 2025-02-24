@@ -407,7 +407,7 @@ namespace VintageEngineering.Transport
             if (vem == null) return;
 
             string text2 = _currentSearchText;
-            string text = (text2 != null) ? text2.RemoveDiacritics().ToLowerInvariant() : null;
+            string text = (text2 != null) ? text2.ToLowerInvariant() : null;  //.RemoveDiacritics().ToLowerInvariant() : null;
             string[] array;
             if (text != null)
             {

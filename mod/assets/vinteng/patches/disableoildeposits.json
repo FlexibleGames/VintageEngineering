@@ -1,0 +1,10 @@
+[
+    {
+        "file": "vinteng:worldgen/deposits/crudeoil.json",
+        "op": "replace",
+        "path": "/0/triesPerChunk",
+        "value": 0,
+        "condition": { "when": "VintEng_GenOilDeposit", "isValue": "false" },
+        "side": "server"
+    }
+]

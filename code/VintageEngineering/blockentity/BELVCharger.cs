@@ -412,7 +412,7 @@ namespace VintageEngineering
             return textureAtlasPosition;
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             if (capi != null)
             {
@@ -420,6 +420,7 @@ namespace VintageEngineering
                 if (renderedMesh != null) renderedMesh.Dispose();
                 if (renderedMeshRef != null) renderedMeshRef.Dispose();
             }
+            //base.Dispose();
         }
         #endregion
 

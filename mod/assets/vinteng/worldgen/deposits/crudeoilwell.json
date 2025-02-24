@@ -1,7 +1,7 @@
 [
 	{
 		"code": "crudeoilwell",
-		"triesPerChunk": 0.05,
+		"triesPerChunk": 0.01,
 		"withBlockCallback": true,
 		"generator": "disc-followsealevel",
 		"handbookPageCode": "crudeoilwell",
@@ -15,7 +15,7 @@
 	},
 	{
 		"code": "crudeoilwell_desert",
-		"triesPerChunk": 0.5,
+		"triesPerChunk": 0.02,
 		"withBlockCallback": true,
 		"generator": "disc-followsealevel",
 		"handbookPageCode": "crudeoilwell",

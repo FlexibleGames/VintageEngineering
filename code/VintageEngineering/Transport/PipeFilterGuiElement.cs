@@ -56,7 +56,7 @@ namespace VintageEngineering.Transport
                     {
                         stack = new ItemStack(capi.World.GetItem(new AssetLocation(code)));
                     }
-                    TextCacheTitle = stack.GetName().RemoveDiacritics();
+                    TextCacheTitle = stack.GetName();//.RemoveDiacritics();
                     _dummySlot = new DummySlot(stack);//, _unspoilableInventory);
                 }
                 catch (Exception ex)
@@ -72,7 +72,7 @@ namespace VintageEngineering.Transport
             _capi = capi;
             Code = stack.Collectible.Code.ToString();
             IsBlock = stack.Collectible.ItemClass == EnumItemClass.Block;
-            TextCacheTitle = stack.GetName().RemoveDiacritics();
+            TextCacheTitle = stack.GetName();//.RemoveDiacritics();
             _dummySlot = new DummySlot(stack);
         }
 

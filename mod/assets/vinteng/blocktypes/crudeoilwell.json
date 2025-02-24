@@ -7,9 +7,6 @@
 	"sidesolid": { "all": true },
 	"sideopaque": { "all": true },
 	"attributes": {
-		"depositgen": true,
-		"spoutgen": true,
-		"poolgen": true,
 		"maxDepositRadius": 9,
 		"minDepositRadius": 5,
 		"minTempForLarge": 28,

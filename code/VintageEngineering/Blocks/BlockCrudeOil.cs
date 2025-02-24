@@ -46,10 +46,9 @@ namespace VintageEngineering.Blocks
         {
             return base.GetColorWithoutTint(capi, pos);
         }
-        public override bool ShouldPlayAmbientSound(IWorldAccessor world, BlockPos pos)
-        {
-            return world.BlockAccessor.GetBlockId(pos.UpCopy(1)) == 0 &&
-                world.BlockAccessor.IsSideSolid(pos.X, pos.Y - 1, pos.Z, BlockFacing.UP);
+        public override float GetAmbientSoundStrength(IWorldAccessor world, BlockPos pos)
+        {            
+            return (float)((world.BlockAccessor.GetBlockId(pos) == 0 && world.BlockAccessor.IsSideSolid(pos.X, pos.Y - 1, pos.Z, BlockFacing.UP)) ? 1 : 0);
         }
 
         public override void OnAsyncClientParticleTick(IAsyncParticleManager manager, BlockPos pos, float windAffectednessAtPos, float secondsTicking)

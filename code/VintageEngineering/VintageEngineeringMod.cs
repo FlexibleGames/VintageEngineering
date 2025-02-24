@@ -33,6 +33,53 @@ namespace VintageEngineering
 
         public bool _filterListLoaded = false;
 
+        #region Config Related
+        private VintEngCommonConfig _commonConfig;
+        private static string _commonConfigFilename = "vinteng_common.json";
+        public VintEngCommonConfig CommonConfig 
+        {
+            get
+            {
+                return _commonConfig;
+            }
+        }
+        public static VintEngCommonConfig ReadConfig(ICoreAPI api)
+        {
+            VintEngCommonConfig tmpconfig;
+            try
+            {
+                tmpconfig = api.LoadModConfig<VintEngCommonConfig>(_commonConfigFilename);
+                if (tmpconfig == null)
+                {
+                    tmpconfig = new VintEngCommonConfig();
+                    api.StoreModConfig<VintEngCommonConfig>(tmpconfig, _commonConfigFilename);                    
+                }
+                else
+                {
+                    api.StoreModConfig<VintEngCommonConfig>(new VintEngCommonConfig(tmpconfig), _commonConfigFilename);
+                    tmpconfig = api.LoadModConfig<VintEngCommonConfig>(_commonConfigFilename);
+                }
+            }
+            catch (Exception e)
+            {
+                api.Logger.Error("VintEng: Config file exception; Typo or invalid value. Rebuilding Config. Exception: " + e);
+                tmpconfig = new VintEngCommonConfig();
+                api.StoreModConfig<VintEngCommonConfig>(tmpconfig, _commonConfigFilename);
+            }
+            return tmpconfig;
+        }
+        #endregion
+
+        public override void StartPre(ICoreAPI api)
+        {
+            base.StartPre(api);
+            if (api is ICoreServerAPI)
+            {
+                _commonConfig = ReadConfig(api);
+                api.World.Config.SetBool("VintEng_GenOilDeposit", _commonConfig.OilGyser_GenOilDeposit);
+            }
+        }
+
         public override void Start(ICoreAPI api)
         {
             base.Start(api);
