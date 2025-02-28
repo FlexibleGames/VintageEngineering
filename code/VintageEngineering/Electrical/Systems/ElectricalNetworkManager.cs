@@ -69,7 +69,8 @@ namespace VintageEngineering.Electrical.Systems
             Stopwatch sw = Stopwatch.StartNew();
             foreach (IElectricNetwork net in networks.Values)
             {
-
+                // now I know why networks would just stop working
+                // previously if a node was unloaded it would return false, which this removes the network.
                 if (!net.UpdateTick(deltatime))
                 {
                     networks.Remove(net.NetworkID);
@@ -94,6 +95,7 @@ namespace VintageEngineering.Electrical.Systems
         {
             if (!networks.ContainsKey(netID))
             {
+                // create the network if it doesn't exist yet. Typical on World Load event.
                 networks.Add(netID, new ElectricNetwork(netID, sapi));
             }
             networks[netID].Join(node, entity);
@@ -101,20 +103,19 @@ namespace VintageEngineering.Electrical.Systems
 
         /// <summary>
         /// Leave a network outside of Catenary wire events.<br/>
-        /// Typically because a nodes chunk was unloaded.
+        /// Typically because a nodes chunk was unloaded.<br/>
+        /// Will not alter allNodes list of network.
         /// </summary>
         /// <param name="netID">NetworkID to leave</param>
         /// <param name="node">WireNode leaving (MUST include a BlockPos)</param>
         /// <param name="entity">Entity leaving</param>
-        public void LeaveNetwork(long netID, WireNode node, IElectricalBlockEntity entity)
+        public void LeaveNetwork(long netID, WireNode node, IElectricalBlockEntity entity, bool permanently = false)
         {
             if (networks.ContainsKey(netID))
             {
-                networks[netID].Leave(node, entity);
-            }
-            if (networks[netID].NodeCount == 0)
-            {
-                networks.Remove(netID);
+                if (permanently) networks[netID].RemoveNode(node, sapi.World.BlockAccessor, true);
+
+                else networks[netID].Leave(node, entity);
             }
         }
 
@@ -464,7 +465,11 @@ namespace VintageEngineering.Electrical.Systems
                 foreach (KeyValuePair<long, ElectricNetwork> net in networks)
                 {
                     if (net.Value.api == null) net.Value.api = this.sapi;
-                    if (net.Value.NetworkID == 0) netstodelete.Add(net.Key);                    
+                    if (net.Value.NetworkID == 0)
+                    {
+                        netstodelete.Add(net.Key);
+                    }
+                    else net.Value.InitializeNetwork();
                 }
                 if (netstodelete.Count > 0)
                 {

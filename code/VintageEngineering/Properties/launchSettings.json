@@ -3,7 +3,7 @@
     "Client": {
       "commandName": "Executable",
       "executablePath": "$(VINTAGE_STORY)/Vintagestory.exe",
-      "commandLineArgs": "--tracelog --addModPath=\"$(MSBuildProjectDirectory)\\..\\..\" -o modtestworld",
+      "commandLineArgs": "--tracelog --addModPath=\"$(MSBuildProjectDirectory)\\..\\..\" -o 120testworld",
       "workingDirectory": "$(VINTAGE_STORY)",
       "environmentVariables": {
         "TEXTURE_DEBUG_DISPOSE": "1"
@@ -12,7 +12,7 @@
     "Server": {
       "commandName": "Executable",
       "executablePath": "$(VINTAGE_STORY)/VintagestoryServer.exe",
-      "commandLineArgs": "--tracelog --addModPath=\"$(MSBuildProjectDirectory)\\..\\..\" -o modtestworld",
+      "commandLineArgs": "--tracelog --addModPath=\"$(MSBuildProjectDirectory)\\..\\..\" -o 120testworld",
       "workingDirectory": "$(VINTAGE_STORY)"
     }
   }

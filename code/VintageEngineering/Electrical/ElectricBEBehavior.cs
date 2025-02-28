@@ -32,6 +32,8 @@ namespace VintageEngineering.Electrical
         /// </summary>
         private EnumBEState machineState;
 
+        public bool IsLoaded { get; set; } = false;
+
         /// <summary>
         /// What Priority is this machine in the Electric Network its attached too?
         /// </summary>
@@ -292,6 +294,9 @@ namespace VintageEngineering.Electrical
             CanExtractPower = properties["canExtractPower"].AsBool();
             CanReceivePower = properties["canReceivePower"].AsBool();
 
+            // if we're initializing this, it can be assumed it's loaded
+            IsLoaded = true;
+
             if (electricConnections == null) electricConnections = new Dictionary<int, List<WireNode>>();
             if (NetworkIDs == null) NetworkIDs = new Dictionary<int, long>();
             if (NetworkIDs.Count > 0 && electricConnections.Count > 0 && api.Side == EnumAppSide.Server)
@@ -299,7 +304,7 @@ namespace VintageEngineering.Electrical
                 // lets try to add ourselves to the proper network
                 ElectricalNetworkManager nm = api.ModLoader.GetModSystem<ElectricalNetworkMod>(true).manager;
                 if (nm != null)
-                {
+                {                    
                     foreach (KeyValuePair<int, long> networkpair in NetworkIDs)
                     {
                         if (networkpair.Value == 0)
@@ -321,13 +326,13 @@ namespace VintageEngineering.Electrical
                             if (wiredBlock.WireAnchors == null) continue;
                             WireNode node = wiredBlock.GetWireNodeInBlock(networkpair.Key).Copy();
                             if (node == null) continue;
-                            node.blockPos = this.Pos; // extremely important that we add Block Position to this.
+                            node.blockPos = this.Pos; // extremely important that we add Block Position to this.                            
                             nm.JoinNetwork(networkpair.Value, node, this);
                         }
                     }
                 }
             }
-        }
+        }        
 
         public override void OnBlockPlaced(ItemStack byItemStack = null)
         {
@@ -393,9 +398,33 @@ namespace VintageEngineering.Electrical
                 return true;
             }
             return false;
-        }
+        }        
 
         public override void OnBlockUnloaded()
+        {
+            IsLoaded = false;
+            LeavePowerNetwork(); // leaves network without altering the allNodes list of the network
+
+            base.OnBlockUnloaded();
+        }
+
+        public override void OnBlockBroken(IPlayer byPlayer = null)
+        {
+//            LeavePowerNetwork(true);
+            base.OnBlockBroken(byPlayer);            
+        }
+
+        public override void OnBlockRemoved()
+        {
+//            LeavePowerNetwork(true);
+            base.OnBlockRemoved();
+        }
+
+        /// <summary>
+        /// Leave the Network. Chunk was likely unloaded.
+        /// </summary>
+        /// <param name="permanently">Permanently remove this node from the network?</param>
+        public void LeavePowerNetwork(bool permanently = false)
         {
             if (Api.Side == EnumAppSide.Server)
             {
@@ -407,14 +436,13 @@ namespace VintageEngineering.Electrical
                     {
                         if (wiredBlock.WireAnchors == null) continue;
 
-                        WireNode node = wiredBlock.GetWireNodeInBlock(networkpair.Key).Copy();
+                        WireNode node = wiredBlock.GetWireNodeInBlock(networkpair.Key)?.Copy();
                         if (node == null) continue;
                         node.blockPos = this.Pos;  // extremely important that we add Block Position to this.
                         nm.LeaveNetwork(networkpair.Value, node, this);
                     }
                 }
             }
-            base.OnBlockUnloaded();
         }
 
         /// <summary>

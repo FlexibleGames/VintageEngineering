@@ -106,6 +106,11 @@ namespace VintageEngineering.Electrical
         void CheatPower(bool drain = false);
 
         /// <summary>
+        /// True if the Block is loaded, false if the block is unloaded.
+        /// </summary>
+        bool IsLoaded { get; }
+
+        /// <summary>
         /// Returns the IElectricalBlockEntity for the BlockEntity or one of its behaviors at given position.
         /// </summary>
         /// <param name="blockAccessor">The accessor for the world</param>
