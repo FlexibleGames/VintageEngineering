@@ -19,7 +19,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
         private int chunksize;
 
         public Matrixf ModelMat = new Matrixf();
-        public Dictionary<Vec3i, List<WireConnection>> ConnectionsPerChunk;
+        public Dictionary<Vec3i, List<WireConnection>> ConnectionsPerChunk;        
 
         private bool _firstpass = true;
 
@@ -43,7 +43,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
                     connection.WireMeshRef?.Dispose(); // dispose of all the meshref's in the entire thing.
                 }                
             }
-            ConnectionsPerChunk.Clear();
+            ConnectionsPerChunk.Clear();            
         }
 
         public void OnRenderFrame(float deltaTime, EnumRenderStage stage)
@@ -91,7 +91,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
             {
                 this.capi.Logger.Warning($"Catenary Renderer Overloaded! Took {sw.ElapsedMilliseconds} to render {ConnectionsPerChunk.Values.Count} wires.");
             }
-        }
+        }        
 
         /// <summary>
         /// Rebuilds wire rendering data indexed on chunk position
@@ -102,7 +102,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
         /// <param name="chunk_position">[Optional] ChunkPosition</param>
         public void UpdateWireMeshes(CatenaryData wireData, Vec3i chunk_position = null) 
         {
-            if (capi == null) return;            
+            if (capi == null) return;
             IClientWorldAccessor world = capi.World;
             IBlockAccessor accessor = capi.World?.BlockAccessor;
 
@@ -115,10 +115,11 @@ namespace VintageEngineering.Electrical.Systems.Catenary
                 // as this function is called EVERY time a chunk is created
             }
             Stopwatch sw = Stopwatch.StartNew();
-            //Dictionary<Vec3i, List<WireConnection>> ConPerChunk = new Dictionary<Vec3i, List<WireConnection>>();
 
-            if (ConnectionsPerChunk != null) // we have data already
+            if (ConnectionsPerChunk != null && ConnectionsPerChunk.Count > 0) // we have data already
             {
+                // this clears and disposes meshes properly before we rebuild them.
+                // possible efficiency here as I doubt we would need to regenerate all the wire meshes.
                 foreach (List<WireConnection> mesh in ConnectionsPerChunk.Values)
                 {
                     foreach (WireConnection connection in mesh)
@@ -135,16 +136,16 @@ namespace VintageEngineering.Electrical.Systems.Catenary
             
             foreach (WireConnection conn in wireData.allConnections) // rebuild chunk-based wire meshes
             {
-                IWireAnchor block1 = accessor.GetBlock(conn.NodeStart.blockPos) as IWireAnchor;
-                IWireAnchor block2 = accessor.GetBlock(conn.NodeEnd.blockPos) as IWireAnchor;
+                //IWireAnchor block1 = accessor.GetBlock(conn.NodeStart.blockPos) as IWireAnchor;
+                //IWireAnchor block2 = accessor.GetBlock(conn.NodeEnd.blockPos) as IWireAnchor;
 
-                if (block1 == null || block2 == null) break;
+                //if (block1 == null || block2 == null) continue;
                 _firstpass = false;
                 BlockPos blockposStart = conn.NodeStart.blockPos;
-                Vec3i chunkpos = new Vec3i(blockposStart.X / chunksize, blockposStart.Y / chunksize, blockposStart.Z / chunksize);
+                Vec3i chunkpos = conn.ChunkPos.Clone(); //new Vec3i(blockposStart.X / chunksize, blockposStart.Y / chunksize, blockposStart.Z / chunksize);
 
-                Vec3f pos1 = conn.NodeStart.blockPos.ToVec3f().AddCopy(-chunkpos.X * chunksize, -chunkpos.Y * chunksize, -chunkpos.Z * chunksize) + block1.GetAnchorPosInBlock(conn.NodeStart);
-                Vec3f pos2 = conn.NodeEnd.blockPos.ToVec3f().AddCopy(-chunkpos.X * chunksize, -chunkpos.Y * chunksize, -chunkpos.Z * chunksize) + block2.GetAnchorPosInBlock(conn.NodeEnd);
+                Vec3f pos1 = conn.NodeStart.blockPos.ToVec3f().AddCopy(-chunkpos.X * chunksize, -chunkpos.Y * chunksize, -chunkpos.Z * chunksize) + conn.VecStart;  // -chunkpos.X * chunksize, -chunkpos.Y * chunksize, -chunkpos.Z * chunksize) + block1.GetAnchorPosInBlock(conn.NodeStart);
+                Vec3f pos2 = conn.NodeEnd.blockPos.ToVec3f().AddCopy(-chunkpos.X * chunksize, -chunkpos.Y * chunksize, -chunkpos.Z * chunksize) + conn.VecEnd;  //-chunkpos.X * chunksize, -chunkpos.Y * chunksize, -chunkpos.Z * chunksize) + block2.GetAnchorPosInBlock(conn.NodeEnd);
 
                 if (ConnectionsPerChunk.ContainsKey(chunkpos)) // if we already have wire in the chunk
                 {
@@ -168,7 +169,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
                     conn.WireMeshRef = capi.Render.UploadMesh(conn.WireMeshData);
                     ConnectionsPerChunk[chunkpos] = new List<WireConnection> { conn };
                 }
-            }            
+            }
             sw.Stop();            
             if (sw.ElapsedMilliseconds > 100) capi.ShowChatMessage($"UpdateWireMeshes took {sw.ElapsedMilliseconds}ms");
         }

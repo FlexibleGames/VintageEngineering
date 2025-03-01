@@ -143,6 +143,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
             // the wire renderer holds a copy of this data that contains the mesh and VAO meshrefs
             // as the server doesn't care about those.
             this.data = packet;
+            //WireRenderer.BuildChunkConnectionList(data);
             WireRenderer.UpdateWireMeshes(data); // this generates the meshes and uploads them for rendering.                        
         }
 
@@ -189,7 +190,9 @@ namespace VintageEngineering.Electrical.Systems.Catenary
             capi.Event.RegisterRenderer(this, EnumRenderStage.Opaque, "wireplacer");
             
             capi.Event.ChunkDirty += OnChunkDirty;
-            api.Event.BlockTexturesLoaded += onLoaded;
+            
+            api.Event.BlockTexturesLoaded += OnLoaded;
+            
             api.Event.LeaveWorld += () =>
             {
                 WireRenderer?.Dispose();
@@ -216,7 +219,11 @@ namespace VintageEngineering.Electrical.Systems.Catenary
             byte[] bdata = sapi.WorldManager.SaveGame.GetData("catenarydata");
             try
             {
-                if (bdata != null) data = SerializerUtil.Deserialize<CatenaryData>(bdata);
+                if (bdata != null)
+                {
+                    data = SerializerUtil.Deserialize<CatenaryData>(bdata);
+                    sapi.Logger.Debug($"CatenaryMod: Loaded {bdata.Length} bytes of Catenary Data.");
+                }
                 else data = new CatenaryData();
             }
             catch (Exception e)
@@ -240,9 +247,9 @@ namespace VintageEngineering.Electrical.Systems.Catenary
                 WireRenderer.UpdateWireMeshes(data, chunkCoord); // only when loading chunks, not generating them
             }
         }
-        private void onLoaded()
+        private void OnLoaded()
         {
-            WireRenderer = new CatenaryRenderer(capi, this);
+            WireRenderer = new CatenaryRenderer(capi, this);            
         }
         #endregion
 
@@ -606,7 +613,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
             {
                 foreach (WireConnection connection in toRemove)
                 {
-                    RemoveConnection(connection);                    
+                    RemoveConnection(connection);
                 }
                 serverChannel.BroadcastPacket(data);
             }
