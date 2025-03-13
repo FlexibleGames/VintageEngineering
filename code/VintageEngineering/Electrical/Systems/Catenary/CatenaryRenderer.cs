@@ -170,7 +170,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
                     ConnectionsPerChunk[chunkpos] = new List<WireConnection> { conn };
                 }
             }
-            sw.Stop();            
+            sw.Stop();
             if (sw.ElapsedMilliseconds > 100) capi.ShowChatMessage($"UpdateWireMeshes took {sw.ElapsedMilliseconds}ms");
         }
     }

@@ -192,11 +192,11 @@ namespace VintageEngineering.Transport.Handlers
                                         // no wildcard
                                         if (thecode == inventory[slotid].Itemstack.Collectible.Code.ToString())
                                         {
-                                            if (isblist) allowed = false;                                            
+                                            if (isblist) allowed = false;
                                         }
                                         else
                                         {
-                                            if (!isblist) allowed = false;                                            
+                                            if (!isblist) allowed = false;
                                         }
                                     }
                                 }

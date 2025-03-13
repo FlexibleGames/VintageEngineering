@@ -754,9 +754,9 @@ namespace VintageEngineering.Transport.API
             // reset the mesh if not null
             if (_meshData != null)
             {
-                _meshData.Clear();
                 _meshData.Dispose();
-                (Api as ICoreClientAPI).Tesselator.TesselateBlock(this.Block, out _meshData);
+                _meshData.Clear();                
+                (Api as ICoreClientAPI).Tesselator.TesselateBlock(this.Block, out _meshData); // creates the default shape mesh for the pipe.
             }
             else 
             {
@@ -789,7 +789,11 @@ namespace VintageEngineering.Transport.API
                     if (extractionSides[f])
                     {
                         Block conb = Api.World.BlockAccessor.GetBlock(new AssetLocation("vinteng:pipeconnections-extraction-" + BlockFacing.ALLFACES[f].Code));
-                        if (conb != null) _meshData.AddMeshData(ConnectionMesh(conb.Shape));
+                        if (conb != null)
+                        {
+                            MeshData extnode = ConnectionMesh(conb.Shape);
+                            if (extnode != null) _meshData.AddMeshData(extnode);
+                        }
                     }
                 }
             }
@@ -810,7 +814,7 @@ namespace VintageEngineering.Transport.API
                     _shape.RotateXYZCopy, null, null);
                 return output;
             }
-            return new MeshData(true);
+            return null;
         }
 
         /// <summary>
@@ -884,7 +888,7 @@ namespace VintageEngineering.Transport.API
                 {
                     if (extractionNodes[f].ListenerID != 0)
                     {
-                        RemoveExtractionListener(f); // removes the listener and sets ID to 0                        
+                        RemoveExtractionListener(f); // removes the listener and sets ID to 0 
                     }
                     if (extractionGUIs != null && extractionGUIs[f] != null)
                     {
@@ -1034,7 +1038,7 @@ namespace VintageEngineering.Transport.API
 
             if (Api != null && Api.Side == EnumAppSide.Client)
             {
-                MarkPipeDirty(worldAccessForResolve, true); 
+                MarkPipeDirty(worldAccessForResolve, true);
             }
         }
 
@@ -1068,7 +1072,7 @@ namespace VintageEngineering.Transport.API
         /// <param name="atpos">BlockPos to check.</param>
         /// <returns>True if chuck is loaded.</returns>
         public static bool IsChunkLoaded(IWorldAccessor world, BlockPos atpos)
-        {
+        {            
             if (world.BlockAccessor.GetChunk(atpos.X / GlobalConstants.ChunkSize,
                 atpos.InternalY / GlobalConstants.ChunkSize,
                 atpos.Z /  GlobalConstants.ChunkSize) == null)
