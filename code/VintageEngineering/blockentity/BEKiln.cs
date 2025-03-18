@@ -215,7 +215,7 @@ namespace VintageEngineering
             {
                 BakingProperties bakingProperties = BakingProperties.ReadFrom(InputSlot.Itemstack);
                 
-                if (bakingProperties == null) 
+                if (bakingProperties == null && _cproperties.SmeltedStack != null) 
                 {
                     if (InputSlot.Itemstack.StackSize >= _cproperties.SmeltedRatio)
                     {

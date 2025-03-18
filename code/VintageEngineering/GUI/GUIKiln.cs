@@ -237,11 +237,14 @@ namespace VintageEngineering
             }
             else if (_properties != null)
             {
-                ItemStack outputstack = _properties.SmeltedStack.ResolvedItemstack;
-                string langcode = outputstack.Collectible.Code.Domain != null ? outputstack.Collectible.Code.Domain : "";
-                langcode += ":" + outputstack.Collectible.ItemClass.ToString().ToLowerInvariant();
-                langcode += "-" + outputstack.Collectible.Code.Path;
-                outputhelptext = $"{Lang.Get("vinteng:gui-word-crafting")} {outputstack.Collectible.GetHeldItemName(outputstack)}";
+                ItemStack outputstack = _properties.SmeltedStack?.ResolvedItemstack;
+                if (outputstack != null)
+                {
+                    string langcode = outputstack.Collectible.Code.Domain != null ? outputstack.Collectible.Code.Domain : "";
+                    langcode += ":" + outputstack.Collectible.ItemClass.ToString().ToLowerInvariant();
+                    langcode += "-" + outputstack.Collectible.Code.Path;
+                    outputhelptext = $"{Lang.Get("vinteng:gui-word-crafting")} {outputstack.Collectible.GetHeldItemName(outputstack)}";
+                }
             }
             else
             {
