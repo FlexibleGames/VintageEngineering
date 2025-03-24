@@ -218,7 +218,7 @@ namespace VintageEngineering
                 if (isCrafting && RecipeProgress < 1f)
                 {
                     if (Electric.CurrentPower == 0 || Electric.CurrentPower < (Electric.MaxPPS * dt)) return; // we don't have any power to progress.
-                    if (!HasRoomInOutput(1) && !HasRoomInOutput(2)) return; // no room in output slots, stop
+                    if (!HasRoomInOutput(1)) return; // no room in output slots, stop
                     if (currentRecipe == null) return; // how the heck did this happen?
 
                     if (!ValidateTemp()) return; // Validate the temperature, if required
