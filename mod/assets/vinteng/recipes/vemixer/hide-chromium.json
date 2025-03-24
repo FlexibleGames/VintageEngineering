@@ -1,0 +1,44 @@
+[
+	{
+		"code": "chromium-hide-medium",
+		"powerpercraft": 150,
+		"attributes": {
+			"requirestemp": 200
+		},
+		"ingredients": [
+			{ "type": "item", "code": "game:hide-scraped-medium",  "quantity": 1 },
+			{ "type": "item", "code": "game:sulfate-full-chromite",  "litres": 1 }
+		],
+		"outputs": [
+            { "type": "item", "code": "game:hide-chromium-medium", "quantity": 1 }
+        ]
+	},
+	{
+		"code": "chromium-hide-large",
+		"powerpercraft": 150,
+		"attributes": {
+			"requirestemp": 200
+		},
+		"ingredients": [
+			{ "type": "item", "code": "game:hide-scraped-large",  "quantity": 1 },
+			{ "type": "item", "code": "game:sulfate-full-chromite",  "litres": 2 }
+		],
+		"outputs": [
+            { "type": "item", "code": "game:hide-chromium-large", "quantity": 1 }
+        ]
+	},
+	{
+		"code": "chromium-hide-huge",
+		"powerpercraft": 150,
+		"attributes": {
+			"requirestemp": 200
+		},
+		"ingredients": [
+			{ "type": "item", "code": "game:hide-scraped-huge",  "quantity": 1 },
+			{ "type": "item", "code": "game:sulfate-full-chromite",  "litres": 3 }
+		],
+		"outputs": [
+            { "type": "item", "code": "game:hide-chromium-huge", "quantity": 1 }
+        ]
+	}
+]

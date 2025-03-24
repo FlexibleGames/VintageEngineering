@@ -1,0 +1,8 @@
+[
+    {
+        "side": "Server",
+        "op": "remove",
+        "path": "/skipVariants/1",
+        "file": "game:itemtypes/resource/hide.json"
+    }
+]

@@ -1,0 +1,16 @@
+[
+	{
+		"code": "chromium-sulfate",
+		"powerpercraft": 150,
+		"attributes": {
+			"requirestemp": 200
+		},
+		"ingredients": [
+			{ "type": "item", "code": "game:crushed-chromite",  "quantity": 2 },
+			{ "type": "item", "code": "game:acid-full-sulfuric",  "litres": 1 }
+		],
+		"outputs": [
+            { "type": "item", "code": "game:sulfate-full-chromite", "litres": 1 }
+        ]
+	}
+]

@@ -1,0 +1,44 @@
+[
+	{
+		"code": "sturdy-medium",
+		"powerpercraft": 150,
+		"attributes": {
+			"requirestemp": 200
+		},
+		"ingredients": [
+			{ "type": "item", "code": "game:hide-chromium-medium",  "quantity": 1 },
+			{ "type": "item", "code": "game:beeswax",  "quantity": 1 }
+		],
+		"outputs": [
+            { "type": "item", "code": "game:leather-sturdy-plain", "quantity": 2 }
+        ]
+	},
+	{
+		"code": "sturdy-large",
+		"powerpercraft": 150,
+		"attributes": {
+			"requirestemp": 200
+		},
+		"ingredients": [
+			{ "type": "item", "code": "game:hide-chromium-large",  "quantity": 1 },
+			{ "type": "item", "code": "game:beeswax",  "quantity": 2 }
+		],
+		"outputs": [
+            { "type": "item", "code": "game:leather-sturdy-plain", "quantity": 5 }
+        ]
+	},
+	{
+		"code": "sturdy-huge",
+		"powerpercraft": 150,
+		"attributes": {
+			"requirestemp": 200
+		},
+		"ingredients": [
+			{ "type": "item", "code": "game:hide-chromium-huge",  "quantity": 1 },
+			{ "type": "item", "code": "game:beeswax",  "quantity": 3 }
+		],
+		"outputs": [
+            { "type": "item", "code": "game:leather-sturdy-plain", "quantity": 10 }
+        ]
+	}
+]

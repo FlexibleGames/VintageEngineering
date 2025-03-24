@@ -1,0 +1,17 @@
+[
+	{
+		"code": "sulfuric_acid",
+		"powerpercraft": 150,
+		"attributes": {
+			"requirestemp": 200
+		},
+		"ingredients": [
+			{ "type": "item", "code": "game:saltpeter",  "quantity": 1 },
+			{ "type": "item", "code": "game:powder-sulfur",  "quantity": 2 },
+			{ "type": "item", "code": "game:waterportion",  "litres": 1 }
+		],
+		"outputs": [
+            { "type": "item", "code": "game:acid-full-sulfuric", "litres": 1 }
+        ]
+	}
+]
