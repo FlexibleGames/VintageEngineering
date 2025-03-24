@@ -7,7 +7,7 @@
 			"requiresvariants": ["tinbronze", "iron", "meteoriciron", "steel", "titanium"],
 			"requiresdurability": true
 		},
-		"powerpercraft": 512,
+		"powerpercraft": 400,
 		"ingredients": [
 			{ "type": "block", "code": "game:log-placed-*-ud", "quantity": 1, "name": "wood" }
 		],
@@ -25,7 +25,7 @@
 			"requiresvariants": ["tinbronze", "iron", "meteoriciron", "steel", "titanium"],
 			"requiresdurability": true
 		},
-		"powerpercraft": 512,
+		"powerpercraft": 400,
 		"ingredients": [
 			{ "type": "block", "code": "game:logsection-placed-*-ne-ud", "quantity": 1, "name": "wood" }
 		],
@@ -43,7 +43,7 @@
 			"requiresvariants": ["tinbronze", "iron", "meteoriciron", "steel", "titanium"],
 			"requiresdurability": true
 		},
-		"powerpercraft": 512,
+		"powerpercraft": 400,
 		"ingredients": [
 			{ "type": "block", "code": "game:planks-*-ud", "quantity": 1, "name": "wood", "skipVariants": ["agedebony", "rottenebony"] }
 		],
@@ -59,7 +59,7 @@
 			"requiresvariants": ["tinbronze", "iron", "meteoriciron", "steel", "titanium"],
 			"requiresdurability": true
 		},
-		"powerpercraft": 512,
+		"powerpercraft": 400,
 		"ingredients": [
 			{ "type": "block", "code": "game:planks-*-ns", "quantity": 1, "name": "wood", "skipVariants": ["agedebony", "rottenebony"] }
 		],
@@ -75,7 +75,7 @@
 			"requiresvariants": ["tinbronze", "iron", "meteoriciron", "steel", "titanium"],
 			"requiresdurability": true
 		},
-		"powerpercraft": 512,
+		"powerpercraft": 300,
 		"ingredients": [
 			{ "type": "block", "code": "game:plankstairs-*-up-north-free", "quantity": 1, "name": "wood", "skipVariants": ["agedebony", "rottenebony"] }
 		],
@@ -91,7 +91,7 @@
 			"requiresvariants": ["tinbronze", "iron", "meteoriciron", "steel", "titanium"],
 			"requiresdurability": true
 		},
-		"powerpercraft": 512,
+		"powerpercraft": 200,
 		"ingredients": [
 			{ "type": "block", "code": "game:plankslab-*-down-free", "quantity": 1, "name": "wood", "skipVariants": ["agedebony", "rottenebony"] }
 		],

@@ -30,7 +30,7 @@
 			}
 		},
 		"craftinganimcode": "craft",
-		"crushpowercost": 128,
+		"crushpowercost": 150,
 		"priority": 5,
         "wireNodes": [
             {

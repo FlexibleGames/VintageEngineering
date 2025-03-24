@@ -7,7 +7,7 @@
 			"requiresdurability": true,
 			"requirestemp": -1
 		},
-		"powerpercraft": 2048,
+		"powerpercraft": 1000,
 		"ingredients": [
 			{ "type": "item", "code": "vinteng:metalrod-*", "quantity": 1, "name":"metal", "allowedVariants": ["brass", "steel", "iron"] }
 		],

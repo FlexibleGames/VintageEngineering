@@ -7,13 +7,13 @@
 			"requiresdurability": true,
 			"requirestemp": -1
 		},
-		"powerpercraft": 256,
+		"powerpercraft": 250,
 		"ingredients": [
 			{ "type": "item", "code": "game:metalplate-*", "quantity": 1, "name": "metal", "allowedVariants": ["copper", "brass", "tinbronze", "gold"] }
 		],
 		"outputs": [
 			{ "type": "item", "code": "vinteng:metalgear-{metal}", "stacksize": 1 },
-			{ "type": "item", "code": "game:metalbit-{metal}", "stacksize": 12, "variable": 6 }
+			{ "type": "item", "code": "game:metalbit-{metal}", "stacksize": 10, "variable": 6 }
 		]
 	},
 	{
@@ -25,13 +25,13 @@
 			"requiresdurability": true,
 			"requirestemp": -1
 		},
-		"powerpercraft": 512,
+		"powerpercraft": 500,
 		"ingredients": [
 			{ "type": "item", "code": "game:metalplate-*", "quantity": 1, "name": "metal", "allowedVariants": ["copper", "brass", "tinbronze", "gold", "iron", "steel", "chromium", "electrum", "platinum", "titanium"] }
 		],
 		"outputs": [
 			{ "type": "item", "code": "vinteng:metalgear-{metal}", "stacksize": 1 },
-			{ "type": "item", "code": "game:metalbit-{metal}", "stacksize": 12, "variable": 6 }
+			{ "type": "item", "code": "game:metalbit-{metal}", "stacksize": 10, "variable": 6 }
 		]
 	}
 ]

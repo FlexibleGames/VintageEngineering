@@ -7,7 +7,7 @@
 			"requiresdurability": true,
 			"requirestemp": -1
 		},
-		"powerpercraft": 512,
+		"powerpercraft": 250,
 		"ingredients": [
 			{ "type": "item", "code": "vinteng:metalrod-*", "quantity": 1, "allowedVariants": ["copper"] }
 		],
@@ -23,7 +23,7 @@
 			"requiresdurability": true,
 			"requirestemp": -1
 		},
-		"powerpercraft": 512,
+		"powerpercraft": 500,
 		"ingredients": [
 			{ "type": "item", "code": "vinteng:metalrod-*", "quantity": 1, "allowedVariants": ["copper"] }
 		],
@@ -39,7 +39,7 @@
 			"requiresdurability": true,
 			"requirestemp": -1
 		},
-		"powerpercraft": 1024,
+		"powerpercraft": 1000,
 		"ingredients": [
 			{ "type": "item", "code": "vinteng:metalrod-*", "quantity": 1, "allowedVariants": ["steel"] }
 		],

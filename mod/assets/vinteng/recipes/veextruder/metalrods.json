@@ -7,7 +7,7 @@
 			"requiresdurability": true,
 			"requirestemp": -1
 		},
-		"powerpercraft": 1024,
+		"powerpercraft": 600,
 		"ingredients": [
 			{ "type": "item", "code": "game:ingot-*", "quantity": 1, "name":"metal", "allowedVariants": ["copper", "brass", "tinbronze", "iron"] }
 		],
@@ -24,7 +24,7 @@
 			"requiresdurability": true,
 			"requirestemp": -1
 		},
-		"powerpercraft": 2048,
+		"powerpercraft": 600,
 		"ingredients": [
 			{ "type": "item", "code": "game:ingot-*", "quantity": 1, "name":"metal", "allowedVariants": ["steel"] }
 		],
