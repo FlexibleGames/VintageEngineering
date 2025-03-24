@@ -278,11 +278,11 @@ namespace VintageEngineering
         private float ChangeTemperature(float fromTemp, float toTemp, float deltatime)
         {
             float basechange = 0f;
-            if (fromTemp < 450) basechange = HeatPerSecondBase * deltatime;
+            if (fromTemp < 600) basechange = HeatPerSecondBase * deltatime;
             else
             {
                 float diff = Math.Abs(fromTemp - toTemp);
-                basechange = deltatime + deltatime * (diff / 6); // 30 seconds to hit 1100
+                basechange = deltatime + deltatime * (diff / 6); 
                 if (diff < basechange) return toTemp;
             }
             if (fromTemp > toTemp) basechange = -basechange;
