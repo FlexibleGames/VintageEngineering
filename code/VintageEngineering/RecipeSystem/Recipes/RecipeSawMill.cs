@@ -137,7 +137,8 @@ namespace VintageEngineering.RecipeSystem.Recipes
                 Name = this.Name,
                 Enabled = this.Enabled,
                 Requires = Requires != null ? this.Requires.Clone() : null,
-                RequiresVariants = this.RequiresVariants != null ? this.RequiresVariants.FastCopy(RequiresVariants.Length) : null,                
+                RequiresVariants = this.RequiresVariants != null ? this.RequiresVariants.FastCopy(RequiresVariants.Length) : null,   
+                RequiresDurability = this.RequiresDurability,
                 Code = this.Code,
                 PowerPerCraft = this.PowerPerCraft,
                 Attributes = this.Attributes?.Clone(),
@@ -258,6 +259,10 @@ namespace VintageEngineering.RecipeSystem.Recipes
                     {
                         RequiresVariants = new string[1] { Attributes["requiresvariants"].AsString() };
                     }
+                }
+                if (Attributes["requiresdurability"].Exists)
+                {
+                    RequiresDurability = Attributes["requiresdurability"].AsBool(false);
                 }
             }
         }

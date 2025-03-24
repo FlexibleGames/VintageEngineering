@@ -109,6 +109,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
                 Requires = Requires != null ? this.Requires.Clone() : null,
                 RequiresVariants = this.RequiresVariants != null ? this.RequiresVariants.FastCopy(RequiresVariants.Length) : null,
                 RequiresTemp = this.RequiresTemp,
+                RequiresDurability = this.RequiresDurability,
                 Code = this.Code,
                 PowerPerCraft = this.PowerPerCraft,
                 Attributes = this.Attributes?.Clone(),
@@ -134,7 +135,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
                 if (requireslot.Empty) return false;
                 if (Requires.IsWildCard)
                 {
-                    // TODO check for variants
+                    // TODO check for variants DONE
                     if (RequiresVariants != null)
                     {
                         return WildcardUtil.Match(Requires, requireslot.Itemstack.Collectible.Code, RequiresVariants);
@@ -222,7 +223,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
                         RequiresVariants = new string[1] { Attributes["requiresvariants"].AsString() }; 
                     }
                 }
-                if (Attributes["requiresdurability"].Exists)
+                if (Attributes.KeyExists("requiresdurability"))
                 {
                     RequiresDurability = Attributes["requiresdurability"].AsBool(false);
                 }
@@ -277,6 +278,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
                     }
                 }
                 if (Attributes["requirestemp"].Exists) RequiresTemp = Attributes["requirestemp"].AsInt(0);
+                if (Attributes["requiresdurability"].Exists) RequiresDurability = Attributes["requiresdurability"].AsBool(false);
             }
         }
 
