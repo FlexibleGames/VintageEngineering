@@ -95,7 +95,7 @@ namespace VintageEngineering
                 {
                     // craftmode == nugget
                     if (nuggetType == null) return 0f;
-                    return (float)recipePowerApplied / (float)crushPowerCostTotal;
+                    return (float)recipePowerApplied / ((float)crushPowerCostTotal);
                 }
                 else
                 {
@@ -103,7 +103,6 @@ namespace VintageEngineering
                     if (grindingProperties == null) return 0f;
                     return (float)recipePowerApplied / (float)crushPowerCostTotal;
                 }
-
             }
         }
 
@@ -225,7 +224,7 @@ namespace VintageEngineering
                     };
                     if (crushPowerCostTotal == 0)
                     {
-                        crushPowerCostTotal = (ulong)(crushingPowerCost * 2);
+                        crushPowerCostTotal = (ulong)(crushingPowerCost);
                     }
                     isCrafting = true;
                     SetState(EnumBEState.On);
@@ -246,7 +245,7 @@ namespace VintageEngineering
                     crushingProperties = InputSlot.Itemstack.Collectible.CrushingProps.Clone();
                     if (crushPowerCostTotal == 0)
                     { 
-                        crushPowerCostTotal = (ulong)(crushingPowerCost * (crushingProperties.HardnessTier == 0 ? 1 : crushingProperties.HardnessTier));
+                        crushPowerCostTotal = ((ulong)(crushingPowerCost * (crushingProperties.HardnessTier == 0 ? 1 : crushingProperties.HardnessTier)))/2;
                     }
                     isCrafting = true;
                     SetState(EnumBEState.On);
