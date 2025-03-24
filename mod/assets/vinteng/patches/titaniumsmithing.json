@@ -1,0 +1,31 @@
+[
+    {
+        "side": "Server",
+        "op": "remove",
+        "path": "/attributes/handbook/excludeByType/*-titanium",
+        "file": "game:itemtypes/resource/ingot.json"
+    },
+    {
+        "side": "Server",
+        "op": "remove",
+        "path": "/attributes/handbook/excludeByType/*-titanium",
+        "file": "game:itemtypes/resource/metalplate.json"
+    },
+    {
+        "side": "Server",
+        "op": "addmerge",
+        "path": "/attributes/requiresAnvilTierByType/ingot-titanium",
+        "value": 3,
+        "file": "game:itemtypes/resource/ingot.json"
+    },
+    {
+        "side": "Server",
+        "op": "addmerge",
+        "path": "/attributes/requiresAnvilTierByType",
+        "value": {
+            "metalplate-steel" : 3,
+            "metalplate-titanium" : 3
+        },
+        "file": "game:itemtypes/resource/metalplate.json"
+    }
+]
