@@ -561,6 +561,7 @@ namespace VintageEngineering
                             string moldmetal = "game:metalbit-" + MoldSlot.Itemstack.Collectible.LastCodePart();
                             int molddur = MoldSlot.Itemstack.Collectible.GetRemainingDurability(MoldSlot.Itemstack);
                             molddur -= 1;
+                            
                             MoldSlot.Itemstack.Attributes.SetInt("durability", molddur);
                             if (molddur == 0)
                             {
@@ -584,7 +585,7 @@ namespace VintageEngineering
                         if (!FindMatchingRecipe())
                         {
                             SetState(EnumBEState.Sleeping);
-                            isCrafting = false;                            
+                            isCrafting = false;
                         }
                         recipePowerApplied = 0;
                         MarkDirty(true, null);

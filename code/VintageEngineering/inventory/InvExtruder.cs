@@ -75,13 +75,13 @@ namespace VintageEngineering
         {
             get
             {
-                if (slotId > 3 || slotId < 0) return null;
+                if (slotId > 2 || slotId < 0) return null;
 
                 return _slots[slotId];
             }
             set
             {
-                if (slotId > 3 || slotId < 0) throw new ArgumentOutOfRangeException("slotId");
+                if (slotId > 2 || slotId < 0) throw new ArgumentOutOfRangeException("slotId");
                 if (value == null) throw new ArgumentNullException("value");
                 _slots[slotId] = value;
             }
@@ -93,7 +93,7 @@ namespace VintageEngineering
         }
 
         /// <summary>
-        /// Slot index 0 is input, 1 & 2 is output, and 3 is press mold
+        /// Slot index 0 is input, 1 is output, and 2 is the die cast
         /// </summary>
         /// <param name="inventoryID"></param>
         /// <param name="api"></param>
@@ -125,7 +125,7 @@ namespace VintageEngineering
 
         public override ItemSlot GetAutoPullFromSlot(BlockFacing atBlockFace)
         {
-            return _slots[1]; // empty the first output slot first, then the second, extra output
+            return _slots[1]; 
         }
 
         public override void FromTreeAttributes(ITreeAttribute tree)
