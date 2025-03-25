@@ -135,37 +135,17 @@ namespace VintageEngineering.inventory
 
             CombustibleProperties props = fromSlot.Itemstack.Collectible.CombustibleProps;
             bool isfuel = props != null ? props.BurnTemperature > 0 : false;
-            // check input first
-            if (_slots[0].Empty) { return _slots[0]; }
-            else
-            {
-                if (_slots[0].Itemstack.Collectible.Equals(
-                    _slots[0].Itemstack,
-                    fromSlot.Itemstack,
-                    GlobalConstants.IgnoredStackAttributes))
-                {
-                    if (_slots[0].GetRemainingSlotSpace(fromSlot.Itemstack) > 0) return _slots[0];
-                }
-            }
+            
+            // if U or D face, only fuel
+            if (atBlockFace.IsVertical) return _slots[1];
 
-            // now check fuel slot
-            if (_slots[1].Empty && isfuel) return _slots[1];
-            if (isfuel)
-            {
-                if (_slots[1].Itemstack.Collectible.Equals(
-                                    _slots[1].Itemstack,
-                                    fromSlot.Itemstack,
-                                    GlobalConstants.IgnoredStackAttributes))
-                {
-                    if (_slots[1].GetRemainingSlotSpace(fromSlot.Itemstack) > 0) return _slots[1];
-                }
-            }
-            return null;
+            else return _slots[0];
         }
 
         public override ItemSlot GetAutoPullFromSlot(BlockFacing atBlockFace)
         {
             return _slots[2]; // chutes can only pull from item slot, not fluid
+            // fluid pipes ignore this call all-together and only check the slots for a LiquidOnly slot type.
         }
 
         public override void FromTreeAttributes(ITreeAttribute tree)
