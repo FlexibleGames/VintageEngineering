@@ -27,6 +27,15 @@ namespace VintageEngineering.Transport.Handlers
 
             BlockPos connectedto = pos.AddCopy(BlockFacing.FromCode(node.FaceCode));
             if (!BEPipeBase.IsChunkLoaded(world, connectedto)) return;
+            if (world.BlockAccessor.GetBlock(connectedto) is BlockMultiblock target)
+            {
+                // if we're pointed at a multiblock, try to access the core instead.                
+                if (target != null)
+                {
+                    connectedto.Add(target.OffsetInv);
+                }
+                if (!BEPipeBase.IsChunkLoaded(world, connectedto)) return;
+            }
             InventoryBase inv = (InventoryBase)((world.BlockAccessor.GetBlock(connectedto).GetInterface<IBlockEntityContainer>(world, connectedto)).Inventory);
             if (inv == null) return; // sanity check 2
             int stacksize = node.UpgradeRate;
@@ -157,7 +166,19 @@ namespace VintageEngineering.Transport.Handlers
                 for (int x = 0; x < conarray.Length; x++)
                 {
                     if (!BEPipeBase.IsChunkLoaded(world, conarray[x].Position)) continue;
-                    IBlockEntityContainer contain = world.BlockAccessor.GetBlock(conarray[x].Position).GetInterface<IBlockEntityContainer>(world, conarray[x].Position);
+                    
+                    BlockPos target = conarray[x].Position.Copy();
+                    Block targetblock = world.BlockAccessor.GetBlock(target);
+                    if (targetblock is BlockMultiblock mbtarget)
+                    {
+                        // if we're pointed at a multiblock, try to access the core instead.                        
+                        if (mbtarget != null)
+                        {
+                            target.Add(mbtarget.OffsetInv);
+                        }
+                        if (!BEPipeBase.IsChunkLoaded(world, target)) return null;
+                    }                    
+                    IBlockEntityContainer contain = world.BlockAccessor.GetBlock(target).GetInterface<IBlockEntityContainer>(world, target);
                     if (contain.Inventory is InventoryBase inv)
                     {                        
                         ItemSlot push = inv.GetAutoPushIntoSlot(BlockFacing.FromCode(node.FaceCode).Opposite, pullfrom);
@@ -177,7 +198,18 @@ namespace VintageEngineering.Transport.Handlers
                 for (int x = 0; x < conarray.Length; x++)
                 {
                     if (!BEPipeBase.IsChunkLoaded(world, conarray[x].Position)) continue;
-                    IBlockEntityContainer contain = world.BlockAccessor.GetBlock(conarray[x].Position).GetInterface<IBlockEntityContainer>(world, conarray[x].Position);
+                    BlockPos target = conarray[x].Position.Copy();
+                    Block targetblock = world.BlockAccessor.GetBlock(target);
+                    if (targetblock is BlockMultiblock mbtarget)
+                    {
+                        // if we're pointed at a multiblock, try to access the core instead.                        
+                        if (mbtarget != null)
+                        {
+                            target.Add(mbtarget.OffsetInv);
+                        }
+                        if (!BEPipeBase.IsChunkLoaded(world, target)) return null;
+                    }                    
+                    IBlockEntityContainer contain = world.BlockAccessor.GetBlock(target).GetInterface<IBlockEntityContainer>(world, target);
                     if (contain.Inventory is InventoryBase inv)
                     {
                         ItemSlot push = inv.GetAutoPushIntoSlot(BlockFacing.FromCode(node.FaceCode).Opposite, pullfrom);
@@ -206,7 +238,18 @@ namespace VintageEngineering.Transport.Handlers
 
                 PipeConnection current = node.PushEnumerator.Current;
                 if (!BEPipeBase.IsChunkLoaded(world, current.Position)) return null;
-                IBlockEntityContainer contain = world.BlockAccessor.GetBlock(current.Position).GetInterface<IBlockEntityContainer>(world, current.Position);
+                BlockPos target = current.Position.Copy();
+                Block targetblock = world.BlockAccessor.GetBlock(target);
+                if (targetblock is BlockMultiblock mbtarget)
+                {
+                    // if we're pointed at a multiblock, try to access the core instead.                        
+                    if (mbtarget != null)
+                    {
+                        target.Add(mbtarget.OffsetInv);
+                    }
+                    if (!BEPipeBase.IsChunkLoaded(world, target)) return null;
+                }                
+                IBlockEntityContainer contain = world.BlockAccessor.GetBlock(target).GetInterface<IBlockEntityContainer>(world, target);
                 if (contain.Inventory is InventoryBase inv)
                 {
                     ItemSlot push = inv.GetAutoPushIntoSlot(BlockFacing.FromCode(node.FaceCode).Opposite, pullfrom);                    
@@ -219,7 +262,18 @@ namespace VintageEngineering.Transport.Handlers
                 int randomcon = world.Rand.Next(pushcons.Count);                
                 PipeConnection current = pushcons[randomcon];
                 if (!BEPipeBase.IsChunkLoaded(world, current.Position)) return null;
-                IBlockEntityContainer contain = world.BlockAccessor.GetBlock(current.Position).GetInterface<IBlockEntityContainer>(world, current.Position);
+                BlockPos target = current.Position.Copy();
+                Block targetblock = world.BlockAccessor.GetBlock(target);
+                if (targetblock is BlockMultiblock mbtarget)
+                {
+                    // if we're pointed at a multiblock, try to access the core instead.                        
+                    if (mbtarget != null)
+                    {
+                        target.Add(mbtarget.OffsetInv);
+                    }
+                    if (!BEPipeBase.IsChunkLoaded(world, target)) return null;
+                }                
+                IBlockEntityContainer contain = world.BlockAccessor.GetBlock(target).GetInterface<IBlockEntityContainer>(world, target);
                 if (contain.Inventory is InventoryBase inv)
                 {
                     ItemSlot push = inv.GetAutoPushIntoSlot(BlockFacing.FromCode(node.FaceCode).Opposite, pullfrom);

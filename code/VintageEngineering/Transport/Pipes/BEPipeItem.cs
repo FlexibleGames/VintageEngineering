@@ -24,14 +24,27 @@ namespace VintageEngineering.Transport.Pipes
 
         public override bool CanConnectTo(IWorldAccessor world, BlockPos pos, BlockFacing toFace = null)
         {            
-            IBlockEntityContainer bec = world.BlockAccessor.GetBlock(pos).GetInterface<IBlockEntityContainer>(world, pos);            
+            Block target = world.BlockAccessor.GetBlock(pos);
+            IBlockEntityContainer bec;
+            BlockPos targetpos = pos.Copy();
+
+            if (target is BlockMultiblock)
+            {
+                targetpos = targetpos.Add((target as BlockMultiblock).OffsetInv);
+                bec = world.BlockAccessor.GetBlock(targetpos)
+                    .GetInterface<IBlockEntityContainer>(world, targetpos);                    
+            }
+            else
+            {
+                bec = world.BlockAccessor.GetBlock(targetpos).GetInterface<IBlockEntityContainer>(world, targetpos);
+            }
             if (bec != null)
             {
                 // TODO check and load config blacklist of assemblies and types to ignore
 
                 // now all the special vanilla block conditions, ugh, is there a better way to do this?
                 // these are all BlockEntities that have inventories that should NOT be interacted with at all using pipes.
-                BlockEntity entity = world.BlockAccessor.GetBlockEntity(pos);
+                BlockEntity entity = world.BlockAccessor.GetBlockEntity(targetpos);
                 if (entity == null) return false;
                 if (entity is BECheese) return false;
                 if (entity is BECheeseCurdsBundle) return false;
