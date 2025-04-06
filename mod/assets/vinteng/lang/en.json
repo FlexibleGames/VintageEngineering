@@ -1,4 +1,7 @@
 {
+	"game:tabname-vinteng": "Vintage Engineering",
+	"game:tabname-vinteng-decor": "Vintage Engineering Decor",
+
 	"vinteng:block-velvgenerator-*": "VE Generator (LV)",
 	"vinteng:blockdesc-velvgenerator-*": "Burns combustibles to generate power, inefficient, upgrade as soon as possible.",
 	"vinteng:block-vemetalpress-*": "VE Metal Press",
