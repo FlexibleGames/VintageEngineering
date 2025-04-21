@@ -297,7 +297,10 @@ namespace VintageEngineering
             if (Electric.MachineState == EnumBEState.On) // machine is on and actively crafting something
             {
                 float powerpertick = Electric.MaxPPS * dt;
-                if (Electric.CurrentPower == 0 || Electric.CurrentPower < powerpertick) { return; } // power is low!
+                ulong powercheck = (ulong)Math.Round(powerpertick);
+                powercheck = Math.Max(1, powercheck); // minimum of 1
+
+                if (powercheck > Electric.CurrentPower) return; // not enough power to continue                                
 
                 if (isHeating) // if we're heating, we may not be ready to craft yet
                 {
@@ -316,25 +319,23 @@ namespace VintageEngineering
                         // Something odd happened, we're heating but our recipes are null...
                         if (!inv[0].Empty) FindMatchingRecipe();
                     }
-                    Electric.electricpower -= (ulong)Math.Round(powerpertick); // consume power when heating up
                 }
 
                 if (isCrafting && RecipeProgress < 1f)
-                {                    
+                {
                     if (!HasRoomInOutput(0, null)) return; // no room in output slots, stop
                     if (currentRecipe == null && _cproperties == null) return; // how the heck did this happen? should not be possible                    
 
                     // round to the nearest whole number
                     if (currentRecipe != null)
                     {
-                        if (currentRecipe.RequiresTime == 0f) recipePowerApplied += (ulong)Math.Round(powerpertick);
+                        if (currentRecipe.RequiresTime == 0f) recipePowerApplied += powercheck;
                         else _burntimeelapsed += dt;
                     }
                     else if (_cproperties != null)
                     {
                         _burntimeelapsed += dt;
                     }
-                    Electric.electricpower -= (ulong)Math.Round(powerpertick); // we're always costing power while crafting
                 }                
                 else if (RecipeProgress >= 1f)
                 {
@@ -435,6 +436,9 @@ namespace VintageEngineering
                     recipePowerApplied = 0;                    
                     //Api.World.BlockAccessor.MarkBlockEntityDirty(this.Pos);
                 }
+                Electric.electricpower -= powercheck;
+                // Clamp the power! Clamp it! Clamp it good!
+                Electric.electricpower = Math.Clamp(Electric.electricpower, 0, Electric.MaxPower);
             }
             this.MarkDirty(true, null);
         }
