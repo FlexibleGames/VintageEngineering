@@ -23,8 +23,16 @@ namespace VintageEngineering
         /// <summary>
         /// Enable/Disable underground veins of Oil
         /// </summary>
-        public bool OilGyser_GenOilDeposit { get; set; } = true;
-        
+        public bool OilGyser_GenOilDeposit { get; set; } = true;        
+        /// <summary>
+        /// Enable/Disable Electric Network power distribution.
+        /// </summary>
+        public bool DoPowerTick { get; set; } = true;
+        /// <summary>
+        /// Enable/Disable Pipe Distribution tick
+        /// </summary>
+        public bool DoPipeTick { get; set; } = true;
+
         public VintEngCommonConfig()
         {
         }
@@ -35,6 +43,8 @@ namespace VintageEngineering
             OilGyser_GenPool = oldConfig.OilGyser_GenPool;
             OilGyser_GenBubble = oldConfig.OilGyser_GenBubble;
             OilGyser_GenOilDeposit = oldConfig.OilGyser_GenOilDeposit;
+            DoPowerTick = oldConfig.DoPowerTick;
+            DoPipeTick = oldConfig.DoPipeTick;
         }
     }
 }
