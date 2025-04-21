@@ -32,6 +32,7 @@ namespace VintageEngineering.Electrical.Systems
         public ICoreServerAPI sapi;
         private ElectricalNetworkMod mod;
         private CatenaryMod cm;
+        private bool _doNetworkTick = true;
         private long gameTickListener;
         // gameTickListener = sapi.Event.RegisterGameTickListener(OnGameTick, 200, 0);
 
@@ -56,6 +57,16 @@ namespace VintageEngineering.Electrical.Systems
             {
                 throw new Exception("ElectricalNetworkManger: Initialization Failed to get ModSystem : CatenaryMod");
             }
+            VintageEngineeringMod vem = sapi.ModLoader.GetModSystem<VintageEngineeringMod>(true);
+            _doNetworkTick = vem != null ? vem.CommonConfig.DoPowerTick : false;
+            if (!_doNetworkTick)
+            {
+                if (vem == null)
+                {
+                    sapi.Logger.Debug("VintEng: Error when initializing ElectricNetworkManager, could not find VintageEngineeringMod.");
+                }
+                sapi.Logger.Debug("VintEng: Electric Network Ticking has been disabled by config. Set config value DoPowerTick to true to enable power distribution.");
+            }
         }
 
         private void OnGameTick(float deltatime)
@@ -63,7 +74,7 @@ namespace VintageEngineering.Electrical.Systems
             // deltatime is a value on how much time (seconds) have passed since the last call, value SHOULD always be less than 1. Ideally it would be 0.25.
 
             // if we have no networks, bounce
-            if (networks.Count == 0) { return; }
+            if (networks.Count == 0 || !_doNetworkTick) { return; }
 
             // we have networks, lets tick them
             Stopwatch sw = Stopwatch.StartNew();
