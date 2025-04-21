@@ -8,6 +8,7 @@ using VintageEngineering.Transport.API;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
+using Vintagestory.API.Server;
 
 namespace VintageEngineering.Transport
 {
@@ -115,15 +116,18 @@ namespace VintageEngineering.Transport
             {
                 ApplyUpgrade();
             }
-            VintageEngineeringMod vem = api.ModLoader.GetModSystem<VintageEngineeringMod>(true);
-            _doNetworkTick = vem != null ? vem.CommonConfig.DoPipeTick : false;
-            if (!_doNetworkTick)
+            if (api is ICoreServerAPI)
             {
-                if (vem == null)
+                VintageEngineeringMod vem = api.ModLoader.GetModSystem<VintageEngineeringMod>(true);
+                _doNetworkTick = vem != null ? vem.CommonConfig.DoPipeTick : false;
+                if (!_doNetworkTick)
                 {
-                    api.Logger.Debug("VintEng: Error when initializing PipeExtractionNode, could not find VintageEngineeringMod.");
+                    if (vem == null)
+                    {
+                        api.Logger.Debug("VintEng: Error when initializing PipeExtractionNode, could not find VintageEngineeringMod.");
+                    }
+                    api.Logger.Debug("VintEng: Pipe Network Ticking has been disabled by config. Set config value DoPipeTick to true to enable pipe distribution.");
                 }
-                api.Logger.Debug("VintEng: Pipe Network Ticking has been disabled by config. Set config value DoPipeTick to true to enable pipe distribution.");
             }
         }
         /// <summary>
