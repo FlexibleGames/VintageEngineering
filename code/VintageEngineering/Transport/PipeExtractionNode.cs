@@ -34,6 +34,8 @@ namespace VintageEngineering.Transport
 
         private ITransportHandler Handler { get { return _api?.World?.BlockAccessor?.GetBlockEntity<BEPipeBase>(_pos)?.GetHandler(); } }
 
+        private bool _doNetworkTick = true;
+        
         /// <summary>
         /// The Enumerator set when Node is in RoundRobin mode.
         /// </summary>
@@ -113,7 +115,16 @@ namespace VintageEngineering.Transport
             {
                 ApplyUpgrade();
             }
-
+            VintageEngineeringMod vem = api.ModLoader.GetModSystem<VintageEngineeringMod>(true);
+            _doNetworkTick = vem != null ? vem.CommonConfig.DoPipeTick : false;
+            if (!_doNetworkTick)
+            {
+                if (vem == null)
+                {
+                    api.Logger.Debug("VintEng: Error when initializing PipeExtractionNode, could not find VintageEngineeringMod.");
+                }
+                api.Logger.Debug("VintEng: Pipe Network Ticking has been disabled by config. Set config value DoPipeTick to true to enable pipe distribution.");
+            }
         }
         /// <summary>
         /// Called when the chunk a pipe block that contains this node is in is unloaded.
@@ -219,7 +230,7 @@ namespace VintageEngineering.Transport
         /// <param name="deltatime">Time (in seconds) since last update.</param>
         public virtual void UpdateTick(float deltatime)
         {
-            if (_isSleeping || Handler == null || _api.Side == EnumAppSide.Client) return;
+            if (_isSleeping || Handler == null || _api.Side == EnumAppSide.Client || !_doNetworkTick) return;
             Stopwatch ws = Stopwatch.StartNew();
             Handler.TransportTick(deltatime, _pos, _api.World, this);
             ws.Stop();
