@@ -120,6 +120,7 @@ namespace VintageEngineering.Electrical.Systems
         /// <param name="netID">NetworkID to leave</param>
         /// <param name="node">WireNode leaving (MUST include a BlockPos)</param>
         /// <param name="entity">Entity leaving</param>
+        /// <param name="permanently">Removes the node from the networks node list.</param>
         public void LeaveNetwork(long netID, WireNode node, IElectricalBlockEntity entity, bool permanently = false)
         {
             if (networks.ContainsKey(netID))

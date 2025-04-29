@@ -23,6 +23,12 @@ namespace VintageEngineering.Electrical
             }
         }
 
+        public override void Initialize(ICoreAPI api)
+        {
+            base.Initialize(api);
+            Electric.IsLoaded = true;
+        }
+
         public override void CreateBehaviors(Block block, IWorldAccessor worldForResolve)
         {
             base.CreateBehaviors(block, worldForResolve);
@@ -43,6 +49,19 @@ namespace VintageEngineering.Electrical
             {
                 behavior.OnBlockPlaced(byItemStack);
             }
+        }
+
+        public override void OnBlockUnloaded()
+        {
+            Electric.IsLoaded = false;
+            base.OnBlockUnloaded();
+        }
+
+        public override void OnBlockBroken(IPlayer byPlayer = null)
+        {
+            // The base WiredBlock handles the wire disconnection and drops.
+            Electric.IsLoaded = false;
+            base.OnBlockBroken(byPlayer);
         }
     }
 }

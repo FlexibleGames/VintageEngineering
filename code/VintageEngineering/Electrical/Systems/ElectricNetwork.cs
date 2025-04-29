@@ -368,11 +368,11 @@ namespace VintageEngineering.Electrical.Systems
 
                     if (api.World.BlockAccessor.GetBlockEntity(node.blockPos) is null)
                     {
-                        throw new ArgumentNullException("VintEng: Electric Update Tick found a NULL block entity.");
+                        throw new ArgumentNullException($"VintEng: Electric Update Tick found a NULL block entity at: {node.blockPos.Copy().Sub(api.World.DefaultSpawnPosition.AsBlockPos)}");
                     }
                     if (IElectricalBlockEntity.GetAtPos(api.World.BlockAccessor, node.blockPos) is null)
                     {
-                        throw new ArgumentNullException("VintEng: Electric Update Tick found a NULL electrical block entity.");
+                        throw new ArgumentNullException($"VintEng: Electric Update Tick found a NULL electrical block entity at: {node.blockPos.Copy().Sub(api.World.DefaultSpawnPosition.AsBlockPos)}");
                     }
                 }
             }
