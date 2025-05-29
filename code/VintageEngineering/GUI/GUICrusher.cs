@@ -244,6 +244,11 @@ namespace VintageEngineering
         private string GetHelpText()
         {            
             string outputhelptext = "";
+            bool machinefull = false;
+            if (!becrusher.HasRoomInOutput(0, null))
+            {
+                machinefull = true;
+            }
             if (_recipecrusher != null)
             {
                 ItemStack outputstack = _recipecrusher.Outputs[0].ResolvedItemstack;
@@ -287,15 +292,15 @@ namespace VintageEngineering
                 {
                     outputhelptext = Lang.Get("vinteng:gui-machine-ingredients");// second priority is an ingredient
                 }
-                if (!becrusher.HasRoomInOutput(0, null))
-                {
-                    outputhelptext = Lang.Get("vinteng:gui-machine-isfull");   // an output is full...                    
-                }
+            }
+            if (machinefull)
+            {
+                outputhelptext = Lang.Get("vinteng:gui-machine-isfull");   // an output is full...                    
             }
             if (!becrusher.Electric.IsEnabled)
             {
                 outputhelptext = Lang.Get("vinteng:gui-machine-off");
-            }
+            }            
             return outputhelptext;
         }
 

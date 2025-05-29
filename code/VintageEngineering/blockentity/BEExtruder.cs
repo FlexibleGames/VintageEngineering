@@ -125,6 +125,12 @@ namespace VintageEngineering
         {
             if (slotid != 1) return false;
             if (inv[slotid].Empty) return true;
+            if (currentRecipe != null)
+            {
+                if (inv[slotid].Itemstack.Collectible.Code.Path != currentRecipe.Outputs[0].Code.Path) return false;
+                if (inv[slotid].Itemstack.Collectible.MaxStackSize < inv[slotid].Itemstack.StackSize + currentRecipe.Outputs[0].StackSize) return false;
+            }
+
             if (inv[slotid].StackSize < inv[slotid].Itemstack.Collectible.MaxStackSize) return true;
 
             return false;

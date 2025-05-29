@@ -130,7 +130,7 @@ namespace VintageEngineering.Electrical.Systems
                 else networks[netID].Leave(node, entity);
             }
         }
-
+        
         /// <summary>
         /// Vital Function called when the Catenary mod throws the OnWireRemoved event
         /// </summary>

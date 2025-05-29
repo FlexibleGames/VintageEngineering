@@ -167,22 +167,41 @@ namespace VintageEngineering
             if (slotid == 0 && forStack == null)
             {
                 if (inv[6].Empty && inv[7].Empty) return true;
-                int itemout = 0;
-                int fluidout = 0;
+                int itemout = 64;
+                int fluidout = 50;
                 if (!inv[6].Empty)
                 {
-                    itemout = inv[6].Itemstack.Collectible.MaxStackSize - inv[6].Itemstack.StackSize;
-                }
-                else itemout = 64;
+                    if (currentRecipe != null)
+                    {
+                        if (!currentRecipe.ShouldBeInLiquidSlot(currentRecipe.Outputs[0].ResolvedItemstack))
+                        {
+                            if (inv[6].Itemstack.Collectible.Code.Path != currentRecipe.Outputs[0].Code.Path) itemout = 0;
+                        }
+                        else if (currentRecipe.Outputs.Length > 1)
+                        {
+                            if (inv[6].Itemstack.Collectible.Code.Path != currentRecipe.Outputs[1].Code.Path) itemout = 0;
+                        }
+                    }
+                    if (itemout != 0) itemout = inv[6].GetRemainingSlotSpace(inv[6].Itemstack);
+                }                
 
                 if (!inv[7].Empty)
                 {
                     WaterTightContainableProps wprops = BlockLiquidContainerBase.GetContainableProps(inv[7].Itemstack);
                     if (wprops == null) fluidout = 0;
-                    fluidout = (int)((inv[7] as ItemSlotLiquidOnly).CapacityLitres - (inv[7].Itemstack.StackSize / wprops.ItemsPerLitre));
-                }
-                else fluidout = 50;
-
+                    if (currentRecipe != null)
+                    {
+                        if (currentRecipe.ShouldBeInLiquidSlot(currentRecipe.Outputs[0].ResolvedItemstack))
+                        {
+                            if (inv[7].Itemstack.Collectible.Code.Path != currentRecipe.Outputs[0].Code.Path) fluidout = 0;
+                        }
+                        else if (currentRecipe.Outputs.Length > 1)
+                        {
+                            if (inv[7].Itemstack.Collectible.Code.Path != currentRecipe.Outputs[1].Code.Path) fluidout = 0;
+                        }
+                    }
+                    if (fluidout != 0) fluidout = (int)((inv[7] as ItemSlotLiquidOnly).CapacityLitres - (inv[7].Itemstack.StackSize / wprops.ItemsPerLitre));
+                }                
                 return itemout > 0 && fluidout > 0;
             }
             else

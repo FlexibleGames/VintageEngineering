@@ -83,7 +83,7 @@ namespace VintageEngineering
         }
         /// <summary>
         /// Output slots IDs are slotid 2 for item, 3 for fluid<br/>
-        /// Pass id = 0 and forStack = null to check both outputs.
+        /// Pass id = 0 and forStack = null to check all outputs.
         /// </summary>
         /// <param name="slotid">Index of ItemSlot inventory</param>
         /// <returns>True if there is room.</returns>
@@ -96,6 +96,18 @@ namespace VintageEngineering
                 
                 if (!_inventory[5].Empty)
                 {
+                    if (_currentRecipe != null)
+                    {
+                        if (_inventory[5].Itemstack.Collectible.Code.Path != _currentRecipe.Outputs[0].Code.Path) return false;
+                    }
+                    if (_alloyRecipe != null)
+                    {
+                        if (_inventory[5].Itemstack.Collectible.Code.Path != _alloyRecipe.Output.Code.Path) return false;
+                    }
+                    if (_smeltableStack != null)
+                    {
+                        if (_inventory[5].Itemstack.Collectible.Code.Path != _smeltableStack.output.Collectible.Code.Path) return false;
+                    }
                     itemout = _inventory[5].Itemstack.Collectible.MaxStackSize - _inventory[5].Itemstack.StackSize;
                 }
                 return itemout > 0;
@@ -107,6 +119,7 @@ namespace VintageEngineering
                 if (_inventory[slotid].Empty) return true; // slot is empty, good to go.
                 else
                 {
+                    if (_inventory[5].Itemstack.Collectible.Code.Path != forStack.Collectible.Code.Path) return false;
                     return _inventory[slotid].GetRemainingSlotSpace(forStack) > 0;
                 }
             }

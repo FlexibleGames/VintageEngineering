@@ -152,7 +152,23 @@ namespace VintageEngineering
                     if (inv[i].Empty) return true;
                     else
                     {
-                        if (inv[i].Itemstack.StackSize < inv[i].Itemstack.Collectible.MaxStackSize) return true;
+                        bool equal = false;
+                        if (currentRecipe != null)
+                        {
+                            string l_output = currentRecipe.Outputs[0].Code.Path;
+                            string l_output2 = currentRecipe.Outputs.Length > 1 ? currentRecipe.Outputs[1].Code.Path : string.Empty;
+                            if (l_output == inv[i].Itemstack.Collectible.Code.Path) equal = true;
+                            else if (currentRecipe.Outputs.Length > 1 && l_output2 == inv[i].Itemstack.Collectible.Code.Path) equal = true;
+                        }
+                        if (_cproperties != null)
+                        {
+                            if (inv[i].Itemstack.Collectible.Code.Path == _cproperties.SmeltedStack.Code.Path) equal = true;
+                        }
+
+                        if (equal && inv[i].Itemstack.StackSize < inv[i].Itemstack.Collectible.MaxStackSize)
+                        {
+                            return true;
+                        }
                     }
                 }
                 return false;
@@ -161,7 +177,7 @@ namespace VintageEngineering
             if (inv[slotid].Empty) return true;
 
             // check equality by code
-            if (inv[slotid].Itemstack.Collectible.Code != forStack.Collectible.Code) return false;
+            if (inv[slotid].Itemstack.Collectible.Code.Path != forStack.Collectible.Code.Path) return false;
 
             // check stack size held versus max
             int numinslot = inv[slotid].StackSize;

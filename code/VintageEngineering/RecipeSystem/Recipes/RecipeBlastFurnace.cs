@@ -34,7 +34,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
             get
             {
                 int temp = 0;
-                for (int i = 0; i < 4; i++)
+                for (int i = 0; i < Ingredients.Length; i++)
                 {
                     if (Ingredients[i] != null)
                     {

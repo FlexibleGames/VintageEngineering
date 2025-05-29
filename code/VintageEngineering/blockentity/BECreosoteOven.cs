@@ -113,22 +113,41 @@ namespace VintageEngineering
             if (slotid == 0 && forStack == null)
             {
                 if (_inventory[2].Empty && _inventory[3].Empty) return true;
-                int itemout = 0;
-                int fluidout = 0;
+                int itemout = 64;
+                int fluidout = 50;
                 if (!_inventory[2].Empty)
                 {
-                    itemout = _inventory[2].Itemstack.Collectible.MaxStackSize - _inventory[2].Itemstack.StackSize;
-                }
-                else itemout = 64;
+                    if (_currentRecipe != null)
+                    {
+                        if (!_currentRecipe.ShouldBeInLiquidSlot(_currentRecipe.Outputs[0].ResolvedItemstack))
+                        {
+                            if (_inventory[2].Itemstack.Collectible.Code.Path != _currentRecipe.Outputs[0].Code.Path) itemout = 0;
+                        }
+                        else if (_currentRecipe.Outputs.Length > 1)
+                        {
+                            if (_inventory[2].Itemstack.Collectible.Code.Path != _currentRecipe.Outputs[1].Code.Path) itemout = 0;
+                        }
+                    }
+                    if (itemout != 0) itemout = _inventory[2].Itemstack.Collectible.MaxStackSize - _inventory[2].Itemstack.StackSize;
+                }                
 
                 if (!_inventory[3].Empty)
                 {
                     WaterTightContainableProps wprops = BlockLiquidContainerBase.GetContainableProps(_inventory[3].Itemstack);
                     if (wprops == null) fluidout = 0;
-                    fluidout = (int)((_inventory[3] as ItemSlotLiquidOnly).CapacityLitres - (_inventory[3].Itemstack.StackSize / wprops.ItemsPerLitre));
+                    if (_currentRecipe != null)
+                    {
+                        if (_currentRecipe.ShouldBeInLiquidSlot(_currentRecipe.Outputs[0].ResolvedItemstack))
+                        {
+                            if (_inventory[3].Itemstack.Collectible.Code.Path != _currentRecipe.Outputs[0].Code.Path) fluidout = 0;
+                        }
+                        else if (_currentRecipe.Outputs.Length > 1)
+                        {
+                            if (_inventory[3].Itemstack.Collectible.Code.Path != _currentRecipe.Outputs[1].Code.Path) fluidout = 0;
+                        }
+                    }
+                    if (fluidout != 0) fluidout = (int)((_inventory[3] as ItemSlotLiquidOnly).CapacityLitres - (_inventory[3].Itemstack.StackSize / wprops.ItemsPerLitre));
                 }
-                else fluidout = 50;
-
                 return itemout > 0 && fluidout > 0;
             }
             else
@@ -138,6 +157,7 @@ namespace VintageEngineering
                 if (_inventory[slotid].Empty) return true; // slot is empty, good to go.
                 else
                 {
+                    if (_inventory[slotid].Itemstack.Collectible.Code != forStack.Collectible.Code) return false;
                     return _inventory[slotid].GetRemainingSlotSpace(forStack) > 0;
                 }
             }

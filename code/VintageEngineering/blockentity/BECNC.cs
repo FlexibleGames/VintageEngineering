@@ -15,6 +15,7 @@ using Vintagestory.GameContent;
 using VintageEngineering.Electrical;
 using VintageEngineering.inventory;
 using Vintagestory.API.Util;
+using System.Threading;
 
 namespace VintageEngineering
 {
@@ -286,7 +287,7 @@ namespace VintageEngineering
         }
 
         /// <summary>
-        /// Output slots IDs are slotid 1 and 2<br/>
+        /// Output slots IDs are slotid 2 and 3 (ID 1 is the program)<br/>
         /// Pass in slotid = 0 and forStack = null to return if ANY slot has room.
         /// </summary>
         /// <param name="slotid">Index of ItemSlot inventory</param>
@@ -301,6 +302,10 @@ namespace VintageEngineering
                     if (inventory[i].Empty) return true;
                     else
                     {
+                        if (currentRecipe != null)
+                        {
+                            if (inventory[i].Itemstack.Collectible.Code.Path != currentRecipe.Output.Code.Path) return false;
+                        }
                         if (inventory[i].Itemstack.StackSize < inventory[i].Itemstack.Collectible.MaxStackSize) return true;
                     }
                 }

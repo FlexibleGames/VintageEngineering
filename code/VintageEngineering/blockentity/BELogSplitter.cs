@@ -115,6 +115,14 @@ namespace VintageEngineering
         {
             if (slotid < 1 || slotid > 2) return false;
             if (inv[slotid].Empty) return true;
+            if (currentRecipe != null)
+            {
+                int outputcheck = slotid == 1 ? 0 : 1;
+                if (currentRecipe.Outputs.Length == 1 && outputcheck == 1) outputcheck = 0; // sanity check to not overrun the array
+
+                if (inv[slotid].Itemstack.Collectible.Code.Path != currentRecipe.Outputs[outputcheck].Code.Path) return false;
+                if (inv[slotid].Itemstack.Collectible.MaxStackSize < inv[slotid].Itemstack.StackSize + currentRecipe.Outputs[outputcheck].StackSize) return false;
+            }
             if (inv[slotid].StackSize < inv[slotid].Itemstack.Collectible.MaxStackSize) return true;
 
             return false;

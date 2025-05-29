@@ -162,14 +162,28 @@ namespace VintageEngineering
         {
             if (slotid == 0 && forStack == null)
             {
-                // a special case to check if any output has room                
+                // a special case to check if any output has room
+                string l_output = string.Empty;
+                if (currentRecipe != null) l_output = currentRecipe.Outputs[0].ResolvedItemstack.Collectible.Code.Path;
+                if (crushingProperties != null) l_output = crushingProperties.CrushedStack.ResolvedItemstack.Collectible.Code.Path;
+                if (grindingProperties != null) l_output = grindingProperties.GroundStack.ResolvedItemstack.Collectible.Code.Path;
+                if (nuggetType != null) l_output = nuggetType.Collectible.Code.Path;
+
+                bool matched = false;
                 for (int i = 1; i < 5; i++)
                 {
                     if (inv[i].Empty) return true;
                     else
                     {
                         // is it the same item?
-                        if (inv[i].Itemstack.StackSize < inv[i].Itemstack.Collectible.MaxStackSize) return true;
+                        if (l_output != string.Empty)
+                        {
+                            if (inv[i].Itemstack.Collectible.Code.Path == l_output) matched = true;
+                        }                        
+                        if (inv[i].Itemstack.StackSize < inv[i].Itemstack.Collectible.MaxStackSize)
+                        {
+                            if (matched || InputSlot.Empty) return true;
+                        }
                     }
                 }
                 return false;
@@ -312,13 +326,15 @@ namespace VintageEngineering
                 if (isCrafting && RecipeProgress < 1f)
                 {
                     if (Electric.CurrentPower == 0 || Electric.CurrentPower < (Electric.MaxPPS * dt)) return; // we don't have any power to progress.
+                    bool roomformore = false;
 
                     if (craftMode == "recipe")
                     {
                         if (currentRecipe == null) return;
                         for (int x=0;x<currentRecipe.Outputs.Length;x++)
                         {
-                            if (!HasRoomInOutput(x + 1, currentRecipe.Outputs[x].ResolvedItemstack)) return;
+                            if (!HasRoomInOutput(x + 1, currentRecipe.Outputs[x].ResolvedItemstack)) continue;
+                            else roomformore = true;
                         }
                     }
                     else if (craftMode == "crush")
@@ -326,7 +342,8 @@ namespace VintageEngineering
                         if (crushingProperties == null) return;
                         for (int x = 1;x<5;x++)
                         {
-                            if (!HasRoomInOutput(x, crushingProperties.CrushedStack.ResolvedItemstack)) return;
+                            if (!HasRoomInOutput(x, crushingProperties.CrushedStack.ResolvedItemstack)) continue;
+                            else roomformore = true;
                         }
                     }
                     else if (craftMode == "nugget")
@@ -334,7 +351,8 @@ namespace VintageEngineering
                         if (nuggetType == null) return;
                         for (int x = 1; x < 5; x++)
                         {
-                            if (!HasRoomInOutput(x, nuggetType)) return;
+                            if (!HasRoomInOutput(x, nuggetType)) continue;
+                            else roomformore = true;
                         }
                     }
                     else
@@ -343,9 +361,12 @@ namespace VintageEngineering
                         if (grindingProperties == null) return;
                         for (int x = 1; x<5;x++)
                         {
-                            if (!HasRoomInOutput(x, grindingProperties.GroundStack.ResolvedItemstack)) return;
+                            if (!HasRoomInOutput(x, grindingProperties.GroundStack.ResolvedItemstack)) continue;
+                            else roomformore = true;
                         }
                     }
+
+                    if (!roomformore) return;
 
                     float powerpertick = Electric.MaxPPS * dt;
 
