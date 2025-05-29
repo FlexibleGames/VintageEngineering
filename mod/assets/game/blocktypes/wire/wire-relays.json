@@ -26,7 +26,7 @@
 			}
 		}
 	],
-	"creativeinventory": { "general": ["*"], "construction": ["*"] },
+	"creativeinventory": { "general": ["*"], "construction": ["*"],"vinteng": ["*-up"] },
 	"shapeByType": {
         "*-north":  { "base": "game:block/relays/{type}", "rotateX": 270 },
 		"*-east":   { "base": "game:block/relays/{type}", "rotateZ": 270 },

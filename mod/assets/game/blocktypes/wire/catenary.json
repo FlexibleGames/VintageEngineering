@@ -4,7 +4,7 @@
 	"variantgroups": [
 		{ "code": "type", "states": [ "lvpower", "mvpower", "hvpower", "evpower", "allpower", "signalred", "signalgreen", "communication"] }
 	],
-	"creativeinventory": { "general": ["*"], "construction": ["*"] },
+	"creativeinventory": { "general": ["*"], "construction": ["*"], "vinteng": "catenary-*" },
 	"shapeByType": {
         "*-lvpower": { "base": "game:block/wires/barecopper"},
         "*-mvpower": { "base": "game:block/wires/barecopper"},

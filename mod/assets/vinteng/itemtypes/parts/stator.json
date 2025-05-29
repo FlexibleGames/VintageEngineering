@@ -1,7 +1,8 @@
 {
 	"code": "stator",
 	"creativeinventory": {
-		"items": [ "*" ]
+		"items": [ "*" ],
+        "vinteng": ["*"] 
 	},
 	"variantgroups": [
 		{

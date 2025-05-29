@@ -1,7 +1,8 @@
 {
 	"code": "rotor",
 	"creativeinventory": {
-		"items": [ "*" ]
+		"items": [ "*" ],
+        "vinteng": ["*"] 
 	},
 	"variantgroups": [
 		{
