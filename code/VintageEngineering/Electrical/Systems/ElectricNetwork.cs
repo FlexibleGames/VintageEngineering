@@ -357,6 +357,8 @@ namespace VintageEngineering.Electrical.Systems
             {
                 // a network of all relays would have 0 of the above types, but allNodes would be > 0
                 if (allNodes.Count == 0) return false; // there are zero nodes in this network, delete it.
+                List<WireNode> nodestoDelete = new List<WireNode>();
+
                 foreach (WireNode node in allNodes)
                 {
                     // if the block position is invalid the block could be unloaded OR invalid
@@ -366,14 +368,31 @@ namespace VintageEngineering.Electrical.Systems
                         continue;
                     }
 
-                    if (api.World.BlockAccessor.GetBlockEntity(node.blockPos) is null)
+                    Block checkblock = api.World.BlockAccessor.GetBlock(node.blockPos);
+                    if (checkblock.Id == 0)
                     {
-                        throw new ArgumentNullException($"VintEng: Electric Update Tick found a NULL block entity at: {node.blockPos.Copy().Sub(api.World.DefaultSpawnPosition.AsBlockPos)}");
+                        nodestoDelete.Add(node);
+                        continue;
                     }
-                    if (IElectricalBlockEntity.GetAtPos(api.World.BlockAccessor, node.blockPos) is null)
+                    BlockPos origin = api.World.DefaultSpawnPosition.AsBlockPos.Copy();
+
+                    if (checkblock.Id != 0 && api.World.BlockAccessor.GetBlockEntity(node.blockPos) is null)
                     {
-                        throw new ArgumentNullException($"VintEng: Electric Update Tick found a NULL electrical block entity at: {node.blockPos.Copy().Sub(api.World.DefaultSpawnPosition.AsBlockPos)}");
+                        throw new ArgumentNullException($"VintEng: Electric Update Tick found a NULL block entity at: {node.blockPos.SubCopy(origin.X, 0, origin.Y)}");
                     }
+                    if (checkblock.Id != 0 && IElectricalBlockEntity.GetAtPos(api.World.BlockAccessor, node.blockPos) is null)
+                    {
+                        throw new ArgumentNullException($"VintEng: Electric Update Tick found a NULL electrical block entity at: {node.blockPos.SubCopy(origin.X, 0, origin.Y)}");
+                    }
+                }
+                if (nodestoDelete.Count > 0)
+                {
+                    foreach (WireNode node in nodestoDelete)
+                    {
+                        allNodes.Remove(node);
+                    }
+                    InitializeNetwork();
+                    return true;
                 }
             }
 
