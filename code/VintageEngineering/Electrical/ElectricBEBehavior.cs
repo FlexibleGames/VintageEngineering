@@ -326,7 +326,7 @@ namespace VintageEngineering.Electrical
                             if (wiredBlock.WireAnchors == null) continue;
                             WireNode node = wiredBlock.GetWireNodeInBlock(networkpair.Key).Copy();
                             if (node == null) continue;
-                            node.blockPos = this.Pos; // extremely important that we add Block Position to this.                            
+                            node.blockPos = this.Pos.Copy(); // extremely important that we add Block Position to this.                            
                             nm.JoinNetwork(networkpair.Value, node, this);
                         }
                     }
