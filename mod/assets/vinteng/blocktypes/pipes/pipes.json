@@ -1,215 +1,79 @@
 {
-    "code": "pipe",
+	"code": "pipe",
     "classByType": {
         "*": "VEPipeBlock"
     },
     "entityClassByType": {
         "*-item": "VEBEItemPipe",
-        "*-fluid": "VEBEFluidPipe"
+		"*-fluid": "VEBEFluidPipe"
     },
-    "variantgroups": [
-        {
-            "code": "purpose",
-            "states": [
-                "item",
-                "fluid"
-            ]
-        }
-    ],
-    "behaviors": [],
-    "creativeinventory": {
-        "general": [
-            "*"
-        ],
-        "construction": [
-            "*"
-        ],
-        "vinteng": [
-            "*"
-        ]
+	"variantgroups": [
+		{ "code": "purpose", "states": [ "item", "fluid"] }
+	],
+	"behaviors": [],
+	"creativeinventory": { "general": ["*"], "construction": ["*"] },
+	"shapeByType": {
+        "*":  { "base": "vinteng:block/pipes/pipe-center" }
     },
-    "shapeByType": {
-        "*": {
-            "base": "vinteng:block/pipes/pipe-center"
-        }
-    },
-    "attributes": {
-        "handbook": {
-            "excludeByType": {
-                "*": false
-            }
-        }
-    },
-    "texturesByType": {
-        "*-item": {
-            "pipe": {
-                "base": "block/bronze"
-            }
-        },
-        "*-fluid": {
-            "pipe": {
-                "base": "block/wornsteel"
-            }
-        },
-        "*": {}
-    },
-    "selectionBoxes": [
-        {
-            "x1": 0.375,
-            "y1": 0,
-            "z1": 0.375,
-            "x2": 0.625,
-            "y2": 0.3125,
-            "z2": 0.625,
-            "rotateX": 90,
-            "rotateZ": 0
-        },
-        {
-            "x1": 0.375,
-            "y1": 0,
-            "z1": 0.375,
-            "x2": 0.625,
-            "y2": 0.3125,
-            "z2": 0.625,
-            "rotateX": 90,
-            "rotateZ": 90
-        },
-        {
-            "x1": 0.375,
-            "y1": 0,
-            "z1": 0.375,
-            "x2": 0.625,
-            "y2": 0.3125,
-            "z2": 0.625,
-            "rotateX": 90,
-            "rotateZ": 180
-        },
-        {
-            "x1": 0.375,
-            "y1": 0,
-            "z1": 0.375,
-            "x2": 0.625,
-            "y2": 0.3125,
-            "z2": 0.625,
-            "rotateX": 90,
-            "rotateZ": 270
-        },
-        {
-            "x1": 0.375,
-            "y1": 0,
-            "z1": 0.375,
-            "x2": 0.625,
-            "y2": 0.3125,
-            "z2": 0.625,
-            "rotateX": 180
-        },
-        {
-            "x1": 0.375,
-            "y1": 0,
-            "z1": 0.375,
-            "x2": 0.625,
-            "y2": 0.3125,
-            "z2": 0.625
-        },
-        {
-            "x1": 0.375,
-            "y1": 0.375,
-            "z1": 0.375,
-            "x2": 0.625,
-            "y2": 0.625,
-            "z2": 0.625
-        }
-    ],
-    "collisionbox": {
-        "x1": 0.3125,
-        "y1": 0.3125,
-        "z1": 0.3125,
-        "x2": 0.75,
-        "y2": 0.75,
-        "z2": 0.75
-    },
-    "blockmaterial": "Metal",
-    "drawtype": "json",
-    "faceCullMode": "NeverCull",
-    "sideOpaque": {
-        "all": false
-    },
+	"attributes": {
+		"handbook": {
+			"excludeByType": {
+				"*": false
+			}
+		}
+	},
+	"texturesByType": {
+		"*-item": { "pipe": { "base": "block/bronze" } },
+		"*-fluid": { "pipe": { "base": "block/wornsteel" } },
+		"*": {}
+	},
+	"selectionBoxes":[
+		{ "x1": 0.375, "y1": 0, "z1": 0.375, "x2": 0.625, "y2": 0.3125, "z2": 0.625, "rotateX": 90, "rotateZ": 0 },
+		{ "x1": 0.375, "y1": 0, "z1": 0.375, "x2": 0.625, "y2": 0.3125, "z2": 0.625, "rotateX": 90, "rotateZ": 90 },
+		{ "x1": 0.375, "y1": 0, "z1": 0.375, "x2": 0.625, "y2": 0.3125, "z2": 0.625, "rotateX": 90, "rotateZ": 180 },
+		{ "x1": 0.375, "y1": 0, "z1": 0.375, "x2": 0.625, "y2": 0.3125, "z2": 0.625, "rotateX": 90, "rotateZ": 270 },
+		{ "x1": 0.375, "y1": 0, "z1": 0.375, "x2": 0.625, "y2": 0.3125, "z2": 0.625, "rotateX": 180 },
+		{ "x1": 0.375, "y1": 0, "z1": 0.375, "x2": 0.625, "y2": 0.3125, "z2": 0.625 },
+		{ "x1": 0.375, "y1": 0.375, "z1": 0.375, "x2": 0.625, "y2": 0.625, "z2": 0.625 }
+	],
+	"collisionbox": { "x1": 0.3125, "y1": 0.3125, "z1": 0.3125, "x2": 0.75, "y2": 0.75, "z2": 0.75 },
+	"blockmaterial": "Metal",
+	"drawtype": "json",
+	"faceCullMode": "NeverCull",
+	"sideOpaque": { "all": false },
     "sidesolid": {
-        "all": true
+            "all": true
     },
-    "emitSideAo": {
-        "all": false
-    },
-    "lightAbsorption": 0,
-    "rainPermeable": true,
-    "resistance": 3.5,
-    "sounds": {
-        "place": "game:block/chute",
-        "break": "game:block/chute",
-        "hit": "game:block/chute",
-        "walk": "game:walk/stone"
-    },
-    "maxStackSize": 64,
-    "materialDensity": 600,
-    "heldTpIdleAnimation": "holdbothhandslarge",
-    "heldTpUseAnimation": "twohandplaceblock",
-    "tpHandTransform": {
-        "translation": {
-            "x": -1.23,
-            "y": -0.91,
-            "z": -0.8
-        },
-        "rotation": {
-            "x": -2,
-            "y": 25,
-            "z": -78
-        },
-        "scale": 0.4
-    },
-    "groundTransform": {
-        "translation": {
-            "x": 0,
-            "y": -0.356,
-            "z": 0
-        },
-        "rotation": {
-            "x": 0,
-            "y": -41,
-            "z": 0
-        },
-        "origin": {
-            "x": 0.5,
-            "y": 0,
-            "z": 0.5
-        },
-        "scale": 4.82
-    },
-    "guiTransform": {
-        "rotation": {
-            "x": -24,
-            "y": -43,
-            "z": -5
-        },
-        "scale": 2.75
-    },
-    "dropsByType": {
-        "*-item": [
-            {
-                "type": "block",
-                "code": "pipe-item",
-                "quantity": {
-                    "avg": 1
-                }
-            }
-        ],
-        "*-fluid": [
-            {
-                "type": "block",
-                "code": "pipe-fluid",
-                "quantity": {
-                    "avg": 1
-                }
-            }
-        ]
+	"emitSideAo": { "all": false },
+	"lightAbsorption": 0,
+	"rainPermeable": true,
+	"resistance": 3.5,
+	"sounds": {
+		"place": "game:block/chute",
+		"break": "game:block/chute",
+		"hit": "game:block/chute",
+		"walk": "game:walk/stone"
+	},
+	"maxStackSize": 64,
+	"materialDensity": 600,
+	"heldTpIdleAnimation": "holdbothhandslarge", "heldTpUseAnimation": "twohandplaceblock",
+	"tpHandTransform": {
+		"translation": { "x": -1.23, "y": -0.91, "z": -0.8 },
+		"rotation": { "x": -2, "y": 25, "z": -78 },
+		"scale": 0.4
+	},
+	"groundTransform": {
+		"translation": { "x": 0, "y": -0.356, "z": 0 },
+		"rotation": { "x": 0, "y": -41, "z": 0 },
+		"origin": { "x": 0.5, "y": 0, "z": 0.5 },
+		"scale": 4.82
+	},
+	"guiTransform": {
+		"rotation": { "x": -24, "y": -43, "z": -5 },
+		"scale": 2.75
+	},
+	"dropsByType": {
+        "*-item": [{ "type": "block", "code": "pipe-item", "quantity": { "avg": 1 } }],
+		"*-fluid": [{ "type": "block", "code": "pipe-fluid", "quantity": { "avg": 1 } }]
     }
 }

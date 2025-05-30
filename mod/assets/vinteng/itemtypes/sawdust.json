@@ -16,7 +16,7 @@
 	},
 	"shape": { "base": "game:item/resource/crushed/potash" },
 	"texture": { "base": "game:item/resource/crushed/potash" },
-	"creativeinventory": { "general": ["*"], "items": ["*"],"vinteng": ["*"] },
+	"creativeinventory": { "general": ["*"], "items": ["*"] },
 	"maxstacksize": 128,
 	"materialDensity": 500,
 	"combustibleProps": {

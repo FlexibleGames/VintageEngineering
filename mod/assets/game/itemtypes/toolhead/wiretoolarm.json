@@ -10,7 +10,7 @@
 			"metal": { "base": "game:block/metal/ingot/{metal}" }
 		}
 	},
-	"creativeinventory": { "general": ["*"], "items": ["*"],"vinteng": ["*"]  },
+	"creativeinventory": { "general": ["*"], "items": ["*"] },
 	"guiTransform": {
 		"translation": { "x": 0, "y": 0, "z": 0 },
 		"rotation": { "x": -65, "y": 60, "z": 33 },

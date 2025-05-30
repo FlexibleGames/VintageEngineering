@@ -29,7 +29,7 @@
     "maxstacksize":  1,
 	"heldTpHitAnimation": "smithing",
 	"shape": { "base": "vinteng:item/vepipefilter" },
-	"creativeinventory": { "general": ["*"], "items": ["*"], "tools": ["*"],"vinteng": ["*"]  },
+	"creativeinventory": { "general": ["*"], "items": ["*"], "tools": ["*"] },
 	"fpHandTransform": {
 		"translation": { "x": 0, "y": 0.4, "z": 0 },
 		"rotation": { "x": -33, "y": 6, "z": 90 },

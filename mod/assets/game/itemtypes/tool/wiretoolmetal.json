@@ -44,7 +44,7 @@
 	"textures": {
 		"metal": { "base": "game:block/metal/ingot/{metal}" }
 	},
-	"creativeinventory": { "general": ["*"], "items": ["*"], "tools": ["*"],"vinteng": ["*"] },
+	"creativeinventory": { "general": ["*"], "items": ["*"], "tools": ["*"] },
 	"guiTransform": {
 		"translation": { "x": 0, "y": 0, "z": 0 },
 		"rotation": { "x": -65, "y": 60, "z": 33 },

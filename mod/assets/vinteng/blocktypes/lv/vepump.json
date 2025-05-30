@@ -1,33 +1,31 @@
 {
-    "code": "vepump",
-    "class": "VEElectricBlock",
-    "entityClass": "VEBELVPump",
-    "entityBehaviors": [
-        {
-            "name": "Animatable"
-        },
-        {
-            "name": "Electric",
-            "properties": {
-                "canExtractPower": false,
-                "canReceivePower": true,
-                "entitytype": "Consumer",
-                "maxpower": 2000,
-                "maxpps": 1200
-            }
-        }
-    ],
-    "attributes": {
-        "craftinganimcode": "craft",
-        "powerperblockpumped": 200,
-        "powerpertankpush": 50,
-        "priority": 5,
+	"code": "vepump",
+	"class": "VEElectricBlock",
+	"entityClass": "VEBELVPump",
+	"entityBehaviors": [
+		{ "name": "Animatable" },
+		{
+			"name": "Electric",
+			"properties": {
+				"canExtractPower": false,
+				"canReceivePower": true,
+				"entitytype": "Consumer",
+				"maxpower": 2000,
+				"maxpps": 1200
+			}
+		}
+	],
+	"attributes": {
+		"craftinganimcode": "craft",
+		"powerperblockpumped": 200,
+		"powerpertankpush": 50,
+		"priority": 5,
         "wireNodes": [
             {
                 "index": 0,
                 "wirefunction": "Power",
-                "powertier": "LV",
-                "maxconnections": 1,
+				"powertier": "LV",
+				"maxconnections": 1,
                 "x1": 0.258125,
                 "y1": 0.625,
                 "z1": 0.258125,
@@ -36,52 +34,25 @@
                 "z2": 0.445625
             }
         ]
-    },
-    "creativeinventory": {
-        "general": [
-            "vepump"
-        ],
-        "terrain": [
-            "*"
-        ],
-        "mechanics": [
-            "*"
-        ],
-        "vinteng": [
-            "vepump"
-        ]
-    },
-    "shape": {
-        "base": "vinteng:block/lv/pump"
-    },
-    "blockmaterial": "Metal",
-    "textures": {},
-    "sidesolid": {
-        "all": false,
-        "down": true
-    },
-    "sideopaque": {
-        "all": false
-    },
-    "lightAbsorption": 1,
-    "maxStackSize": 8,
-    "replaceable": 600,
-    "resistance": 1.5,
-    "collisionSelectionBoxes": [
-        {
-            "x1": 0.25,
-            "y1": 0,
-            "z1": 0.25,
-            "x2": 0.75,
-            "y2": 1,
-            "z2": 0.75
-        }
-    ],
-    "guiTransform": {
-        "rotation": {
-            "x": -22.6,
-            "y": -149,
-            "z": 0
-        }
-    }
+	},
+	"creativeinventory": { "general": ["vepump"], "terrain": ["*"], "mechanics": ["*"] },
+	"shape": { "base": "vinteng:block/lv/pump" },
+	"blockmaterial": "Metal",
+	"textures": {},
+	"sidesolid": {
+		"all": false, "down": true
+	},
+	"sideopaque": {
+		"all": false
+	},
+	"lightAbsorption": 1,
+	"maxStackSize": 8,
+	"replaceable": 600,
+	"resistance": 1.5,
+	"collisionSelectionBoxes": [
+		{ "x1": 0.25, "y1": 0, "z1": 0.25, "x2": 0.75, "y2": 1, "z2": 0.75 }
+	],
+	"guiTransform": {
+		"rotation": { "x": -22.6, "y": -149, "z": 0 }
+	}
 }

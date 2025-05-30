@@ -1,8 +1,7 @@
 {
 	"code": "metalgear",
 	"creativeinventory": {
-		"items": [ "*" ],
-        "vinteng": ["*"] 
+		"items": [ "*" ]
 	},
 	"drawtype": "json",
 	"shape": { "base": "vinteng:item/parts/gear" },

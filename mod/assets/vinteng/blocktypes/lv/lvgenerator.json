@@ -1,125 +1,78 @@
 {
-    "code": "velvgenerator",
-    "class": "VELVGenerator",
-    "entityClass": "VEBELVGenerator",
-    "behaviors": [
-        {
-            "name": "HorizontalOrientable",
-            "properties": {
-                "drop": {
-                    "type": "block",
-                    "code": "velvgenerator-north"
-                }
-            }
-        }
-    ],
-    "variantgroups": [
-        {
-            "code": "side",
-            "loadFromProperties": "abstract/horizontalorientation"
-        }
-    ],
-    "entityBehaviors": [
-        {
-            "name": "Animatable"
-        },
-        {
-            "name": "Electric",
-            "properties": {
-                "canExtractPower": true,
-                "canReceivePower": false,
-                "entitytype": "Producer",
-                "maxpower": 1000,
-                "maxpps": 100
-            }
-        }
-    ],
-    "attributes": {
-        "handbook": {
-            "groupBy": [
-                "velvgenerator-*"
-            ],
-            "excludeByType": {
-                "*-north": false,
-                "*": true
-            }
-        },
-        "craftinganimcode": "craft",
-        "priority": 5,
+	"code": "velvgenerator",
+	"class": "VELVGenerator",
+	"entityClass": "VEBELVGenerator",
+	"behaviors": [
+		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "velvgenerator-north" }}}
+	],
+	"variantgroups": [
+		{ "code":"side", "loadFromProperties": "abstract/horizontalorientation" }
+	],
+	"entityBehaviors": [
+		{ "name": "Animatable" },
+		{
+			"name": "Electric",
+			"properties": {
+				"canExtractPower": true,
+				"canReceivePower": false,
+				"entitytype": "Producer",
+				"maxpower": 1000,
+				"maxpps": 100
+			}
+		}
+	],
+	"attributes": {
+		"handbook": {
+			"groupBy": ["velvgenerator-*"],
+			"excludeByType": {
+				"*-north": false,
+				"*": true
+			}
+		},
+		"craftinganimcode": "craft",
+		"priority": 5,
         "wireNodes": [
             {
                 "index": 0,
                 "wirefunction": "Power",
-                "powertier": "LV",
-                "maxconnections": 1,
-                "x1": 0.625,
-                "y1": 0.4375,
-                "z1": 0.0625,
-                "x2": 0.75,
-                "y2": 0.625,
-                "z2": 0.25,
+				"powertier": "LV",
+				"maxconnections": 1,
+				"x1": 0.625,
+				"y1": 0.4375,
+				"z1": 0.0625,
+				"x2": 0.75,
+				"y2": 0.625,
+				"z2": 0.25,
                 "rotateYByType": {
-                    "*-north": 0,
-                    "*-east": 270,
+					"*-north": 0,
+					"*-east": 270,
                     "*-south": 180,
                     "*-west": 90
                 }
             }
         ]
-    },
-    "creativeinventory": {
-        "general": [
-            "*-north"
-        ],
-        "terrain": [
-            "*"
-        ],
-        "mechanics": [
-            "*"
-        ],
-        "vinteng": [
-            "*-north"
-        ]
-    },
-    "shapeByType": {
-        "*-north": {
-            "base": "vinteng:block/lv/generator",
-            "rotateY": 0
-        },
-        "*-east": {
-            "base": "vinteng:block/lv/generator",
-            "rotateY": 270
-        },
-        "*-south": {
-            "base": "vinteng:block/lv/generator",
-            "rotateY": 180
-        },
-        "*-west": {
-            "base": "vinteng:block/lv/generator",
-            "rotateY": 90
-        }
-    },
-    "blockmaterial": "Metal",
-    "textures": {},
-    "sidesolid": {
-        "all": false,
-        "down": true
-    },
-    "sideopaque": {
-        "all": false
-    },
-    "lightAbsorption": 1,
-    "maxStackSize": 8,
-    "replaceable": 600,
-    "resistance": 1.5,
-    "collisionSelectionBoxes": [
-        {
-            "x1": 0.0625,
-            "y1": 0,
-            "z1": 0.0625,
-            "x2": 0.9375,
-            "y2": 0.9375,
-            "z2": 0.9375
-        }
-    ]
+	},
+	"creativeinventory": { "general": ["*-north"], "terrain": ["*"], "mechanics": ["*"] },
+	"shapeByType": {
+		"*-north": { "base": "vinteng:block/lv/generator", "rotateY":0 },
+		"*-east": { "base": "vinteng:block/lv/generator", "rotateY":270 },
+		"*-south": { "base": "vinteng:block/lv/generator", "rotateY":180 },
+		"*-west": { "base": "vinteng:block/lv/generator", "rotateY":90 }
+	},
+	"blockmaterial": "Metal",
+	"textures": {
+	},
+	"sidesolid": {
+		"all": false, "down": true
+	},
+	"sideopaque": {
+		"all": false
+	},
+	"lightAbsorption": 1,
+	"maxStackSize": 8,
+	"replaceable": 600,
+	"resistance": 1.5,
+	"collisionSelectionBoxes": [
+		{ "x1": 0.0625, "y1": 0, "z1": 0.0625, "x2": 0.9375, "y2": 0.9375, "z2": 0.9375 }
+	]
 }
