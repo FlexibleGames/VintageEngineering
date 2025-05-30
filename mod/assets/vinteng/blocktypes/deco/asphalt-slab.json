@@ -1,0 +1,93 @@
+{
+	"code": "asphaltslab",
+	"class": "BlockSlabSnowRemove",
+	"behaviors": [
+		{
+			"name": "OmniRotatable",
+			"properties": {
+				"rotateSides": true,
+				"facing": "block"
+			}
+		},
+		{ "name": "WrenchOrientable", "properties": { "baseCode": "asphaltslab-down" } }
+	],
+	"variantgroups": [
+		{ "code": "rot", "states": ["north", "east", "south", "west", "up", "down"] }
+	],
+	"attributes": {
+		"mapColorCode": "settlement",
+		"canChisel": true,
+		"chiselShapeFromCollisionBox": true,
+		"handbook": {
+			"groupBy": ["asphaltslab-*"]	
+		},
+		"liquidBarrierOnSidesByType": {
+		   "*-down-*": [ 0.5, 0.5, 0.5, 0.5 ]
+		}
+	},
+	"replaceable": 200,
+	"resistance": 4,
+	"blockmaterial": "Stone",
+	"creativeinventory": { "general": ["*-down"], "construction": ["*-down"], "vinteng-decor": ["*-down"] },
+    "walkspeedmultiplier": 1.6,
+	"drops": [{ "code": "asphaltslab-down" }],
+	"shape": { "base": "game:block/basic/slab/slab-{rot}" },
+	"textures": {
+		"horizontals": { "base": "block/stone/asphalt" },
+		"verticals": { "base": "block/stone/asphalt" }
+	},
+	"sideSolidOpaqueAoByType": {
+		"*-north": { "all": false, "north": true },
+		"*-east": { "all": false, "east": true },
+		"*-south": { "all": false, "south": true },
+		"*-west": { "all": false, "west": true },
+		"*-up": { "all": false, "up": true },
+		"*-down": { "all": false, "down": true }
+	},
+	"sideAo": { "all": true },
+	"emitSideAoByType": {
+		"*-up": { "all": false, "up": true },
+		"*-down": { "all": false, "down": true },
+		"*": { "all": false }
+	},
+	"collisionbox": { "x1": 0, "y1": 0, "z1": 0,   "x2": 1, "y2": 0.5, "z2": 1,
+		"rotateXByType": {
+			"*-north": 90,
+			"*-south": 270,
+			"*-up": 180,
+			"*-down": 0
+		},
+		"rotateZByType": {
+			"*-east": 90,
+			"*-west": 270
+		}
+	},
+	"selectionbox": { "x1": 0, "y1": 0, "z1": 0,   "x2": 1, "y2": 0.5, "z2": 1,
+		"rotateXByType": {
+			"*-north": 90,
+			"*-south": 270,
+			"*-up": 180,
+			"*-down": 0
+		},
+		"rotateZByType": {
+			"*-east": 90,
+			"*-west": 270
+		}
+	},
+	"sounds": {
+		"walk": "walk/stone",
+		"byTool": {
+			"Pickaxe": { "hit": "block/rock-hit-pickaxe", "break": "block/rock-break-pickaxe" }
+		}
+	},
+	"guiTransform": {
+		"translation": { "x": 0, "y": 2, "z": 0 },
+		"origin": { "x": 0.5, "y": 0.25, "z": 0.5 }
+	},
+	"heldTpIdleAnimation": "holdbothhandslarge", "heldRightReadyAnimation": "heldblockready", "heldTpUseAnimation": "twohandplaceblock",
+	"tpHandTransform": {
+		"translation": { "x": -1.23, "y": -0.91, "z": -0.8 },
+		"rotation": { "x": -2, "y": 25, "z": -78 },
+		"scale": 0.4
+	}
+}

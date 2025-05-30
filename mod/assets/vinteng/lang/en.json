@@ -143,8 +143,14 @@
     "vinteng:item-bitumen": "Bitumen",
     "vinteng:itemdesc-bitumen": "A product of Oil Distillation, doesn't burn very hot, but burns for a long time. Can also be mixed into asphault.",
 
-    "vinteng:block-asphault": "Asphalt",
-    "vinteng:blockdesc-asphault": "A block of aggregates and bitumen heated, then mixed together. Makes great pathways.",
+    "vinteng:block-asphalt": "Asphalt",
+    "vinteng:blockdesc-asphalt": "A block of aggregates and bitumen heated, then mixed together. Makes great pathways.",
+
+    "vinteng:block-asphaltstairs-*": "Asphalt Stairs",
+    "vinteng:blockdesc-asphaltstairs-*": "A block of aggregates and bitumen heated, then mixed together. Makes great pathways; This one is conviniently stair shaped.",
+
+    "vinteng:block-asphaltslab-*": "Asphalt Slab",
+    "vinteng:blockdesc-asphaltslab-*": "A block of aggregates and bitumen heated, then mixed together. Makes great pathways; This one is a slab.",
 
 	"vinteng:gui-mold-text": "Mold",
 	"vinteng:gui-diecast-text": "Gauge",
