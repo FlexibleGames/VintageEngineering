@@ -1,0 +1,57 @@
+[
+    {
+        "ingredientPattern": "S,A",
+        "ingredients": {
+            "S": { "type": "item", "code": "game:saw-*", "quantity": 1, "isTool":true },
+            "A": { "type": "block", "code": "vinteng:asphalt", "quantity": 1 }
+        },
+        "width": 1,
+        "height": 2,
+        "output": { "type": "block", "code": "vinteng:asphaltslab-down", "quantity": 2  }
+    },
+    {
+        "ingredientPattern": "S,S",
+        "ingredients": {
+            "S": { "type": "block", "code": "vinteng:asphaltslab-down", "quantity": 1 }
+        },
+        "width": 1,
+        "height": 2,
+        "output": { "type": "block", "code": "vinteng:asphalt", "quantity": 1  }
+    },
+    {
+        "ingredientPattern": "S_,SS",
+        "ingredients": {
+            "S": { "type": "block", "code": "vinteng:asphalt", "quantity": 1 }
+        },
+        "width": 2,
+        "height": 2,
+        "output": { "type": "block", "code": "vinteng:asphaltstairs-up-north", "quantity": 4  }
+    },
+    {
+        "ingredientPattern": "S__,SS_,SSS",
+        "ingredients": {
+            "S": { "type": "block", "code": "vinteng:asphalt", "quantity": 1 }
+        },
+        "width": 3,
+        "height": 3,
+        "output": { "type": "block", "code": "vinteng:asphaltstairs-up-north", "quantity": 8  }
+    },
+    {
+        "ingredientPattern": "SS,SS",
+        "ingredients": {
+            "S": { "type": "block", "code": "vinteng:asphaltstairs-up-north", "quantity": 1 }
+        },
+        "width": 2,
+        "height": 2,
+        "output": { "type": "block", "code": "vinteng:asphalt", "quantity": 3  }
+    },
+    {
+        "ingredientPattern": "SSS,S_S,SSS",
+        "ingredients": {
+            "S": { "type": "block", "code": "vinteng:asphaltstairs-up-north", "quantity": 1 }
+        },
+        "width": 3,
+        "height": 3,
+        "output": { "type": "block", "code": "vinteng:asphalt", "quantity": 6  }
+    }
+]
