@@ -1,0 +1,86 @@
+[
+    {
+        "code": "asphault-from-bitumen",
+        "powerpercraft": 200,
+        "attributes": {
+            "requirestemp": 100
+        },
+        "ingredients": [
+            {
+                "type": "item",
+                "code": "bitumen",
+                "quantity": 1
+            },
+            {
+                "type": "block",
+                "code": "game:gravel-*",
+                "quantity": 8,
+                "name": "type",
+                "allowedVariants": [
+                    "andesite",
+                    "chalk",
+                    "chert",
+                    "conglomerate",
+                    "limestone",
+                    "claystone",
+                    "granite",
+                    "sandstone",
+                    "shale",
+                    "basalt",
+                    "peridotite",
+                    "phyllite",
+                    "slate"
+                ]
+            },
+            {
+                "type": "block",
+                "code": "game:sand-*",
+                "quantity": 8,
+                "name": "type",
+                "allowedVariants": [
+                    "andesite",
+                    "chalk",
+                    "chert",
+                    "conglomerate",
+                    "limestone",
+                    "claystone",
+                    "granite",
+                    "sandstone",
+                    "shale",
+                    "basalt",
+                    "peridotite",
+                    "phyllite",
+                    "slate"
+                ]
+            }
+        ],
+        "outputs": [
+            {
+                "type": "block",
+                "code": "vinteng:asphalt",
+                "quantity": 16
+            }
+        ]
+    },
+    {
+        "code": "bitumen-from-oil",
+        "powerpercraft": 150,
+        "attributes": {
+            "requirestemp": 100
+        },
+        "ingredients": [
+            {
+                "type": "item",
+                "code": "crudeoilportion",
+                "litres": 2
+            }
+        ],
+        "outputs": [
+            {
+                "type": "item",
+                "code": "bitumen",
+                "quantity": 1
+            }
+        ]
+    }
+]

@@ -36,7 +36,7 @@
         "*-temporalsteel": { "capacity": 50000 },
         "*-infsink": { "capacity": 16000 }
     },
-	"creativeinventory": { "general": ["vefluidtank-*"], "terrain": ["*"], "mechanics": ["*"] },
+	"creativeinventory": { "general": ["vefluidtank-*"], "terrain": ["*"], "mechanics": ["*"], "vinteng": ["*"] },
 	"shape": { "base": "vinteng:block/fluidtank" },
 	"blockmaterial": "Metal",
 	"texturesByType": {

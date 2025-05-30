@@ -51,7 +51,7 @@
             }
         ]
 	},
-	"creativeinventory": { "general": ["velvcharger-north"], "terrain": ["*"], "mechanics": ["*"] },
+	"creativeinventory": { "general": ["velvcharger-north"], "terrain": ["*"], "mechanics": ["*"], "vinteng": ["*-north"] },
 	"shapeByType": {
 		"*-north": 	{ "base": "vinteng:block/lv/lvcharger", "rotateY":0 },
 		"*-east": 	{ "base": "vinteng:block/lv/lvcharger", "rotateY":270 },

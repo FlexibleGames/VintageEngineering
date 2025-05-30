@@ -140,6 +140,12 @@
 	"vinteng:item-sawdust": "Sawdust",
 	"vinteng:itemdesc-sawdust": "A byproduct of the Sawmill, burns hot and fast and makes a good base for paper products.",
 
+    "vinteng:item-bitumen": "Bitumen",
+    "vinteng:itemdesc-bitumen": "A product of Oil Distillation, doesn't burn very hot, but burns for a long time. Can also be mixed into asphault.",
+
+    "vinteng:block-asphault": "Asphalt",
+    "vinteng:blockdesc-asphault": "A block of aggregates and bitumen heated, then mixed together. Makes great pathways.",
+
 	"vinteng:gui-mold-text": "Mold",
 	"vinteng:gui-diecast-text": "Gauge",
 	"vinteng:gui-sawblade-text": "Blade",

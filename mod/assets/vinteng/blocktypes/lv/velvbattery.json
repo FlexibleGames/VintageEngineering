@@ -42,7 +42,7 @@
             }
         ]
 	},
-	"creativeinventory": { "general": ["velvbattery"], "terrain": ["*"], "mechanics": ["*"] },
+	"creativeinventory": { "general": ["velvbattery"], "terrain": ["*"], "mechanics": ["*"], "vinteng": ["*"] },
 	"shape": { "base": "vinteng:block/lv/battery" },
 	"blockmaterial": "Metal",
 	"textures": {},

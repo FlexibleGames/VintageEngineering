@@ -1,0 +1,27 @@
+{
+    "code": "asphalt",
+    "creativeinventory": {
+        "general": [
+            "*"
+        ],
+        "vinteng-decor": [
+            "*"
+        ]
+    },
+    "maxStackSize": 32,
+    "blockmaterial": "Stone",
+    "drawtype": "Cube",
+    "texturesByType": {
+        "*": {
+            "all": {
+                "base": "block/stone/asphalt"
+            }
+        }
+    },
+    "resistance": 1,
+    "sounds": {
+        "place": "game:block/stone",
+        "walk": "game:walk/stone"
+    },
+    "walkspeedmultiplier": 1.6
+}

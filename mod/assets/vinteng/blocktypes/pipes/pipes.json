@@ -11,7 +11,7 @@
 		{ "code": "purpose", "states": [ "item", "fluid"] }
 	],
 	"behaviors": [],
-	"creativeinventory": { "general": ["*"], "construction": ["*"] },
+	"creativeinventory": { "general": ["*"], "construction": ["*"], "vinteng": ["*"] },
 	"shapeByType": {
         "*":  { "base": "vinteng:block/pipes/pipe-center" }
     },

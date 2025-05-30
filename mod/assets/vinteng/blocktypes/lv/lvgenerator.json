@@ -52,7 +52,7 @@
             }
         ]
 	},
-	"creativeinventory": { "general": ["*-north"], "terrain": ["*"], "mechanics": ["*"] },
+	"creativeinventory": { "general": ["*-north"], "terrain": ["*"], "mechanics": ["*"], "vinteng":["*-north"] },
 	"shapeByType": {
 		"*-north": { "base": "vinteng:block/lv/generator", "rotateY":0 },
 		"*-east": { "base": "vinteng:block/lv/generator", "rotateY":270 },

@@ -1,7 +1,8 @@
 {
 	"code": "braidedwire",
 	"creativeinventory": {
-		"items": [ "*" ]
+		"items": [ "*" ],
+		"vinteng": ["*"]
 	},
 	"drawtype": "json",
 	"shape": { "base": "item/parts/braidedwire" },

@@ -35,7 +35,7 @@
             }
         ]
 	},
-	"creativeinventory": { "general": ["vepump"], "terrain": ["*"], "mechanics": ["*"] },
+	"creativeinventory": { "general": ["vepump"], "terrain": ["*"], "mechanics": ["*"], "vinteng": ["*"] },
 	"shape": { "base": "vinteng:block/lv/pump" },
 	"blockmaterial": "Metal",
 	"textures": {},
