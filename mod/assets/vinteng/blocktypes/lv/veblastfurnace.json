@@ -34,7 +34,7 @@
         }
 	},
 	"shapeinventory": { "base": "block/lv/blastfurnace-inventory" },
-	"creativeinventory": { "general": ["veblastfurnace-north"], "terrain": ["*"], "mechanics": ["*"] },
+	"creativeinventory": { "general": ["veblastfurnace-north"], "terrain": ["*"], "mechanics": ["*"], "vinteng": ["veblastfurnace-north"] },
 	"shapeByType": {
 		"*-north": 	{ "base": "vinteng:block/lv/blastfurnace", "rotateY":0 },
 		"*-east": 	{ "base": "vinteng:block/lv/blastfurnace", "rotateY":270 },

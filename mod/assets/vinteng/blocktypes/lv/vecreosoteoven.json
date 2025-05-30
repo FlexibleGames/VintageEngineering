@@ -38,7 +38,7 @@
         }
 	},
 	"shapeinventory": { "base": "block/lv/creosoteoven-inventory" },
-	"creativeinventory": { "general": ["vecreosoteoven-north"], "terrain": ["*"], "mechanics": ["*"] },
+	"creativeinventory": { "general": ["vecreosoteoven-north"], "terrain": ["*"], "mechanics": ["*"], "vinteng": ["*-north"] },
 	"shapeByType": {
 		"*-north": 	{ "base": "vinteng:block/lv/creosoteoven", "rotateY":0 },
 		"*-east": 	{ "base": "vinteng:block/lv/creosoteoven", "rotateY":270 },

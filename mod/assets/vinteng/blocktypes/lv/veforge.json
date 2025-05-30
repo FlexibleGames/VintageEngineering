@@ -51,7 +51,7 @@
             }
         ]
 	},
-	"creativeinventory": { "general": ["veforge-north"], "terrain": ["*"], "mechanics": ["*"] },
+	"creativeinventory": { "general": ["veforge-north"], "terrain": ["*"], "mechanics": ["*"], "vinteng": ["*-north"] },
 	"shapeByType": {
 		"*-north": 	{ "base": "vinteng:block/lv/forge", "rotateY":0 },
 		"*-east": 	{ "base": "vinteng:block/lv/forge", "rotateY":270 },

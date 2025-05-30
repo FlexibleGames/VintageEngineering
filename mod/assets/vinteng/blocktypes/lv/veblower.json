@@ -52,7 +52,7 @@
             }
         ]
 	},
-	"creativeinventory": { "general": ["veblower-north"], "terrain": ["*"], "mechanics": ["*"] },
+	"creativeinventory": { "general": ["veblower-north"], "terrain": ["*"], "mechanics": ["*"], "vinteng": ["veblower-north"]},
 	"shapeByType": {
 		"*-north": 	{ "base": "vinteng:block/lv/blower", "rotateY":0 },
 		"*-east": 	{ "base": "vinteng:block/lv/blower", "rotateY":270 },

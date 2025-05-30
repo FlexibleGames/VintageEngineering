@@ -46,7 +46,7 @@
 		"*-steel": 4500,
         "*-titanium": 10000
 	},
-	"creativeinventory": { "general": ["*"], "items": ["*"], "tools": ["*"] },
+	"creativeinventory": { "general": ["*"], "items": ["*"], "tools": ["*"] ,"vinteng": ["*"] },
 	"fpHandTransform": {
 		"translation": { "x": 0, "y": 0.4, "z": 0 },
 		"rotation": { "x": -33, "y": 6, "z": 90 },

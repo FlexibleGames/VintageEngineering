@@ -56,7 +56,7 @@
             "*-north": [ "crusher" ]
         }
 	},
-	"creativeinventory": { "general": ["vecrusher-north"], "terrain": ["*"], "mechanics": ["*"] },
+	"creativeinventory": { "general": ["vecrusher-north"], "terrain": ["*"], "mechanics": ["*"], "vinteng": ["*-north"]},
 	"shapeByType": {
 		"*-north": 	{ "base": "vinteng:block/lv/crusher", "rotateY":0 },
 		"*-east": 	{ "base": "vinteng:block/lv/crusher", "rotateY":270 },

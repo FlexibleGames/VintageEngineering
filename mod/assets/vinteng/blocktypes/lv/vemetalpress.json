@@ -55,7 +55,7 @@
             "*-north": [ "metalpress" ]
         }
 	},
-	"creativeinventory": { "general": ["vemetalpress-north"], "terrain": ["*"], "mechanics": ["*"] },
+	"creativeinventory": { "general": ["vemetalpress-north"], "terrain": ["*"], "mechanics": ["*"], "vinteng":["*-north"] },
 	"shapeByType": {
 		"*-north": 	{ "base": "vinteng:block/lv/metalpress", "rotateY":0 },
 		"*-east": 	{ "base": "vinteng:block/lv/metalpress", "rotateY":270 },

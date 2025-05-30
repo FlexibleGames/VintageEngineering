@@ -58,7 +58,7 @@
             "*-north": [ "mixer" ]
         }
 	},
-	"creativeinventory": { "general": ["vemixer-north"], "terrain": ["*"], "mechanics": ["*"] },
+	"creativeinventory": { "general": ["vemixer-north"], "terrain": ["*"], "mechanics": ["*"], "vinteng":["*-north"] },
 	"shapeByType": {
 		"*-north": 	{ "base": "vinteng:block/lv/mixer", "rotateY":0 },
 		"*-east": 	{ "base": "vinteng:block/lv/mixer", "rotateY":270 },

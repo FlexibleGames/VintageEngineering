@@ -1,7 +1,8 @@
 {
 	"code": "motor",
 	"creativeinventory": {
-		"items": [ "*" ]
+		"items": [ "*" ],
+        "vinteng": ["*"]
 	},
 	"variantgroups": [
 		{

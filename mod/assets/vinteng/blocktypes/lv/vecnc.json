@@ -53,7 +53,7 @@
             }
         ]
 	},
-	"creativeinventory": { "general": ["vecnc-north"], "terrain": ["*"], "mechanics": ["*"] },
+	"creativeinventory": { "general": ["vecnc-north"], "terrain": ["*"], "mechanics": ["*"], "vinteng": ["*-north"] },
 	"shapeByType": {
 		"*-north": 	{ "base": "vinteng:block/lv/cnc", "rotateY":0 },
 		"*-east": 	{ "base": "vinteng:block/lv/cnc", "rotateY":270 },

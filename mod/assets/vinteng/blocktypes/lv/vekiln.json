@@ -54,7 +54,7 @@
             "*-north": [ "kiln" ]
         }
 	},
-	"creativeinventory": { "general": ["vekiln-north"], "terrain": ["*"], "mechanics": ["*"] },
+	"creativeinventory": { "general": ["vekiln-north"], "terrain": ["*"], "mechanics": ["*"], "vinteng": ["*-north"] },
 	"shapeByType": {
 		"*-north": 	{ "base": "vinteng:block/lv/electrickiln", "rotateY":0 },
 		"*-east": 	{ "base": "vinteng:block/lv/electrickiln", "rotateY":270 },
