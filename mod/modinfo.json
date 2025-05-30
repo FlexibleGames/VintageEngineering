@@ -5,6 +5,10 @@
   "authors": [ "Flexible Games" ],
   "description": "Extending End-Game content with machines and electricity. Includes an API to enable other modders to use the power system.",
   "website": "https://www.youtube.com/c/FlexibleGames",
+<<<<<<< Updated upstream
   "version": "0.3.9-1",
+=======
+  "version": "0.3.9-dev.1",
+>>>>>>> Stashed changes
   "dependency": {}
 }

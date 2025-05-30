@@ -376,13 +376,13 @@ namespace VintageEngineering.Electrical.Systems
                     }
                     BlockPos origin = api.World.DefaultSpawnPosition.AsBlockPos.Copy();
 
-                    if (checkblock.Id != 0 && api.World.BlockAccessor.GetBlockEntity(node.blockPos) is null)
+                    if (checkblock.Id != 0 && api.World.BlockAccessor.GetBlockEntity(node.blockPos) == null)
                     {
-                        throw new ArgumentNullException($"VintEng: Electric Update Tick found a NULL block entity at: {node.blockPos.SubCopy(origin.X, 0, origin.Y)}");
+                        throw new ArgumentNullException($"VintEng: Electric Update Tick found a NULL block entity at: {node.blockPos.SubCopy(origin.X, 0, origin.Z)}");
                     }
-                    if (checkblock.Id != 0 && IElectricalBlockEntity.GetAtPos(api.World.BlockAccessor, node.blockPos) is null)
+                    if (checkblock.Id != 0 && IElectricalBlockEntity.GetAtPos(api.World.BlockAccessor, node.blockPos) == null)
                     {
-                        throw new ArgumentNullException($"VintEng: Electric Update Tick found a NULL electrical block entity at: {node.blockPos.SubCopy(origin.X, 0, origin.Y)}");
+                        throw new ArgumentNullException($"VintEng: Electric Update Tick found a NULL electrical block entity at: {node.blockPos.SubCopy(origin.X, 0, origin.Z)}");
                     }
                 }
                 if (nodestoDelete.Count > 0)
