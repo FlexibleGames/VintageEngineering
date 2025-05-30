@@ -10,6 +10,15 @@
         "output": { "type": "block", "code": "vinteng:asphaltslab-down", "quantity": 2  }
     },
     {
+        "ingredientPattern": "A",
+        "ingredients": {
+            "A": { "type": "block", "code": "vinteng:asphaltslab-down", "quantity": 1 }
+        },
+        "width": 1,
+        "height": 1,
+        "output": { "type": "block", "code": "vinteng:asphaltslab-down", "quantity": 1  }
+    },
+    {
         "ingredientPattern": "S,S",
         "ingredients": {
             "S": { "type": "block", "code": "vinteng:asphaltslab-down", "quantity": 1 }
