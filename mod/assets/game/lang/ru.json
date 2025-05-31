@@ -1,0 +1,64 @@
+{
+	"block-catenary-lvpower": "Электрический провод (НН)",
+	"blockdesc-catenary-lvpower": "Провод для электрических сетей низкого напряжения (НН).",
+	"block-catenary-mvpower": "Электрический провод (СН)",
+	"blockdesc-catenary-mvpower": "Провод для электрических сетей среднего напряжения (СН).",
+	"block-catenary-hvpower": "Электрический провод (ВН)",
+	"blockdesc-catenary-hvpower": "Провод для электрических сетей высокого напряжения (ВН).",
+	"block-catenary-evpower": "Электрический провод (СВН)",
+	"blockdesc-catenary-evpower": "Провод для электрических сетей сверхвысокого напряжения (СВН).",
+	"block-catenary-allpower": "Электрический провод (Все)",
+	"blockdesc-catenary-allpower": "Провод для электрических сетей любого напряжения.",
+	"block-catenary-signalred": "Сигнальный провод (Красный)",
+	"blockdesc-catenary-signalred": "Красный провод для сигнальных сетей.",
+	"block-catenary-signalgreen": "Сигнальный провод (Зелёный)",
+	"blockdesc-catenary-signalgreen": "Зелёный провод для сигнальных сетей.",
+	"block-catenary-communication": "Коммуникационный провод",
+	"blockdesc-catenary-communication": "Универсальный коммуникационный провод.",
+
+	"item-wiretool-iron": "Кусачки (Железные)",
+	"itemdesc-wiretool-iron": "Инструмент для обрезки проводов.",
+	"item-wiretool-meteoriciron": "Кусачки (Метеоритное железо)",
+	"itemdesc-wiretool-meteoriciron": "Инструмент для обрезки проводов.",
+	"item-wiretool-steel": "Кусачки (Стальные)",
+	"itemdesc-wiretool-steel": "Инструмент для обрезки проводов.",
+
+	"item-wiretoolarm-iron": "Губка кусачек (Железная)",
+	"itemdesc-wiretoolarm-iron": "Компонент кусачек для проводов.",
+	"item-wiretoolarm-meteoriciron": "Рукоять кусачек (Метеоритное железо)",
+	"itemdesc-wiretoolarm-meteoriciron": "Компонент кусачек для проводов.",
+	"item-wiretoolarm-steel": "Рукоять кусачек (Стальная)",
+	"itemdesc-wiretoolarm-steel": "Компонент кусачек для проводов.",
+
+	"block-wirerelay-lvpower-*": "Реле провода (НН)",
+	"blockdesc-wirerelay-lvpower-*": "Простое реле для подключения проводов НН. Не накапливает энергию. Используется для прокладки проводов по базе.",
+
+	"block-wirerelay-mvpower-*": "Реле провода (СН)",
+	"blockdesc-wirerelay-mvpower-*": "Простое реле для подключения проводов СН. Не накапливает энергию. Используется для прокладки проводов по базе.",
+
+	"block-wirerelay-hvpower-*": "Реле провода (ВН)",
+	"blockdesc-wirerelay-hvpower-*": "Простое реле для подключения проводов ВН. Не накапливает энергию. Используется для прокладки проводов на большие расстояния.",
+
+	"block-wirerelay-evpower-*": "Реле провода (СВН)",
+	"blockdesc-wirerelay-evpower-*": "Простое реле для подключения проводов СВН. Не накапливает энергию. Используется для прокладки проводов на большие расстояния.",
+
+	"block-wirerelay-allpower-*": "Реле провода (Все напряжения)",
+	"blockdesc-wirerelay-allpower-*": "В настоящее время не используется. Не накапливает энергию. Для тех, кто хочет создать электрическую сеть, более похожую на RF Power.",
+
+	"block-wirerelay-signalred-*": "Реле провода (Красный сигнальный)",
+	"blockdesc-wirerelay-signalred-*": "Реле для прокладки красного сигнального провода.",
+
+	"block-wirerelay-signalgreen-*": "Реле провода (Зелёный сигнальный)",
+	"blockdesc-wirerelay-signalgreen-*": "Реле для прокладки зелёного сигнального провода.",
+
+	"block-wirerelay-communication-*": "Реле провода (Коммуникационный)",
+	"blockdesc-wirerelay-communication-*": "Реле для прокладки коммуникационных линий.",
+
+	"gui-catenary-invalidblock": "Этот блок нельзя подключить проводом.",
+	"gui-catenary-needwire": "Вам нужно {0} проводов, чтобы соединить эти точки.",
+	"gui-catenary-badstart": "Начальный блок стал недействительным.",
+	"gui-catenary-wireinvalid": "Этот провод нельзя подключить к этой машине.",
+	"gui-catenary-connecttoself": "Нельзя подключить машину к самой себе.",
+	"gui-catenary-wiretooshort": "Провод слишком короткий.",
+	"gui-catenary-wiretoolong": "Провод слишком длинный, превышает максимальную длину."
+}
