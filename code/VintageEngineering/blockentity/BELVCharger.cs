@@ -436,7 +436,7 @@ namespace VintageEngineering
         {
             base.FromTreeAttributes(tree, worldForResolving);
             inventory.FromTreeAttributes(tree.GetTreeAttribute("inventory"));
-            inventory.AfterBlocksLoaded(worldForResolving);
+            if (Api != null) inventory.AfterBlocksLoaded(worldForResolving);
             rotator = tree.GetFloat("rotation", 0);
 
             if (Api != null && Api.Side == EnumAppSide.Client) SetState(Electric.MachineState);
