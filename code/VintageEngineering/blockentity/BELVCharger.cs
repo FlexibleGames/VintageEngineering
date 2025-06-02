@@ -281,6 +281,9 @@ namespace VintageEngineering
                     {
                         TranslateMesh(renderedMesh, 1f, 0.6875f, rotation);
                     }
+                    // do we add more special cases here, or do we use custom attributes for charger translation?
+                    // the Angel Belt is rendered way up off the charger as the item itself is worn on the waist
+                    // but the shape is not high up, what translates the belt so high above the charger?
                     renderedMeshRef = capi.Render.UploadMesh(renderedMesh);
                 }
             }
