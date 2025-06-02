@@ -185,15 +185,15 @@ namespace VintageEngineering.Transport.Network
                 {
                     return; // bad Buggi bad! Corrupting your test world...
                 }
-                _pipeNetworks[netid].RemovePipe(pos, world);
+                _pipeNetworks[netid].RemovePipe(pos.Copy(), world);
                 if (pipeinserts > 0)
                 {
-                    _pipeNetworks[netid].QuickUpdateNetwork(world, pos, true);
+                    _pipeNetworks[netid].QuickUpdateNetwork(world, pos.Copy(), true);
                 }
             }
             else
             {
-                SplitNetworkAt(world, pos);
+                SplitNetworkAt(world, pos.Copy());
             }
         }
 
@@ -218,7 +218,7 @@ namespace VintageEngineering.Transport.Network
             if (overrideState)
             {
                 // we are forcefully disconnecting the pipe-pipe connection
-                List<BlockPos> othernet = GetConnectedPipes(world, other.Pos);
+                List<BlockPos> othernet = GetConnectedPipes(world, other.Pos.Copy());
 
                 if (othernet.Contains(pos)) { return; } // the network is still connected elsewhere... do not split
                 else
@@ -285,7 +285,7 @@ namespace VintageEngineering.Transport.Network
                 }
             }
             // we need to remove THIS pipe from its network
-            _pipeNetworks[splitid].RemovePipe(pos, world);
+            _pipeNetworks[splitid].RemovePipe(pos.Copy(), world);
 
             // connectedpipes now has a list of all the pipe block positions of new (potential) networks.
             // the connections of the position passed in have also been disabled to prevent false connections.
@@ -351,7 +351,7 @@ namespace VintageEngineering.Transport.Network
 
             BEPipeBase bep = world.BlockAccessor.GetBlockEntity(pos) as BEPipeBase;
 
-            connectedpipes.Add(pos);
+            connectedpipes.Add(pos.Copy());
             pipestoprocess.AddRange(bep.GetPipeConnections(skippos));
 
             while (pipestoprocess.Count > 0)
@@ -361,7 +361,7 @@ namespace VintageEngineering.Transport.Network
                 {
                     if (!connectedpipes.Contains(node))
                     {
-                        connectedpipes.Add(node);
+                        connectedpipes.Add(node.Copy());
                     }
                     else continue;
 
