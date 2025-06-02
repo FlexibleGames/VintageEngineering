@@ -93,8 +93,8 @@ namespace VintageEngineering
             if (chargable)
             {
                 // use the durability!
-                int curcharge = InputSlot.Itemstack.Collectible.GetRemainingDurability(InputSlot.Itemstack);
-                int maxcharge = InputSlot.Itemstack.Collectible.Durability;
+                int curcharge = InputSlot.Itemstack.Attributes.GetInt("durability");
+                int maxcharge = InputSlot.Itemstack.Collectible.GetMaxDurability(InputSlot.Itemstack);
                 if (curcharge < maxcharge)
                 {
                     if (Electric.MachineState != EnumBEState.On) SetState(EnumBEState.On); // on and active.
