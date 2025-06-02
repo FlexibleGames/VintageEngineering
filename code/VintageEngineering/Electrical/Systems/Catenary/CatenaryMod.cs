@@ -160,7 +160,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
                 {
                     if (packet.connection != null)
                     {
-                        AddConnection(packet.connection);
+                        AddConnection(packet.connection, fromPlayer);
                     }
                 }
                 if (packet.opcode == WireConnectionOpCode.Remove || packet.opcode == WireConnectionOpCode.RemoveAll)
@@ -428,11 +428,11 @@ namespace VintageEngineering.Electrical.Systems.Catenary
                 CancelPlace(block as BlockWire, byEntity);
                 return;
             }
-            else
+            /* else
             {
                 slot.TakeOut((int)Math.Ceiling(length));
                 slot.MarkDirty();
-            }
+            } */
             
 
             // If we're here, we can connect wire
@@ -689,7 +689,8 @@ namespace VintageEngineering.Electrical.Systems.Catenary
         /// <br>Triggers OnWireConnected event for any subscribed network mods.</br>
         /// </summary>
         /// <param name="placedWire">WireConnection added</param>
-        public void AddConnection(WireConnection placedWire)
+        /// <param name="player">Player who triggered the connection.</param>
+        public void AddConnection(WireConnection placedWire, IServerPlayer player)
         {
             if (placedWire.Block == null)
             {
@@ -701,6 +702,9 @@ namespace VintageEngineering.Electrical.Systems.Catenary
             bool isAdded = data.allConnections.Add(placedWire);
             if (isAdded)
             {
+                // lets fix 26
+                player.InventoryManager.ActiveHotbarSlot.TakeOut((int)Math.Ceiling(placedWire.NodeStart.blockPos.DistanceTo(placedWire.NodeEnd.blockPos)));
+                player.BroadcastPlayerData(true);
                 serverChannel.BroadcastPacket(data);
             }
             else
