@@ -59,7 +59,7 @@ namespace VintageEngineering.blockentity
             {
                 if (consBhv != null)
                 {
-                    var powermade = consBhv.ProducePow();
+                    var powermade = consBhv.ProducePower();
                     Electric.electricpower += (ulong)powermade;
                     if (Electric.CurrentPower > Electric.MaxPower) Electric.electricpower = Electric.MaxPower;
                 }

@@ -27,7 +27,7 @@ namespace VintageEngineering.Blocks
             return face == axleFace;
         }
 
-        public MechanicalNetwork? GetNetwork(IWorldAccessor world, BlockPos pos)
+        public MechanicalNetwork GetNetwork(IWorldAccessor world, BlockPos pos)
         {
             if (world.BlockAccessor.GetBlockEntity(pos)?.GetBehavior<BEBehaviorMPBase>() is IMechanicalPowerDevice device) { return device.Network; }
             return null;
@@ -35,9 +35,7 @@ namespace VintageEngineering.Blocks
 
         public override bool DoPlaceBlock(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel, ItemStack byItemStack)
         {
-
             BlockFacing facing = BlockFacing.NORTH;
-
             try
             {
                 facing = blockSel.Face;
@@ -47,9 +45,7 @@ namespace VintageEngineering.Blocks
                 return false;
             }
 
-            if (
-                base.DoPlaceBlock(world, byPlayer, blockSel, byItemStack)
-            )
+            if (base.DoPlaceBlock(world, byPlayer, blockSel, byItemStack))
             {
 
                 if (

@@ -149,26 +149,22 @@ namespace VintageEngineering.blockBhv
             var spd = Math.Abs(Network?.Speed * GearedRatio ?? 0f);
             float base_res = 0.05f;
 
+            // Resistance increases as the speed increases?
             return base_res + Math.Abs((spd>speed_max) 
                 ? res_factor * (float)Math.Pow(spd / speed_max, 2f)
                 : res_factor * spd / speed_max);
-
         }
-
-
     }
 
     public class ElectricKineticAlternatorBhv : BEBehaviorMPBase
     {
-
-        private float powGive;
+        private float powerGive;
         private static float I_Max = 20f;
         private static float speed_max = 0.75f;
         private static float res_Fac = 0.125f;
         private static float res_Load = 0.5f;
         private static float base_res = 0f;
         private static float kpd_max = 0.95f;
-
 
         public ElectricKineticAlternatorBhv(BlockEntity blockentity) : base(blockentity)
         {
@@ -241,14 +237,14 @@ namespace VintageEngineering.blockBhv
             mesher.AddMeshData(BaseMesh());
             return base.OnTesselation(mesher, tesselator);
         }
-        public float ProducePow()
+        public float ProducePower()
         {
             float spd = network?.Speed * GearedRatio ?? 0f;
             float pow = (Math.Abs(spd) <= speed_max)
             ? Math.Abs(spd) / speed_max * I_Max
             : I_Max;
 
-            powGive = pow;
+            powerGive = pow;
             return pow;
         }
 

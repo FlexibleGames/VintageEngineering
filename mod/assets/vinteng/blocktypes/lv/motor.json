@@ -2,12 +2,10 @@
 	"code": "velvek",
 	"class": "VEElectricKinetic",
 	"entityClass": "VEBEElectricKinetic",
-	"behaviorsbytype": {"velvek-alternator-*":[
-        {"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "velvek-alternator-north" }}}
-	],
-        "velvek-motor-*":[
-        {"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "velvek-motor-north" }}}
-	]},
+	"behaviorsbytype": {
+        "velvek-alternator-*":[{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "velvek-alternator-north" }}}],
+        "velvek-motor-*":[{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "velvek-motor-north" }}}]
+    },
 	"variantgroups": [
         { "code": "type", "states": ["motor","alternator"]},
         { "code": "side", "loadFromProperties": "abstract/horizontalorientation" }
@@ -40,17 +38,26 @@
             {"name":"VEElectricKineticGenBhv"}
         ],
         "*":[{"name":"MPBase"}]
-	}
-    ,
+	},
+    "attributesByType": {
+        "velvek-motor-*": {
+            "handbook": {
+                "excludeByType": {
+                    "*-north": false,
+                    "*": true
+                }
+            }
+        },
+        "velvek-alternator-*": {
+            "handbook": {
+                "excludeByType": {
+                    "*-north": false,
+                    "*": true
+                }
+            }
+        }
+    },
 	"attributes": {
-		"handbook": {
-			"groupBy": ["velvek-*"],
-			"excludeByType": {
-				"*-motor-*": false,
-                "*-alternator-*": false,
-                "*": true
-			}
-		},
 		"priority": 5,
         "wireNodes": [
             {
@@ -73,7 +80,7 @@
             }
         ]
 	},
-	"creativeinventory": { "general": ["velvek-*-north"], "terrain": ["*"], "mechanics": ["*"], "vinteng": ["*"] },
+	"creativeinventory": { "general": ["velvek-*-north"], "terrain": ["*"], "mechanics": ["*"], "vinteng": ["*-north"] },
 	"shapeByType":{"*-north": { "base": "vinteng:block/lv/motor/motor-axle" },
                     "*-west": { "base": "vinteng:block/lv/motor/motor-axle","rotateY": 90 },
                     "*-south": { "base": "vinteng:block/lv/motor/motor-axle","rotateY": 180 },
