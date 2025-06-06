@@ -51,15 +51,25 @@ namespace VintageEngineering.blockentity
                 if (Electric.CurrentPower == 0 || Electric.CurrentPower < PPT) { return; }
                 if(genBhv != null)
                 {
-                    genBhv.ConsumePower(PPT);
-                    Electric.electricpower -= (ulong)Math.Round(PPT);
+                    Single powerwanted = genBhv.getPowReq();
+                    if (Electric.CurrentPower < powerwanted)
+                    {
+                        genBhv.ConsumePower(Electric.CurrentPower);
+                        Electric.electricpower = 0;
+                    }
+                    else
+                    {
+                        Single consumed = genBhv.getPowReq();
+                        genBhv.ConsumePower(consumed);
+                        Electric.electricpower -= (ulong)Math.Round(consumed);
+                    }
                 }
             }
             if(isGenerator)
             {
                 if (consBhv != null)
                 {
-                    var powermade = consBhv.ProducePower();
+                    float powermade = consBhv.ProducePower();
                     Electric.electricpower += (ulong)powermade;
                     if (Electric.CurrentPower > Electric.MaxPower) Electric.electricpower = Electric.MaxPower;
                 }
