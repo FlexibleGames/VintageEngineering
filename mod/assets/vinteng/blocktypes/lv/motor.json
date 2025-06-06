@@ -85,6 +85,7 @@
                     "*-west": { "base": "vinteng:block/lv/motor/motor-axle","rotateY": 90 },
                     "*-south": { "base": "vinteng:block/lv/motor/motor-axle","rotateY": 180 },
                     "*-east": { "base": "vinteng:block/lv/motor/motor-axle","rotateY": 270 } },
+    "shapeInventory": { "base": "vinteng:block/lv/motor/motor" },
 	"blockmaterial": "Metal",
 	"textures": {},
 	"sidesolid": {

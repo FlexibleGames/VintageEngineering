@@ -77,7 +77,7 @@
 	"sounds": {
 		"walk": "walk/stone",
 		"byTool": {
-			"Pickaxe": { "hit": "block/rock-hit-pickaxe", "break": "block/rock-break-pickaxe" }
+			"Pickaxe": { "hit": "game:block/rock-hit-pickaxe", "break": "game:block/rock-break-pickaxe" }
 		}
 	},
 	"guiTransform": {

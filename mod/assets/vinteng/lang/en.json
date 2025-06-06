@@ -297,6 +297,7 @@
 	"vinteng:blockdesc-crudeoil-*": "Texas Tea! A potent source of potential energy.",
 	"vinteng:item-crudeoilportion": "Crude Oil (Portion)",
 	"vinteng:itemdesc-crudeoilportion": "A little portion of crude oil, try not to get it on your cloths.",
+    "vinteng:incontainer-item-crudeoilportion": "Crude Oil",
 	"vinteng:gui-word-pumping": "Pumping",
 	"vinteng:gui-word-not": "Not",
 	"vinteng:gui-word-remaining": "Remaining",
