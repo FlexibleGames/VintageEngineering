@@ -17,18 +17,23 @@ namespace VintageEngineering.blockBhv
 {
     public class ElectricKineticMotorBhv : BEBehaviorMPBase
     {
-
+        //how much torqe we are providing
         private float torque;
-        private float IVal;
+        //how fast are we going
+        private float speedSet;
+        //how much power are we getting
         private float powRec;
+        //how much power do we want to be getting
         private float powReqed;
 
+        //How much power is needed to turn at all
         private static float Ins_Min = 10f;
-        private static float Ins_Max= 100f;
-        private static float torq_Max = 1f;
-        private static float kpdMax = 0.85f;
-        private static float speed_max = 0.5f;
-        private static float res_factor = 0.25f;
+        //How much power is needed to turn at fastest + max resistance
+        private static float Ins_Max= 250f;
+        //How much torq will be provided at max
+        private static float resistance_Max = 1f;
+        //How fast can be at max, vanilla 0-1
+        private static float speed_max = 1f;
 
 
         public ElectricKineticMotorBhv(BlockEntity blockentity) : base(blockentity)
@@ -56,9 +61,9 @@ namespace VintageEngineering.blockBhv
         {
             return ObjectCacheUtil.GetOrCreate(Api, "motor-base" + Block.Shape.rotateY, () =>
             {
-                var path = AssetLocation.Create("vinteng:block/lv/motor/motor-base").WithPathAppendixOnce(".json").WithPathPrefixOnce("shapes/");
-                var shape = Api.Assets.TryGet(path).ToObject<Shape>();
-                (Api as ICoreClientAPI).Tesselator.TesselateShape(Block, shape, out var mesh, new Vec3f(0, Block.Shape.rotateY, 0));
+                AssetLocation path = AssetLocation.Create("vinteng:block/lv/motor/motor-base").WithPathAppendixOnce(".json").WithPathPrefixOnce("shapes/");
+                Shape shape = Api.Assets.TryGet(path).ToObject<Shape>();
+                (Api as ICoreClientAPI).Tesselator.TesselateShape(Block, shape, out MeshData mesh, new Vec3f(0, Block.Shape.rotateY, 0));
                 return mesh;
             });
         }
@@ -118,53 +123,58 @@ namespace VintageEngineering.blockBhv
         {
             torque = 0f;
             resistance = GetResistance();
-            IVal = 0;
+            speedSet = 0;
             //Dangerous cast, DC,DA.
             float powAmnt = (Blockentity as BEElectricKinetic).Electric.CurrentPower;
 
             if(powAmnt <= Ins_Min) { return torque; }
-            IVal = Math.Min(powAmnt, Ins_Max);
+            //todo: change with GUI
+            speedSet = Math.Min(powAmnt/10, speed_max);
 
-            torque = IVal / Ins_Max * torq_Max;
+            torque = (speedSet * resistance) * 1.25f;
 
-            torque *= kpdMax;
-
-            powReqed = Ins_Max;
+            powReqed = Math.Min(speedSet + (resistance * 1.5f)*100f,Ins_Max);
 
             return propagationDir == OutFacingForNetworkDiscovery ? torque : -torque;
         }
 
+        /// <summary>
+        /// How much kinetic power this object got last
+        /// </summary>
+        /// <returns>The power got last, in electrical units</returns>
         public float getPowRec()
         {
             return powRec;
         }
 
+        /// <summary>
+        /// How much kinetic power this object wants
+        /// </summary>
+        /// <returns>The power it wants, in electrical units</returns>
         public float getPowReq()
         {
             return powReqed;
         }
 
+        //TODO: Replace with GUI
         public override float GetResistance()
-        {
-            var spd = Math.Abs(Network?.Speed * GearedRatio ?? 0f);
-            float base_res = 0.05f;
-
-            // Resistance increases as the speed increases?
-            return base_res + Math.Abs((spd>speed_max) 
-                ? res_factor * (float)Math.Pow(spd / speed_max, 2f)
-                : res_factor * spd / speed_max);
+        { 
+            return Math.Max(1f,resistance_Max);
         }
     }
 
     public class ElectricKineticAlternatorBhv : BEBehaviorMPBase
     {
-        private float powerGive;
-        private static float I_Max = 20f;
-        private static float speed_max = 0.75f;
+        //The max power generated at full speed
+        private static float max_Output = 80f;
+        //How fast IS max speed? Base wind-speed is 0-1
+        private static float speed_max = 0.8f;
+        //How much is added to resistance when doing something
         private static float res_Fac = 0.125f;
-        private static float res_Load = 0.5f;
+        //add this much resistance per 100% power over speed_max
+        private static float res_Load = 0.25f;
+        //How much do we consume doing literally nothing
         private static float base_res = 0f;
-        private static float kpd_max = 0.95f;
 
         public ElectricKineticAlternatorBhv(BlockEntity blockentity) : base(blockentity)
         {
@@ -226,9 +236,9 @@ namespace VintageEngineering.blockBhv
         {
             return ObjectCacheUtil.GetOrCreate(Api, "motor-base" + Block.Shape.rotateY, () =>
             {
-                var path = AssetLocation.Create("vinteng:block/lv/motor/motor-base").WithPathAppendixOnce(".json").WithPathPrefixOnce("shapes/");
-                var shape = Api.Assets.TryGet(path).ToObject<Shape>();
-                (Api as ICoreClientAPI).Tesselator.TesselateShape(Block, shape, out var mesh, new Vec3f(0, Block.Shape.rotateY, 0));
+                AssetLocation path = AssetLocation.Create("vinteng:block/lv/motor/motor-base").WithPathAppendixOnce(".json").WithPathPrefixOnce("shapes/");
+                Shape shape = Api.Assets.TryGet(path).ToObject<Shape>();
+                (Api as ICoreClientAPI).Tesselator.TesselateShape(Block, shape, out MeshData mesh, new Vec3f(0, Block.Shape.rotateY, 0));
                 return mesh;
             });
         }
@@ -240,11 +250,8 @@ namespace VintageEngineering.blockBhv
         public float ProducePower()
         {
             float spd = network?.Speed * GearedRatio ?? 0f;
-            float pow = (Math.Abs(spd) <= speed_max)
-            ? Math.Abs(spd) / speed_max * I_Max
-            : I_Max;
+            float pow = Math.Abs(spd) / speed_max * max_Output;
 
-            powerGive = pow;
             return pow;
         }
 
@@ -256,12 +263,10 @@ namespace VintageEngineering.blockBhv
         public override float GetResistance()
         {
 
-            var spd = Math.Abs(network?.Speed * GearedRatio ?? 0f);
-            var resistance = (float)(base_res + ((spd > speed_max)
-                ? res_Load + (res_Fac * (Math.Pow(spd/speed_max,2f)))
-                : res_Load + (res_Fac * spd / speed_max)));
-
-            resistance /= kpd_max;
+            float spd = Math.Abs(network?.Speed * GearedRatio ?? 0f);
+            float resistance = (float)(base_res + ((spd > speed_max)
+                ? res_Load + ((res_Fac*2) * (spd/speed_max))
+                : res_Load + (res_Fac * (spd / speed_max))));
 
             return resistance;
         }
