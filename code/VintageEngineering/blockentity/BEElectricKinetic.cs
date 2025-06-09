@@ -1,16 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using VintageEngineering.blockBhv;
 using VintageEngineering.Electrical;
-using Vintagestory.API.Client;
 using Vintagestory.API.Common;
-using Vintagestory.API.MathTools;
-using Vintagestory.API.Util;
-using Vintagestory.GameContent.Mechanics;
-using Vintagestory.ServerMods.NoObf;
+
 
 namespace VintageEngineering.blockentity
 {
@@ -21,9 +13,10 @@ namespace VintageEngineering.blockentity
 
         //public ElectricBEBehavior Electricity;
 
+        private long _clientUpdateMS = 0L;
 
-        ElectricKineticMotorBhv genBhv;
-        ElectricKineticAlternatorBhv consBhv;
+        private ElectricKineticMotorBhv genBhv;
+        private ElectricKineticAlternatorBhv consBhv;
 
         private float sleepTimer = 0;
 
@@ -31,10 +24,11 @@ namespace VintageEngineering.blockentity
         {
             base.Initialize(api);
 
-            if (api.Side != EnumAppSide.Client)
+            if (api.Side == EnumAppSide.Server)
             {
                 RegisterGameTickListener(OnSimTick, 100, 0);
-            } 
+            }
+            _clientUpdateMS = api.World.ElapsedMilliseconds;
         }
         public void OnSimTick(float dt)
         {
@@ -75,6 +69,12 @@ namespace VintageEngineering.blockentity
                         Electric.electricpower -= (ulong)Math.Round(consumed);
                     }
                 }
+            }
+            // update client values every half second
+            if (Api.World.ElapsedMilliseconds - _clientUpdateMS > 500L)
+            {
+                _clientUpdateMS = Api.World.ElapsedMilliseconds;
+                MarkDirty(true);
             }
         }
 
