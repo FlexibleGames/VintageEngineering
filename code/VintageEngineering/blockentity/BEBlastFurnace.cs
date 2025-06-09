@@ -437,8 +437,10 @@ namespace VintageEngineering
                 _alloyRecipe = alloy;
                 return true; 
             }
+            bool isPlate = false;
             foreach (ItemStack stack in stacks)
             {
+                if (stack != null && stack.Collectible.Code.Path.Contains("metalplate")) isPlate = true;
                 CombustibleProperties cprops = (stack != null) ? stack.Collectible.CombustibleProps : null;
                 if (cprops != null && !cprops.RequiresContainer) return false;
                 // RequiresContainer defaults to true unless JSON overrides the value.
@@ -448,6 +450,8 @@ namespace VintageEngineering
             {
                 _currentRecipe = null;
                 _alloyRecipe = null;
+                if (isPlate) matched.stackSize /= 2;
+
                 if (NumActiveBlowers == 2 && matched.output.Collectible.Code.Path.Contains("ironbloom"))
                 {
                     // a special case for iron while using blowers, make ingots and not blooms.

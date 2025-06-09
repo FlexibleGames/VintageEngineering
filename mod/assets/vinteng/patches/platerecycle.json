@@ -1,0 +1,6 @@
+[
+    {  "side": "Server", "op": "replace", "path": "/1/output/quantity",
+        "value": 20,
+        "file": "game:recipes/grid/metalbit.json"
+    }
+]
