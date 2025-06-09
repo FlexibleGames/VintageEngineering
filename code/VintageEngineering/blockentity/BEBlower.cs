@@ -22,7 +22,11 @@ namespace VintageEngineering
         /// <summary>
         /// Is this blower currently powered?
         /// </summary>
-        public bool IsActive { get; set; } = false;
+        public bool IsPowered { get; set; } = false;
+        /// <summary>
+        /// Is this blower currently active?
+        /// </summary>
+        public bool IsActive { get; set; } = true;
 
         public ElectricBEBehavior Electric { get; private set; }
 
@@ -37,7 +41,10 @@ namespace VintageEngineering
             if (api.Side == EnumAppSide.Server)
             {
                 sapi = api as ICoreServerAPI;
-                RegisterGameTickListener(new Action<float>(OnSimTick), 250, 0);                
+                RegisterGameTickListener(new Action<float>(OnSimTick), 250, 0);
+                if (Electric.CurrentPower > 0) IsPowered = true;
+                if (IsActive) SetState(EnumBEState.On);
+                else SetState(EnumBEState.Sleeping);
             }
             else
             {
@@ -45,9 +52,20 @@ namespace VintageEngineering
                 if (Electric.AnimUtil != null)
                 {
                     Electric.AnimUtil.InitializeAnimator("veblower", null, null, new Vec3f(0, GetRotation(), 0f));
-                }
+                }                                
             }
             _clientUpdateMS = api.World.ElapsedMilliseconds;
+        }
+
+        public void OnRightClick(IPlayer byPlayer)
+        {
+            if (byPlayer != null)
+            {
+                IsActive = !IsActive;
+                Api?.World.PlaySoundAt(new AssetLocation("game:sounds/block/loosestick"), byPlayer);
+                if (IsActive && IsPowered) SetState(EnumBEState.On);
+                else SetState(EnumBEState.Sleeping);
+            }
         }
 
         public void OnSimTick(float dt)
@@ -58,23 +76,25 @@ namespace VintageEngineering
                 _updateBouncer += dt;
                 if (_updateBouncer < 2f) return;
                 _updateBouncer = 0f;
-            }            
-
+            }
             float ratedpower = Electric.MaxPPS * dt;
-            if (Electric.CurrentPower > ratedpower)
+            if (Electric.CurrentPower >= ratedpower)
             {
+                IsPowered = true;
+
                 if (!CheckForAir()) 
                 {
                     SetState(EnumBEState.Sleeping);
                     return; 
                 }
                 // power is good, we can tick
-                if (Electric.MachineState != EnumBEState.On) SetState(EnumBEState.On);
-                Electric.electricpower -= (ulong)Math.Round(ratedpower, 0);
+                //if (Electric.MachineState != EnumBEState.On) SetState(EnumBEState.On);
+                if (IsActive) Electric.electricpower -= (ulong)Math.Round(ratedpower, 0);
             }
             else
             {
                 // not enough power, go to sleep
+                IsPowered = false;
                 if (Electric.MachineState != EnumBEState.Sleeping) SetState(EnumBEState.Sleeping);
             }
             if (Api.World.ElapsedMilliseconds - _clientUpdateMS > 500L)
@@ -92,14 +112,14 @@ namespace VintageEngineering
                 Electric.MachineState = state;
                 if (state != EnumBEState.On)
                 {
-                    IsActive = false;                    
+                    IsActive = false;
                 }
                 else 
-                { 
-                    IsActive = true;                    
-                }                
+                {
+                    IsActive = true;
+                }
             }
-            if (Electric.MachineState == EnumBEState.On)
+            if (Electric.MachineState == EnumBEState.On && IsPowered)
             {
                 if (Electric.AnimUtil != null && base.Block.Attributes["craftinganimcode"].Exists)
                 {
@@ -141,7 +161,7 @@ namespace VintageEngineering
                 worldForResolve.Logger.Fatal("The Electric behavior is required on {0}", Block.Code);
                 throw new FormatException($"The Electric behavior is required on {Block.Code}");
             }
-        }
+        }        
 
         public bool CheckForAir()
         {
@@ -151,7 +171,7 @@ namespace VintageEngineering
 
         public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
         {
-            base.GetBlockInfo(forPlayer, dsc);
+            base.GetBlockInfo(forPlayer, dsc);            
             if (!CheckForAir())
             {
                 dsc.AppendLine();
@@ -168,11 +188,13 @@ namespace VintageEngineering
         {
             base.ToTreeAttributes(tree);
             tree.SetBool("active", IsActive);
+            tree.SetBool("powered", IsPowered);
         }
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldAccessForResolve)
         {
             base.FromTreeAttributes(tree, worldAccessForResolve);
             IsActive = tree.GetBool("active");
+            IsPowered = tree.GetBool("powered");
             SetState(Electric.MachineState);
         }
     }

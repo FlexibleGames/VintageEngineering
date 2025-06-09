@@ -187,6 +187,8 @@ namespace VintageEngineering
             // mixer has fluids
             api.RegisterBlockClass("VEBlockFluidIO", typeof(BlockFluidIO));
 
+            api.RegisterBlockClass("VELVBlower", typeof(BlockLVBlower));
+
             api.RegisterBlockClass("VEPipeBlock", typeof(BlockPipeBase));
 
             api.RegisterBlockClass("VEBlockFluidTank", typeof(BlockFluidTank));
