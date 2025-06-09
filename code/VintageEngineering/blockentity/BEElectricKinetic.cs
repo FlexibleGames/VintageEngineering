@@ -19,11 +19,11 @@ namespace VintageEngineering.blockentity
 
         public bool isGenerator { get { return Block.Code.Path.Contains("alternator"); } }
 
-        public ElectricBEBehavior Electricity;
+        //public ElectricBEBehavior Electricity;
 
         ElectricKineticMotorBhv genBhv;
-
         ElectricKineticAlternatorBhv consBhv;
+
         private float sleepTimer = 0;
 
         public override void Initialize(ICoreAPI api)
@@ -32,12 +32,12 @@ namespace VintageEngineering.blockentity
 
             if (api.Side != EnumAppSide.Client)
             {
-                RegisterGameTickListener(OnCommonTick, 100, 0);
+                RegisterGameTickListener(OnSimTick, 100, 0);
             } 
         }
-        public void OnCommonTick(float dt)
+        public void OnSimTick(float dt)
         {
-            if(Api.Side == EnumAppSide.Client) { return; }
+            //if(Api.Side == EnumAppSide.Client) { return; }
             if (!Electric.IsEnabled) return;
             if (Electric.IsSleeping)
             {
@@ -45,27 +45,7 @@ namespace VintageEngineering.blockentity
                 else sleepTimer = 0;
             }
 
-            if(!isGenerator)
-            {
-                float PPT = Electric.MaxPPS * dt;
-                if (Electric.CurrentPower == 0 || Electric.CurrentPower < PPT) { return; }
-                if(genBhv != null)
-                {
-                    Single powerwanted = genBhv.getPowReq();
-                    if (Electric.CurrentPower < powerwanted)
-                    {
-                        genBhv.ConsumePower(Electric.CurrentPower);
-                        Electric.electricpower = 0;
-                    }
-                    else
-                    {
-                        Single consumed = genBhv.getPowReq();
-                        genBhv.ConsumePower(consumed);
-                        Electric.electricpower -= (ulong)Math.Round(consumed);
-                    }
-                }
-            }
-            if(isGenerator)
+            if (isGenerator)
             {
                 if (consBhv != null)
                 {
@@ -74,7 +54,26 @@ namespace VintageEngineering.blockentity
                     if (Electric.CurrentPower > Electric.MaxPower) Electric.electricpower = Electric.MaxPower;
                 }
             }
-
+            else
+            {
+                float PPT = Electric.MaxPPS * dt;
+                if (Electric.CurrentPower == 0 || Electric.CurrentPower < PPT) { return; }
+                if(genBhv != null)
+                {
+                    Single powerwanted = genBhv.GetMechanicalPowerRequired();
+                    if (Electric.CurrentPower < powerwanted)
+                    {
+                        genBhv.ConsumePower(Electric.CurrentPower);
+                        Electric.electricpower = 0;
+                    }
+                    else
+                    {
+                        Single consumed = genBhv.GetMechanicalPowerRequired();
+                        genBhv.ConsumePower(consumed);
+                        Electric.electricpower -= (ulong)Math.Round(consumed);
+                    }
+                }
+            }
         }
 
         public override void CreateBehaviors(Block block, IWorldAccessor worldForResolve)

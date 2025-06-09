@@ -22,9 +22,9 @@ namespace VintageEngineering.blockBhv
         //how fast are we going
         private float speedSet;
         //how much power are we getting
-        private float powRec;
+        private float mechpowerReceived;
         //how much power do we want to be getting
-        private float powReqed;
+        private float mechpowerRequested;
 
         //How much power is needed to turn at all
         private static float Ins_Min = 10f;
@@ -116,7 +116,7 @@ namespace VintageEngineering.blockBhv
 
         public void ConsumePower(float amnt)
         {
-            powRec = amnt;
+            mechpowerReceived = amnt;
         }
 
         public override float GetTorque(long tick, float speed, out float resistance)
@@ -133,7 +133,7 @@ namespace VintageEngineering.blockBhv
 
             torque = (speedSet * resistance) * 1.25f;
 
-            powReqed = Math.Min(speedSet + (resistance * 1.5f)*100f,Ins_Max);
+            mechpowerRequested = Math.Min(speedSet + (resistance * 1.5f)*100f,Ins_Max);
 
             return propagationDir == OutFacingForNetworkDiscovery ? torque : -torque;
         }
@@ -142,18 +142,18 @@ namespace VintageEngineering.blockBhv
         /// How much kinetic power this object got last
         /// </summary>
         /// <returns>The power got last, in electrical units</returns>
-        public float getPowRec()
+        public float GetMechanicalPowerReceived()
         {
-            return powRec;
+            return mechpowerReceived;
         }
 
         /// <summary>
         /// How much kinetic power this object wants
         /// </summary>
         /// <returns>The power it wants, in electrical units</returns>
-        public float getPowReq()
+        public float GetMechanicalPowerRequired()
         {
-            return powReqed;
+            return mechpowerRequested;
         }
 
         //TODO: Replace with GUI
@@ -247,6 +247,10 @@ namespace VintageEngineering.blockBhv
             mesher.AddMeshData(BaseMesh());
             return base.OnTesselation(mesher, tesselator);
         }
+        /// <summary>
+        /// This feels like it's important enough to need serious documentation
+        /// </summary>
+        /// <returns>a float</returns>
         public float ProducePower()
         {
             float spd = network?.Speed * GearedRatio ?? 0f;
