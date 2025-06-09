@@ -21,6 +21,7 @@ namespace VintageEngineering.blockentity
 
         //public ElectricBEBehavior Electricity;
 
+
         ElectricKineticMotorBhv genBhv;
         ElectricKineticAlternatorBhv consBhv;
 
@@ -63,6 +64,7 @@ namespace VintageEngineering.blockentity
                     Single powerwanted = genBhv.GetMechanicalPowerRequired();
                     if (Electric.CurrentPower < powerwanted)
                     {
+                        // if this is out of power, then it should just stop providing mechanical power
                         genBhv.ConsumePower(Electric.CurrentPower);
                         Electric.electricpower = 0;
                     }

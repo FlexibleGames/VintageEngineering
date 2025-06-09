@@ -21,7 +21,7 @@ namespace VintageEngineering.blockBhv
         private float torque;
         //how fast are we going
         private float speedSet;
-        //how much power are we getting
+        //how much power are we getting, this is not actually used anywhere...?
         private float mechpowerReceived;
         //how much power do we want to be getting
         private float mechpowerRequested;
