@@ -29,6 +29,17 @@ namespace VintageEngineering.blockBhv
         //How fast can be at max, vanilla 0-1
         private static float speed_max = 1f;
 
+        /// <summary>
+        /// Given the set speed and resistance settings how much electrical power is required
+        /// to keep the motor spinning.
+        /// </summary>
+        public ulong ElectricalPowerRequired
+        {
+            get
+            {
+                return (ulong)mechpowerRequested;
+            }
+        }
 
         public ElectricKineticMotorBhv(BlockEntity blockentity) : base(blockentity)
         {
@@ -120,10 +131,12 @@ namespace VintageEngineering.blockBhv
             speedSet = 0;
             //Dangerous cast, DC,DA.
             float powAmnt = (Blockentity as BEElectricKinetic).Electric.CurrentPower;
-
+            // if power is < 10, don't try to turn at all... Why 10? reasons.
             if(powAmnt <= Ins_Min) { return torque; }
-            //todo: change with GUI
-            speedSet = Math.Min(powAmnt/10, speed_max);
+            
+            float l_curspeedsetting = (Blockentity as BEElectricKinetic)?.SpeedSetting ?? 0f;
+
+            speedSet = Math.Min(powAmnt/10, l_curspeedsetting);
 
             torque = (speedSet * resistance) * 1.25f;
 
@@ -149,11 +162,11 @@ namespace VintageEngineering.blockBhv
         {
             return mechpowerRequested;
         }
-
-        //TODO: Replace with GUI
+        
         public override float GetResistance()
-        { 
-            return Math.Max(1f,resistance_Max);
+        {
+            float l_curresistsetting = (float)((Blockentity as BEElectricKinetic)?.ResistanceSetting);
+            return Math.Min(l_curresistsetting, resistance_Max);
         }
     }
 

@@ -43,7 +43,10 @@
 	"vinteng:blockdesc-vepump": "A pump for extracting fluids from the world. Has a pumping radius of 32, if a water or lava fluid body exceeds # source blocks it will treat that fluid as infinite. PPS value is used as power used per block pumped.",
 
     "vinteng:block-velvek-motor-*": "Electric Motor",
+	"vinteng:gui-title-motor": "Electric Motor",
+	"vinteng:blockdesc-velvek-motor-*": "Electric Motor generates Mechanical energy using Electric Power. Dial Speed and Resistance targets in the GUI to alter how much power is required.",
     "vinteng:block-velvek-alternator-*":"Electric Alternator",
+	"vinteng:blockdesc-velvek-alternator-*":"The Alternator generates Electric Power using Mechanical energy.",
 
 	"vinteng:item-vepressmold-plate-*": "Plate Mold",
 	"vinteng:itemdesc-vepressmold-plate-*": "Use in a Metal Press to make plates. Harder metals require harder molds. Mold will wear out over time, durability depends on material.",
@@ -113,7 +116,7 @@
 	"vinteng:item-motor-hv": "HV Motor",
 	"vinteng:itemdesc-motor-hv": "A High Voltage Motor",
 	"vinteng:item-motor-ev": "EV Motor",
-	"vinteng:itemdesc-motor-ev": "An Extreme Low Voltage Motor",
+	"vinteng:itemdesc-motor-ev": "An Extreme Voltage Motor",
 
 	"vinteng:item-machineplate-tinbronze": "Machine Plate (TinBronze)",
 	"vinteng:itemdesc-machineplate-tinbronze": "A sturdy ingredient for crafting machines.",
@@ -342,5 +345,10 @@
 	"vinteng:block-metalplatform": "Metal Platform",
 	"vinteng:blockdesc-metalplatform": "Metal Platform or Scaffold is used for industrial walkways and platforms.",
 	"vinteng:block-metalstairs-*": "Metal Stairs",
-	"vinteng:blockdesc-metalstairs-*": "No industrial build is complete without gritty-looking metal stairs."
+	"vinteng:blockdesc-metalstairs-*": "No industrial build is complete without gritty-looking metal stairs.",
+
+	"vinteng:gui-motor-targetspeed": "Target Speed: ",
+	"vinteng:gui-motor-targetres": "Target Resistance: ",
+	"vinteng:gui-powerrequired": "Power Required:"
+
 }

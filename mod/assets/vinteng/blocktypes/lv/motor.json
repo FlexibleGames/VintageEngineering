@@ -2,7 +2,7 @@
 	"code": "velvek",
 	"class": "VEElectricKinetic",
 	"entityClass": "VEBEElectricKinetic",
-	"behaviorsbytype": {
+	"behaviorsByType": {
         "velvek-alternator-*":[{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "velvek-alternator-north" }}}],
         "velvek-motor-*":[{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "velvek-motor-north" }}}]
     },

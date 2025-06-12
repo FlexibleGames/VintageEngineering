@@ -177,7 +177,6 @@ namespace VintageEngineering
                 langcode += ":" + outputstack.Collectible.ItemClass.ToString().ToLowerInvariant();
                 langcode += "-" + outputstack.Collectible.Code.Path;
                 outputhelptext = $"{Lang.Get("vinteng:gui-word-heating")} {Lang.Get(langcode)}";
-
             }
             else
             {
