@@ -215,6 +215,7 @@ namespace VintageEngineering.GUI
 
             if (base.SingleComposer != null)
             {
+                base.SingleComposer.GetCustomDraw("powerDrawer").Redraw();
                 base.SingleComposer.GetDynamicText("speedText").SetNewText($"{Lang.Get("vinteng:gui-motor-targetspeed")} {_mechSpeed:F2}");
                 base.SingleComposer.GetDynamicText("resistanceText").SetNewText($"{Lang.Get("vinteng:gui-motor-targetres")} {_mechResistance:F2}");
                 base.SingleComposer.GetDynamicText("enableBtnText").SetNewText(_bentity.Electric.IsEnabled ? Lang.Get("vinteng:gui-word-on") : Lang.Get("vinteng:gui-word-off"));

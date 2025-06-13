@@ -57,7 +57,7 @@ namespace VintageEngineering.blockentity
             }
         }
 
-        private string DialogTitle = Lang.Get("vinteng:block-velvek-motor-*");
+        private string DialogTitle = Lang.Get("vinteng:gui-title-motor");
         private InventoryGeneric inventory;
         public override InventoryBase Inventory => inventory;
         public BEElectricKinetic()
@@ -117,7 +117,7 @@ namespace VintageEngineering.blockentity
                 if (Electric.CurrentPower == 0 || Electric.CurrentPower < PPT) { return; }
                 if(genBhv != null)
                 {
-                    Single powerwanted = genBhv.GetMechanicalPowerRequired();
+                    Single powerwanted = genBhv.GetElectricalPowerRequired();
                     if (Electric.CurrentPower < powerwanted)
                     {
                         // if this is out of power, then it should just stop providing mechanical power
@@ -126,7 +126,7 @@ namespace VintageEngineering.blockentity
                     }
                     else
                     {
-                        Single consumed = genBhv.GetMechanicalPowerRequired();
+                        Single consumed = genBhv.GetElectricalPowerRequired();
                         genBhv.ConsumePower(consumed);
                         Electric.electricpower -= (ulong)Math.Round(consumed);
                     }
@@ -151,27 +151,6 @@ namespace VintageEngineering.blockentity
             //if (MachineState == newstate) return; // no change, nothing to see here.
             Electric.MachineState = newstate;
 
-            if (Electric.MachineState == EnumBEState.On)
-            {
-                if (AnimUtil != null && base.Block.Attributes["craftinganimcode"].Exists)
-                {
-                    AnimUtil.StartAnimation(new AnimationMetaData
-                    {
-                        Animation = base.Block.Attributes["craftinganimcode"].AsString(),
-                        Code = base.Block.Attributes["craftinganimcode"].AsString(),
-                        AnimationSpeed = 1f,
-                        EaseOutSpeed = 4f,
-                        EaseInSpeed = 1f
-                    });
-                }
-            }
-            else
-            {
-                if (AnimUtil != null && AnimUtil.activeAnimationsByAnimCode.Count > 0)
-                {
-                    AnimUtil.StopAnimation(base.Block.Attributes["craftinganimcode"].AsString());
-                }
-            }
             if (Api != null && Api.Side == EnumAppSide.Client && clientDialog != null && clientDialog.IsOpened())
             {
                 clientDialog.Update(Electric.CurrentPower, _speedSetting, _resistanceSetting);
@@ -188,7 +167,7 @@ namespace VintageEngineering.blockentity
                 if (Electric.IsEnabled) SetState(EnumBEState.Off); // turn off
                 else
                 {
-                    SetState((Electric.CurrentPower > 0) ? EnumBEState.On : EnumBEState.Sleeping);
+                    SetState(EnumBEState.On);
                 }
                 MarkDirty(true, null);
             }
@@ -227,8 +206,13 @@ namespace VintageEngineering.blockentity
                 base.FromTreeAttributes(tree, worldAccessForResolve);
                 _speedSetting = tree.GetFloat("speed", 0.0f);
                 _resistanceSetting = tree.GetFloat("resistance", 0.0f);
+                if (Api != null && Api.Side == EnumAppSide.Client) { SetState(Electric.MachineState); }
+                if (clientDialog != null)
+                {
+                    clientDialog.Update(Electric.CurrentPower, _speedSetting, _resistanceSetting);
+                }
             }
-            catch (Exception e) { }
+            catch (Exception) { }
         }
         #endregion
     }

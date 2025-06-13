@@ -16,9 +16,9 @@ namespace VintageEngineering.blockBhv
         //how fast are we going
         private float speedSet;
         //how much power are we getting, this is not actually used anywhere...?
-        private float mechpowerReceived;
+        private float electricPowerReceived;
         //how much power do we want to be getting
-        private float mechpowerRequested;
+        private float electricPowerRequired;
 
         //How much power is needed to turn at all
         private static float Ins_Min = 10f;
@@ -37,7 +37,7 @@ namespace VintageEngineering.blockBhv
         {
             get
             {
-                return (ulong)mechpowerRequested;
+                return (ulong)electricPowerRequired;
             }
         }
 
@@ -121,7 +121,7 @@ namespace VintageEngineering.blockBhv
 
         public void ConsumePower(float amnt)
         {
-            mechpowerReceived = amnt;
+            electricPowerReceived = amnt;
         }
 
         public override float GetTorque(long tick, float speed, out float resistance)
@@ -130,9 +130,7 @@ namespace VintageEngineering.blockBhv
             resistance = GetResistance();
             speedSet = 0;
             //Dangerous cast, DC,DA.
-            float powAmnt = (Blockentity as BEElectricKinetic).Electric.CurrentPower;
-            // if power is < 10, don't try to turn at all... Why 10? reasons.
-            if(powAmnt <= Ins_Min) { return torque; }
+            float powAmnt = (Blockentity as BEElectricKinetic).Electric.CurrentPower;            
             
             float l_curspeedsetting = (Blockentity as BEElectricKinetic)?.SpeedSetting ?? 0f;
 
@@ -140,33 +138,63 @@ namespace VintageEngineering.blockBhv
 
             torque = (speedSet * resistance) * 1.25f;
 
-            mechpowerRequested = Math.Min(speedSet + (resistance * 1.5f)*100f,Ins_Max);
+            electricPowerRequired = Math.Min(speedSet + (resistance * 1.5f)*100f,Ins_Max);
+
+            // if power is < 10, don't try to turn at all... Why 10? reasons.
+            if (powAmnt <= Ins_Min) { return torque; }
+
+            if ((Blockentity as BEElectricKinetic).Electric.MachineState == EnumBEState.Off) return 0f;
 
             return propagationDir == OutFacingForNetworkDiscovery ? torque : -torque;
         }
 
         /// <summary>
-        /// How much kinetic power this object got last
+        /// How much electrical power this object got last
         /// </summary>
         /// <returns>The power got last, in electrical units</returns>
-        public float GetMechanicalPowerReceived()
+        public float GetElectricalPowerReceived()
         {
-            return mechpowerReceived;
+            return electricPowerReceived;
         }
 
         /// <summary>
-        /// How much kinetic power this object wants
+        /// How much electrical power this object wants
         /// </summary>
         /// <returns>The power it wants, in electrical units</returns>
-        public float GetMechanicalPowerRequired()
+        public float GetElectricalPowerRequired()
         {
-            return mechpowerRequested;
+            return electricPowerRequired;
         }
         
         public override float GetResistance()
         {
-            float l_curresistsetting = (float)((Blockentity as BEElectricKinetic)?.ResistanceSetting);
-            return Math.Min(l_curresistsetting, resistance_Max);
+            if (Blockentity is BEElectricKinetic kinetic)
+            {
+                float l_curresistsetting = kinetic.ResistanceSetting;
+
+                if (kinetic.Electric.MachineState == EnumBEState.Off) return 0f;
+
+                return Math.Min(l_curresistsetting, resistance_Max);
+            }
+            return 0f;
+        }
+
+        public override void ToTreeAttributes(ITreeAttribute tree)
+        {
+            base.ToTreeAttributes(tree);
+            tree.SetFloat("torque", torque);
+            tree.SetFloat("speed", speedSet);
+            tree.SetFloat("powerreceived", electricPowerReceived);
+            tree.SetFloat("powerrequired", electricPowerRequired);
+        }
+
+        public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldAccessForResolve)
+        {
+            base.FromTreeAttributes(tree, worldAccessForResolve);
+            torque = tree.GetFloat("torque", 0f);
+            speedSet = tree.GetFloat("speed", 0f);
+            electricPowerReceived = tree.GetFloat("powerreceived", 0f);
+            electricPowerRequired = tree.GetFloat("powerrequired", 0f);
         }
     }
 
