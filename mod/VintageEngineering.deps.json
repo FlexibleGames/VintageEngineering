@@ -6,7 +6,7 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v7.0": {
-      "VintageEngineering/0.3.11": {
+      "VintageEngineering/0.3.12": {
         "runtime": {
           "VintageEngineering.dll": {}
         }
@@ -14,7 +14,7 @@
     }
   },
   "libraries": {
-    "VintageEngineering/0.3.11": {
+    "VintageEngineering/0.3.12": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
