@@ -95,11 +95,18 @@ namespace VintageEngineering.Blocks
                     bewell.InitDeposit(isLarge, access, wrand, this, this.api);
                 }
             }
-            BuildOilSpout(access, pos, face, wrand, isLarge);
+            //BuildOilSpout(access, pos, face, wrand, isLarge);
             return true;
         }
-
-        public void BuildOilSpout(IBlockAccessor access, BlockPos pos, BlockFacing face, IRandom wrand, bool isLarge)
+        /// <summary>
+        /// Generate an oil spout from a well block at pos.
+        /// </summary>
+        /// <param name="access">Bulk Block Accessor</param>
+        /// <param name="pos">Position of underground well block</param>
+        /// <param name="face">Unused, can be null</param>
+        /// <param name="wrand">IRandom object</param>
+        /// <param name="isLarge">true if this is a large deposit</param>
+        public void BuildOilSpout(IBulkBlockAccessor access, BlockPos pos, BlockFacing face, IRandom wrand, bool isLarge)
         {            
             if (isLarge)
             {

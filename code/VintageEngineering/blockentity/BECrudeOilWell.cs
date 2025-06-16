@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using VintageEngineering.API;
+using VintageEngineering.Blocks;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
@@ -33,10 +34,55 @@ namespace VintageEngineering
 
         public long MinDepositBlocks => (long)base.Block.Attributes["mindepositblocks"].AsDouble(1500);
 
+        /// <summary>
+        /// Is this considered a large well, set when this block is generated.
+        /// </summary>
+        public bool IsLarge = false;
+        /// <summary>
+        /// Is this deposit generated? <br/>
+        /// Generation does not happen when the block is created but after all neighboring chunks are loaded to
+        /// ensure all blocks can be accessed
+        /// </summary>
+        public bool IsGenerated = false;
+        /// <summary>
+        /// The internal TickHandler ID
+        /// </summary>
+        private long _tickHandler = 0;
+
         public override void Initialize(ICoreAPI api)
         {
             base.Initialize(api);
-            if (api.Side == EnumAppSide.Server) sapi = api as ICoreServerAPI;            
+            if (api.Side == EnumAppSide.Server) 
+            {
+                sapi = api as ICoreServerAPI;
+                _tickHandler = RegisterGameTickListener(OnGameTick, 1000, 100);
+            }
+        }
+        /// <summary>
+        /// Only run server-side, will track and build the deposit when all neighboring chunks are loaded.
+        /// </summary>
+        /// <param name="dt">Time in seconds since last tick.</param>
+        public void OnGameTick(float dt)
+        {
+            if (IsGenerated)
+            {
+                if (this.TickHandlers.Count > 0)
+                {
+                    // remove this ticking event as it is not needed.
+                    this.UnregisterGameTickListener(_tickHandler);
+                    _tickHandler = 0;
+                }
+            }
+            else
+            {
+                bool ready = sapi.World.IsFullyLoadedChunk(Pos);
+                if (ready)
+                {
+                    IBulkBlockAccessor bbaccessor = sapi.World.GetBlockAccessorMapChunkLoading(false, false);
+                    (this.Block as BlockCrudeOilWell).BuildOilSpout(bbaccessor, Pos.Copy(), null, sapi.World.Rand as NormalRandom, IsLarge);
+                    bbaccessor.Commit();
+                }
+            }
         }
 
         public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
@@ -63,6 +109,7 @@ namespace VintageEngineering
 
         public void InitDeposit(bool isLarge, IBlockAccessor access, IRandom wgenrand, Block wellblock, ICoreAPI l_api)
         {
+            IsLarge = isLarge;
             long minblocks = MinDepositBlocks;
             if (isLarge) minblocks = (long)(MaxDepositBlocks * 0.8);
             long maxblocks = MaxDepositBlocks;
@@ -88,7 +135,7 @@ namespace VintageEngineering
             catch (Exception ex)
             {
                 l_api.Logger.Error(ex);
-            }            
+            }
         }
 
         public long PumpTick(float dt)
@@ -113,12 +160,16 @@ namespace VintageEngineering
         {
             base.FromTreeAttributes(tree, worldAccessForResolve);
             this._fluidportions = tree.GetLong("fluidleft", 25);
+            this.IsLarge = tree.GetBool("islarge", false);
+            this.IsGenerated = tree.GetBool("isgenerated", true);
         }
 
         public override void ToTreeAttributes(ITreeAttribute tree)
         {
             base.ToTreeAttributes(tree);
             tree.SetLong("fluidleft", this._fluidportions);
+            tree.SetBool("isgenerated", this.IsGenerated);
+            tree.SetBool("islarge", this.IsLarge);
         }
     }
 }
