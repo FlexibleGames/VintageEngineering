@@ -55,7 +55,7 @@ namespace VintageEngineering
             if (api.Side == EnumAppSide.Server) 
             {
                 sapi = api as ICoreServerAPI;
-                _tickHandler = RegisterGameTickListener(OnGameTick, 1000, 100);
+                _tickHandler = RegisterGameTickListener(OnGameTick, 3000, 100);
             }
         }
         /// <summary>
@@ -78,9 +78,16 @@ namespace VintageEngineering
                 bool ready = sapi.World.IsFullyLoadedChunk(Pos);
                 if (ready)
                 {
-                    IBulkBlockAccessor bbaccessor = sapi.World.GetBlockAccessorMapChunkLoading(false, false);
+                    IBulkBlockAccessor bbaccessor = sapi.World.GetBlockAccessorBulkUpdate(true, true, false);
+                    bbaccessor.UpdateSnowAccumMap = false;                    
                     (this.Block as BlockCrudeOilWell).BuildOilSpout(bbaccessor, Pos.Copy(), null, sapi.World.Rand as NormalRandom, IsLarge);
+                    foreach (KeyValuePair<BlockPos, BlockUpdate> pair in bbaccessor.StagedBlocks)
+                    {
+                        pair.Value.NewSolidBlockId = 0;// pair.Value.NewFluidBlockId;
+                    }                    
                     bbaccessor.Commit();
+                    bbaccessor.PostCommitCleanup(bbaccessor.StagedBlocks.Values.ToList<BlockUpdate>());                    
+                    IsGenerated = true;
                 }
             }
         }

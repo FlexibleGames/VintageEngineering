@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using VintageEngineering.API;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.ServerMods;
@@ -64,9 +65,34 @@ namespace VintageEngineering.Blocks
             }
         }
 
+        public override void OnBlockPlaced(IWorldAccessor world, BlockPos blockPos, ItemStack byItemStack = null)
+        {
+            base.OnBlockPlaced(world, blockPos, byItemStack);
+            // this is for debugging, far easier to plop one of these down
+            if (this.EntityClass != null && blockPos.Y < 20)
+            {
+                world.BlockAccessor.SpawnBlockEntity(this.EntityClass, blockPos.Copy(), null);
+                IOilWell bewell = world.BlockAccessor.GetBlockEntity(blockPos) as IOilWell; // grab the BE of the well
+                if (bewell != null)
+                {
+                    // initalize the well object
+                    NormalRandom rand = new NormalRandom(world.Seed);
+                    bool isLarge = rand.NextFloat() <= _oddsForLarge; // first check on large deposits
+                    bewell.InitDeposit(isLarge, world.BlockAccessor, rand, this, this.api);
+                }
+            }
+        }
+
         public override bool TryPlaceBlockForWorldGen(IBlockAccessor access, BlockPos pos, BlockFacing face, IRandom wrand, BlockPatchAttributes attributes = null)
         {           
-            if (pos.Y > 5) return false;
+            if (pos.Y > 5) 
+            {
+                if (wrand.NextFloat() > 0.5f)
+                {
+                    pos.Y = 5;
+                }
+                else return false; 
+            }
             if (_oilBlock == null || _oilBlock.Id == 0) return false;
             int surfacey = access.GetTerrainMapheightAt(pos); // surface
             if (Math.Abs(surfacey - TerraGenConfig.seaLevel) > 40) return false;
@@ -106,26 +132,32 @@ namespace VintageEngineering.Blocks
         /// <param name="face">Unused, can be null</param>
         /// <param name="wrand">IRandom object</param>
         /// <param name="isLarge">true if this is a large deposit</param>
-        public void BuildOilSpout(IBulkBlockAccessor access, BlockPos pos, BlockFacing face, IRandom wrand, bool isLarge)
-        {            
+        public void BuildOilSpout(IBulkBlockAccessor access, BlockPos pos, BlockFacing face, NormalRandom wrand, bool isLarge)
+        {
+            ClimateCondition climate = access.GetClimateAt(pos, EnumGetClimateMode.WorldGenValues);
+            float wtemp = climate.Temperature;
+            float wrain = climate.Rainfall;
             if (isLarge)
             {
-                ClimateCondition climate = access.GetClimateAt(pos, EnumGetClimateMode.WorldGenValues);
-                float wtemp = climate.Temperature;
-                float wrain = climate.Rainfall;
                 if (wtemp < _minTempForLarge || wtemp > _maxTempForLarge) isLarge = false;
                 if (wrain < _minRainForLarge || wrain > _maxRainForLarge) isLarge = false;
             }
-            int surfacey = access.GetTerrainMapheightAt(pos); // surface            
-            
+            else
+            {
+                // Desert climates are a guaranteed to have large gysers
+                if ((wtemp >= _minTempForLarge && wtemp <= _maxTempForLarge) &&
+                   (wrain >= _minRainForLarge && wrain <= _maxRainForLarge)) isLarge = true;
+            }
+                int surfacey = access.GetTerrainMapheightAt(pos); // surface            
+            if (wrand == null) wrand = new NormalRandom(api.World.Seed);
             int radius = wrand.NextInt(_maxDepositRadius + 1); // grab a radius
             if (radius < _minDepositRadius) radius = _minDepositRadius; // ensure it's at least minimum size
             radius += isLarge ? _extraRadiusLarge : 0; // add on any bonus for deserts
             int pooldepth = wrand.NextInt(3) + 1; // surface pool depth
-            int spoutheight = isLarge ? wrand.NextInt(8) + 6 : wrand.NextInt(4) + 4; // height of the spout
+            int spoutheight = isLarge ? wrand.NextInt(12) + 6 : wrand.NextInt(8) + 4; // height of the spout
             if (!_genSpouts && _genPool) spoutheight = 0;
 
-            if (!_genPool && !_genSpouts) spoutheight = -10;
+            if (!_genPool && !_genSpouts) spoutheight = (surfacey / 2) + radius - 1;
             
             int bubblecentery = surfacey / 2;
             BlockPos bubblepos = new BlockPos(pos.X, bubblecentery, pos.Z, BlockLayersAccess.Default);
@@ -133,23 +165,23 @@ namespace VintageEngineering.Blocks
             BlockPos poolcenter = new BlockPos(pos.X, surfacey, pos.Z, BlockLayersAccess.Default);
             // Place the spout
             for (int y = 1; y < spoutmaxy - pos.Y; y++)
-            {
+            {                
                 access.SetBlock(_oilBlock.Id, pos.UpCopy(y));
                 if (isLarge)
                 {
-                    access.SetBlock(_oilBlock.Id, pos.UpCopy(y).AddCopy(BlockFacing.NORTH));
-                    access.SetBlock(_oilBlock.Id, pos.UpCopy(y).AddCopy(BlockFacing.EAST));
-                    access.SetBlock(_oilBlock.Id, pos.UpCopy(y).AddCopy(BlockFacing.SOUTH));
-                    access.SetBlock(_oilBlock.Id, pos.UpCopy(y).AddCopy(BlockFacing.WEST));
+                    access.SetBlock(_oilBlock.Id, pos.UpCopy(y).AddCopy(BlockFacing.NORTH), 1);
+                    access.SetBlock(_oilBlock.Id, pos.UpCopy(y).AddCopy(BlockFacing.EAST), 1);
+                    access.SetBlock(_oilBlock.Id, pos.UpCopy(y).AddCopy(BlockFacing.SOUTH), 1);
+                    access.SetBlock(_oilBlock.Id, pos.UpCopy(y).AddCopy(BlockFacing.WEST), 1);
                 }       
-                access.TriggerNeighbourBlockUpdate(pos.UpCopy(y));
+                //access.TriggerNeighbourBlockUpdate(pos.UpCopy(y));
             }
             if (isLarge && _genSpouts)
             {
                 int extraspoutstart = spoutmaxy - pos.Y;
                 for (int y = extraspoutstart; y < extraspoutstart + spoutheight; y++)
                 {
-                    access.SetBlock(_oilBlock.Id, pos.UpCopy(y));
+                    access.SetBlock(_oilBlock.Id, pos.UpCopy(y), 1);
                 }
             }
             if (_genDeposits) // this is the bubble underground
@@ -157,7 +189,7 @@ namespace VintageEngineering.Blocks
                 List<BlockPos> bubble = BuildBubble(access, bubblepos, radius);
                 foreach (BlockPos bub in bubble)
                 {
-                    access.SetBlock(_oilBlock.Id, bub);
+                    access.SetBlock(_oilBlock.Id, bub, 1);
                 }
             }
             if (_genPool)
@@ -165,7 +197,7 @@ namespace VintageEngineering.Blocks
                 List<BlockPos> pool = BuildSurfacePool(access, poolcenter, radius, pooldepth, wrand);
                 foreach (BlockPos bub in pool)
                 {
-                    access.SetBlock(_oilBlock.Id, bub);
+                    access.SetBlock(_oilBlock.Id, bub, 1);
                     access.TriggerNeighbourBlockUpdate(bub);
                 }
             }
