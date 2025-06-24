@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using VintageEngineering.blockBhv;
 using VintageEngineering.Electrical;
 using VintageEngineering.GUI;
@@ -113,15 +114,14 @@ namespace VintageEngineering.blockentity
             }
             else
             {
-                float PPT = Electric.MaxPPS * dt;
+                float PPT = genBhv.ElectricalPowerRequired; //Electric.MaxPPS * dt;
                 if (Electric.CurrentPower == 0 || Electric.CurrentPower < PPT) { return; }
                 if(genBhv != null)
-                {
-                    Single powerwanted = genBhv.GetElectricalPowerRequired();
-                    if (Electric.CurrentPower >= powerwanted)
+                {                    
+                    if (Electric.CurrentPower >= PPT)
                     {
                         // if this is out of power, then it should just stop providing mechanical power                        
-                        Electric.electricpower -= (ulong)Math.Round(powerwanted);
+                        Electric.electricpower -= (ulong)Math.Round(PPT);
                     }
                 }
             }
@@ -139,6 +139,27 @@ namespace VintageEngineering.blockentity
             consBhv = GetBehavior<ElectricKineticAlternatorBhv>();
             genBhv = GetBehavior<ElectricKineticMotorBhv>();
         }
+
+        public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
+        {
+            base.GetBlockInfo(forPlayer, dsc);
+            if (consBhv != null)
+            {
+                if (consBhv.Network != null) // the alternator is a consumer as it consumes mechanical power
+                {
+                    MechanicalNetwork mn = consBhv.Network;
+                    dsc.AppendLine($"Spd: {mn.Speed:N3}, GearR: {consBhv.GearedRatio}, AvailT: {mn.TotalAvailableTorque:N3} {Environment.NewLine} PPSLast: {(consBhv.PowerLastTick*10):N0}");
+                }
+            }
+            else if (genBhv != null) // the motor is generator as it generates mechanical power
+            {
+                if (genBhv.Network != null)
+                {
+                    dsc.AppendLine($"Actual PPS: {(genBhv.ElectricalPowerRequired * 10):N0} {Environment.NewLine} Speed: {SpeedSetting:N2}|Torque: {TorqueSetting:N1}");
+                }
+            }
+        }
+
         protected virtual void SetState(EnumBEState newstate)
         {
             //if (MachineState == newstate) return; // no change, nothing to see here.
