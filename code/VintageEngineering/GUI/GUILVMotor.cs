@@ -17,7 +17,7 @@ namespace VintageEngineering.GUI
         private ulong _maxPower;
 
         private float _mechSpeed;
-        private float _mechResistance;
+        private float _mechTorque;
 
         private ulong _powerRequired;
 
@@ -34,7 +34,7 @@ namespace VintageEngineering.GUI
             _maxPower = _bentity.Electric.MaxPower; // set this once as it doesn't/shouldn't change (for now)
 
             _mechSpeed = _bentity.SpeedSetting;
-            _mechResistance = _bentity.ResistanceSetting;
+            _mechTorque = _bentity.TorqueSetting;
 
             this.SetupDialog();
         }
@@ -59,8 +59,8 @@ namespace VintageEngineering.GUI
             ElementBounds speedtext = ElementBounds.Fixed(61, 9 + titlebarheight, 196, 16);
             ElementBounds speedsliderbounds = ElementBounds.Fixed(61, 30 + titlebarheight, 196, 21);
 
-            ElementBounds resistancetext = ElementBounds.Fixed(61, 56 + titlebarheight, 196, 16);
-            ElementBounds resistancesliderbounds = ElementBounds.Fixed(61, 77 + titlebarheight, 196, 21);
+            ElementBounds torquetext = ElementBounds.Fixed(61, 56 + titlebarheight, 196, 16);
+            ElementBounds torquesliderbounds = ElementBounds.Fixed(61, 77 + titlebarheight, 196, 21);
 
             ElementBounds outputtxtinset = ElementBounds.Fixed(61, 107 + titlebarheight, 196, 47);
             ElementBounds outputtextbnds = ElementBounds.Fixed(63, 109 + titlebarheight, 192, 43);
@@ -73,7 +73,7 @@ namespace VintageEngineering.GUI
                 powerInset, powerBounds,
                 enableBtn, enableBtnText,
                 speedtext, speedsliderbounds,
-                resistancetext, resistancesliderbounds,
+                torquetext, torquesliderbounds,
                 outputtxtinset, outputtextbnds
             });
             ElementBounds window = ElementStdBounds.AutosizedMainDialog.WithAlignment(EnumDialogArea.RightMiddle)
@@ -112,15 +112,15 @@ namespace VintageEngineering.GUI
                 .AddDynamicText(Lang.Get("vinteng:gui-motor-targetspeed") + _mechSpeed.ToString("F2"), outputfont, speedtext, "speedText")
                 .AddSlider(new ActionConsumable<int>(OnSpeedChange), speedsliderbounds, "speedslider")
 
-                .AddDynamicText(Lang.Get("vinteng:gui-motor-targetres") + _mechResistance.ToString("F2"), outputfont, resistancetext, "resistanceText")
-                .AddSlider(new ActionConsumable<int>(OnResistanceChange), resistancesliderbounds, "resistanceslider")
+                .AddDynamicText(Lang.Get("vinteng:gui-motor-targettorque") + _mechTorque.ToString("F2"), outputfont, torquetext, "torqueText")
+                .AddSlider(new ActionConsumable<int>(OnTorqueChange), torquesliderbounds, "torqueslider")
 
                 .AddInset(outputtxtinset, 2, 0f)
                 .AddDynamicText(GetHelpText(), outputfont, outputtextbnds, "outputText")
 
                 .EndChildElements();
             SingleComposer.GetSlider("speedslider").SetValues(((int)(_mechSpeed*100)), 0, 100, 1, "");
-            SingleComposer.GetSlider("resistanceslider").SetValues(((int)(_mechResistance * 100)), 0, 100, 1, "");            
+            SingleComposer.GetSlider("torqueslider").SetValues(((int)(_mechTorque * 10)), 0, 50, 1, "");
             SingleComposer.Compose(true);
         }
         private void OnTitleBarClose()
@@ -166,12 +166,12 @@ namespace VintageEngineering.GUI
             base.SingleComposer.GetDynamicText("speedText").SetNewText($"{Lang.Get("vinteng:gui-motor-targetspeed")} {_mechSpeed:F2}");
             return true;
         }
-        private bool OnResistanceChange(int t1)
+        private bool OnTorqueChange(int t1)
         {
-            float newvalue = (float)t1 / 100;
-            _mechResistance = newvalue;
+            float newvalue = (float)t1 / 10;
+            _mechTorque = newvalue;
             capi.Network.SendBlockEntityPacket(base.BlockEntityPosition, 1005, t1);
-            base.SingleComposer.GetDynamicText("resistanceText").SetNewText($"{Lang.Get("vinteng:gui-motor-targetres")} {_mechResistance:F2}");
+            base.SingleComposer.GetDynamicText("torqueText").SetNewText($"{Lang.Get("vinteng:gui-motor-targettorque")} {_mechTorque:F2}");
             return true;
         }
         private string GetHelpText()
@@ -185,10 +185,14 @@ namespace VintageEngineering.GUI
 
             if (_bentity.Electric.MachineState == EnumBEState.On)
             {
-                outputhelptext = $"{Lang.Get("vinteng:gui-powerrequired")} {_powerRequired}";
+                outputhelptext = $"{Lang.Get("vinteng:gui-powerrequired")} {_powerRequired*10} PPS";
                 if (_currentPower <= 10)
                 {
                     outputhelptext = System.Environment.NewLine + $"{Lang.Get("vinteng:gui-machine-lowpower")}";
+                }
+                if (_powerRequired > 100) // this is per tick, so over 1000 PPS exceeds LV tier
+                {
+                    outputhelptext = System.Environment.NewLine + $"{Lang.Get("vinteng:gui-excessive-power")}";
                 }
             }
             else
@@ -209,7 +213,7 @@ namespace VintageEngineering.GUI
         {
             _currentPower = p_curpower;
             _mechSpeed = p_speed;
-            _mechResistance = p_resist;
+            _mechTorque = p_resist;
 
             if (!this.IsOpened()) return;
 
@@ -217,7 +221,7 @@ namespace VintageEngineering.GUI
             {
                 base.SingleComposer.GetCustomDraw("powerDrawer").Redraw();
                 base.SingleComposer.GetDynamicText("speedText").SetNewText($"{Lang.Get("vinteng:gui-motor-targetspeed")} {_mechSpeed:F2}");
-                base.SingleComposer.GetDynamicText("resistanceText").SetNewText($"{Lang.Get("vinteng:gui-motor-targetres")} {_mechResistance:F2}");
+                base.SingleComposer.GetDynamicText("torqueText").SetNewText($"{Lang.Get("vinteng:gui-motor-targettorque")} {_mechTorque:F2}");
                 base.SingleComposer.GetDynamicText("enableBtnText").SetNewText(_bentity.Electric.IsEnabled ? Lang.Get("vinteng:gui-word-on") : Lang.Get("vinteng:gui-word-off"));
                 base.SingleComposer.GetDynamicText("outputText").SetNewText(GetHelpText());                
             }

@@ -27,7 +27,7 @@ namespace VintageEngineering.blockentity
         private float sleepTimer = 0;
 
         private float _speedSetting = 0.0f;
-        private float _resistanceSetting = 0.0f;
+        private float _torqueSetting = 0.0f;
 
         GUILVMotor clientDialog;
 
@@ -40,7 +40,7 @@ namespace VintageEngineering.blockentity
         /// What the Resistance is set to for this Motor<br/>
         /// Not used for the Alternator
         /// </summary>
-        public float ResistanceSetting { get { return _resistanceSetting; } set { _resistanceSetting = value; } }
+        public float TorqueSetting { get { return _torqueSetting; } set { _torqueSetting = value; } }
 
         public BEBehaviorMPBase Mechanical
         {
@@ -72,7 +72,7 @@ namespace VintageEngineering.blockentity
                 base.toggleInventoryDialogClient(byPlayer, delegate
                 {
                     clientDialog = new GUILVMotor(DialogTitle, Inventory, this.Pos, base.Api as ICoreClientAPI, this);
-                    clientDialog.Update(Electric.CurrentPower, _speedSetting, _resistanceSetting);
+                    clientDialog.Update(Electric.CurrentPower, _speedSetting, _torqueSetting);
                     return this.clientDialog;
                 });
             }
@@ -106,7 +106,7 @@ namespace VintageEngineering.blockentity
             {
                 if (consBhv != null)
                 {
-                    float powermade = consBhv.ProducePower();
+                    float powermade = consBhv.GetPowerProduced();
                     Electric.electricpower += (ulong)powermade;
                     if (Electric.CurrentPower > Electric.MaxPower) Electric.electricpower = Electric.MaxPower;
                 }
@@ -118,17 +118,10 @@ namespace VintageEngineering.blockentity
                 if(genBhv != null)
                 {
                     Single powerwanted = genBhv.GetElectricalPowerRequired();
-                    if (Electric.CurrentPower < powerwanted)
+                    if (Electric.CurrentPower >= powerwanted)
                     {
-                        // if this is out of power, then it should just stop providing mechanical power
-                        genBhv.ConsumePower(Electric.CurrentPower);
-                        Electric.electricpower = 0;
-                    }
-                    else
-                    {
-                        Single consumed = genBhv.GetElectricalPowerRequired();
-                        genBhv.ConsumePower(consumed);
-                        Electric.electricpower -= (ulong)Math.Round(consumed);
+                        // if this is out of power, then it should just stop providing mechanical power                        
+                        Electric.electricpower -= (ulong)Math.Round(powerwanted);
                     }
                 }
             }
@@ -153,7 +146,7 @@ namespace VintageEngineering.blockentity
 
             if (Api != null && Api.Side == EnumAppSide.Client && clientDialog != null && clientDialog.IsOpened())
             {
-                clientDialog.Update(Electric.CurrentPower, _speedSetting, _resistanceSetting);
+                clientDialog.Update(Electric.CurrentPower, _speedSetting, _torqueSetting);
             }
             MarkDirty(true);
         }
@@ -181,8 +174,8 @@ namespace VintageEngineering.blockentity
             if (packetid == 1005)
             {
                 // new Resistance setting
-                int newresist = SerializerUtil.Deserialize<int>(data);
-                _resistanceSetting = (float)newresist / 100;
+                int newtorque = SerializerUtil.Deserialize<int>(data);
+                _torqueSetting = (float)newtorque / 10;
                 MarkDirty(true);
             }
         }
@@ -190,14 +183,14 @@ namespace VintageEngineering.blockentity
         public override void OnReceivedServerPacket(int packetid, byte[] data)
         {
             base.OnReceivedServerPacket(packetid, data);
-            if (clientDialog != null && clientDialog.IsOpened()) clientDialog.Update(Electric.CurrentPower, _speedSetting, _resistanceSetting);
+            if (clientDialog != null && clientDialog.IsOpened()) clientDialog.Update(Electric.CurrentPower, _speedSetting, _torqueSetting);
         }
 
         public override void ToTreeAttributes(ITreeAttribute tree)
         {
             base.ToTreeAttributes(tree);
             tree.SetFloat("speed", _speedSetting);
-            tree.SetFloat("resistance", _resistanceSetting);
+            tree.SetFloat("resistance", _torqueSetting);
         }
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldAccessForResolve)
         {
@@ -205,11 +198,11 @@ namespace VintageEngineering.blockentity
             {
                 base.FromTreeAttributes(tree, worldAccessForResolve);
                 _speedSetting = tree.GetFloat("speed", 0.0f);
-                _resistanceSetting = tree.GetFloat("resistance", 0.0f);
+                _torqueSetting = tree.GetFloat("resistance", 0.0f);
                 if (Api != null && Api.Side == EnumAppSide.Client) { SetState(Electric.MachineState); }
                 if (clientDialog != null)
                 {
-                    clientDialog.Update(Electric.CurrentPower, _speedSetting, _resistanceSetting);
+                    clientDialog.Update(Electric.CurrentPower, _speedSetting, _torqueSetting);
                 }
             }
             catch (Exception) { }

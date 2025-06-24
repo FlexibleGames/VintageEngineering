@@ -19,7 +19,7 @@
                     "canReceivePower": true,
                     "entitytype": "Consumer",
                     "maxpower": 2000,
-                    "maxpps": 100
+                    "maxpps": 1000
                 }
             },
             {"name":"VEElectricMotorBhv"}
@@ -32,7 +32,7 @@
                     "canReceivePower": false,
                     "entitytype": "Producer",
                     "maxpower": 2000,
-                    "maxpps": 100
+                    "maxpps": 1000
                 }
             },
             {"name":"VEElectricKineticGenBhv"}

@@ -44,7 +44,7 @@
 
     "vinteng:block-velvek-motor-*": "Electric Motor",
 	"vinteng:gui-title-motor": "Electric Motor",
-	"vinteng:blockdesc-velvek-motor-*": "Electric Motor generates Mechanical energy using Electric Power. Dial Speed and Resistance targets in the GUI to alter how much power is required.",
+	"vinteng:blockdesc-velvek-motor-*": "Electric Motor generates Mechanical energy using Electric Power. Dial Speed and Torque targets in the GUI which alters how much power is required.",
     "vinteng:block-velvek-alternator-*":"Electric Alternator",
 	"vinteng:blockdesc-velvek-alternator-*":"The Alternator generates Electric Power using Mechanical energy.",
 
@@ -348,7 +348,9 @@
 	"vinteng:blockdesc-metalstairs-*": "No industrial build is complete without gritty-looking metal stairs.",
 
 	"vinteng:gui-motor-targetspeed": "Target Speed: ",
-	"vinteng:gui-motor-targetres": "Target Resistance: ",
-	"vinteng:gui-powerrequired": "Power Required:"
+	"vinteng:gui-motor-targettorque": "Target Torque: ",
+	"vinteng:gui-powerrequired": "Power Required:",
+
+	"vinteng:gui-excessive-power": "Machine Requires more power than supplied by network tier. Time to upgrade."
 
 }

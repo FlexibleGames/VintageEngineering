@@ -12,22 +12,24 @@ namespace VintageEngineering.blockBhv
     public class ElectricKineticMotorBhv : BEBehaviorMPBase
     {
         //how much torqe we are providing
-        private float torque;
+        private float _torque;
         //how fast are we going
-        private float speedSet;
-        //how much power are we getting, this is not actually used anywhere...?
-        private float electricPowerReceived;
+        private float _speedSet;
         //how much power do we want to be getting
         private float electricPowerRequired;
 
-        //How much power is needed to turn at all
-        private static float Ins_Min = 10f;
-        //How much power is needed to turn at fastest + max resistance
-        private static float Ins_Max= 250f;
+        //How much power (per tick) is needed to turn at all
+        private static float Power_Min = 1f;
+        /// <summary>
+        /// How much power (per tick) is needed to turn at fastest + max torque
+        /// </summary>
+        private static float PowerAtMax = 250f;
         //How much torq will be provided at max
-        private static float resistance_Max = 1f;
+        //private static float resistance_Max = 1f;
         //How fast can be at max, vanilla 0-1
         private static float speed_max = 1f;
+        //How high should we clamp _torque?
+        private static float torque_max = 5f;
 
         /// <summary>
         /// Given the set speed and resistance settings how much electrical power is required
@@ -119,81 +121,93 @@ namespace VintageEngineering.blockBhv
             _ => this.AxisSign
         };
 
-        public void ConsumePower(float amnt)
-        {
-            electricPowerReceived = amnt;
-        }
-
         public override float GetTorque(long tick, float speed, out float resistance)
         {
-            torque = 0f;
-            resistance = GetResistance();
-            speedSet = 0;
+            _torque = 0f;
+            resistance = GetResistance(); // now a flat 0.003, same as a windmill rotor.
+            _speedSet = 0;
             //Dangerous cast, DC,DA.
-            float powAmnt = (Blockentity as BEElectricKinetic).Electric.CurrentPower;            
-            
+            float powAmnt = (Blockentity as BEElectricKinetic).Electric.CurrentPower;
+
+            float direction = (this.propagationDir == this.OutFacingForNetworkDiscovery) ? 1f : -1f;
+
+            // speed is 0 -> 1
             float l_curspeedsetting = (Blockentity as BEElectricKinetic)?.SpeedSetting ?? 0f;
+            // _torque is 0 -> 5
+            float l_curtorquesetting = (Blockentity as BEElectricKinetic)?.TorqueSetting ?? 0f;
+            // if either of these are 0, it returns 0 so ensure we do that.
+            if (l_curspeedsetting == 0 || l_curtorquesetting == 0) return 0;
 
-            speedSet = Math.Min(powAmnt/10, l_curspeedsetting);
+            // powAmnt goes to 2000, so this is 0 -> 200 compared to speed which is 0 -> 1
+            // ?? only when power is between 10 and 11 would this make any difference.
+            _speedSet = powAmnt > 0 ? l_curspeedsetting : 0f;
+            
+            // base game Windmill rotor max TorqueFactor is 1.25
+            // wind speed is 0 -> 1
+            // GetTorque returns speed * TorqueFactor.
+            _torque = (_speedSet * l_curtorquesetting);
 
-            torque = (speedSet * resistance) * 1.25f;
+            GetElectricalPowerRequired();
 
-            electricPowerRequired = Math.Min(speedSet + (resistance * 1.5f)*100f,Ins_Max);
-
-            // if power is < 10, don't try to turn at all... Why 10? reasons.
-            if (powAmnt <= Ins_Min) { return torque; }
+            // if power is < 10, don't try to turn at all... 
+            if (powAmnt <= Power_Min) { return 0f; }
 
             if ((Blockentity as BEElectricKinetic).Electric.MachineState == EnumBEState.Off) return 0f;
 
-            return propagationDir == OutFacingForNetworkDiscovery ? torque : -torque;
-        }
+            return propagationDir == OutFacingForNetworkDiscovery ? _torque : -_torque;
+        }        
 
         /// <summary>
-        /// How much electrical power this object got last
+        /// How much electrical power (per tick) this object needs
         /// </summary>
-        /// <returns>The power got last, in electrical units</returns>
-        public float GetElectricalPowerReceived()
-        {
-            return electricPowerReceived;
-        }
-
-        /// <summary>
-        /// How much electrical power this object wants
-        /// </summary>
-        /// <returns>The power it wants, in electrical units</returns>
+        /// <returns>The power (per tick) it wants, in electrical units</returns>
         public float GetElectricalPowerRequired()
         {
-            return electricPowerRequired;
+            // speed is 0.00 -> 1.00
+            // _torque is 0.0 -> 5.0
+            if (_speedSet == 0 || _torque == 0)
+            {
+                electricPowerRequired = 0;
+                return 0;
+            }
+
+            // a max value of 5 = 4 windmill rotors
+
+            //float speedFactor = MathF.Pow(_speedSet, 1.5f); // Power of 1.5 for hyperbolic curve
+            //float torqueFactor = MathF.Pow(normalizedtorque, 1.5f); // Power of 1.5 for hyperbolic curve
+
+            float normalizedtorque = _torque / 5; 
+            
+            float l_speedpower = _speedSet * 250f;
+            float l_torquepower = normalizedtorque * 250f;
+
+            float output = (l_speedpower/2) + (l_torquepower/4);
+            output = Math.Clamp(output, Power_Min, PowerAtMax);
+            
+            // this is sent to the client for GUI use.
+            electricPowerRequired = output;
+
+            return output;
         }
-        
+
         public override float GetResistance()
         {
-            if (Blockentity is BEElectricKinetic kinetic)
-            {
-                float l_curresistsetting = kinetic.ResistanceSetting;
-
-                if (kinetic.Electric.MachineState == EnumBEState.Off) return 0f;
-
-                return Math.Min(l_curresistsetting, resistance_Max);
-            }
-            return 0f;
+            return 0.003f;
         }
 
         public override void ToTreeAttributes(ITreeAttribute tree)
         {
             base.ToTreeAttributes(tree);
-            tree.SetFloat("torque", torque);
-            tree.SetFloat("speed", speedSet);
-            tree.SetFloat("powerreceived", electricPowerReceived);
+            tree.SetFloat("torque", _torque);
+            tree.SetFloat("speed", _speedSet);
             tree.SetFloat("powerrequired", electricPowerRequired);
         }
 
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldAccessForResolve)
         {
             base.FromTreeAttributes(tree, worldAccessForResolve);
-            torque = tree.GetFloat("torque", 0f);
-            speedSet = tree.GetFloat("speed", 0f);
-            electricPowerReceived = tree.GetFloat("powerreceived", 0f);
+            _torque = tree.GetFloat("torque", 0f);
+            _speedSet = tree.GetFloat("speed", 0f);
             electricPowerRequired = tree.GetFloat("powerrequired", 0f);
         }
     }
@@ -201,7 +215,7 @@ namespace VintageEngineering.blockBhv
     public class ElectricKineticAlternatorBhv : BEBehaviorMPBase
     {
         //The max power generated at full speed
-        private static float max_Output = 80f;
+        private float max_Output { get => (Blockentity as BEElectricKinetic).Electric.MaxPPS; }
         //How fast IS max speed? Base wind-speed is 0-1
         private static float speed_max = 0.8f;
         //How much is added to resistance when doing something
@@ -283,10 +297,11 @@ namespace VintageEngineering.blockBhv
             return base.OnTesselation(mesher, tesselator);
         }
         /// <summary>
-        /// This feels like it's important enough to need serious documentation
+        /// Returns how much power this is producing given the network speed<br/>
+        /// This requires a lot of work.
         /// </summary>
-        /// <returns>a float</returns>
-        public float ProducePower()
+        /// <returns>Power Produced</returns>
+        public float GetPowerProduced()
         {
             float spd = network?.Speed * GearedRatio ?? 0f;
             float pow = Math.Abs(spd) / speed_max * max_Output;
@@ -301,7 +316,6 @@ namespace VintageEngineering.blockBhv
 
         public override float GetResistance()
         {
-
             float spd = Math.Abs(network?.Speed * GearedRatio ?? 0f);
             float resistance = (float)(base_res + ((spd > speed_max)
                 ? res_Load + ((res_Fac*2) * (spd/speed_max))

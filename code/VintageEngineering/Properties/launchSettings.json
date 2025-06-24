@@ -3,7 +3,7 @@
     "Client": {
       "commandName": "Executable",
       "executablePath": "$(VINTAGE_STORY)/Vintagestory.exe",
-      "commandLineArgs": "--tracelog --addModPath=\"$(MSBuildProjectDirectory)\\..\\..\" -o \"120 test world\"",
+      "commandLineArgs": "--tracelog --addModPath=\"$(MSBuildProjectDirectory)\\..\\..\" -o \"120testworld\"",
       "workingDirectory": "$(VINTAGE_STORY)",
       "environmentVariables": {
         "TEXTURE_DEBUG_DISPOSE": "1"
