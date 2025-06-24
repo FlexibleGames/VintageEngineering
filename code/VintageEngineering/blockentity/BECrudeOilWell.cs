@@ -55,7 +55,7 @@ namespace VintageEngineering
             if (api.Side == EnumAppSide.Server) 
             {
                 sapi = api as ICoreServerAPI;
-                _tickHandler = RegisterGameTickListener(OnGameTick, 3000, 100);
+                if (!IsGenerated) _tickHandler = RegisterGameTickListener(OnGameTick, 3000, 100);
             }
         }
         /// <summary>
