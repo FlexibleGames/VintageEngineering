@@ -12,6 +12,7 @@ using Vintagestory.GameContent;
 using System.IO;
 using VintageEngineering.blockentity;
 using VintageEngineering.Blocks;
+using VintageEngineering.blockBhv;
 
 [assembly: ModInfo("VintageEngineering",
                     Authors = new string[] { "Flexible Games", "bluelightning32" },
@@ -108,6 +109,7 @@ namespace VintageEngineering
             RegisterItems(api);
             RegisterBlocks(api);
             RegisterBlockEntities(api);
+            RegisterBlockEntityBehaviors(api);
         }
 
         private void OnFilterDataSyncFromClient(IServerPlayer fromPlayer, PipeFilterPacket packet)
@@ -180,8 +182,12 @@ namespace VintageEngineering
             // Needed for neighbor block change event
             api.RegisterBlockClass("VEForge", typeof(BlockVEForge));
 
+            api.RegisterBlockClass("VEElectricKinetic",typeof(BlockElectricKinetic));
+
             // mixer has fluids
             api.RegisterBlockClass("VEBlockFluidIO", typeof(BlockFluidIO));
+
+            api.RegisterBlockClass("VELVBlower", typeof(BlockLVBlower));
 
             api.RegisterBlockClass("VEPipeBlock", typeof(BlockPipeBase));
 
@@ -202,6 +208,7 @@ namespace VintageEngineering
             api.RegisterBlockEntityClass("VEBECrusher", typeof(BECrusher));
             api.RegisterBlockEntityClass("VEBEKiln", typeof(BEKiln));
             api.RegisterBlockEntityClass("VEBEForge", typeof(BEForge));
+            api.RegisterBlockEntityClass("VEBEElectricKinetic",typeof(BEElectricKinetic));
             api.RegisterBlockEntityClass("VEBECNC", typeof(BECNC));
             api.RegisterBlockEntityClass("VEBEMixer", typeof(BEMixer));
             api.RegisterBlockEntityClass("VEBELVBattery", typeof(BELVBattery));
@@ -216,6 +223,12 @@ namespace VintageEngineering
             api.RegisterBlockEntityClass("VEBELVPump", typeof(BELVPump));
 
             api.RegisterBlockEntityClass("VEBECrudeOilWell", typeof(BECrudeOilWell));
+        }
+
+        public void RegisterBlockEntityBehaviors(ICoreAPI api)
+        {
+            api.RegisterBlockEntityBehaviorClass("VEElectricMotorBhv", typeof(ElectricKineticMotorBhv));
+            api.RegisterBlockEntityBehaviorClass("VEElectricKineticGenBhv", typeof(ElectricKineticAlternatorBhv));
         }
 
         public override void Dispose()

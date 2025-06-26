@@ -1,6 +1,6 @@
 {
 	"code": "veblower",
-	"class": "VEElectricBlock",
+	"class": "VELVBlower",
 	"entityClass": "VEBEBlower",
 	"behaviors": [
 		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "veblower-north" }}}

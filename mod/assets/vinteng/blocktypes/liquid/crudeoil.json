@@ -18,7 +18,7 @@
 			"name": "FiniteSpreadingLiquid",
 			"properties":
 			{
-				"spreadDelay": 1000,
+				"spreadDelay": 250,
 				"liquidCollisionSound": "sizzle",
 				"sourceReplacementCode": "game:sludgygravel",
 				"flowingReplacementCode": "game:sludgygravel",
@@ -104,8 +104,8 @@
 		"crudeoil-*": [
 			{
 				"hsvaColor": [{ "avg": 10, "var": 0 }, { "avg": 0, "var": 0 }, { "avg": 3, "var": 2 },  { "avg": 255, "var": 10 }],
-				"gravityEffect": { "avg": 0.0, "var": 0 },
-				"posOffset": [ { "avg": 0.5, "var": 0.5 }, { "avg": 0.7, "var": 0.2 }, { "avg": 0.5, "var": 0.5 }],
+				"gravityEffect": { "avg": 0.3, "var": 0 },
+				"posOffset": [ { "avg": 0, "var": 0.2 }, { "avg": 0.7, "var": 0.2 }, { "avg": 0.5, "var": 0.5 }],
 				"velocity": [ { "avg": 0, "var": 0.9 }, { "avg": 4, "var": 0 }, { "avg": 0, "var": 0.9 }],
 				"quantity": { "avg": 0.002 },
 				"lifeLength": { "avg": 0.5 },

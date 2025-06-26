@@ -15,7 +15,7 @@ namespace VintageEngineering.Blocks
     {
         public string Flow { get; set; }
         public Vec3i FlowNormali { get; set; }
-
+        
         public bool IsLava => false;
 
         public int Height {  get; set; }

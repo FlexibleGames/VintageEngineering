@@ -54,31 +54,66 @@
 	"sounds": {
 		"walk": "walk/stone",
 		"byTool": {
-			"Pickaxe": { "hit": "block/rock-hit-pickaxe", "break": "block/rock-break-pickaxe" }
+			"Pickaxe": { "hit": "game:block/rock-hit-pickaxe", "break": "game:block/rock-break-pickaxe" }
 		}
 	},
-	"collisionSelectionBoxesByType": {
-		"*-down": [
-			{ "x1": 0, "y1": 0.5, "z1": 0, "x2": 1, "y2": 1, "z2": 1 },
+	"collisionselectionBoxesByType": {
+		"*-up-*": [
+			{ "x1": 0, "y1": 0, "z1": 0, "x2": 1, "y2": 0.25, "z2": 1 },
 			{ 
-				"x1": 0, "y1": 0, "z1": 0.5, "x2": 1, "y2": 0.5, "z2": 1, 
+				"x1": 0.25, "y1": 0, "z1": 0, "x2": 1, "y2": 0.5, "z2": 1, 
 				"rotateYByType": {
-					"*-north-*": 180,
-					"*-east-*": 90,
-					"*-south-*": 0,
-					"*-west-*": 270
+					"*-north": 90,
+					"*-east": 0,
+					"*-south": 270,
+					"*-west": 180
 				}
-			}			
-		],
-		"*-up": [
-			{ "x1": 0, "y1": 0, "z1": 0, "x2": 1, "y2": 0.5, "z2": 1 },
-			{ 
-				"x1": 0, "y1": 0.5, "z1": 0.5, "x2": 1, "y2": 1, "z2": 1, 
+			},
+            { 
+				"x1": 0.5, "y1": 0, "z1": 0, "x2": 1, "y2": 0.75, "z2": 1, 
 				"rotateYByType": {
-					"*-north-*": 180,
-					"*-east-*": 90,
-					"*-south-*": 0,
-					"*-west-*": 270
+					"*-north": 90,
+					"*-east": 0,
+					"*-south": 270,
+					"*-west": 180
+				}
+			},
+            { 
+				"x1": 0.75, "y1": 0, "z1": 0, "x2": 1, "y2": 1, "z2": 1, 
+				"rotateYByType": {
+					"*-north": 90,
+					"*-east": 0,
+					"*-south": 270,
+					"*-west": 180
+				}
+			}
+		],
+		"*-down-*": [
+			{ "x1": 0.75, "y1": 0.75, "z1": 0, "x2": 1, "y2": 1, "z2": 1 },
+			{ 
+				"x1": 0.5, "y1": 0.5, "z1": 0, "x2": 0.75, "y2": 0.75, "z2": 1, 
+				"rotateYByType": {
+					"*-north": 90,
+					"*-east": 270,
+					"*-west": 180
+				}
+			},
+            { 
+				"x1": 0.25, "y1": 0.25, "z1": 0, "x2": 0.5, "y2": 0.5, "z2": 1, 
+				"rotateYByType": {
+					"*-north": 90,
+					"*-east": 0,
+					"*-south": 270,
+					"*-west": 180
+				}
+			},
+            { 
+				"x1": 0, "y1": 0, "z1": 0, "x2": 0.25, "y2": 0.25, "z2": 1, 
+				"rotateYByType": {
+					"*-north": 90,
+					"*-east": 0,
+					"*-south": 270,
+					"*-west": 180
 				}
 			}
 		]

@@ -501,7 +501,6 @@ namespace VintageEngineering.Electrical.Systems.Catenary
             shader.ModelMatrix = ModelMat.Values;
             rpi.RenderMesh(ws.currentMeshRef);
             shader.Stop();
-
         }
 
         private void reloadMeshRef()
