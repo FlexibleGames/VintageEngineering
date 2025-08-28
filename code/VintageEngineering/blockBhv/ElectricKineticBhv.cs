@@ -7,6 +7,9 @@ using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent.Mechanics;
 
+// Disable warnings about variables not starting with a capital letter.
+#pragma warning disable IDE1006
+
 namespace VintageEngineering.blockBhv
 {
     public class ElectricKineticMotorBhv : BEBehaviorMPBase
@@ -222,13 +225,13 @@ namespace VintageEngineering.blockBhv
         //The max power generated at full speed
         private float max_Output { get => (Blockentity as BEElectricKinetic).Electric.MaxPPS; }
         //Speed at which we produce the base of 100 pps for a single windmill.
-        private static float speed_max = 0.352f;
+        //private static float speed_max = 0.352f;
         //How much is added to resistance when doing something
         private static float res_Fac = 0.125f;
         //add this much resistance per 100% power over speed_max
-        private static float res_Load = 0.25f;
+        //private static float res_Load = 0.25f;
         //How much do we consume doing literally nothing
-        private static float base_res = 0f;
+        //private static float base_res = 0f;
 
         private float _powerLastTick = 0f;
         /// <summary>
@@ -351,3 +354,4 @@ namespace VintageEngineering.blockBhv
         }
     }
 }
+#pragma warning restore IDE1006

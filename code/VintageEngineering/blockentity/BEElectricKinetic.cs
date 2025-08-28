@@ -83,7 +83,7 @@ namespace VintageEngineering.blockentity
         public override void Initialize(ICoreAPI api)
         {
             base.Initialize(api);
-
+            SetState(EnumBEState.On);
             if (api.Side == EnumAppSide.Server)
             {
                 RegisterGameTickListener(OnSimTick, 100, 0);
@@ -99,6 +99,7 @@ namespace VintageEngineering.blockentity
             if (!Electric.IsEnabled) return;
             if (Electric.IsSleeping)
             {
+                SetState(EnumBEState.On); // do not allow these to ever sleep
                 if (sleepTimer < 2f) { sleepTimer += dt; return; }
                 else sleepTimer = 0;
             }
