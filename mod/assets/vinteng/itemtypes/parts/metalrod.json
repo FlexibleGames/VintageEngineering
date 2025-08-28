@@ -6,6 +6,7 @@
 	"drawtype": "json",
 	"shape": { "base": "vinteng:item/parts/rod" },
 	"maxstacksize": 64,
+	"storageFlags": 5,
 	"variantgroups": [
 		{
 			"code": "metal",
