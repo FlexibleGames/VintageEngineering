@@ -50,11 +50,6 @@
             "*"
         ]
     },
-    "textures": {
-        "metal": {
-            "base": "game:block/metal/ingot/{material}"
-        }
-    },
     "fpHandTransform": {
         "translation": {
             "x": 0,
