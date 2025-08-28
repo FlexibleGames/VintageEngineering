@@ -13,7 +13,9 @@
 		"castiron": "vinteng:block/castiron",
 		"gold": "vinteng:block/gold",
 		"shinyiron": "vinteng:block/shinyiron",
-		"copper": "game:block/metal/ingot/copper"
+		"copper": "game:block/metal/ingot/copper",
+		"shinybrass":"vinteng:block/shinybrass",
+		"copperspooldiagonal":"vinteng:block/copperspooldiagonal"
 	},
 	"elements": [
 		{

@@ -25,7 +25,7 @@ public class CollectibleBehaviorHandbookTextAndExtraInfoAccessor : CollectibleBe
 
     public new void AddSubHeading(List<RichTextComponentBase> components, ICoreClientAPI capi, ActionConsumable<string> openDetailPageFor, string subheading, string detailpage)
     {
-        base.AddSubHeading(components, capi, openDetailPageFor, subheading, detailpage);
+        CollectibleBehaviorHandbookTextAndExtraInfo.AddSubHeading(components, capi, openDetailPageFor, subheading, detailpage);
     }
 
     public new const int SmallPadding = CollectibleBehaviorHandbookTextAndExtraInfo.SmallPadding;

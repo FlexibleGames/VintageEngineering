@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cairo.Freetype;
+using System;
 using System.Text;
 using VintageEngineering.Electrical;
 using Vintagestory.API.Client;
@@ -65,6 +66,12 @@ namespace VintageEngineering
                 Api?.World.PlaySoundAt(new AssetLocation("game:sounds/block/loosestick"), byPlayer);
                 if (IsActive && IsPowered) SetState(EnumBEState.On);
                 else SetState(EnumBEState.Sleeping);
+
+                string facing = this.Block.Variant["side"]; // north,east,south,west
+                BlockFacing machinefacing = BlockFacing.FromCode(facing);
+                BEBlastFurnace furnace = Api.World.BlockAccessor.GetBlockEntity(this.Pos.AddCopy(machinefacing)) as BEBlastFurnace;
+
+                if (furnace != null) furnace.MarkDirty(true);
             }
         }
 
@@ -195,7 +202,8 @@ namespace VintageEngineering
             base.FromTreeAttributes(tree, worldAccessForResolve);
             IsActive = tree.GetBool("active");
             IsPowered = tree.GetBool("powered");
-            SetState(Electric.MachineState);
+            if (IsActive) SetState(EnumBEState.On);
+            else SetState(EnumBEState.Sleeping);
         }
     }
 }

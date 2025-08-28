@@ -198,6 +198,8 @@ namespace VintageEngineering
             get
             {
                 if (Api == null) return 0;
+                if (Api.Side == EnumAppSide.Client) return _numBlowers;
+
                 string facing = this.Block.Variant["side"]; // north,east,south,west
                 BlockFacing machinefacing = BlockFacing.FromCode(facing);
                 BlockFacing cwface = machinefacing.GetCW(); // left face
@@ -214,6 +216,7 @@ namespace VintageEngineering
                 {
                     if (rightside.IsActive) output++;
                 }
+                if (_numBlowers != output) _numBlowers = output;
                 return output;
             }
         }
@@ -266,7 +269,10 @@ namespace VintageEngineering
                 {
                     int blowers = NumActiveBlowers;
                     _totalCraftTime = GetMeltingDuration(Api.World, InputSlots);
-                    _totalCraftTime *= (float)(1f - (blowers * 0.1f)); // 10% faster for each active blower
+                    // a custom recipe has a custom smelt time as a single-craft iteration rather than the whole stack
+                    if (_currentRecipe != null) _totalCraftTime = _currentRecipe.PowerPerCraft;
+
+                    if (_currentRecipe == null) _totalCraftTime *= (float)(1f - (blowers * 0.1f)); // 10% faster for each active blower
                     _tempgoal = GetMeltingPoint(Api.World, InputSlots);
                     SetState(EnumBEState.On);
                     return true;
@@ -403,7 +409,7 @@ namespace VintageEngineering
         }
         /// <summary>
         /// Can the current set of ingredients be smelted into anything?<br/>
-        /// First checks to see if output is empty, then Alloy Recipes, then base game metal stacks, then machine specific recipes.<br/>
+        /// First checks to see if output is empty, then machine specific recipes, then Alloy Recipes, then base game metal stacks.<br/>
         /// If a recipe is found, this will set the proper internal recipe object to that recipe and all others to null.
         /// </summary>
         /// <param name="world">WorldAccessor</param>
@@ -458,7 +464,11 @@ namespace VintageEngineering
                     ItemStack ironingot = new ItemStack(Api.World.GetItem(new AssetLocation("game:ingot-iron")), matched.output.StackSize);
                     matched.output = ironingot.Clone();
                 }
-                if (ValidateInputs(world, stacks, matched.output)) _smeltableStack = matched;
+                if (ValidateInputs(world, stacks, matched.output))
+                {
+                    if (matched.stackSize >= 1)
+                    _smeltableStack = matched;
+                }
                 else
                 {
                     _smeltableStack = null;
@@ -512,7 +522,7 @@ namespace VintageEngineering
         public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
         {            
             //base.GetBlockInfo(forPlayer, dsc); // we do NOT need power information as this machine isn't powered.
-            dsc.AppendLine($"{MachineState}");
+            dsc.AppendLine($"{MachineState} with {NumActiveBlowers} Active Blowers");
             if (MachineState == EnumBEState.On)
             {
                 if (CurrentRecipe != null) dsc.AppendLine($"|{Lang.Get("vinteng:gui-word-crafting")}:{CurrentRecipe.Outputs[0].ResolvedItemstack.StackSize} {CurrentRecipe.Outputs[0].ResolvedItemstack.GetName()}");
@@ -569,12 +579,17 @@ namespace VintageEngineering
                         SetIngredientTemperature(Api.World, _currentTemp);                        
                     }
                     _updateBouncer = 0f;
+                    SetState(EnumBEState.On);
                     MarkDirty(true);
                 }
                 else return;
             }
             if (_state == EnumBEState.On) // machine is on and actively crafting something
             {
+                if (IsCrafting && (_currentRecipe == null && _alloyRecipe == null && _smeltableStack == null))
+                {
+                    FindMatchingRecipe();
+                }
                 if (IsCrafting && RecipeProgress < 1f)
                 {
                     if (!HasRoomInOutput(0, null)) return;
@@ -775,6 +790,7 @@ namespace VintageEngineering
             tree.SetFloat("currenttemp", _currentTemp);
             tree.SetFloat("tempgoal", _tempgoal);
             tree.SetFloat("maxburntemp", _maxBurnTemp);
+            tree.SetInt("numblowers", _numBlowers); // clients need this
         }
 
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldForResolving)
@@ -790,6 +806,7 @@ namespace VintageEngineering
             _currentTemp = tree.GetFloat("currenttemp", 0f);
             _tempgoal = tree.GetFloat("tempgoal", 0f);
             _maxBurnTemp = tree.GetFloat("maxburntemp", 0f);
+            _numBlowers = tree.GetInt("numblowers", 0); // clients need this
 
             if (Api != null && Api.Side == EnumAppSide.Client) SetState(_state);
             if (_clientDialog != null)
