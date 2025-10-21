@@ -28,7 +28,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
             cm = catenaryMod;
             capi = c_api;
             chunksize = GlobalConstants.ChunkSize;
-            capi.Event.RegisterRenderer(this, EnumRenderStage.Opaque, "catenarynetwork");
+            capi.Event.RegisterRenderer(this, EnumRenderStage.Opaque, "ve_catenarynetwork");
         }
 
         public void Dispose()
