@@ -569,7 +569,14 @@ namespace VintageEngineering.Transport.API
                     }
                 }
             }
-            if (_shapeDirty) MarkDirty(true);
+            if (_shapeDirty) 
+            { 
+                if (NetworkID != 0 && pnm != null)
+                {                    
+                    pnm.GetNetwork(NetworkID).MarkNetworkDirty(world);
+                }
+                MarkDirty(true);
+            }
         }
 
         /// <summary>

@@ -230,12 +230,18 @@ namespace VintageEngineering.Transport.Network
             {
                 if (world.BlockAccessor.GetChunkAtBlockPos(pos) == null) { continue; }
                 BEPipeBase bep = world.BlockAccessor.GetBlockEntity(pos) as BEPipeBase;
-                if (bep == null) continue;
+                if (bep == null) 
+                {
+                    world.Api.Logger.Error($"VE Pipe Module: Pipe BE null at given pipe position {pos.SubCopy(world.DefaultSpawnPosition.AsBlockPos)}. Chunk is loaded.");
+                    continue; 
+                }
                 if (bep.NumInsertionConnections > 0) insertpos.Add(pos);
                 if (bep.NumExtractionConnections > 0) extractpos.Add(pos);
             }
             foreach (BlockPos pos in extractpos)
             {
+                // This list is populated by the previous loop, which only adds positions if
+                // the pos is loaded and valid so those checks are not needed here.
                 BEPipeBase bep = world.BlockAccessor.GetBlockEntity(pos) as BEPipeBase;
                 if (bep == null) continue;
                 bep.RebuildPushConnections(world, insertpos.ToArray());
