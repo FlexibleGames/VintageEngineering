@@ -252,6 +252,7 @@ namespace VintageEngineering.Transport
         public virtual bool OnRightClick(IWorldAccessor world, IPlayer player)
         {
             // auto swap held item in player hotbarslot if valid.
+            if (player == null || player.InventoryManager.ActiveHotbarSlot == null || player.InventoryManager.ActiveHotbarSlot.Itemstack == null) return false;
             if (player.InventoryManager.ActiveHotbarSlot.Itemstack.Collectible is ItemPipeUpgrade)
             {
                 if (Upgrade.Empty)
