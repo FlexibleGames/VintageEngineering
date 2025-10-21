@@ -223,6 +223,8 @@ namespace VintageEngineering
             api.RegisterBlockEntityClass("VEBELVPump", typeof(BELVPump));
 
             api.RegisterBlockEntityClass("VEBECrudeOilWell", typeof(BECrudeOilWell));
+
+            api.RegisterBlockEntityClass("VEBEMVTransformer", typeof(BEMVTransformer));
         }
 
         public void RegisterBlockEntityBehaviors(ICoreAPI api)
