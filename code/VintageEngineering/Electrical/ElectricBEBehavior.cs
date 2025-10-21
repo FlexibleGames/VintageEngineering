@@ -380,14 +380,33 @@ namespace VintageEngineering.Electrical
         public virtual string GetNetworkInfo()
         {
             StringBuilder stringBuilder = new StringBuilder();
-            if (electricConnections.Count == 0)
+            WiredBlock wblock = Block as WiredBlock;
+
+            if (wblock.WireAnchors.Length > 0)
             {
-                return "No Network";
+                int numanchors = wblock.WireAnchors.Length;
+                foreach (WireNode node in wblock.WireAnchors)
+                {
+                    if (electricConnections.Count > 0 && electricConnections.ContainsKey(node.index))
+                    {
+                        // connection exists for node
+                        stringBuilder.AppendLine($"Node {node.index} has {electricConnections[node.index].Count} cons on netid {(NetworkIDs.ContainsKey(node.index) ? NetworkIDs[node.index] : "NULL!")}");
+                    }
+                    else
+                    {
+                        // connection does NOT exist for node
+                        stringBuilder.AppendLine($"Node {node.index} : No Network.");
+                    }
+                }
             }
-            foreach (KeyValuePair<int, List<WireNode>> pair in electricConnections)
-            {
-                stringBuilder.AppendLine($"Node {pair.Key} has {((pair.Value == null) ? "null!" : pair.Value.Count)} cons on id {(NetworkIDs.ContainsKey(pair.Key) ? NetworkIDs[pair.Key] : "NULL!")}");
-            }
+            //if (electricConnections.Count == 0)
+            //{
+            //    return "No Network";
+            //}
+            //foreach (KeyValuePair<int, List<WireNode>> pair in electricConnections)
+            //{
+            //    stringBuilder.AppendLine($"Node {pair.Key} has {((pair.Value == null) ? "null!" : pair.Value.Count)} cons on id {(NetworkIDs.ContainsKey(pair.Key) ? NetworkIDs[pair.Key] : "NULL!")}");
+            //}            
             return stringBuilder.ToString().TrimEnd();
         }
 
