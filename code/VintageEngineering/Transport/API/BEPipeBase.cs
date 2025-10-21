@@ -112,9 +112,7 @@ namespace VintageEngineering.Transport.API
             disconnectedSides ??= new bool[6]; 
             insertionSides ??= new bool[6];
 
-            MarkPipeDirty(api.World, true); // mark the pipe dirty to rebuild shape if needed
-
-            for (int f = 0; f< 6; f++)
+            for (int f = 0; f < 6; f++)
             {
                 if (extractionNodes[f] != null)
                 {
@@ -122,6 +120,8 @@ namespace VintageEngineering.Transport.API
                     //if (api.Side == EnumAppSide.Server) extractionNodes[f].SetHandler(GetHandler());
                 }
             }
+
+            MarkPipeDirty(api.World, true); // mark the pipe dirty to rebuild shape if needed
 
             PipeNetworkManager pnm = api.ModLoader.GetModSystem<PipeNetworkManager>(true); // this only exists on the server
             if (pnm == null) return;
@@ -477,16 +477,16 @@ namespace VintageEngineering.Transport.API
             // the order is N, E, S, W, U, D
             for (int f = 0; f < BlockFacing.ALLFACES.Length; f++)
             {
+                bool isLoaded = IsChunkLoaded(Api.World, Pos.AddCopy(BlockFacing.ALLFACES[f]));
                 Block dblock = world.BlockAccessor.GetBlock((Pos.AddCopy(BlockFacing.ALLFACES[f])), BlockLayersAccess.Default);
                 BlockEntity dbe = world.BlockAccessor.GetBlockEntity(Pos.AddCopy(BlockFacing.ALLFACES[f]));
-                BlockFacing fromface = BlockFacing.ALLFACES[f];
-
+                BlockFacing fromface = BlockFacing.ALLFACES[f];                
                 // NEED to track NetworkID's of all faces, merge networks, join networks as needed.
 
                 if (dblock.Id == 0) // face direction is air block, neither solid nor fluid
                 {
                     // block is air, not a valid block to connect to.
-                    if (extractionSides[f])
+                    if (extractionSides[f] && isLoaded)
                     {
                         // while the block is air, we have an extraction node trying to connect to it                        
                         PipeExtractionNode penode = extractionNodes[f];
@@ -512,7 +512,7 @@ namespace VintageEngineering.Transport.API
                         // connection was previously manually overridden, remove that flag
                         disconnectedSides[f] = false;
                     }
-                    if (insertionSides[f])
+                    if (insertionSides[f] && isLoaded)
                     {
                         PipeConnection removeinsert = new PipeConnection(Pos.AddCopy(fromface), fromface, 0);
                         if (pnm != null) pnm.GetNetwork(NetworkID).QuickUpdateNetwork(world, removeinsert, true);
@@ -521,7 +521,7 @@ namespace VintageEngineering.Transport.API
                         insertionSides[f] = false;
                         _shapeDirty = true;
                     }
-                    if (connectionSides[f])
+                    if (connectionSides[f] && isLoaded)
                     {
                         connectionSides[f] = false;
                         _shapeDirty = true;
