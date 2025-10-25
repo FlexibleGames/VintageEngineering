@@ -73,10 +73,10 @@
 	"vinteng:item-vecncprogram-grid-blank": "Blank CNC Program (Grid)",
 	"vinteng:item-vecncprogram-grid-encoded": "Encoded CNC Program (Grid)",
 	"vinteng:itemdesc-vecncprogram-grid-*": "The CNC Program (Grid) item gets programmed in the CNC bench with the desired grid recipe.<br>The CNC machine then reads this recipe, compiles all ingredients required and depending on the tier of the machine looks for those ingredients to craft the item.<br>Tier 1 machine can only handle recipes with 1 ingredient type.",
-	"vinteng:item-lvrelaybase-raw": "LV Wire Relay Base (Raw)",
+	"vinteng:item-lvrelaybase-raw": "Wire Relay Base (Raw)",
 	"vinteng:itemdesc-lvrelaybase-raw": "Fire this in a PitKiln (or Electric Kiln) to use.",
-	"vinteng:item-lvrelaybase-burned": "LV Wire Relay Base (Fired)",
-	"vinteng:itemdesc-lvrelaybase-burned": "A component to craft an LV Relay for running LV wires around your base. Craft with a glass slab to make a relay.",
+	"vinteng:item-lvrelaybase-burned": "Wire Relay Base (Fired)",
+	"vinteng:itemdesc-lvrelaybase-burned": "A component to craft a Wire Relay for running Electric wires around your base.",
 
 	"vinteng:item-metalrod-copper": "Metal Rod (Copper)",
 	"vinteng:itemdesc-metalrod-copper": "Copper Rod used in crafting and in the Extruder to make Wires.",
@@ -351,6 +351,12 @@
 	"vinteng:gui-motor-targettorque": "Target Torque: ",
 	"vinteng:gui-powerrequired": "Power Required:",
 
-	"vinteng:gui-excessive-power": "Machine Requires more power than supplied by network tier. Time to upgrade."
+	"vinteng:gui-excessive-power": "Machine Requires more power than supplied by network tier. Time to upgrade.",
 
+	"vinteng:block-vemvtransformer-*": "VE LV-MV Transformer",
+	"vinteng:blockdesc-vemvtransformer-*": "A special block that bridges power between LV and MV networks.<br>LV networks are limited to 500 Power Per Second (PPS) by default while MV networks move 4000 PPS. This block ensures the connected LV network doesn't get overloaded.",
+	"vinteng:block-vemvbattery": "VE MV Battery",
+	"vinteng:blockdesc-vemvbattery": "A Battery for storing power on an MV network. The MV battery stores 20000 power and is capable of moving 500 power per second (pps) by default.",
+
+	"eof": "End Of File"
 }

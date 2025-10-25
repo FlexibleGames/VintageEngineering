@@ -111,6 +111,13 @@ namespace VintageEngineering.Electrical
         bool IsLoaded { get; }
 
         /// <summary>
+        /// Returns the BlockPos of this instance of the interface.<br/>
+        /// A vital function, do not ignore.
+        /// </summary>
+        /// <returns>BlockPos</returns>
+        BlockPos GetPosition();
+
+        /// <summary>
         /// Returns the IElectricalBlockEntity for the BlockEntity or one of its behaviors at given position.
         /// </summary>
         /// <param name="blockAccessor">The accessor for the world</param>

@@ -65,20 +65,11 @@ namespace VintageEngineering.Transport
         {
             // TODO:            
             // if right clicking on a pipe extraction node, insert (or swap) the upgrade into the extraction node
-            IPlayer byPlayer = null;
+            //IPlayer byPlayer = null;
             if (byEntity is EntityPlayer ep)
             {
-                byPlayer = ep.Player;
-                if (byPlayer.WorldData.EntityControls.ShiftKey)
-                {
-                    handling = EnumHandHandling.PreventDefault;
-                    PipeNetworkManager pnm = api.ModLoader.GetModSystem<PipeNetworkManager>(true);
-                    if (pnm != null) pnm.ValidateAllNetworks(api.World);
-                }
-                else
-                {
-                    base.OnHeldInteractStart(slot, byEntity, blockSel, entitySel, firstEvent, ref handling);
-                }
+                //byPlayer = ep.Player;
+                base.OnHeldInteractStart(slot, byEntity, blockSel, entitySel, firstEvent, ref handling);                
             }
         }
     }

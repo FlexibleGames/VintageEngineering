@@ -33,7 +33,7 @@
 			"thickness": 0.04,
 			"wirefunction": "Power",
 			"powertier": "MV",
-			"maxlength": 20,
+			"maxlength": 25,
 			"slumpPerMeter": 0.125,
 			"texture": "game:block/metal/plate/copper.png"
 		},
@@ -82,7 +82,7 @@
 			"slumpPerMeter": 0.125,
 			"texture": "game:block/metal/ingot/lead.png"
 		}
-	},	
+	},
 	"blockmaterial": "Metal",
 	"drawtype": "json",
 	"faceCullMode": "NeverCull",
@@ -109,6 +109,6 @@
 		"rotation": { "x": -22.6, "y": -45.3, "z": 29 },
 		"origin": { "x": 0.5, "y": 0, "z": 0.5 },
 		"scale": 1.84
-	},	
+	},
 	"drops": []
 }

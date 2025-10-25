@@ -231,6 +231,11 @@ namespace VintageEngineering.Electrical
             }
         }
 
+        public BlockPos GetPosition()
+        {
+            return this.Pos.Copy();
+        }
+
         #endregion
 
 
@@ -259,7 +264,7 @@ namespace VintageEngineering.Electrical
             {
                 electricConnections = new Dictionary<int, List<WireNode>>();
             }
-            if (electricConnections.Count == 0 || electricConnections[wirenodeindex] == null)
+            if (electricConnections.Count == 0 || !electricConnections.ContainsKey(wirenodeindex))
             {
                 electricConnections.Add(wirenodeindex, new List<WireNode> { newconnection });
             }

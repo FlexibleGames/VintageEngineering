@@ -1,22 +1,23 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using VintageEngineering.Electrical;
-using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
-using Vintagestory.API.MathTools;
-using Vintagestory.API.Server;
 
-namespace VintageEngineering.blockentity
+namespace VintageEngineering
 {
-    public class BEMVTransformer : ElectricSimpleBE
-    {      
+    public class BEBattery: ElectricSimpleBE
+    {
+        // A very simple block entity that doesn't need much other than an Electric interface
         public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
         {
             base.GetBlockInfo(forPlayer, dsc);
-            
+
             dsc.AppendLine();
-            double percentfull = (double)Electric.CurrentPower / Electric.MaxPower;
+            double percentfull = ((double)Electric.CurrentPower / Electric.MaxPower);
             int wholepercent = (int)(percentfull * 100);
             int numexes = wholepercent / 10;
             string exes = "";
@@ -32,21 +33,11 @@ namespace VintageEngineering.blockentity
                 case 7: exes = "XXXXXXX---"; break;
                 case 8: exes = "XXXXXXXX--"; break;
                 case 9: exes = "XXXXXXXXX-"; break;
-                case 10: exes ="XXXXXXXXXX"; break;
+                case 10: exes = "XXXXXXXXXX"; break;
                 default: break;
             }
-            
-            dsc.AppendLine($"{Lang.Get("vinteng:gui-word-power")}: {exes} {wholepercent:N0}%");            
-        }       
 
-        public int GetRotation()
-        {
-            string side = Block.Variant["side"];
-            // The BlockFacing horiztonal index goes counter-clockwise from east. That needs to be converted so that
-            // it goes counter-clockwise from north instead.
-            int adjustedIndex = ((BlockFacing.FromCode(side)?.HorizontalAngleIndex ?? 1) + 3) & 3;
-            return adjustedIndex * 90;
+            dsc.AppendLine($"{Lang.Get("vinteng:gui-word-power")}: {exes} {wholepercent:N0}%");
         }
-
     }
 }

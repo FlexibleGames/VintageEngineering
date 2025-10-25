@@ -1073,7 +1073,8 @@ namespace VintageEngineering.Transport.API
         }
 
         /// <summary>
-        /// A quick check to determine if a chunk at a given position is loaded.
+        /// A quick check to determine if a chunk at a given position is loaded.<br/>
+        /// Unlike the base-game call, this one ignores neighboring chunks.
         /// </summary>
         /// <param name="world">World Accessor</param>
         /// <param name="atpos">BlockPos to check.</param>

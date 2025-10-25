@@ -22,7 +22,10 @@
 			"name": "Electric",
 			"properties": {
 				"canExtractPower": false,
-				"canReceivePower": true
+				"canReceivePower": false,
+				"entitytype": "Relay",
+				"maxpower": 0,
+				"maxpps": 0
 			}
 		}
 	],
@@ -44,10 +47,7 @@
 				"*-allpower-*": true
 			}
 		},
-		"entitytype": "Relay",
-		"priority": 5,
-		"maxpower": 0,
-		"maxpps": 0
+		"priority": 5
 	},
 	"attributesByType": {
 		"*-lvpower-*":{
@@ -88,14 +88,14 @@
 				{
 					"index": 0,
 					"wirefunction": "Power",
-					"maxconnections": 3,
+					"maxconnections": 6,
 					"powertier": "MV",
 					"networkid": 0,
 					"x1": 0.375,
 					"y1": 0.1875,
 					"z1": 0.375,
 					"x2": 0.625,
-					"y2": 0.4375,
+					"y2": 0.40625,
 					"z2": 0.625,
 					"rotateXByType": {
 						"*-up": 0,

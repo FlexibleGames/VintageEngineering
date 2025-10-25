@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using VintageEngineering.Electrical.Systems.Catenary;
+using VintageEngineering.Transport.API;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.Server;
@@ -69,6 +70,59 @@ namespace VintageEngineering.Electrical.Systems
             }
         }
 
+        /// <summary>
+        /// Validates ALL Electric Networks for this world.<br/>
+        /// Will optionally delete invalid networks automatically.<br/>
+        /// Called from a debug command: /vedebug validatepowernetworks [delete]
+        /// </summary>
+        /// <returns>Number of invalid networks discovered.</returns>
+        public int ValidateNetworks(bool delete = false)
+        {
+            List<long> invalidIDs = new();
+            foreach (KeyValuePair<long, ElectricNetwork> pair in networks)
+            {
+                if (!ValidateNetwork(pair.Key)) invalidIDs.Add(pair.Key);
+            }
+            if (delete && invalidIDs.Count > 0)
+            {
+                // delete 'em you daring soul.
+                foreach (long id in invalidIDs)
+                {
+                    DeleteNetwork(id);
+                }
+            }
+            return invalidIDs.Count;
+        }
+
+        /// <summary>
+        /// Validate every BlockEntity in a given Electric Network.<br/>
+        /// If _ALL_ BlockEntities in a network are invalid this returns false, otherwise it returns true.<br/>
+        /// Does not delete any nodes, ignores nodes in unloaded chunks and does not count them toward the total, so ensure the entire network is loaded.
+        /// </summary>
+        /// <param name="netID">NetworkID to check</param>
+        /// <returns>False if a network is INVALID</returns>
+        public bool ValidateNetwork(long netID)
+        {
+            if (sapi == null) return true; // API isn't initialized... should never trigger.
+            if (!networks.ContainsKey(netID))
+            {
+                return true; // networkID doesn't exist
+            }
+            ElectricNetwork net = networks.Get(netID);
+            if (net.NodeCount == 0) return false;
+            int invalidnodes = 0;
+            foreach (WireNode node in net.allNodes)
+            {
+                //Block be = sapi.World.BlockAccessor.GetBlock(node.blockPos);
+                IElectricalBlockEntity entity = IElectricalBlockEntity.GetAtPos(sapi.World.BlockAccessor, node.blockPos);
+                bool chunkloaded = BEPipeBase.IsChunkLoaded(sapi.World, node.blockPos);
+                
+                // if the chunk is loaded AND the entity is null
+                if (chunkloaded && entity == null) invalidnodes++;
+            }
+            return net.NodeCount != invalidnodes;
+        }
+
         private void OnGameTick(float deltatime)
         {
             // deltatime is a value on how much time (seconds) have passed since the last call, value SHOULD always be less than 1. Ideally it would be 0.25.
@@ -107,7 +161,9 @@ namespace VintageEngineering.Electrical.Systems
             if (!networks.ContainsKey(netID))
             {
                 // create the network if it doesn't exist yet. Typical on World Load event.
-                networks.Add(netID, new ElectricNetwork(netID, sapi));
+                ElectricBlock eblock = sapi.World.BlockAccessor.GetBlock(node.blockPos) as ElectricBlock;
+                EnumElectricalPowerTier blocktier = Enum.Parse<EnumElectricalPowerTier>(eblock.Attributes["wireNodes"].AsArray()[node.index]["powertier"].AsString());
+                networks.Add(netID, new ElectricNetwork(netID, sapi, blocktier));
             }
             networks[netID].Join(node, entity);
         }
@@ -129,8 +185,8 @@ namespace VintageEngineering.Electrical.Systems
 
                 else networks[netID].Leave(node, entity);
             }
-        }
-        
+        }        
+
         /// <summary>
         /// Vital Function called when the Catenary mod throws the OnWireRemoved event
         /// </summary>
@@ -396,14 +452,17 @@ namespace VintageEngineering.Electrical.Systems
         }
 
         /// <summary>
-        /// Creates a new network and returns the networkID assigned to it.
+        /// Creates a new network and returns the networkID assigned to it.<br/>
+        /// Node order is referenced for debugging
         /// </summary>
-        /// <param name="node1">Node1</param>
-        /// <param name="node2">Node2</param>
+        /// <param name="node1">Node1 (start node)</param>
+        /// <param name="node2">Node2 (end node)</param>
         /// <returns>NetworkID used</returns>
         public long CreateNetwork(WireNode node1, WireNode node2)
-        {            
-            ElectricNetwork network = new ElectricNetwork(nextNetworkID, sapi);            
+        {
+            ElectricBlock eblock = sapi.World.BlockAccessor.GetBlock(node1.blockPos) as ElectricBlock;
+            EnumElectricalPowerTier blocktier = Enum.Parse<EnumElectricalPowerTier>(eblock.Attributes["wireNodes"].AsArray()[node1.index]["powertier"].AsString());
+            ElectricNetwork network = new ElectricNetwork(nextNetworkID, sapi, blocktier);            
             network.AddNode(node1, sapi.World.BlockAccessor);
             network.AddNode(node2, sapi.World.BlockAccessor);
             networks.Add(nextNetworkID, network);
@@ -416,26 +475,35 @@ namespace VintageEngineering.Electrical.Systems
             if (!networks.ContainsKey(networkID))
             {
                 // network with this id doesnt exist...
-                networks.Add(networkID, new ElectricNetwork(networkID, sapi));
+                ElectricBlock eblock = sapi.World.BlockAccessor.GetBlock(node.blockPos) as ElectricBlock;
+                EnumElectricalPowerTier blocktier = Enum.Parse<EnumElectricalPowerTier>(eblock.Attributes["wireNodes"].AsArray()[node.index]["powertier"].AsString());
+                networks.Add(networkID, new ElectricNetwork(networkID, sapi, blocktier));
             }
             networks[networkID].AddNode(node, sapi.World.BlockAccessor, false);
         }
 
         /// <summary>
-        /// Creates a new network from a list of nodes and returns the network ID.
+        /// Creates a new network from a list of nodes and returns the network ID.<br/>
+        /// Return 0 if nodes list is empty, thus a network is not created.
         /// </summary>
         /// <param name="nodes">List of nodes to add to the new network.</param>
         /// <returns>NetworkID</returns>
         public long CreateNetwork(List<WireNode> nodes)
-        {            
-            ElectricNetwork newnet = new ElectricNetwork(nextNetworkID, sapi);            
-            foreach (WireNode node in nodes)
+        {
+            if (nodes.Count > 0)
             {
-                newnet.AddNode(node, sapi.World.BlockAccessor);
+                ElectricBlock eblock = sapi.World.BlockAccessor.GetBlock(nodes[0].blockPos) as ElectricBlock;
+                EnumElectricalPowerTier blocktier = Enum.Parse<EnumElectricalPowerTier>(eblock.Attributes["wireNodes"].AsArray()[nodes[0].index]["powertier"].AsString());
+                ElectricNetwork newnet = new ElectricNetwork(nextNetworkID, sapi);
+                foreach (WireNode node in nodes)
+                {
+                    newnet.AddNode(node, sapi.World.BlockAccessor);
+                }
+                networks.Add(nextNetworkID, newnet);
+                nextNetworkID++;
+                return newnet.NetworkID;
             }
-            networks.Add(nextNetworkID, newnet);
-            nextNetworkID++;
-            return newnet.NetworkID;
+            return 0;
         }
 
         /// <summary>

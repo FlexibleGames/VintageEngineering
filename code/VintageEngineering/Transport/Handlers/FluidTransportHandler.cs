@@ -38,27 +38,27 @@ namespace VintageEngineering.Transport.Handlers
             InventoryBase inv = (InventoryBase)((world.BlockAccessor.GetBlock(connectedto)?.GetInterface<IBlockEntityContainer>(world, connectedto))?.Inventory);
             int stacksize = node.UpgradeRate;
             int numperliter = 0;
-            if (inv == null)
-            {
-                // check to see if block is a liquid block, for debugging
-                Block lblock = world.BlockAccessor.GetBlock(connectedto, BlockLayersAccess.FluidOrSolid);
-                if (lblock.IsLiquid())
-                {
-                    ItemStack lblockstack = new ItemStack(lblock);
-                    WaterTightContainableProps wprops = BlockLiquidContainerBase.GetContainableProps(lblockstack);
-                    if (wprops != null)
-                    {
-                        ItemStack portion = wprops.WhenFilled.Stack.Resolve(world, "Filter Pipe", true) ? wprops.WhenFilled.Stack.ResolvedItemstack : null;
-                        if (portion == null) return;
-                        portion.StackSize = portion.Collectible.MaxStackSize;
-                        numperliter = ((int)wprops.ItemsPerLitre);
-                        inv = node.Inventory as InventoryBase;
-                        pull = inv[2];
-                        pull.Itemstack = portion.Clone();
-                    }
-                }
-                else return; 
-            }                         
+            //if (inv == null)
+            //{
+            //    // check to see if block is a liquid block, for debugging
+            //    Block lblock = world.BlockAccessor.GetBlock(connectedto, BlockLayersAccess.FluidOrSolid);
+            //    if (lblock.IsLiquid())
+            //    {
+            //        ItemStack lblockstack = new ItemStack(lblock);
+            //        WaterTightContainableProps wprops = BlockLiquidContainerBase.GetContainableProps(lblockstack);
+            //        if (wprops != null)
+            //        {
+            //            ItemStack portion = wprops.WhenFilled.Stack.Resolve(world, "Filter Pipe", true) ? wprops.WhenFilled.Stack.ResolvedItemstack : null;
+            //            if (portion == null) return;
+            //            portion.StackSize = portion.Collectible.MaxStackSize;
+            //            numperliter = ((int)wprops.ItemsPerLitre);
+            //            inv = node.Inventory as InventoryBase;
+            //            pull = inv[2];
+            //            pull.Itemstack = portion.Clone();
+            //        }
+            //    }
+            //    else return;
+            //}
             if (world.BlockAccessor.GetBlockEntity(connectedto) is BlockEntityLiquidContainer)
             {
                 pull = GetPullSlot(world, inv, node, true);
