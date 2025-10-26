@@ -243,7 +243,18 @@ namespace VintageEngineering
                 }
                 _cproperties = null; // a baking thing or not enough items, ignore the combustable props
             }
-
+            else if (_cproperties != null && _cproperties.SmeltedStack != null && _cproperties.SmeltedStack.Code.Path.Contains("quicklime"))
+            {
+                if (InputSlot.Itemstack.StackSize >= _cproperties.SmeltedRatio)
+                {
+                    if (currentTemp < _cproperties.MeltingPoint) isHeating = true;
+                    else isCrafting = true;
+                    SetState(EnumBEState.On);
+                    return true;
+                }
+                _cproperties = null;
+            }
+            // nothing to do, go to sleep
             currentRecipe = null;
             isCrafting = false;
             isHeating = false;
