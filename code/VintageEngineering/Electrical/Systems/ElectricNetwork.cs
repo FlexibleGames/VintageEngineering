@@ -508,32 +508,65 @@ namespace VintageEngineering.Electrical.Systems
                 // edge case of a network ONLY having storage and/or transformer nodes
                 if (storageNodes.Count > 1)
                 {
+                    Dictionary<BlockPos, long> storageWeights = new();
+                    int highestPressure = 0;
+                    int lowestPressure = 100;                    
+
+                    // going to try a pressure based system rather than the failed whole network % based system
+                    foreach (IElectricalBlockEntity entity in storageNodes)
+                    {
+                        if (entity.MaxPower == 0) continue; // avoid divide by 0
+                        double percentfull = (double)entity.CurrentPower / entity.MaxPower;
+                        int pressure = ((int)(Math.Round(percentfull, 2) * 100));
+
+                        highestPressure = Math.Max(highestPressure, pressure);
+                        lowestPressure = Math.Min(lowestPressure, pressure);
+
+                        if (storageWeights.ContainsKey(entity.GetPosition()))
+                        {
+                            // do not crash if we have some crazy multi entity block position that should be impossible
+                            storageWeights[entity.GetPosition()] = pressure;
+                        }
+                        else storageWeights.Add(entity.GetPosition(), pressure);
+                    }
+
+                    // so now we should have a value for the highest pressure and lowest pressure in the system
+                    // as well as a pressure value associated with every entity (% full)
+                    // and due to the Math.Round, it will even off power fluctuations naturally
+
                     // only run if there's more than one storage node in the network
                     // copy amount for storage balancing.
-                    ulong storagetotal = (ulong)storageNodes.Sum(x => (long)x.CurrentPower);
+                    //ulong storagetotal = (ulong)storageNodes.Sum(x => (long)x.CurrentPower);
 
                     // Total amount of storage in the network
-                    ulong totalcapacity = (ulong)storageNodes.Sum(x => (long)x.MaxPower);
+                    //ulong totalcapacity = (ulong)storageNodes.Sum(x => (long)x.MaxPower);
 
                     // total Rated power available is all storages for this tick
-                    ulong totalpptavailable = totalinstorage;
+                    //ulong totalpptavailable = totalinstorage;
 
                     // this is the TARGET fill % of EVERY storage node in the network.
-                    double targetcapacity = storagetotal / (double)totalcapacity;
-                    targetcapacity = Math.Round(targetcapacity, 2); // Final target % with no decimal places (i.e. 45% not 45.637%)
+                    //double targetcapacity = storagetotal / (double)totalcapacity;
+                    //targetcapacity = Math.Round(targetcapacity, 2); // Final target % with no decimal places (i.e. 45% not 45.637%)
 
-                    double deficittarget = targetcapacity;
+                    //double deficittarget = targetcapacity;
 
-                    List<IElectricalBlockEntity> surplusNodes = storageNodes.Where<IElectricalBlockEntity>(x => x.CurrentPower > (x.MaxPower * targetcapacity)).ToList();
+                    //double surplusmargin = targetcapacity - 0.02;
 
-                    if (surplusNodes.Count > 0)
-                    {
-                        deficittarget += 0.1;
-                        if (deficittarget > 1) deficittarget = 1;
-                    }
-                    else return true;
+                    // nodes that have a surplus
+                    List<BlockPos> surplusNodePos = storageWeights.Where(x => x.Value > lowestPressure).Select(x => x.Key).ToList();
 
-                    List<IElectricalBlockEntity> deficitNodes = storageNodes.Where<IElectricalBlockEntity>(x => (x.CurrentPower < (ulong)(x.MaxPower * deficittarget)) && !surplusNodes.Contains(x)).ToList();
+                    // nodes that need power that are NOT in surplus node list
+                    List<BlockPos> deficitNodePos = storageWeights.Where(x => (x.Value < highestPressure && !surplusNodePos.Contains(x.Key))).Select(x => x.Key).ToList();
+
+                    List<IElectricalBlockEntity> surplusNodes = storageNodes.Where(x => surplusNodePos.Contains(x.GetPosition())).ToList();
+
+                    List<IElectricalBlockEntity> deficitNodes = storageNodes.Where(x => deficitNodePos.Contains(x.GetPosition())).ToList();
+
+                    // used in calculating an equlibrium amount of power to shoot for, 
+                    // this methodology ignores capacity differences
+                    // 100% pressure of 1000/1000 power represents a small amount when compared to a 20,000 cap battery at 50%
+                    float f_highestPressure = (float)Math.Round((float)highestPressure / 100, 2);
+                    float f_lowestPressure = (float)Math.Round((float)lowestPressure / 100, 2);
 
                     ulong totalSurplusPower = 0L;
                     if (deficitNodes.Count > 0)
@@ -544,7 +577,7 @@ namespace VintageEngineering.Electrical.Systems
 
                             ulong mymaxpower = entity.MaxPower;
                             //ulong margin = (ulong)(entity.MaxPower * 0.005);
-                            ulong mytargetpower = (ulong)(mymaxpower * targetcapacity);
+                            ulong mytargetpower = (ulong)(mymaxpower * surplusmargin);
                             long deltapower = (long)mytargetpower - (long)entity.CurrentPower;
 
                             ulong myppt = entity.RatedPower(deltaTime, deltapower > 0 ? true : false);
@@ -597,7 +630,7 @@ namespace VintageEngineering.Electrical.Systems
                             totalsurplusbackup -= totalSurplusPower;
                             ulong mymaxpower = entity.MaxPower;
                             //ulong margin = (ulong)(entity.MaxPower * 0.005);
-                            ulong mytargetpower = (ulong)(mymaxpower * targetcapacity);
+                            ulong mytargetpower = (ulong)(mymaxpower * surplusmargin);
                             long deltapower = (long)mytargetpower - (long)entity.CurrentPower;
 
                             ulong myppt = entity.RatedPower(deltaTime, deltapower > 0 ? true : false);
