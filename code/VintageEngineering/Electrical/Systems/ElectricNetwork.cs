@@ -530,6 +530,12 @@ namespace VintageEngineering.Electrical.Systems
                         else storageWeights.Add(entity.GetPosition(), pressure);
                     }
 
+                    if (highestPressure == lowestPressure || highestPressure == lowestPressure+1 || lowestPressure == highestPressure-1)
+                    {
+                        // if pressures are within 1% of each other, do nothing
+                        return true;
+                    }
+
                     // so now we should have a value for the highest pressure and lowest pressure in the system
                     // as well as a pressure value associated with every entity (% full)
                     // and due to the Math.Round, it will even off power fluctuations naturally
@@ -553,10 +559,10 @@ namespace VintageEngineering.Electrical.Systems
                     //double surplusmargin = targetcapacity - 0.02;
 
                     // nodes that have a surplus
-                    List<BlockPos> surplusNodePos = storageWeights.Where(x => x.Value > lowestPressure).Select(x => x.Key).ToList();
+                    List<BlockPos> surplusNodePos = storageWeights.Where(x => x.Value > (highestPressure - lowestPressure)).Select(x => x.Key).ToList();
 
                     // nodes that need power that are NOT in surplus node list
-                    List<BlockPos> deficitNodePos = storageWeights.Where(x => (x.Value < highestPressure && !surplusNodePos.Contains(x.Key))).Select(x => x.Key).ToList();
+                    List<BlockPos> deficitNodePos = storageWeights.Where(x => (x.Value <= (highestPressure - lowestPressure) && !surplusNodePos.Contains(x.Key))).Select(x => x.Key).ToList();
 
                     List<IElectricalBlockEntity> surplusNodes = storageNodes.Where(x => surplusNodePos.Contains(x.GetPosition())).ToList();
 
@@ -566,7 +572,7 @@ namespace VintageEngineering.Electrical.Systems
                     // this methodology ignores capacity differences
                     // 100% pressure of 1000/1000 power represents a small amount when compared to a 20,000 cap battery at 50%
                     float f_highestPressure = (float)Math.Round((float)highestPressure / 100, 2);
-                    float f_lowestPressure = (float)Math.Round((float)lowestPressure / 100, 2);
+                    float f_lowestPressure = (float)Math.Round((float)lowestPressure / 100, 2);                    
 
                     ulong totalSurplusPower = 0L;
                     if (deficitNodes.Count > 0)
