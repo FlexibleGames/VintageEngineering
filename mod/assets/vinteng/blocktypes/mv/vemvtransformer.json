@@ -16,7 +16,7 @@
 				"canExtractPower": true,
 				"canReceivePower": true,
 				"entitytype": "Transformer",
-				"maxpower": 1000,
+				"maxpower": 4000,
 				"maxpps": 500
 			}
 		}
@@ -30,7 +30,7 @@
 			}
 		},
 		"craftinganimcode": "craft",
-		"priority": 5,
+		"priority": 4,
         "wireNodes": [
             {
                 "index": 0,

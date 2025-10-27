@@ -14,8 +14,8 @@
 				"canExtractPower": true,
 				"canReceivePower": true,
 				"entitytype": "Storage",
-				"maxpower": 20000,
-				"maxpps": 1000
+				"maxpower": 40000,
+				"maxpps": 2000
 			}
 		}
 	],

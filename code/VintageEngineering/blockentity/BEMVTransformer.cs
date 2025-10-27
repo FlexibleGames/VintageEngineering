@@ -10,7 +10,17 @@ using Vintagestory.API.Server;
 namespace VintageEngineering.blockentity
 {
     public class BEMVTransformer : ElectricSimpleBE
-    {      
+    {
+        public override void Initialize(ICoreAPI api)
+        {
+            base.Initialize(api);
+            Electric.MachineState = EnumBEState.On;
+        }
+        public override void OnBlockPlaced(ItemStack byItemStack = null)
+        {
+            base.OnBlockPlaced(byItemStack);
+            Electric.MachineState = EnumBEState.On;
+        }
         public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
         {
             base.GetBlockInfo(forPlayer, dsc);

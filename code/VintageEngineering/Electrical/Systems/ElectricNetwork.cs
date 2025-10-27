@@ -509,11 +509,13 @@ namespace VintageEngineering.Electrical.Systems
                 // edge case of a network ONLY having storage and/or transformer nodes
                 if (storageNodes.Count > 1)
                 {
+
                     Dictionary<IElectricalBlockEntity, int> nodePressures = new(storageNodes.Count);
                     int highestPressure = 0;
                     int lowestPressure = 100;
 
                     // going to try a pressure based system rather than the failed whole network % based system
+                    // this creates a Dictionary that maps % full to the node
                     foreach (IElectricalBlockEntity node in storageNodes)
                     {
                         if (node.MaxPower == 0 || !node.IsEnabled || node.IsSleeping) continue;
@@ -523,7 +525,7 @@ namespace VintageEngineering.Electrical.Systems
                         BlockPos pos = node.GetPosition();
 
                         bool isDuplicate = false;
-                        if (nodePressures.ContainsKey(node)) 
+                        if (nodePressures.ContainsKey(node))
                         { 
                             isDuplicate = true;
                             break;
@@ -536,56 +538,92 @@ namespace VintageEngineering.Electrical.Systems
                         }
                     }
 
-                    if (Math.Abs(highestPressure - lowestPressure) <= 1 || nodePressures.Count <= 1)
+                    if (Math.Abs(highestPressure - lowestPressure) < 3 || nodePressures.Count <= 1)
                     {
-                        // if pressures are within 1% of each other, do nothing
+                        // if all pressures are within 1% of each other, do nothing
                         return true;
                     }
 
-                    List<IElectricalBlockEntity> surplusNodes = nodePressures.Where(node => node.Value > lowestPressure).Select(node => node.Key).ToList();
-                    List<IElectricalBlockEntity> deficitNodes = nodePressures.Where(node => !surplusNodes.Contains(node.Key)).Select(node => node.Key).ToList();
+                    // average the pressures to get a target
+                    //int targetPercent = nodePressures.Sum(node => node.Value) / nodePressures.Count;
+                    //if (targetPercent == 0) targetPercent++;
 
-                    if (surplusNodes.Count == 0 || deficitNodes.Count == 0) return true;
+
+                    List<IElectricalBlockEntity> deficitNodes = nodePressures.Where(node => node.Value <= lowestPressure).Select(node => node.Key).ToList();
+
+                    // if a block isn't in deficit it's in surplus, no more batteries sitting idle with power to spare
+                    List<IElectricalBlockEntity> surplusNodes = nodePressures.Where(node => !deficitNodes.Contains(node.Key)).Select(node => node.Key).ToList();
+                    
+                    // now each list is those nodes that have too much or too little power, target is total network % storage used.
+
+                    if (surplusNodes.Count == 0 || deficitNodes.Count == 0) return true; // should rarely fire
 
                     if (surplusNodes.Count > 1) // only sort if more than 1
                     {
                         surplusNodes.Sort((IElectricalBlockEntity a, IElectricalBlockEntity b) =>
-                        a.Priority == b.Priority ? nodePressures[b].CompareTo(nodePressures[a]) : a.Priority.CompareTo(b.Priority));
+                                a.Priority == b.Priority ? nodePressures[b].CompareTo(nodePressures[a]) : a.Priority.CompareTo(b.Priority));
                     }
                     if (deficitNodes.Count > 1) // only sort if more than 1
                     {
                         deficitNodes.Sort((IElectricalBlockEntity a, IElectricalBlockEntity b) =>
-                        a.Priority == b.Priority ? nodePressures[b].CompareTo(nodePressures[a]) : a.Priority.CompareTo(b.Priority));
+                                a.Priority == b.Priority ? nodePressures[a].CompareTo(nodePressures[b]) : a.Priority.CompareTo(b.Priority));
                     }
 
-                    ulong totalExcess = (ulong)(surplusNodes.Select(node => (long)node.RatedPower(deltaTime, false)).Sum());
-                    ulong totalNeeded = (ulong)(deficitNodes.Select(node => (long)node.RatedPower(deltaTime, true)).Sum());
+                    // going to rely on PPS values to help smooth the curves
+                    // actual power movement will be refined in the loops
+                    ulong totalExcess = (ulong)(surplusNodes.Sum(node => (long)node.RatedPower(deltaTime, false)));
+                    if (totalExcess == 0) return true;
 
+                    ulong totalNeeded = (ulong)(deficitNodes.Sum(node => (long)node.RatedPower(deltaTime, true)));
+
+                    // what is lower, total power in excess or total needed?
                     ulong transferable = Math.Min(totalExcess, totalNeeded);
                     if (transferable == 0) return true;
 
-                    ulong actualTransferred = 0;
+                    ulong actualExtracted = 0; // simulating extraction, will pull for real after
+                    ulong actualReceived = 0;
 
                     foreach (IElectricalBlockEntity node in surplusNodes)
-                    {
-                        if (totalExcess == 0) break;
-                        ulong nodeExcess = node.RatedPower(deltaTime, false);
-                        ulong powerWanted = (ulong)((double)nodeExcess / totalExcess * transferable);
-                        ulong unsatisfied = node.ExtractPower(powerWanted, deltaTime, false);
-                        ulong extracted = powerWanted - unsatisfied;
-                        actualTransferred += extracted;
-                    }
+                    {                        
+                        ulong ppt = node.RatedPower(deltaTime, false); // how much are we allowed to move this tick?
 
-                    // Step 8: Offer actualTransferred proportionally to deficit
+                        ulong differential = node.CurrentPower; // the delta in power, in this case, just the power we have, it's all surplus baby!
+                        if (ppt > differential) ppt = differential; // clamp to limit to capacity, useful for very low power totals
+                        if (ppt > transferable) ppt = transferable; // clamp to how much power we actually need to move, useful for low power
+                        
+                        // unsatisfied power needs to be removed from the amount we tried actually extracting
+                        ulong unsatisfied = node.ExtractPower(ppt, deltaTime, true);
+                        actualExtracted += ppt - unsatisfied;
+                    }
+                    // we now have actualExtracted amount of power, lets do something with it!
+                    
                     foreach (IElectricalBlockEntity node in deficitNodes)
-                    {
-                        if (totalNeeded == 0) break;
-                        ulong nodeNeeded = node.RatedPower(deltaTime, true);
-                        ulong powerOffered = (ulong)((double)nodeNeeded / totalNeeded * actualTransferred);
-                        ulong leftover = node.ReceivePower(powerOffered, deltaTime, false);
-                        // Leftover ignored (unaccounted due to internal limits, but minimized)
-                    }
+                    {                        
+                        ulong ppt = node.RatedPower(deltaTime, true); // power rate for this tick
+                        ulong differential = node.MaxPower - node.CurrentPower; // what is the delta?
 
+                        // we want to limit and clamp the power going into EACH node from ppt to the delta
+                        ppt = Math.Min(ppt, differential); // clamp delta for this node
+                        ppt = Math.Min(ppt, actualExtracted-actualReceived); // clamp delta for entire tick
+
+                        // limit the offer, to smooth power spikes in low-power situ
+                        ulong leftover = node.ReceivePower(ppt, deltaTime, false); // we're giving power we haven't removed yet.
+                        actualReceived += (ppt - leftover);
+                    }
+                    ulong receivedTotal = actualReceived;
+                    if (actualReceived > 0)
+                    {
+                        // we've used power, ensuring we limit to how much we have to give, now lets take it!                                                
+                        foreach (IElectricalBlockEntity node in surplusNodes)
+                        {
+                            actualReceived = node.ExtractPower(actualReceived, deltaTime, false);
+                            if (actualReceived == 0) break;
+                        }
+                        if (actualReceived != 0)
+                        {
+                            api.Logger.Error($"VintEng: Electric Network Tick error: Storage Network {this.NetworkID} gave {receivedTotal} but has {actualReceived} required power left to satisfy!");
+                        }
+                    }
 
                     return true;
                 }

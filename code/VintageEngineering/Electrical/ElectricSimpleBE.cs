@@ -27,6 +27,7 @@ namespace VintageEngineering.Electrical
         {
             base.Initialize(api);
             Electric.IsLoaded = true;
+            Electric.MachineState = EnumBEState.On;
         }
 
         public override void CreateBehaviors(Block block, IWorldAccessor worldForResolve)
