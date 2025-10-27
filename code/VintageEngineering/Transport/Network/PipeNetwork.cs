@@ -71,7 +71,7 @@ namespace VintageEngineering.Transport.Network
                 if (pipe != null) 
                 { 
                     pipe.NetworkID = _networkID;
-                    pipe.MarkDirty(true);
+                    //pipe.MarkDirty(true);
                 }
                 return true;
             }
@@ -98,7 +98,7 @@ namespace VintageEngineering.Transport.Network
                     if (pipe != null) 
                     { 
                         pipe.NetworkID = _networkID; 
-                        pipe.MarkDirty(true);
+                        //pipe.MarkDirty(true);
                     }
                 }
             }

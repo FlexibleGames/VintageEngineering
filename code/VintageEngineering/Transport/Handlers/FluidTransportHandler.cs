@@ -100,12 +100,12 @@ namespace VintageEngineering.Transport.Handlers
                 { 
                     moved = pull.TryPutInto(push, ref ismo); 
                 }
-                if (moved == 0) return;
-                else push.MarkDirty();
+                //if (moved == 0) return;
+                //else push.MarkDirty();
             }
             catch (Exception e)
             {
-                world.Logger.Error(e);
+                world.Logger.Error($"VintEng: Fluid Transport TickException: {Environment.NewLine} {e}");
                 return;
             } 
         }

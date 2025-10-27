@@ -148,7 +148,7 @@ namespace VintageEngineering.Transport.API
                 }
                 pnm.GetNetwork(NetworkID).QuickUpdateNetwork(api.World, inserts.ToArray(), false);
             }
-            if (api.Side == EnumAppSide.Server) MarkDirty(true);
+            //if (api.Side == EnumAppSide.Server) MarkDirty(true);
         }        
 
         public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
@@ -434,6 +434,7 @@ namespace VintageEngineering.Transport.API
                     }
                 }
             }
+            // keeping this one, players need to be updated on any interaction with a pipe
             MarkDirty(true);
             return true;
         }
@@ -575,6 +576,7 @@ namespace VintageEngineering.Transport.API
                 {                    
                     pnm.GetNetwork(NetworkID).MarkNetworkDirty(world);
                 }
+                // keeping this one as the shape changed, clients need to be informed, a less-frequent update
                 MarkDirty(true);
             }
         }
@@ -629,7 +631,7 @@ namespace VintageEngineering.Transport.API
                 {
                     _pushConnections.Sort((x, y) => x.Distance.CompareTo(y.Distance)); 
                 }
-                MarkDirty(true);
+                //MarkDirty(true);
             }
         }
         /// <summary>
@@ -679,7 +681,7 @@ namespace VintageEngineering.Transport.API
                     extractionNodes[f].IsSleeping = false;
                 }
             }
-            MarkDirty(true);
+            //MarkDirty(true);
         }
         /// <summary>
         /// Add or remove a set of push connections for this pipe entity.<br/>
@@ -723,7 +725,7 @@ namespace VintageEngineering.Transport.API
                     extractionNodes[f].IsSleeping = false;
                 }
             }
-            MarkDirty(true);
+            //MarkDirty(true);
         }
             
         /// <summary>
@@ -736,6 +738,7 @@ namespace VintageEngineering.Transport.API
             disconnectedSides[faceindex] = newvalue;
             if (connectionSides[faceindex] && newvalue) connectionSides[faceindex] = false;
             _shapeDirty = true;
+            // need this one for clients as it's important they see the change asap
             MarkDirty(true);
         }
 
@@ -857,7 +860,8 @@ namespace VintageEngineering.Transport.API
             if (Api.Side == EnumAppSide.Server) 
             { 
                 UnregisterGameTickListener(lid);
-                MarkDirty(true); // need to push updated data to client
+                // not needed...
+                //MarkDirty(true); // need to push updated data to client
             }
         }
 

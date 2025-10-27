@@ -12,6 +12,8 @@ namespace VintageEngineering.Electrical
     /// </summary>
     public class ElectricBERelay : BlockEntity
     {
-        // TODO: Detect what this is attached to and whether to pass power to/from it.
+        // what use is this? Why might we need these to be smarter?
+        // this is a type of block that has no internal power, doesn't tick but still needs
+        // to be part of an electric network and wiring system
     }
 }

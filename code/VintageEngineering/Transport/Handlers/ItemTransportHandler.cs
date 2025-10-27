@@ -53,15 +53,15 @@ namespace VintageEngineering.Transport.Handlers
             {
                 stacksize = pull.Itemstack?.Collectible.MaxStackSize ?? 1;
             }
-            ItemStackMoveOperation ismo = new ItemStackMoveOperation(world, EnumMouseButton.Left, (EnumModifierKey)0, EnumMergePriority.AutoMerge, stacksize);            
+            ItemStackMoveOperation ismo = new ItemStackMoveOperation(world, EnumMouseButton.Left, (EnumModifierKey)0, EnumMergePriority.DirectMerge, stacksize);            
 
             ItemSlot push = GetPushSlot(world, node, us.PushConnections, pull);
 
             if (push == null) return; // sanity check 3
 
             int moved = pull.TryPutInto(push, ref ismo);
-            if (moved == 0) return;
-            else pull.MarkDirty();
+            //if (moved == 0) return;
+            //else pull.MarkDirty();
         }
 
         public ItemSlot GetPullSlot(InventoryBase inventory, PipeExtractionNode node, bool isGeneric = false)

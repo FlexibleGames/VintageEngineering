@@ -142,7 +142,7 @@ namespace VintageEngineering.Electrical
             {
                 electricpower = 0;
             }
-            Blockentity.MarkDirty(true);
+            //Blockentity.MarkDirty(true);
         }
 
         public virtual ulong RatedPower(float dt, bool isInsert = false)
@@ -184,14 +184,14 @@ namespace VintageEngineering.Electrical
             {
                 // PPS meets or exceeds power wanted, this machine can cover all power needs.
                 if (!simulate) electricpower -= powerWanted;
-                Blockentity.MarkDirty(true);
+                //Blockentity.MarkDirty(true);
                 return 0; // all power wanted was supplied
             }
             else
             {
                 // powerWanted exceeds how much we can supply
                 if (!simulate) electricpower -= pps; // simulation mode doesn't change machines power total.
-                Blockentity.MarkDirty(true);
+                //Blockentity.MarkDirty(true);
                 return powerWanted - pps; // return powerWanted reduced by our PPS.
             }
         }
@@ -219,14 +219,14 @@ namespace VintageEngineering.Electrical
             {
                 // meaning we can take it all.
                 if (!simulate) electricpower += powerOffered;
-                Blockentity.MarkDirty(true);
+                //Blockentity.MarkDirty(true);
                 return 0;
             }
             else
             {
                 // far more common, powerOffered exceeds PPS
                 if (!simulate) electricpower += pps;
-                Blockentity.MarkDirty(true);
+                //Blockentity.MarkDirty(true);
                 return powerOffered - pps;
             }
         }
@@ -272,7 +272,7 @@ namespace VintageEngineering.Electrical
             {
                 electricConnections[wirenodeindex].Add(newconnection);
             }
-            Blockentity.MarkDirty(true);
+            //Blockentity.MarkDirty(true);
         }
 
         public void RemoveConnection(int wirenodeindex, WireNode oldconnection)
@@ -288,7 +288,7 @@ namespace VintageEngineering.Electrical
                 electricConnections.Remove(wirenodeindex);
                 NetworkIDs.Remove(wirenodeindex);
             }
-            Blockentity.MarkDirty(true);
+            //Blockentity.MarkDirty(true);
         }
         #endregion
 
@@ -342,7 +342,7 @@ namespace VintageEngineering.Electrical
         public override void OnBlockPlaced(ItemStack byItemStack = null)
         {
             base.OnBlockPlaced(byItemStack);
-            MachineState = EnumBEState.Sleeping; // when first placed, a machine is on and not crafting.
+            //MachineState = EnumBEState.Sleeping; // when first placed, a machine is on and not crafting.
         }
 
         /// <summary>
@@ -525,7 +525,7 @@ namespace VintageEngineering.Electrical
                 return true;
             }
             NetworkIDs.Add(selectionIndex, networkID);
-            Blockentity.MarkDirty(true);
+            //Blockentity.MarkDirty(true);
             return true;
         }
 
