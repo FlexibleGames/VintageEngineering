@@ -154,6 +154,23 @@ namespace VintageEngineering.Electrical.Systems.Catenary
             return NodeStart.blockPos.GetHashCode() + (8 * NodeStart.index) + NodeEnd.blockPos.GetHashCode() + (8 * NodeEnd.index);
         }
 
+        public override string ToString()
+        {
+            return ToString(null);
+        }
+
+        public string ToString(ICoreAPI api)
+        {
+            if (api == null)
+            {
+                return $"{NodeStart.blockPos}:{NodeStart.index}->{NodeEnd.blockPos}:{NodeEnd.index}";
+            }
+            else
+            {
+                return $"{NodeStart.blockPos.SubCopy(api.World.DefaultSpawnPosition.AsBlockPos)}:{NodeStart.index}->{NodeEnd.blockPos.SubCopy(api.World.DefaultSpawnPosition.AsBlockPos)}:{NodeEnd.index}";
+            }
+        }
+
         public static bool operator ==(WireConnection left, WireConnection right)
         {
             if (left is null) return right is null;
