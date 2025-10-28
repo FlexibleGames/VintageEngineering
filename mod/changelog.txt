@@ -33,7 +33,7 @@ v0.4.3
    (note, this network PPS feature has not yet been implemented, but will be soon! This is added now to prep for that future.)
  - Removed many MarkDirty events to help streamline Client-Server data transfer.
  - Added special case to Kiln to make QuickLime craftable in the machine, go wild!
- - Added Null checks to Recipe Handbook functions to fix #43
+ - Added Null checks to Recipe Handbook function to (hopefully) fix #43
  - If any output slot is full, Sawmill should now stop processing
  - Wires will no longer render during Temporal Storms to save on GPU load.
  - Simple blocks like any Battery and Transformer should never go to Sleep, these do not tick so sleeping is not needed.
