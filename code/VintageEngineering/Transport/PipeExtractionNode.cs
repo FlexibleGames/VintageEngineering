@@ -91,7 +91,7 @@ namespace VintageEngineering.Transport
         /// </summary>
         public long ListenerID { get => listenerID; set { listenerID = value; } }
         public IInventory Inventory => inventory;
-
+        
         public string InventoryClassName => $"PipeInventory-{faceCode}";
 
         public PipeExtractionNode()
@@ -139,7 +139,7 @@ namespace VintageEngineering.Transport
 
         public virtual void ResetEnumerator(List<PipeConnection> conlist)
         {
-            PushEnumerator.Dispose();            
+            PushEnumerator.Dispose();
             PushEnumerator = conlist.GetEnumerator();
         }
 

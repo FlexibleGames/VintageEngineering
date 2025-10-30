@@ -221,6 +221,7 @@ namespace VintageEngineering.Transport.Handlers
             }
             else if (node.PipeDistribution == EnumPipeDistribution.RoundRobin)
             {
+                if (node.IsSleeping) return null;
                 if (node.PushEnumerator.Current == null)
                 {
                     node.PushEnumerator = pushcons.GetEnumerator();
@@ -228,7 +229,16 @@ namespace VintageEngineering.Transport.Handlers
                 }
                 else 
                 { 
-                    if (!node.PushEnumerator.MoveNext())
+                    try
+                    {
+                        if (!node.PushEnumerator.MoveNext())
+                        {
+                            node.PushEnumerator.Dispose();
+                            node.PushEnumerator = pushcons.GetEnumerator();
+                            node.PushEnumerator.MoveNext();
+                        }
+                    }
+                    catch (Exception e)
                     {
                         node.PushEnumerator.Dispose();
                         node.PushEnumerator = pushcons.GetEnumerator();
