@@ -272,7 +272,7 @@ namespace VintageEngineering.Electrical
             {
                 electricConnections[wirenodeindex].Add(newconnection);
             }
-            //Blockentity.MarkDirty(true);
+            Blockentity.MarkDirty(true);
         }
 
         public void RemoveConnection(int wirenodeindex, WireNode oldconnection)
@@ -288,7 +288,7 @@ namespace VintageEngineering.Electrical
                 electricConnections.Remove(wirenodeindex);
                 NetworkIDs.Remove(wirenodeindex);
             }
-            //Blockentity.MarkDirty(true);
+            Blockentity.MarkDirty(true);
         }
         #endregion
 
@@ -525,7 +525,7 @@ namespace VintageEngineering.Electrical
                 return true;
             }
             NetworkIDs.Add(selectionIndex, networkID);
-            //Blockentity.MarkDirty(true);
+            Blockentity.MarkDirty(true);
             return true;
         }
 

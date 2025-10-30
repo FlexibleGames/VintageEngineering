@@ -62,11 +62,11 @@
 	"vinteng:item-vediecast-hv-*": "Die Cast (HV Gauge)",
 	"vinteng:itemdesc-vediecast-hv-*": "Use in an Extruder to make HV gauge wire from steel rods.",
 	"vinteng:item-vediecast-rod-*": "Die Cast (Metal Rod)",
-	"vinteng:itemdesc-vediecast-rod-*": "Use in an Extruder to make metal rods from copper, brass, tinbronze, iron, and steel ingots.",
+	"vinteng:itemdesc-vediecast-rod-*": "Use in an Extruder to make metal rods from copper, brass, tin bronze, iron, and steel ingots. Note: Making Steel Rods requires the die cast to be smithed from a higher-tier (Meteor Iron, Steel, or Titanium) metal.",
 	"vinteng:item-vediecast-screw-*": "Die Cast (Screws)",
 	"vinteng:itemdesc-vediecast-screw-*": "Use in an Extruder to make metal screws from brass, iron, and steel rods.",
 	"vinteng:item-vediecast-pipe-*": "Die Cast (Pipes)",
-	"vinteng:itemdesc-vediecast-pipe-*": "Use in an Extruder to make metal screws from brass, iron, and steel rods.",
+	"vinteng:itemdesc-vediecast-pipe-*": "Use in an Extruder to make Item Pipes from Tin Bronze Ingots and Fluid Pipes from Iron Ingots. Note: Making Fluid Pipes requires the die cast to be smithed from a higher-tier (Meteor Iron, Steel, or Titanium) metal.",
 
 	"vinteng:item-vesawblade-*": "Saw Blade",
 	"vinteng:itemdesc-vesawblade-*": "Use in a Sawmill to make planks from logs. Will wear out over time, durability depends on material.<br><br>Can also convert plank blocks, stairs, and slabs back into raw planks.",

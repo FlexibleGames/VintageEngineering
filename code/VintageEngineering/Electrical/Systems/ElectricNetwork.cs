@@ -242,7 +242,7 @@ namespace VintageEngineering.Electrical.Systems
                     break;
                 default: break;
             }
-            //blockAccessor.GetBlockEntity(node.blockPos).MarkDirty(true);
+            blockAccessor.GetBlockEntity(node.blockPos).MarkDirty(true);
         }
 
         /// <summary>
