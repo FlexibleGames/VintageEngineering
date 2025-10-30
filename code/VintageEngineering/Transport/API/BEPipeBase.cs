@@ -613,7 +613,7 @@ namespace VintageEngineering.Transport.API
                 {
                     BEPipeBase bep = world.BlockAccessor.GetBlockEntity(p) as BEPipeBase;
                     if (bep == null)
-                    {                        
+                    {
                         continue; 
                     }
                     for (int f = 0; f < 6; f++)
@@ -698,6 +698,7 @@ namespace VintageEngineering.Transport.API
                 if (extractionNodes[f] != null)
                 {
                     // in the case of RoundRobin extraction, altering the list FUBARs the enumerator
+                    extractionNodes[f].PushEnumerator.Dispose();
                     extractionNodes[f].IsSleeping = true;
                 }
             }
@@ -712,7 +713,7 @@ namespace VintageEngineering.Transport.API
                 {
                     if (!_pushConnections.Contains(newcon))
                     {
-                        _pushConnections.Add(newcon.Copy());                        
+                        _pushConnections.Add(newcon.Copy()); 
                     }
                 }
             }
@@ -722,7 +723,7 @@ namespace VintageEngineering.Transport.API
                 {
                     // in the case of RoundRobin extraction, altering the list FUBARs the enumerator
                     extractionNodes[f].ResetEnumerator(_pushConnections);
-                    extractionNodes[f].IsSleeping = false;
+                    extractionNodes[f].IsSleeping = false;                    
                 }
             }
             //MarkDirty(true);
