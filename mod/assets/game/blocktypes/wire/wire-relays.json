@@ -1,7 +1,9 @@
 {
 	"code": "wirerelay",
 	"class": "VEElectricBlock",
-	"entityClass": "VEBERelay",
+	"entityClassByType": {
+		"*power": "VEBERelay"
+	},
 	"variantgroups": [
 		{ "code": "type", "states": [ "lvpower", "mvpower", "hvpower", "evpower", "allpower", "signalred", "signalgreen", "communication"] },
 		{ "code":"position", "states": ["up", "down"], "loadFromProperties": "abstract/horizontalorientation" }
