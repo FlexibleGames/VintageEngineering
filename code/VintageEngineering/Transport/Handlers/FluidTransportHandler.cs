@@ -38,27 +38,27 @@ namespace VintageEngineering.Transport.Handlers
             InventoryBase inv = (InventoryBase)((world.BlockAccessor.GetBlock(connectedto)?.GetInterface<IBlockEntityContainer>(world, connectedto))?.Inventory);
             int stacksize = node.UpgradeRate;
             int numperliter = 0;
-            if (inv == null)
-            {
-                // check to see if block is a liquid block, for debugging
-                Block lblock = world.BlockAccessor.GetBlock(connectedto, BlockLayersAccess.FluidOrSolid);
-                if (lblock.IsLiquid())
-                {
-                    ItemStack lblockstack = new ItemStack(lblock);
-                    WaterTightContainableProps wprops = BlockLiquidContainerBase.GetContainableProps(lblockstack);
-                    if (wprops != null)
-                    {
-                        ItemStack portion = wprops.WhenFilled.Stack.Resolve(world, "Filter Pipe", true) ? wprops.WhenFilled.Stack.ResolvedItemstack : null;
-                        if (portion == null) return;
-                        portion.StackSize = portion.Collectible.MaxStackSize;
-                        numperliter = ((int)wprops.ItemsPerLitre);
-                        inv = node.Inventory as InventoryBase;
-                        pull = inv[2];
-                        pull.Itemstack = portion.Clone();
-                    }
-                }
-                else return; 
-            }                         
+            //if (inv == null)
+            //{
+            //    // check to see if block is a liquid block, for debugging
+            //    Block lblock = world.BlockAccessor.GetBlock(connectedto, BlockLayersAccess.FluidOrSolid);
+            //    if (lblock.IsLiquid())
+            //    {
+            //        ItemStack lblockstack = new ItemStack(lblock);
+            //        WaterTightContainableProps wprops = BlockLiquidContainerBase.GetContainableProps(lblockstack);
+            //        if (wprops != null)
+            //        {
+            //            ItemStack portion = wprops.WhenFilled.Stack.Resolve(world, "Filter Pipe", true) ? wprops.WhenFilled.Stack.ResolvedItemstack : null;
+            //            if (portion == null) return;
+            //            portion.StackSize = portion.Collectible.MaxStackSize;
+            //            numperliter = ((int)wprops.ItemsPerLitre);
+            //            inv = node.Inventory as InventoryBase;
+            //            pull = inv[2];
+            //            pull.Itemstack = portion.Clone();
+            //        }
+            //    }
+            //    else return;
+            //}
             if (world.BlockAccessor.GetBlockEntity(connectedto) is BlockEntityLiquidContainer)
             {
                 pull = GetPullSlot(world, inv, node, true);
@@ -100,12 +100,12 @@ namespace VintageEngineering.Transport.Handlers
                 { 
                     moved = pull.TryPutInto(push, ref ismo); 
                 }
-                if (moved == 0) return;
-                else push.MarkDirty();
+                //if (moved == 0) return;
+                //else push.MarkDirty();
             }
             catch (Exception e)
             {
-                world.Logger.Error(e);
+                world.Logger.Error($"VintEng: Fluid Transport TickException: {Environment.NewLine} {e}");
                 return;
             } 
         }
@@ -355,8 +355,18 @@ namespace VintageEngineering.Transport.Handlers
                 }
                 else
                 {
-                    if (!node.PushEnumerator.MoveNext())
+                    try
                     {
+                        if (!node.PushEnumerator.MoveNext())
+                        {
+                            node.PushEnumerator.Dispose();
+                            node.PushEnumerator = pushcons.GetEnumerator();
+                            node.PushEnumerator.MoveNext();
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        // a more elegant solution would be most welcome
                         node.PushEnumerator.Dispose();
                         node.PushEnumerator = pushcons.GetEnumerator();
                         node.PushEnumerator.MoveNext();

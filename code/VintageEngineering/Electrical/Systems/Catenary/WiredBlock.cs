@@ -19,6 +19,9 @@ namespace VintageEngineering.Electrical.Systems.Catenary
         /// </summary>
         protected WireNode[] wireAnchors;
 
+        /// <summary>
+        /// Wire Anchors this block as defined in the wireNodes section of JSON Attributes.
+        /// </summary>
         public WireNode[] WireAnchors { get { return wireAnchors; } }        
 
         protected CatenaryMod cm;
@@ -30,7 +33,16 @@ namespace VintageEngineering.Electrical.Systems.Catenary
         public override void OnLoaded(ICoreAPI api)
         {
             base.OnLoaded(api);
-            JsonObject[] wirenodes = Attributes?["wireNodes"]?.AsArray();
+            JsonObject wirenodelist = Attributes["wireNodes"];
+            JsonObject[] wirenodes = null;
+
+            if (wirenodelist != null)
+            {
+                // ensure all nodes are loaded properly, not sure why this didn't work as one call.
+                wirenodes = wirenodelist.AsArray();
+            }
+            //JsonObject[] wirenodes = Attributes?["wireNodes"]?.AsArray();
+
             cm = api.ModLoader.GetModSystem<CatenaryMod>(true);
             if (wirenodes != null)
             {

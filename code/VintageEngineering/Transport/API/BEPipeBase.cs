@@ -112,9 +112,7 @@ namespace VintageEngineering.Transport.API
             disconnectedSides ??= new bool[6]; 
             insertionSides ??= new bool[6];
 
-            MarkPipeDirty(api.World, true); // mark the pipe dirty to rebuild shape if needed
-
-            for (int f = 0; f< 6; f++)
+            for (int f = 0; f < 6; f++)
             {
                 if (extractionNodes[f] != null)
                 {
@@ -122,6 +120,8 @@ namespace VintageEngineering.Transport.API
                     //if (api.Side == EnumAppSide.Server) extractionNodes[f].SetHandler(GetHandler());
                 }
             }
+
+            MarkPipeDirty(api.World, true); // mark the pipe dirty to rebuild shape if needed
 
             PipeNetworkManager pnm = api.ModLoader.GetModSystem<PipeNetworkManager>(true); // this only exists on the server
             if (pnm == null) return;
@@ -148,7 +148,7 @@ namespace VintageEngineering.Transport.API
                 }
                 pnm.GetNetwork(NetworkID).QuickUpdateNetwork(api.World, inserts.ToArray(), false);
             }
-            if (api.Side == EnumAppSide.Server) MarkDirty(true);
+            //if (api.Side == EnumAppSide.Server) MarkDirty(true);
         }        
 
         public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
@@ -434,6 +434,7 @@ namespace VintageEngineering.Transport.API
                     }
                 }
             }
+            // keeping this one, players need to be updated on any interaction with a pipe
             MarkDirty(true);
             return true;
         }
@@ -477,16 +478,16 @@ namespace VintageEngineering.Transport.API
             // the order is N, E, S, W, U, D
             for (int f = 0; f < BlockFacing.ALLFACES.Length; f++)
             {
+                bool isLoaded = IsChunkLoaded(Api.World, Pos.AddCopy(BlockFacing.ALLFACES[f]));
                 Block dblock = world.BlockAccessor.GetBlock((Pos.AddCopy(BlockFacing.ALLFACES[f])), BlockLayersAccess.Default);
                 BlockEntity dbe = world.BlockAccessor.GetBlockEntity(Pos.AddCopy(BlockFacing.ALLFACES[f]));
-                BlockFacing fromface = BlockFacing.ALLFACES[f];
-
+                BlockFacing fromface = BlockFacing.ALLFACES[f];                
                 // NEED to track NetworkID's of all faces, merge networks, join networks as needed.
 
                 if (dblock.Id == 0) // face direction is air block, neither solid nor fluid
                 {
                     // block is air, not a valid block to connect to.
-                    if (extractionSides[f])
+                    if (extractionSides[f] && isLoaded)
                     {
                         // while the block is air, we have an extraction node trying to connect to it                        
                         PipeExtractionNode penode = extractionNodes[f];
@@ -512,7 +513,7 @@ namespace VintageEngineering.Transport.API
                         // connection was previously manually overridden, remove that flag
                         disconnectedSides[f] = false;
                     }
-                    if (insertionSides[f])
+                    if (insertionSides[f] && isLoaded)
                     {
                         PipeConnection removeinsert = new PipeConnection(Pos.AddCopy(fromface), fromface, 0);
                         if (pnm != null) pnm.GetNetwork(NetworkID).QuickUpdateNetwork(world, removeinsert, true);
@@ -521,7 +522,7 @@ namespace VintageEngineering.Transport.API
                         insertionSides[f] = false;
                         _shapeDirty = true;
                     }
-                    if (connectionSides[f])
+                    if (connectionSides[f] && isLoaded)
                     {
                         connectionSides[f] = false;
                         _shapeDirty = true;
@@ -569,7 +570,15 @@ namespace VintageEngineering.Transport.API
                     }
                 }
             }
-            if (_shapeDirty) MarkDirty(true);
+            if (_shapeDirty) 
+            { 
+                if (NetworkID != 0 && pnm != null)
+                {                    
+                    pnm.GetNetwork(NetworkID).MarkNetworkDirty(world);
+                }
+                // keeping this one as the shape changed, clients need to be informed, a less-frequent update
+                MarkDirty(true);
+            }
         }
 
         /// <summary>
@@ -604,7 +613,7 @@ namespace VintageEngineering.Transport.API
                 {
                     BEPipeBase bep = world.BlockAccessor.GetBlockEntity(p) as BEPipeBase;
                     if (bep == null)
-                    {                        
+                    {
                         continue; 
                     }
                     for (int f = 0; f < 6; f++)
@@ -622,7 +631,7 @@ namespace VintageEngineering.Transport.API
                 {
                     _pushConnections.Sort((x, y) => x.Distance.CompareTo(y.Distance)); 
                 }
-                MarkDirty(true);
+                //MarkDirty(true);
             }
         }
         /// <summary>
@@ -672,7 +681,7 @@ namespace VintageEngineering.Transport.API
                     extractionNodes[f].IsSleeping = false;
                 }
             }
-            MarkDirty(true);
+            //MarkDirty(true);
         }
         /// <summary>
         /// Add or remove a set of push connections for this pipe entity.<br/>
@@ -689,6 +698,7 @@ namespace VintageEngineering.Transport.API
                 if (extractionNodes[f] != null)
                 {
                     // in the case of RoundRobin extraction, altering the list FUBARs the enumerator
+                    extractionNodes[f].PushEnumerator.Dispose();
                     extractionNodes[f].IsSleeping = true;
                 }
             }
@@ -703,7 +713,7 @@ namespace VintageEngineering.Transport.API
                 {
                     if (!_pushConnections.Contains(newcon))
                     {
-                        _pushConnections.Add(newcon.Copy());                        
+                        _pushConnections.Add(newcon.Copy()); 
                     }
                 }
             }
@@ -713,10 +723,10 @@ namespace VintageEngineering.Transport.API
                 {
                     // in the case of RoundRobin extraction, altering the list FUBARs the enumerator
                     extractionNodes[f].ResetEnumerator(_pushConnections);
-                    extractionNodes[f].IsSleeping = false;
+                    extractionNodes[f].IsSleeping = false;                    
                 }
             }
-            MarkDirty(true);
+            //MarkDirty(true);
         }
             
         /// <summary>
@@ -729,6 +739,7 @@ namespace VintageEngineering.Transport.API
             disconnectedSides[faceindex] = newvalue;
             if (connectionSides[faceindex] && newvalue) connectionSides[faceindex] = false;
             _shapeDirty = true;
+            // need this one for clients as it's important they see the change asap
             MarkDirty(true);
         }
 
@@ -850,7 +861,8 @@ namespace VintageEngineering.Transport.API
             if (Api.Side == EnumAppSide.Server) 
             { 
                 UnregisterGameTickListener(lid);
-                MarkDirty(true); // need to push updated data to client
+                // not needed...
+                //MarkDirty(true); // need to push updated data to client
             }
         }
 
@@ -1066,7 +1078,8 @@ namespace VintageEngineering.Transport.API
         }
 
         /// <summary>
-        /// A quick check to determine if a chunk at a given position is loaded.
+        /// A quick check to determine if a chunk at a given position is loaded.<br/>
+        /// Unlike the base-game call, this one ignores neighboring chunks.
         /// </summary>
         /// <param name="world">World Accessor</param>
         /// <param name="atpos">BlockPos to check.</param>

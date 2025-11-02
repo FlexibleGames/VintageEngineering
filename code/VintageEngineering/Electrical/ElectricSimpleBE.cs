@@ -10,7 +10,12 @@ namespace VintageEngineering.Electrical
     /// </summary>
     public abstract class ElectricSimpleBE : BlockEntity
     {
+
         public ElectricBEBehavior Electric { get; private set; }
+
+        private long ListenerID { get; set; }
+
+        //private float clientUpdateBouncer = 0;
 
         /// <summary>
         /// Utility for setting, starting, and stopping animations.
@@ -27,6 +32,16 @@ namespace VintageEngineering.Electrical
         {
             base.Initialize(api);
             Electric.IsLoaded = true;
+            Electric.MachineState = EnumBEState.On;
+            if (api.Side == EnumAppSide.Server)
+            {
+                ListenerID = api.Event.RegisterGameTickListener(new Action<float>(OnGameTick), 500);
+            }
+        }
+
+        public void OnGameTick(float deltatime)
+        {
+            if (ListenerID > 0) MarkDirty(true);
         }
 
         public override void CreateBehaviors(Block block, IWorldAccessor worldForResolve)
@@ -50,6 +65,7 @@ namespace VintageEngineering.Electrical
         {
             // The base WiredBlock handles the wire disconnection and drops.
             Electric.IsLoaded = false;
+            if (ListenerID > 0) Api.Event.UnregisterGameTickListener(ListenerID);
             base.OnBlockBroken(byPlayer);
         }
     }

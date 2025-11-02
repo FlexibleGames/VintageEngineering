@@ -1,7 +1,9 @@
 ﻿using ProtoBuf;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using VintageEngineering.Electrical.Systems.Catenary;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -187,7 +189,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
         {
             base.StartClientSide(api);
             capi = api;
-            capi.Event.RegisterRenderer(this, EnumRenderStage.Opaque, "wireplacer");
+            capi.Event.RegisterRenderer(this, EnumRenderStage.Opaque, "ve_wireplacer");
             
             capi.Event.ChunkDirty += OnChunkDirty;
             
@@ -206,8 +208,139 @@ namespace VintageEngineering.Electrical.Systems.Catenary
 
             api.Event.GameWorldSave += Event_GameWorldSave;
             api.Event.SaveGameLoaded += Event_SaveGameLoaded;
-            sapi.Event.PlayerNowPlaying += Event_PlayerNowPlaying;            
-        }        
+            sapi.Event.PlayerNowPlaying += Event_PlayerNowPlaying;
+            SetupCommands();
+        }
+
+        #region DebugCommands
+        private void SetupCommands()
+        {
+            if (sapi == null) return;
+
+            IChatCommandApi chatCommands = sapi.ChatCommands;
+            CommandArgumentParsers parsers = sapi.ChatCommands.Parsers;
+
+            chatCommands.GetOrCreate("vedebug")
+                .WithDescription("Vintage Engineering Debug Commands")
+                .RequiresPrivilege(Privilege.controlserver)
+                .BeginSubCommand("validatewires")
+                .WithAlias(["vw"])
+                .WithDescription("Validate all wire nodes. Optionally delete invalid nodes, will not drop wire or fire events. Use with CAUTION!")
+                .WithArgs([parsers.OptionalBool("dodelete", "delete")])
+                .HandleWith(new OnCommandDelegate(ValidateAllWires)).EndSubCommand()
+                .BeginSubCommand("numwires")
+                .WithDescription("Prints number of Wire Connection objects in data")
+                .HandleWith(new OnCommandDelegate(PrintNumConnections)).EndSubCommand()
+                .BeginSubCommand("printwires")
+                .WithDescription("Prints Wire Connections to Verbose Debug LOG file, use with care on large networks.")
+                .HandleWith(new OnCommandDelegate(PrintAllConnections)).EndSubCommand();
+        }
+
+        private TextCommandResult ValidateAllWires(TextCommandCallingArgs args)
+        {
+            if (data.allConnections.Count == 0)
+            {
+                return TextCommandResult.Success("No Wires exist to validate.");
+            }
+            Stopwatch timer = Stopwatch.StartNew();
+            int numInvalid = ValidateWires((bool)args[0]);
+            timer.Stop();
+            string dodelete = "";
+            if ((bool)args[0])
+            {
+                dodelete = " which were deleted.";
+            }
+            else
+            {
+                dodelete = ".";
+            }
+            return TextCommandResult.Success($"Catenary Wire validations took {timer.ElapsedMilliseconds}ms and found {numInvalid} invalid connections{dodelete}");            
+        }
+
+        private int ValidateWires(bool doDelete)
+        {
+            int numinvalid = 0;
+            if (sapi == null) return -1;
+
+            Dictionary<BlockPos, bool> validBlocks = new Dictionary<BlockPos, bool>();
+
+            // WireConnections are objects that have a unique start and end position, even if end and start are swapped.
+            // Simply put, currently you cannot attach more than one wire between two BlockPositions
+            List<WireConnection> toDelete = new();
+
+            foreach (WireConnection con in data.allConnections)
+            {
+                // need to validate all connections, but not all endpoints are unique
+                // cache endpoints to save on calls?
+                BlockPos start = con.NodeStart.blockPos.Copy();
+                BlockPos end = con.NodeEnd.blockPos.Copy();
+                if (!validBlocks.ContainsKey(start))
+                {
+                    bool valid = sapi.World.BlockAccessor.GetBlock(start) is WiredBlock;
+                    if (!valid)
+                    {
+                        numinvalid++;
+                        if (!toDelete.Contains(con)) toDelete.Add(con);
+                    }
+                    validBlocks.Add(start, valid);
+                }
+                if (!validBlocks.ContainsKey(end))
+                {
+                    bool valid = sapi.World.BlockAccessor.GetBlock(end) is WiredBlock;
+                    if (!valid)
+                    {
+                        numinvalid++;
+                        if (!toDelete.Contains(con)) toDelete.Add(con);
+                    }
+                    validBlocks.Add(end, valid);
+                }
+            }
+            if (doDelete && toDelete.Count > 0)
+            {
+                foreach (WireConnection con in toDelete)
+                {
+                    data.allConnections.Remove(con);
+                }
+            }
+
+            return numinvalid;
+        }
+
+        public enum DebugPrintDataType
+        {
+            Count,
+            WireNodes
+        }
+
+        private TextCommandResult PrintNumConnections(TextCommandCallingArgs args)
+        {
+            return PrintData(DebugPrintDataType.Count);
+        }
+        private TextCommandResult PrintAllConnections(TextCommandCallingArgs args)
+        {
+            return PrintData(DebugPrintDataType.WireNodes);
+        }
+
+        private TextCommandResult PrintData(DebugPrintDataType printtype)
+        {
+            StringBuilder sb = new StringBuilder();            
+            switch (printtype)
+            {
+                case DebugPrintDataType.Count: return TextCommandResult.Success($"Number of Wire Connections {data.allConnections.Count}");
+                case DebugPrintDataType.WireNodes:
+                    {
+                        if (data.allConnections.Count == 0) return TextCommandResult.Success($"No Wire Connections to print.");
+                        foreach (WireConnection con in data.allConnections)
+                        {                        
+                            sb.AppendLine(con.ToString(api));
+                        }
+                        api.Logger.VerboseDebug(sb.ToString());
+                        return TextCommandResult.Success($"Printed {data.allConnections.Count} Wire Connections to VerboseDebug log file.");                        
+                    }
+                default: return TextCommandResult.Success("Nothing To See Here...");
+            }
+        }
+        #endregion
 
         private void Event_PlayerNowPlaying(IServerPlayer byPlayer)
         {
@@ -458,7 +591,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
         public void OnRenderFrame(float deltatime, EnumRenderStage stage)
         {
             if (stage != EnumRenderStage.Opaque) return;
-
+            // this renderer is specificly for wires in-progress of being run, not established connections.
             WirePlacerWorkSpace ws = this.getWorkSpace(capi.World.Player.PlayerUID);
             
             // if we are not currently running a wire, we don't need to render anything

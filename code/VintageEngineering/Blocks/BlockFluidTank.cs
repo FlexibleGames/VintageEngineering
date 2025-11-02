@@ -82,6 +82,14 @@ namespace VintageEngineering.Blocks
                         return true;
                     }
                 }
+                else if (byPlayer.InventoryManager.ActiveHotbarSlot.Itemstack.Collectible.Code.Path.Contains("stick"))
+                {
+                    ItemSlotLiquidOnly pull = betank?.GetLiquidAutoPullFromSlot(blockSel.Face);
+                    if (pull != null)
+                    {
+                        pull.TakeOutWhole(); // void the tank
+                    }
+                }
             }
 
             bool handled = base.OnBlockInteractStart(world, byPlayer, blockSel);

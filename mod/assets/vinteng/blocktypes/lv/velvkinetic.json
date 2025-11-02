@@ -32,7 +32,7 @@
                     "canReceivePower": false,
                     "entitytype": "Producer",
                     "maxpower": 2000,
-                    "maxpps": 1000
+                    "maxpps": 120
                 }
             },
             {"name":"VEElectricKineticGenBhv"}

@@ -32,7 +32,7 @@ namespace VintageEngineering
         /// <summary>
         /// N E S W
         /// </summary>
-        private bool[] faceHasMachine = new bool[4];
+        //private bool[] faceHasMachine = new bool[4];
 
         public float FuelBurnTime { get { return fuelBurnTime; } }
         public float GenTemp { get { return genTemp; } }
@@ -226,11 +226,16 @@ namespace VintageEngineering
                     SetState(EnumBEState.Sleeping); // go to sleep... zzzz
                 }
                 prevGenTemp = genTemp;
-                if ((faceHasMachine[0] || faceHasMachine[1] || faceHasMachine[2] || faceHasMachine[3]) && Electric.CurrentPower > 0)
+                //if ((faceHasMachine[0] || faceHasMachine[1] || faceHasMachine[2] || faceHasMachine[3]) && Electric.CurrentPower > 0)
+                //{
+                //    if (GiveNeighborsPower(deltatime)) SetState(EnumBEState.On);
+                //}
+                _clientUpdateDelay += deltatime;
+                if (_clientUpdateDelay > 0.5f)
                 {
-                    if (GiveNeighborsPower(deltatime)) SetState(EnumBEState.On);
+                    _clientUpdateDelay = 0f;
+                    MarkDirty(true);
                 }
-                MarkDirty(true, null);
             }
             if (Api != null && Api.Side == EnumAppSide.Client)
             {
@@ -257,102 +262,6 @@ namespace VintageEngineering
                 MarkDirty(true);
             }
         }
-
-        public bool GiveNeighborsPower(float dt)
-        {
-            // a temporary routine to push power into a machine, will be an electric network eventually
-            IElectricalBlockEntity beElectricalMachine;
-            ulong ratedpower = Electric.RatedPower(dt);
-            ulong ratedpowerbackup = ratedpower;
-            if (ratedpower > Electric.CurrentPower) ratedpower = Electric.CurrentPower;
-
-            for (int x = 0; x < 4; x++)
-            {
-                if (ratedpower > 0)
-                {
-                    if (faceHasMachine[x])
-                    {                        
-                        // we have power and this face has a machine... lets give some power
-                        switch(x)
-                        {
-                            case 0: 
-                                beElectricalMachine = this.Api.World.BlockAccessor.GetBlockEntity(this.Pos.NorthCopy()) as IElectricalBlockEntity;
-                                if (beElectricalMachine != null)
-                                {
-                                    if (!beElectricalMachine.CanReceivePower) break;
-                                    ratedpower = beElectricalMachine.ReceivePower(ratedpower, dt);
-                                    if (ratedpower == 0) break;
-                                }
-                                break;
-                            case 1:
-                                beElectricalMachine = this.Api.World.BlockAccessor.GetBlockEntity(this.Pos.EastCopy()) as IElectricalBlockEntity;
-                                if (beElectricalMachine != null)
-                                {
-                                    if (!beElectricalMachine.CanReceivePower) break;
-                                    ratedpower = beElectricalMachine.ReceivePower(ratedpower, dt);
-                                    if (ratedpower == 0) break;
-                                }
-                                break;
-                            case 2:
-                                beElectricalMachine = this.Api.World.BlockAccessor.GetBlockEntity(this.Pos.SouthCopy()) as IElectricalBlockEntity;
-                                if (beElectricalMachine != null)
-                                {
-                                    if (!beElectricalMachine.CanReceivePower) break;
-                                    ratedpower = beElectricalMachine.ReceivePower(ratedpower, dt);
-                                    if (ratedpower == 0) break;
-                                }
-                                break;
-                            case 3:
-                                beElectricalMachine = this.Api.World.BlockAccessor.GetBlockEntity(this.Pos.WestCopy()) as IElectricalBlockEntity;
-                                if (beElectricalMachine != null)
-                                {
-                                    if (!beElectricalMachine.CanReceivePower) break;
-                                    ratedpower = beElectricalMachine.ReceivePower(ratedpower, dt);
-                                    if (ratedpower == 0) break;
-                                }
-                                break;
-                        }
-                    }
-                }
-            }
-            ulong usedpower = ratedpowerbackup - ratedpower;
-            if (usedpower > 0)
-            {
-                Electric.electricpower -= usedpower;
-                return true;
-            }
-            else return false;
-        }
-
-        public void NeighborUpdate(IWorldAccessor world)
-        {
-            // checks neighbor blocks searching for a machine.
-            // for the test, only check horizontally N E S W
-            faceHasMachine[0] = false;
-            if (world.BlockAccessor.GetBlockEntity(this.Pos.NorthCopy()) is IElectricalBlockEntity)
-            {
-                faceHasMachine[0] = true;
-            }
-
-            faceHasMachine[1] = false;
-            if (world.BlockAccessor.GetBlockEntity(this.Pos.EastCopy()) is IElectricalBlockEntity)
-            {
-                faceHasMachine[1] = true;
-            }
-
-            faceHasMachine[2] = false;
-            if (world.BlockAccessor.GetBlockEntity(this.Pos.SouthCopy()) is IElectricalBlockEntity)
-            {
-                faceHasMachine[2] = true;
-            }
-
-            faceHasMachine[3] = false;
-            if (world.BlockAccessor.GetBlockEntity(this.Pos.WestCopy()) is IElectricalBlockEntity)
-            {
-                faceHasMachine[3] = true;
-            }
-        }
-        
 
         public float ChangeTemperature(float fromTemp, float toTemp, float deltaTime)
         {
@@ -415,10 +324,6 @@ namespace VintageEngineering
             ITreeAttribute invtree = new TreeAttribute();
             this.inventory.ToTreeAttributes(invtree);
             tree["inventory"] = invtree;
-            
-            ITreeAttribute facetree = new TreeAttribute();
-            ToFaceTree(facetree);
-            tree["faceConnections"] = facetree;
 
             tree.SetFloat("genTemp", genTemp);
             tree.SetInt("maxTemp", maxTemp);
@@ -428,8 +333,7 @@ namespace VintageEngineering
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldForResolving)
         {
             base.FromTreeAttributes(tree, worldForResolving);
-            this.inventory.FromTreeAttributes(tree.GetTreeAttribute("inventory"));
-            FromFaceTree(tree.GetTreeAttribute("faceConnections"));
+            this.inventory.FromTreeAttributes(tree.GetTreeAttribute("inventory"));            
             if (Api != null) Inventory.AfterBlocksLoaded(this.Api.World);
             genTemp = tree.GetFloat("genTemp", 0);
             maxTemp = tree.GetInt("maxTemp", 0);
@@ -440,27 +344,6 @@ namespace VintageEngineering
                 if (this.clientDialog != null) clientDialog.Update(genTemp, fuelBurnTime, Electric.CurrentPower);
                 MarkDirty(true, null);
             }
-        }
-
-        private void ToFaceTree(ITreeAttribute tree)
-        {
-            tree.SetBool("faceNorth", faceHasMachine[0]);
-            tree.SetBool("faceEast", faceHasMachine[1]);
-            tree.SetBool("faceSouth", faceHasMachine[2]);
-            tree.SetBool("faceWest", faceHasMachine[3]);
-        }
-        private void FromFaceTree(ITreeAttribute tree)
-        {
-            if (tree == null)
-            {
-                // failsafe in case of a missing tree attribute.
-                faceHasMachine[0] = faceHasMachine[1] = faceHasMachine[2] = faceHasMachine[3] = false;
-                return;
-            }
-            faceHasMachine[0] = tree.GetBool("faceNorth");
-            faceHasMachine[1] = tree.GetBool("faceEast");
-            faceHasMachine[2] = tree.GetBool("faceSouth");
-            faceHasMachine[3] = tree.GetBool("faceWest");
         }
     }
 }

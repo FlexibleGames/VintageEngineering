@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using VintageEngineering.blockentity;
 using VintageEngineering.Electrical.Systems;
 using VintageEngineering.Electrical.Systems.Catenary;
 using VintageEngineering.RecipeSystem;
@@ -78,6 +79,10 @@ namespace VintageEngineering.Electrical
                 {
                     // allows the GUI to be opened
                     (machEntity as BlockEntityOpenableContainer).OnPlayerRightClick(byPlayer, blockSel);
+                }
+                if (machEntity is BELVPump velvp)
+                {
+                    velvp.OnPlayerRightClick(world, byPlayer, blockSel);
                 }
                 return true;
             }

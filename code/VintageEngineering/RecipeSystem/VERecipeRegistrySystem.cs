@@ -261,39 +261,44 @@ namespace VintageEngineering.RecipeSystem
         GetIngredientsForOutput<T>(ICoreClientAPI capi, IReadOnlyList<IVEMachineRecipeBase<T>> recipes, ItemStack output, ItemStack[] allStacks)
         {
             Dictionary<AssetLocation, List<ItemStack>> result = null;
-            foreach (IVEMachineRecipeBase<T> recipe in recipes)
+            // some mod somewhere breaks this, not sure how or why.
+            // adding checks to hopefully mitigate bad code
+            if (output != null && recipes != null && recipes.Count > 0) 
             {
-                for (int outputIndex = 0; outputIndex < recipe.Outputs.Length; ++outputIndex)
+                foreach (IVEMachineRecipeBase<T> recipe in recipes)
                 {
-                    if (recipe.GetResolvedOutput(outputIndex).Equals(
-                            capi.World, output, GlobalConstants.IgnoredStackAttributes))
+                    for (int outputIndex = 0; outputIndex < recipe.Outputs.Length; ++outputIndex)
                     {
-                        for (int inputIndex = 0; inputIndex < recipe.Ingredients.Length; ++inputIndex)
+                        if (recipe.GetResolvedOutput(outputIndex).Equals(
+                                capi.World, output, GlobalConstants.IgnoredStackAttributes)) // the null ref was on this line
                         {
-                            result ??= new();
-                            if (!result.TryGetValue(recipe.Name,
-                                                    out List<ItemStack> resultList))
+                            for (int inputIndex = 0; inputIndex < recipe.Ingredients.Length; ++inputIndex)
                             {
-                                resultList = new();
-                                result.Add(recipe.Name, resultList);
-                            }
-                            ItemStack resolved = recipe.GetResolvedInput(inputIndex);
-                            if (resolved != null)
-                            {
-                                resultList.Add(recipe.GetResolvedInput(inputIndex));
-                            }
-                            else
-                            {
-                                foreach (ItemStack item in allStacks)
+                                result ??= new();
+                                if (!result.TryGetValue(recipe.Name,
+                                                        out List<ItemStack> resultList))
                                 {
-                                    if (recipe.SatisfiesAsIngredient(inputIndex, item, false))
+                                    resultList = new();
+                                    result.Add(recipe.Name, resultList);
+                                }
+                                ItemStack resolved = recipe.GetResolvedInput(inputIndex);
+                                if (resolved != null)
+                                {
+                                    resultList.Add(recipe.GetResolvedInput(inputIndex));
+                                }
+                                else
+                                {
+                                    foreach (ItemStack item in allStacks)
                                     {
-                                        resultList.Add(item);
+                                        if (recipe.SatisfiesAsIngredient(inputIndex, item, false))
+                                        {
+                                            resultList.Add(item);
+                                        }
                                     }
                                 }
                             }
+                            break;
                         }
-                        break;
                     }
                 }
             }

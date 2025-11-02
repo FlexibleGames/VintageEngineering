@@ -1,5 +1,5 @@
 {
-	"code": "velvbattery",
+	"code": "vemvbattery",
 	"class": "VEElectricBlock",
 	"entityClass": "VEBEBattery",
 	"behaviors": [
@@ -14,14 +14,14 @@
 				"canExtractPower": true,
 				"canReceivePower": true,
 				"entitytype": "Storage",
-				"maxpower": 4000,
-				"maxpps": 100
+				"maxpower": 40000,
+				"maxpps": 2000
 			}
 		}
 	],
 	"attributes": {
 		"handbook": {
-			"groupBy": ["velvbattery"],
+			"groupBy": ["vemvbattery"],
 			"excludeByType": {
 				"*": false
 			}
@@ -31,19 +31,19 @@
             {
                 "index": 0,
                 "wirefunction": "Power",
-				"powertier": "LV",
+				"powertier": "MV",
 				"maxconnections": 1,
-                "x1": 0.40625,
+                "x1": 0.375,
                 "y1": 0.875,
-                "z1": 0.40625,
-                "x2": 0.59375,
+                "z1": 0.375,
+                "x2": 0.625,
                 "y2": 1,
-                "z2": 0.59375
+                "z2": 0.625
             }
         ]
 	},
-	"creativeinventory": { "general": ["velvbattery"], "terrain": ["*"], "mechanics": ["*"], "vinteng": ["*"] },
-	"shape": { "base": "vinteng:block/lv/battery" },
+	"creativeinventory": { "general": ["vemvbattery"], "terrain": ["*"], "mechanics": ["*"], "vinteng": ["*"] },
+	"shape": { "base": "vinteng:block/mv/battery" },
 	"blockmaterial": "Metal",
 	"textures": {},
 	"sidesolid": {

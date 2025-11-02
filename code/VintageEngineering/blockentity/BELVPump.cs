@@ -20,8 +20,8 @@ namespace VintageEngineering.blockentity
     public struct FluidPosition : IEquatable<FluidPosition>, IEquatable<BlockPos>
     {
         public BlockPos Position;
-        public int Distance;
-        public FluidPosition(BlockPos _position, int _distance)
+        public float Distance;
+        public FluidPosition(BlockPos _position, float _distance)
         {
             this.Position = _position;
             this.Distance = _distance;
@@ -47,13 +47,14 @@ namespace VintageEngineering.blockentity
         private string _fluidtype;
         private List<FluidPosition> _fluidpositions;
         private bool _ischeckingfluid = true;
-        private bool _isinfinite = false;
+        private bool _isinfinite = false;        
         private int _pumpcount = 0; // used only on client
+        private float _clientUpdateDelay = 0f;
 
         private int _powerPerBlockPumped = 200;
         private int _powerPerTankPush = 50;
 
-        public ItemSlotLargeLiquid Tank => inventory[0] as ItemSlotLargeLiquid;
+        public ItemSlotLargeLiquid InternalTank => inventory[0] as ItemSlotLargeLiquid;
 
         protected BlockEntityAnimationUtil AnimUtil
         {
@@ -120,7 +121,7 @@ namespace VintageEngineering.blockentity
             _clientupdatedelay += dt;
             if (_ischeckingfluid || _fluidpositions == null) return;
             if (_clientupdatedelay > 10) _clientupdatedelay = 0;
-            if (_fluidpositions.Count == 0 && !_isinfinite) 
+            if (_fluidpositions.Count == 0 && !_isinfinite)
             {
                 // we are out of blocks to pump... sleep now
                 SetState(EnumBEState.Sleeping);
@@ -156,13 +157,9 @@ namespace VintageEngineering.blockentity
                         if (_fluidpositions.Count == 0) break;
                     }
                 }
-            }
+            } 
 
-            if (Api.World.BlockAccessor.GetChunk(last.Position.X / GlobalConstants.ChunkSize, 
-                                                 last.Position.Y / GlobalConstants.ChunkSize, 
-                                                 last.Position.Z / GlobalConstants.ChunkSize) == null) return;
-
-            if (Tank.Itemstack != null)
+            if (InternalTank.Itemstack != null)
             {
                 // tank is not empty
                 WaterTightContainableProps props = GetWPropsFromPos(Api.World, last.Position);
@@ -183,12 +180,12 @@ namespace VintageEngineering.blockentity
 
                         float portionperblock = literperblock * portionperliter;
 
-                        if (Tank.Itemstack.StackSize <= portionperblock)
+                        if (InternalTank.Itemstack.StackSize <= portionperblock)
                         {
                             // internal tank has room for another 'block' of fluid
                             if (Electric.MachineState != EnumBEState.On) SetState(EnumBEState.On);
                             
-                            Tank.Itemstack.StackSize += (int)portionperblock; // add fluid to tank
+                            InternalTank.Itemstack.StackSize += (int)portionperblock; // add fluid to tank
                             if (!_isinfinite)
                             {
                                 Api.World.BlockAccessor.SetBlock(0, last.Position, BlockLayersAccess.Fluid);
@@ -196,7 +193,7 @@ namespace VintageEngineering.blockentity
                                 _fluidpositions.Remove(last);
                             }
                             Electric.electricpower -= ((ulong)_powerPerBlockPumped);
-                            MarkDirty(true);
+                            //MarkDirty(true);
                         }
                     }
                 }
@@ -236,14 +233,20 @@ namespace VintageEngineering.blockentity
                         }
                         if (Electric.MachineState != EnumBEState.On) SetState(EnumBEState.On);
                         Electric.electricpower -= ((ulong)_powerPerBlockPumped);
-                        MarkDirty(true);
+                        //MarkDirty(true);
                     }
                 }
             }
             if (!inventory[0].Empty && IsTankOnTop()) // need to call this even if we didn't pump anything this tick
             {
                 TryPushIntoTank(); // will try to push whatever it can into a tank...
-            }            
+            }
+            _clientUpdateDelay += dt;
+            if (_clientUpdateDelay > 0.5f)
+            {
+                _clientUpdateDelay = 0f;
+                MarkDirty(true);
+            }
         }
 
         public static WaterTightContainableProps GetWPropsFromPos(IWorldAccessor world, BlockPos pos)
@@ -289,6 +292,19 @@ namespace VintageEngineering.blockentity
             }
         }
 
+        public void OnPlayerRightClick(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
+        {
+            if (byPlayer != null && byPlayer.InventoryManager.ActiveHotbarSlot.Empty && byPlayer.Entity.Controls.Sneak)
+            {
+                if (world.Api.Side == EnumAppSide.Server && !_ischeckingfluid)
+                {
+                    _ischeckingfluid = true;
+                    if (CheckForFluid() && !_isinfinite) TyronThreadPool.QueueTask(GetFluids, "VELVPump");
+                    else _ischeckingfluid = false;
+                }
+            }
+        }
+
         /// <summary>
         /// Checks to ensure this is on top of a valid fluid block.
         /// </summary>
@@ -312,6 +328,7 @@ namespace VintageEngineering.blockentity
             Block blockbelow = Api.World.BlockAccessor.GetBlock(below);
             if (blockbelow.IsLiquid())
             {
+                _ischeckingfluid = true;
                 ItemStack liqblock = new ItemStack(blockbelow);
                 WaterTightContainableProps props = BlockLiquidContainerBase.GetContainableProps(liqblock);
                 if (props != null && props.WhenFilled != null)
@@ -349,7 +366,7 @@ namespace VintageEngineering.blockentity
                                         // TODO make pump range a config value check
                                         if (below.ManhattenDistance(bcheck) > 32)  { return; }
 
-                                        FluidPosition bfpos = new FluidPosition(bcheck, below.ManhattenDistance(bcheck));
+                                        FluidPosition bfpos = new FluidPosition(bcheck, below.DistanceTo(bcheck));
                                         if (!_fluidpositions.Contains(bfpos))
                                         {
                                             if (dblock.LiquidLevel == 7)

@@ -412,7 +412,7 @@ namespace VintageEngineering
                 {
                     // meltingpoint / 2, but what if melting point doesn't exist?
                     // sanity check then
-                    CombustibleProperties cprops = InputStack.Collectible.CombustibleProps.Clone();
+                    CombustibleProperties cprops = InputStack.Collectible.CombustibleProps?.Clone();
                     if (cprops != null)
                     {
                         if (itemtemp < (cprops.MeltingPoint / 2)) return false;
@@ -596,9 +596,14 @@ namespace VintageEngineering
                             isCrafting = false;
                         }
                         recipePowerApplied = 0;
-                        MarkDirty(true, null);
-                        Api.World.BlockAccessor.MarkBlockEntityDirty(this.Pos);
+                        //MarkDirty(true, null);                        
                     }
+                }
+                _clientUpdateDelay += deltatime;
+                if (_clientUpdateDelay > 0.5f)
+                {
+                    _clientUpdateDelay = 0f;
+                    MarkDirty(true);
                 }
             }
         }

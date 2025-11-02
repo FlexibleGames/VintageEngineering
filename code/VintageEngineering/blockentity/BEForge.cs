@@ -19,6 +19,7 @@ namespace VintageEngineering
         private ICoreServerAPI sapi;
         private float updateBouncer = 0f;
         private GUIForge clientDialog;
+        private int tempOverrideScale = 0;
 
         public string DialogTitle
         {
@@ -136,13 +137,13 @@ namespace VintageEngineering
                 // something changed with the input slot
                 UpdateMesh(0);
                 FindMatchingRecipe();
-                MarkDirty(true, null);
 
                 if (clientDialog != null && clientDialog.IsOpened())
                 {
                     clientDialog.Update(RecipeProgress, Electric.CurrentPower, CurrentTemp, _currentTempGoal, tempGoal);
                 }
             }
+            MarkDirty(true, null);
         }
 
         /// <summary>
@@ -222,7 +223,6 @@ namespace VintageEngineering
                     }
                     else
                     {
-                        _currentTempGoal = tempGoal;
                         isHeating = true;
                         SetState(EnumBEState.On);
                         return true;
@@ -320,6 +320,7 @@ namespace VintageEngineering
                 if (updateBouncer < 2f) return;
                 updateBouncer = 0f;
             }
+
             if (Electric.MachineState == EnumBEState.On) // machine is on and actively crafting something
             {
                 float powerpertick = Electric.MaxPPS * dt;
@@ -373,7 +374,12 @@ namespace VintageEngineering
                     else return; // this shouldn't ever fire... but just in case
                 }
             }
-            this.MarkDirty(true, null);
+            _clientUpdateDelay += dt;
+            if (_clientUpdateDelay > 0.5f)
+            {
+                _clientUpdateDelay = 0f;
+                MarkDirty(true);
+            }            
         }
 
         /// <summary>
@@ -738,6 +744,7 @@ namespace VintageEngineering
             FindMatchingRecipe();
             if (!InputSlot.Empty && Api != null)
             {
+                UpdateMesh(0);
                 InputSlot.Itemstack.Collectible.SetTemperature(worldForResolving,
                     InputSlot.Itemstack, currentItemTemp, true);
             }

@@ -29,12 +29,13 @@ namespace VintageEngineering
         /// </summary>
         public bool IsActive { get; set; } = true;
 
+        private float _clientUpdateDelay = 0f;
+
         public ElectricBEBehavior Electric { get; private set; }
 
         private ICoreServerAPI sapi;
         private ICoreClientAPI capi;
         private float _updateBouncer = 0f;
-        private long _clientUpdateMS = 0L;
 
         public override void Initialize(ICoreAPI api)
         {
@@ -54,8 +55,7 @@ namespace VintageEngineering
                 {
                     Electric.AnimUtil.InitializeAnimator("veblower", null, null, new Vec3f(0, GetRotation(), 0f));
                 }                                
-            }
-            _clientUpdateMS = api.World.ElapsedMilliseconds;
+            }            
         }
 
         public void OnRightClick(IPlayer byPlayer)
@@ -104,9 +104,10 @@ namespace VintageEngineering
                 IsPowered = false;
                 if (Electric.MachineState != EnumBEState.Sleeping) SetState(EnumBEState.Sleeping);
             }
-            if (Api.World.ElapsedMilliseconds - _clientUpdateMS > 500L)
+            _clientUpdateDelay += dt;
+            if (_clientUpdateDelay > 0.5f)
             {
-                _clientUpdateMS = Api.World.ElapsedMilliseconds;
+                _clientUpdateDelay = 0f;
                 MarkDirty(true);
             }
         }

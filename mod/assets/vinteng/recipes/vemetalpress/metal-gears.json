@@ -13,7 +13,7 @@
 		],
 		"outputs": [
 			{ "type": "item", "code": "vinteng:metalgear-{metal}", "stacksize": 1 },
-			{ "type": "item", "code": "game:metalbit-{metal}", "stacksize": 10, "variable": 6 }
+			{ "type": "item", "code": "game:metalbit-{metal}", "stacksize": 4, "variable": 1 }
 		]
 	},
 	{
@@ -31,7 +31,7 @@
 		],
 		"outputs": [
 			{ "type": "item", "code": "vinteng:metalgear-{metal}", "stacksize": 1 },
-			{ "type": "item", "code": "game:metalbit-{metal}", "stacksize": 10, "variable": 6 }
+			{ "type": "item", "code": "game:metalbit-{metal}", "stacksize": 4, "variable": 1 }
 		]
 	}
 ]

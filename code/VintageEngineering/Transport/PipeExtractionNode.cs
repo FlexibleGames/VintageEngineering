@@ -91,7 +91,7 @@ namespace VintageEngineering.Transport
         /// </summary>
         public long ListenerID { get => listenerID; set { listenerID = value; } }
         public IInventory Inventory => inventory;
-
+        
         public string InventoryClassName => $"PipeInventory-{faceCode}";
 
         public PipeExtractionNode()
@@ -139,7 +139,7 @@ namespace VintageEngineering.Transport
 
         public virtual void ResetEnumerator(List<PipeConnection> conlist)
         {
-            PushEnumerator.Dispose();            
+            PushEnumerator.Dispose();
             PushEnumerator = conlist.GetEnumerator();
         }
 
@@ -224,6 +224,9 @@ namespace VintageEngineering.Transport
         public virtual void OnNodeRemoved()
         {
             inventory.SlotModified -= OnSlotModified;
+
+            // what if this is null?
+            PushEnumerator.Dispose();
             DropContents(_pos.ToVec3d());
         }
 
@@ -252,6 +255,7 @@ namespace VintageEngineering.Transport
         public virtual bool OnRightClick(IWorldAccessor world, IPlayer player)
         {
             // auto swap held item in player hotbarslot if valid.
+            if (player == null || player.InventoryManager.ActiveHotbarSlot == null || player.InventoryManager.ActiveHotbarSlot.Itemstack == null) return false;
             if (player.InventoryManager.ActiveHotbarSlot.Itemstack.Collectible is ItemPipeUpgrade)
             {
                 if (Upgrade.Empty)

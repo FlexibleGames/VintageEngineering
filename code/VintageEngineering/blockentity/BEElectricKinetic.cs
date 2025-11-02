@@ -18,9 +18,7 @@ namespace VintageEngineering.blockentity
 
         public bool isGenerator { get { return Block.Code.Path.Contains("alternator"); } }
 
-        //public ElectricBEBehavior Electricity;
-
-        private long _clientUpdateMS = 0L;
+        //public ElectricBEBehavior Electricity;        
 
         private ElectricKineticMotorBhv genBhv;
         private ElectricKineticAlternatorBhv consBhv;
@@ -90,8 +88,6 @@ namespace VintageEngineering.blockentity
             }
             inventory.Pos = this.Pos.Copy();
             inventory.LateInitialize($"{InventoryClassName}-{this.Pos.X}/{this.Pos.Y}/{this.Pos.Z}", api);
-
-            _clientUpdateMS = api.World.ElapsedMilliseconds;
         }
         public void OnSimTick(float dt)
         {
@@ -127,9 +123,10 @@ namespace VintageEngineering.blockentity
                 }
             }
             // update client values every half second
-            if (Api.World.ElapsedMilliseconds - _clientUpdateMS > 500L)
+            _clientUpdateDelay += dt;
+            if (_clientUpdateDelay > 0.5f)
             {
-                _clientUpdateMS = Api.World.ElapsedMilliseconds;
+                _clientUpdateDelay = 0f;
                 MarkDirty(true);
             }
         }

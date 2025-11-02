@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
+using VintageEngineering.Electrical;
+using VintageEngineering.Electrical.Systems;
+using VintageEngineering.Electrical.Systems.Catenary;
 using VintageEngineering.Transport.API;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
@@ -38,6 +42,7 @@ namespace VintageEngineering.Transport.Network
             _sapi = api;
             _sapi.Event.SaveGameLoaded += OnSaveGameLoaded;
             _sapi.Event.GameWorldSave += OnGameSave;
+            SetupDebugCommands();
         }
 
         private void OnGameSave()
@@ -51,6 +56,140 @@ namespace VintageEngineering.Transport.Network
             byte[] networkbytes = _sapi.WorldManager.SaveGame.GetData("vepipenetworks");
             byte[] nextidbytes = _sapi.WorldManager.SaveGame.GetData("vepipenetworknextid");                        
             InitializeNetworkManager(networkbytes, nextidbytes);
+        }
+
+        #region DebugCommands
+        private void SetupDebugCommands()
+        {
+            IChatCommandApi chatCommands = _sapi.ChatCommands;
+            CommandArgumentParsers parsers = _sapi.ChatCommands.Parsers;
+
+            chatCommands.GetOrCreate("vedebug")
+                .WithDescription("Vintage Engineering Debug Commands")
+                .RequiresPrivilege(Privilege.controlserver)
+                .BeginSubCommand("validatepipenetworks")
+                .WithAlias(["vpipes"])
+                .WithDescription("Validate all nodes of all pipe networks. Optionally DELETES invalid networks.")
+                .WithArgs([parsers.OptionalBool("dodelete", "delete")])
+                .HandleWith(new OnCommandDelegate(ValidateAllPipeNetworks)).EndSubCommand()
+                .BeginSubCommand("validatepipes")
+                .WithDescription("Validate a single given pipe network ID. With optional delete.")
+                .WithArgs([parsers.Long("networkID"), parsers.OptionalBool("dodelete", "delete")])
+                .HandleWith(new OnCommandDelegate(ValidatePipeNetwork)).EndSubCommand();
+        }
+
+        private TextCommandResult ValidateAllPipeNetworks(TextCommandCallingArgs args)
+        {
+            // Needs to validate all networks
+
+            if (_pipeNetworks.Count == 0)
+            {
+                return TextCommandResult.Success("No Pipe Networks exist to validate.");
+            }
+            Stopwatch timer = Stopwatch.StartNew();
+            int numInvalid = ValidatePipeNetworks((bool)args[0]);
+            timer.Stop();
+            string dodelete = "";
+            if ((bool)args[0])
+            {
+                dodelete = " which were deleted.";
+            }
+            else
+            {
+                dodelete = ".";
+            }
+            return TextCommandResult.Success($"Pipe Network validations took {timer.ElapsedMilliseconds}ms and found {numInvalid} invalid networks{dodelete}");
+        }
+        private TextCommandResult ValidatePipeNetwork(TextCommandCallingArgs args)
+        {
+            // Needs to validate given network in args
+            if (args.Parsers[0].IsMissing)
+            {
+                return TextCommandResult.Success("Missing NetworkID to validate.");
+            }
+            long netID = (long)args[0];
+            if (!_pipeNetworks.ContainsKey(netID))
+            {
+                return TextCommandResult.Success($"Pipe NetworkID {netID} does not exist.");
+            }
+            bool isValid = ValidatePipeNetwork(netID);
+            if (isValid)
+            {
+                return TextCommandResult.Success($"Network ID {netID} has valid nodes.");
+            }
+            else
+            {
+                //manager.DeleteNetwork(netID);
+                string dodelete = "";
+                if ((bool)args[1])
+                {
+                    dodelete = " Deleting...";
+                    DeleteNetwork(netID);
+                }
+                return TextCommandResult.Success($"Network ID {netID} Failed Validation. All nodes are invalid. {dodelete}");
+            }
+        }
+        /// <summary>
+        /// Validates ALL Pipe Networks for this world.<br/>
+        /// Will optionally delete invalid networks automatically.<br/>
+        /// Called from a debug command: /vedebug validatepipenetworks [delete]
+        /// </summary>
+        /// <returns>Number of invalid networks discovered.</returns>
+        public int ValidatePipeNetworks(bool doDelete)
+        {
+            List<long> invalidIDs = new();
+            foreach (KeyValuePair<long, PipeNetwork> pair in _pipeNetworks)
+            {
+                if (!ValidatePipeNetwork(pair.Key)) invalidIDs.Add(pair.Key);
+            }
+            if (doDelete && invalidIDs.Count > 0)
+            {
+                // delete 'em you daring soul.
+                foreach (long id in invalidIDs)
+                {
+                    DeleteNetwork(id);
+                }
+            }
+            return invalidIDs.Count;
+        }
+
+        /// <summary>
+        /// Validate every BlockEntity in a given Pipe Network.<br/>
+        /// If _ALL_ BlockEntities in a network are invalid this returns false, otherwise it returns true.<br/>
+        /// Does not delete any nodes, ignores nodes in unloaded chunks and does not count them toward the total, so ensure the entire network is loaded.
+        /// </summary>
+        /// <param name="netID">NetworkID to check</param>
+        /// <returns>False if a network is INVALID</returns>
+        public bool ValidatePipeNetwork(long netID)
+        {
+            if (_sapi == null) return true; // API isn't initialized... should never trigger.
+            if (!_pipeNetworks.ContainsKey(netID))
+            {
+                return true; // networkID doesn't exist
+            }
+            PipeNetwork net = _pipeNetworks.Get(netID);
+            if (net.PipeBlockPositions.Count == 0) return false;
+            int invalidnodes = 0;
+            foreach (BlockPos node in net.PipeBlockPositions)
+            {
+                BlockEntity entity = _sapi.World.BlockAccessor.GetBlockEntity(node);
+                
+                bool chunkloaded = BEPipeBase.IsChunkLoaded(_sapi.World, node);
+
+                // if the chunk is loaded AND the entity is null
+                if (chunkloaded && entity == null) invalidnodes++;
+            }
+            return net.PipeBlockPositions.Count != invalidnodes;
+        }
+
+        #endregion
+
+        public void DeleteNetwork(long netid)
+        {
+            if (_pipeNetworks.ContainsKey(netid))
+            {
+                _pipeNetworks.Remove(netid);
+            }
         }
 
         /// <summary>

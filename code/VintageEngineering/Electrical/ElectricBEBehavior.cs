@@ -142,7 +142,7 @@ namespace VintageEngineering.Electrical
             {
                 electricpower = 0;
             }
-            Blockentity.MarkDirty(true);
+            //Blockentity.MarkDirty(true);
         }
 
         public virtual ulong RatedPower(float dt, bool isInsert = false)
@@ -184,14 +184,14 @@ namespace VintageEngineering.Electrical
             {
                 // PPS meets or exceeds power wanted, this machine can cover all power needs.
                 if (!simulate) electricpower -= powerWanted;
-                Blockentity.MarkDirty(true);
+                //Blockentity.MarkDirty(true);
                 return 0; // all power wanted was supplied
             }
             else
             {
                 // powerWanted exceeds how much we can supply
                 if (!simulate) electricpower -= pps; // simulation mode doesn't change machines power total.
-                Blockentity.MarkDirty(true);
+                //Blockentity.MarkDirty(true);
                 return powerWanted - pps; // return powerWanted reduced by our PPS.
             }
         }
@@ -219,16 +219,21 @@ namespace VintageEngineering.Electrical
             {
                 // meaning we can take it all.
                 if (!simulate) electricpower += powerOffered;
-                Blockentity.MarkDirty(true);
+                //Blockentity.MarkDirty(true);
                 return 0;
             }
             else
             {
                 // far more common, powerOffered exceeds PPS
                 if (!simulate) electricpower += pps;
-                Blockentity.MarkDirty(true);
+                //Blockentity.MarkDirty(true);
                 return powerOffered - pps;
             }
+        }
+
+        public BlockPos GetPosition()
+        {
+            return this.Pos.Copy();
         }
 
         #endregion
@@ -259,7 +264,7 @@ namespace VintageEngineering.Electrical
             {
                 electricConnections = new Dictionary<int, List<WireNode>>();
             }
-            if (electricConnections.Count == 0 || electricConnections[wirenodeindex] == null)
+            if (electricConnections.Count == 0 || !electricConnections.ContainsKey(wirenodeindex))
             {
                 electricConnections.Add(wirenodeindex, new List<WireNode> { newconnection });
             }
@@ -337,7 +342,7 @@ namespace VintageEngineering.Electrical
         public override void OnBlockPlaced(ItemStack byItemStack = null)
         {
             base.OnBlockPlaced(byItemStack);
-            MachineState = EnumBEState.Sleeping; // when first placed, a machine is on and not crafting.
+            MachineState = EnumBEState.On; // when first placed, a machine is on and not crafting.
         }
 
         /// <summary>
@@ -380,14 +385,33 @@ namespace VintageEngineering.Electrical
         public virtual string GetNetworkInfo()
         {
             StringBuilder stringBuilder = new StringBuilder();
-            if (electricConnections.Count == 0)
+            WiredBlock wblock = Block as WiredBlock;
+
+            if (wblock.WireAnchors.Length > 0)
             {
-                return "No Network";
+                int numanchors = wblock.WireAnchors.Length;
+                foreach (WireNode node in wblock.WireAnchors)
+                {
+                    if (electricConnections.Count > 0 && electricConnections.ContainsKey(node.index))
+                    {
+                        // connection exists for node
+                        stringBuilder.AppendLine($"Node {node.index} has {electricConnections[node.index].Count} cons on netid {(NetworkIDs.ContainsKey(node.index) ? NetworkIDs[node.index] : "NULL!")}");
+                    }
+                    else
+                    {
+                        // connection does NOT exist for node
+                        stringBuilder.AppendLine($"Node {node.index} : No Network.");
+                    }
+                }
             }
-            foreach (KeyValuePair<int, List<WireNode>> pair in electricConnections)
-            {
-                stringBuilder.AppendLine($"Node {pair.Key} has {((pair.Value == null) ? "null!" : pair.Value.Count)} cons on id {(NetworkIDs.ContainsKey(pair.Key) ? NetworkIDs[pair.Key] : "NULL!")}");
-            }
+            //if (electricConnections.Count == 0)
+            //{
+            //    return "No Network";
+            //}
+            //foreach (KeyValuePair<int, List<WireNode>> pair in electricConnections)
+            //{
+            //    stringBuilder.AppendLine($"Node {pair.Key} has {((pair.Value == null) ? "null!" : pair.Value.Count)} cons on id {(NetworkIDs.ContainsKey(pair.Key) ? NetworkIDs[pair.Key] : "NULL!")}");
+            //}            
             return stringBuilder.ToString().TrimEnd();
         }
 

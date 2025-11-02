@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using ProtoBuf;
 using VintageEngineering.Electrical.Systems.Catenary;
+using VintageEngineering.Transport.API;
 using Vintagestory;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -96,12 +97,18 @@ namespace VintageEngineering.Electrical.Systems
         /// </summary>
         private List<IElectricalBlockEntity> storageNodes = new List<IElectricalBlockEntity>();
 
+        /// <summary>
+        /// Relay nodes are largely ignored, but it's nice to have ALL nodes sorted and accounted for.
+        /// </summary>
+        private List<IElectricalBlockEntity> relayNodes = new List<IElectricalBlockEntity>();
+
         //internal ElectricalNetworkMod enm;
         public ICoreServerAPI api;
         private bool isDirty;
         private bool isSleeping;
         private float sleepTimer;
         private long _networkID;
+        private ulong _networkPPS = 0;
 
         [ProtoMember(2)]
         public long NetworkID { get => _networkID; set => _networkID = value; }
@@ -111,16 +118,34 @@ namespace VintageEngineering.Electrical.Systems
 
         public bool IsSleeping => isSleeping;
 
+        public ulong NetworkPPS => _networkPPS;
+
+        [ProtoMember(3)]
+        public EnumElectricalPowerTier PowerTier { get; private set; } = EnumElectricalPowerTier.LV;
+
         public ElectricNetwork()
         {
         }
-        public ElectricNetwork(long _networkid, ICoreServerAPI _api)
+        public ElectricNetwork(long _networkid, ICoreServerAPI _api, EnumElectricalPowerTier powerTier = EnumElectricalPowerTier.LV)
         {
             api = _api;
             this.NetworkID = _networkid;
             this.isSleeping = false;
             sleepTimer = 0;
-
+            PowerTier = powerTier;
+            ElectricalNetworkMod mod = _api.ModLoader.GetModSystem<ElectricalNetworkMod>(true);
+            if (mod != null)
+            {
+                ElectricalNetworkConfig econfig = mod.ElectricConfig;
+                switch (powerTier)
+                {
+                    case EnumElectricalPowerTier.LV: _networkPPS = econfig.NetworkPPS_LV; break;
+                    case EnumElectricalPowerTier.MV: _networkPPS = econfig.NetworkPPS_MV; break;
+                    case EnumElectricalPowerTier.HV: _networkPPS = econfig.NetworkPPS_HV; break;
+                    case EnumElectricalPowerTier.EV: _networkPPS = econfig.NetworkPPS_EV; break;
+                    default: _networkPPS = 1; break;
+                }
+            }
         }
 
 
@@ -133,6 +158,7 @@ namespace VintageEngineering.Electrical.Systems
             producerNodes.Clear();
             consumerNodes.Clear();
             storageNodes.Clear();
+            relayNodes.Clear();
 
             if (allNodes.Count > 0)
             {
@@ -161,6 +187,10 @@ namespace VintageEngineering.Electrical.Systems
                             storageNodes.Add(entity);
                             if (storageNodes.Count > 1) storageNodes.Sort((x, y) => x.Priority.CompareTo(y.Priority));
                             break;
+                        case EnumElectricalEntityType.Relay:
+                            relayNodes.Add(entity);
+                            // relays do NOT have or need a priority, they are simply tools to spread the POWER! \o/
+                            break;
                         default: break;
                     }
                 }
@@ -184,7 +214,7 @@ namespace VintageEngineering.Electrical.Systems
             IWireNetwork wirenet = IWireNetwork.GetAtPos(blockAccessor, node.blockPos);
             if (wirenet != null && updateEntity)
             {
-                wirenet.SetNetworkID(NetworkID);
+                wirenet.SetNetworkID(NetworkID, node.index);
             }
 
             allNodes.Add(node);
@@ -207,9 +237,12 @@ namespace VintageEngineering.Electrical.Systems
                     storageNodes.Add(electricalBlockEntity);
                     if (storageNodes.Count > 1) storageNodes.Sort((x, y) => x.Priority.CompareTo(y.Priority));
                     break;
+                case EnumElectricalEntityType.Relay:
+                    relayNodes.Add(electricalBlockEntity);
+                    break;
                 default: break;
             }
-            blockAccessor.GetBlockEntity(node.blockPos).MarkDirty();
+            blockAccessor.GetBlockEntity(node.blockPos).MarkDirty(true);
         }
 
         /// <summary>
@@ -243,6 +276,9 @@ namespace VintageEngineering.Electrical.Systems
                     storageNodes.Add(entity);
                     if (storageNodes.Count > 1) storageNodes.Sort((x, y) => x.Priority.CompareTo(y.Priority));
                     break;
+                case EnumElectricalEntityType.Relay:
+                    relayNodes.Add(entity);
+                    break;
                 default: break;
             }
         }
@@ -274,6 +310,9 @@ namespace VintageEngineering.Electrical.Systems
                 case EnumElectricalEntityType.Transformer:
                     if (storageNodes.Contains(entity)) { storageNodes.Remove(entity); }
                     if (storageNodes.Count > 1) storageNodes.Sort((x, y) => x.Priority.CompareTo(y.Priority));
+                    break;
+                case EnumElectricalEntityType.Relay:
+                    if (relayNodes.Contains(entity)) {  relayNodes.Remove(entity); }
                     break;
                 default: break;
             }
@@ -311,9 +350,12 @@ namespace VintageEngineering.Electrical.Systems
                     case EnumElectricalEntityType.Transformer:
                         storageNodes.Remove(electricalBlockEntity);
                         break;
+                    case EnumElectricalEntityType.Relay:
+                        relayNodes.Remove(electricalBlockEntity);
+                        break;
                     default: break;
                 }
-                blockAccessor.GetBlockEntity(node.blockPos).MarkDirty();
+                //blockAccessor.GetBlockEntity(node.blockPos).MarkDirty();
             }
         }
 
@@ -349,7 +391,13 @@ namespace VintageEngineering.Electrical.Systems
             ulong totalexcesspower = 0;
             ulong totalstorageused = 0;
 
+            // TODO: Update PPS of entire network to use _networkPPS variable...
+
             if (allNodes.Count == 1) return true; // one node, no need to tick it.            
+
+            // power per tick, power limit for this update tick
+            // By Default: LV is 500 PPS, MV is 4000 PPS, and HV is 200k PPS
+            ulong networkppt = (ulong)((_networkPPS * deltaTime) + 0.02);
 
             if (producerNodes.Count == 0 &&
                 storageNodes.Count == 0 &&
@@ -357,32 +405,45 @@ namespace VintageEngineering.Electrical.Systems
             {
                 // a network of all relays would have 0 of the above types, but allNodes would be > 0
                 if (allNodes.Count == 0) return false; // there are zero nodes in this network, delete it.
+
+                // if all the nodes are relays then lets skip validation
+                // until such a time as I have to keep it due to edge-case bugs
+                if (allNodes.Count == relayNodes.Count) return true;
+
+                // if all nodes are not accounted for, we need to validate
+                // it could mean some nodes are NOT loaded
+                // only networks with literally hundreds of nodes would result in noticable update lag.
                 List<WireNode> nodestoDelete = new List<WireNode>();
 
                 foreach (WireNode node in allNodes)
                 {
                     // if the block position is invalid the block could be unloaded OR invalid
                     // if unloaded, then we need to skip.
-                    if (!api.World.IsFullyLoadedChunk(node.blockPos))
+                    // using a custom call that ignores neighboring chunk status.
+                    if (!BEPipeBase.IsChunkLoaded(api.World, node.blockPos))
                     {
                         continue;
                     }
 
+                    // check block and block entity at position
                     Block checkblock = api.World.BlockAccessor.GetBlock(node.blockPos);
-                    if (checkblock.Id == 0)
+                    BlockEntity bentity = api.World.BlockAccessor.GetBlockEntity(node.blockPos);
+                    if (checkblock.Id == 0 || bentity == null)
                     {
+                        // a truly legit bad node, chunk is loaded yet the block or entity is bad
+                        // this can happen with server/game crashes etc.
                         nodestoDelete.Add(node);
-                        continue;
                     }
                     BlockPos origin = api.World.DefaultSpawnPosition.AsBlockPos.Copy();
 
-                    if (checkblock.Id != 0 && api.World.BlockAccessor.GetBlockEntity(node.blockPos) == null)
+                    if (checkblock.Id != 0 && bentity == null)
                     {
-                        throw new ArgumentNullException($"VintEng: Electric Update Tick found a NULL block entity at: {node.blockPos.SubCopy(origin.X, 0, origin.Z)}");
+                        api.Logger.Error($"VintEng: Electric Update Tick found a NULL block entity at: {node.blockPos.SubCopy(origin.X, 0, origin.Z)}. Deleted Node from network.");
                     }
-                    if (checkblock.Id != 0 && IElectricalBlockEntity.GetAtPos(api.World.BlockAccessor, node.blockPos) == null)
+                    if (checkblock.Id == 0 && bentity != null)
                     {
-                        throw new ArgumentNullException($"VintEng: Electric Update Tick found a NULL electrical block entity at: {node.blockPos.SubCopy(origin.X, 0, origin.Z)}");
+                        api.World.BlockAccessor.RemoveBlockEntity(node.blockPos);
+                        api.Logger.Error($"VintEng: Electric Update Tick found an invalid block at: {node.blockPos.SubCopy(origin.X, 0, origin.Z)} but the block entity wasn't null. This is bananas bad and should never happen. Deleting corrupted Block Entity.");
                     }
                 }
                 if (nodestoDelete.Count > 0)
@@ -448,19 +509,128 @@ namespace VintageEngineering.Electrical.Systems
                 // edge case of a network ONLY having storage and/or transformer nodes
                 if (storageNodes.Count > 1)
                 {
-                    // only run if there's more than one storage node in the network
-                    foreach (IElectricalBlockEntity entity in storageNodes)
+
+                    Dictionary<IElectricalBlockEntity, int> nodePressures = new(storageNodes.Count);
+                    int highestPressure = 0;
+                    int lowestPressure = 100;
+
+                    // going to try a pressure based system rather than the failed whole network % based system
+                    // this creates a Dictionary that maps % full to the node
+                    foreach (IElectricalBlockEntity node in storageNodes)
                     {
-                        if (entity == null || !entity.IsLoaded) continue;
-                        totalinstorage = entity.ReceivePower(totalinstorage, deltaTime);
+                        if (node.MaxPower == 0 || !node.IsEnabled || node.IsSleeping) continue;
+
+                        double percentFull = (double)node.CurrentPower / node.MaxPower;
+                        int pressure = (int)(Math.Round(percentFull, 2) * 100);
+                        BlockPos pos = node.GetPosition();
+
+                        bool isDuplicate = false;
+                        if (nodePressures.ContainsKey(node))
+                        { 
+                            isDuplicate = true;
+                            break;
+                        }
+                        if (!isDuplicate)
+                        {
+                            nodePressures.Add(node, pressure);
+                            highestPressure = Math.Max(highestPressure, pressure);
+                            lowestPressure = Math.Min(lowestPressure, pressure);
+                        }
                     }
-                    // totalinstorage should = 0 at this point
+
+                    if (Math.Abs(highestPressure - lowestPressure) < 3 || nodePressures.Count <= 1)
+                    {
+                        // if all pressures are within 1% of each other, do nothing
+                        return true;
+                    }
+
+                    // average the pressures to get a target
+                    //int targetPercent = nodePressures.Sum(node => node.Value) / nodePressures.Count;
+                    //if (targetPercent == 0) targetPercent++;
+
+
+                    List<IElectricalBlockEntity> deficitNodes = nodePressures.Where(node => node.Value <= lowestPressure).Select(node => node.Key).ToList();
+
+                    // if a block isn't in deficit it's in surplus, no more batteries sitting idle with power to spare
+                    List<IElectricalBlockEntity> surplusNodes = nodePressures.Where(node => !deficitNodes.Contains(node.Key)).Select(node => node.Key).ToList();
+                    
+                    // now each list is those nodes that have too much or too little power, target is total network % storage used.
+
+                    if (surplusNodes.Count == 0 || deficitNodes.Count == 0) return true; // should rarely fire
+
+                    if (surplusNodes.Count > 1) // only sort if more than 1
+                    {
+                        surplusNodes.Sort((IElectricalBlockEntity a, IElectricalBlockEntity b) =>
+                                a.Priority == b.Priority ? nodePressures[b].CompareTo(nodePressures[a]) : a.Priority.CompareTo(b.Priority));
+                    }
+                    if (deficitNodes.Count > 1) // only sort if more than 1
+                    {
+                        deficitNodes.Sort((IElectricalBlockEntity a, IElectricalBlockEntity b) =>
+                                a.Priority == b.Priority ? nodePressures[a].CompareTo(nodePressures[b]) : a.Priority.CompareTo(b.Priority));
+                    }
+
+                    // going to rely on PPS values to help smooth the curves
+                    // actual power movement will be refined in the loops
+                    ulong totalExcess = (ulong)(surplusNodes.Sum(node => (long)node.RatedPower(deltaTime, false)));
+                    if (totalExcess == 0) return true;
+
+                    ulong totalNeeded = (ulong)(deficitNodes.Sum(node => (long)node.RatedPower(deltaTime, true)));
+
+                    // what is lower, total power in excess or total needed?
+                    ulong transferable = Math.Min(totalExcess, totalNeeded);
+                    if (transferable == 0) return true;
+
+                    ulong actualExtracted = 0; // simulating extraction, will pull for real after
+                    ulong actualReceived = 0;
+
+                    foreach (IElectricalBlockEntity node in surplusNodes)
+                    {                        
+                        ulong ppt = node.RatedPower(deltaTime, false); // how much are we allowed to move this tick?
+
+                        ulong differential = node.CurrentPower; // the delta in power, in this case, just the power we have, it's all surplus baby!
+                        if (ppt > differential) ppt = differential; // clamp to limit to capacity, useful for very low power totals
+                        if (ppt > transferable) ppt = transferable; // clamp to how much power we actually need to move, useful for low power
+                        
+                        // unsatisfied power needs to be removed from the amount we tried actually extracting
+                        ulong unsatisfied = node.ExtractPower(ppt, deltaTime, true);
+                        actualExtracted += ppt - unsatisfied;
+                    }
+                    // we now have actualExtracted amount of power, lets do something with it!
+                    
+                    foreach (IElectricalBlockEntity node in deficitNodes)
+                    {                        
+                        ulong ppt = node.RatedPower(deltaTime, true); // power rate for this tick
+                        ulong differential = node.MaxPower - node.CurrentPower; // what is the delta?
+
+                        // we want to limit and clamp the power going into EACH node from ppt to the delta
+                        ppt = Math.Min(ppt, differential); // clamp delta for this node
+                        ppt = Math.Min(ppt, actualExtracted-actualReceived); // clamp delta for entire tick
+
+                        // limit the offer, to smooth power spikes in low-power situ
+                        ulong leftover = node.ReceivePower(ppt, deltaTime, false); // we're giving power we haven't removed yet.
+                        actualReceived += (ppt - leftover);
+                    }
+                    ulong receivedTotal = actualReceived;
+                    if (actualReceived > 0)
+                    {
+                        // we've used power, ensuring we limit to how much we have to give, now lets take it!                                                
+                        foreach (IElectricalBlockEntity node in surplusNodes)
+                        {
+                            actualReceived = node.ExtractPower(actualReceived, deltaTime, false);
+                            if (actualReceived == 0) break;
+                        }
+                        if (actualReceived != 0)
+                        {
+                            api.Logger.Error($"VintEng: Electric Network Tick error: Storage Network {this.NetworkID} gave {receivedTotal} but has {actualReceived} required power left to satisfy!");
+                        }
+                    }
+
                     return true;
                 }
                 else
                 {
                     // sleep, there is nothing to simulate
-                    isSleeping = true; // zzzzzzzzzzzz                    
+                    isSleeping = true; // zzzzzzzzzzzz
                     return true;
                 }
             }
@@ -509,7 +679,7 @@ namespace VintageEngineering.Electrical.Systems
                     foreach (IElectricalBlockEntity entity in storageNodes)
                     {
                         // push excess power into storage nodes
-                        if (entity == null || !entity.IsLoaded) continue;
+                        if (entity == null || !entity.IsLoaded) continue;                        
                         totalexcesspower = entity.ReceivePower(totalexcesspower, deltaTime);
                     }
                 }
@@ -601,6 +771,8 @@ namespace VintageEngineering.Electrical.Systems
             tree.SetInt("numnodes", allNodes.Count);
 
             tree.SetBytes("allnodes", SerializerUtil.Serialize(allNodes.ToArray()));
+
+            tree.SetString("networktier", PowerTier.ToString());
         }
 
         /// <summary>
@@ -613,7 +785,8 @@ namespace VintageEngineering.Electrical.Systems
         {
             NetworkID = tree.GetLong("networkid", 0);
             int numnodes = tree.GetInt("numnodes", 0);
-            
+            string tier = tree.GetString("networktier", "LV");
+            PowerTier = Enum.Parse<EnumElectricalPowerTier>(tier);
             if (allNodes != null) allNodes.Clear();
 
             // potential crashable line of code...

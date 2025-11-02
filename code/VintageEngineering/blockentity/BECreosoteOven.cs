@@ -24,6 +24,7 @@ namespace VintageEngineering
         private ICoreClientAPI capi;
         private ICoreServerAPI sapi;
         private GUICreosoteOven _clientDialog;
+        private float _clientUpdateDelay = 0f;
 
         #region InventoryStuff
         public virtual bool AllowPipeLiquidTransfer
@@ -386,9 +387,15 @@ namespace VintageEngineering
                         SetState(EnumBEState.Sleeping);
                     }
                     _recipeTime = 0f;
-                    MarkDirty(true, null);
-                    Api.World.BlockAccessor.MarkBlockEntityDirty(this.Pos);
+                    //MarkDirty(true, null);
+                    //Api.World.BlockAccessor.MarkBlockEntityDirty(this.Pos);
                 }
+            }
+            _clientUpdateDelay += dt;
+            if (_clientUpdateDelay > 0.5f)
+            {
+                _clientUpdateDelay = 0f;
+                MarkDirty(true);
             }
         }
 

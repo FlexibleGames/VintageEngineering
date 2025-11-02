@@ -5,6 +5,7 @@ using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
+using Vintagestory.GameContent;
 
 namespace VintageEngineering.Electrical.Systems.Catenary
 {
@@ -28,7 +29,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
             cm = catenaryMod;
             capi = c_api;
             chunksize = GlobalConstants.ChunkSize;
-            capi.Event.RegisterRenderer(this, EnumRenderStage.Opaque, "catenarynetwork");
+            capi.Event.RegisterRenderer(this, EnumRenderStage.Opaque, "ve_catenarynetwork");
         }
 
         public void Dispose()
@@ -50,7 +51,8 @@ namespace VintageEngineering.Electrical.Systems.Catenary
         {
             if (ConnectionsPerChunk == null || ConnectionsPerChunk.Count == 0) return;
             if (stage != EnumRenderStage.Opaque) return;
-            
+
+            if (capi.ModLoader.GetModSystem<SystemTemporalStability>(true).StormData.nowStormActive) return;
 
             IRenderAPI rpi = capi.Render;
             IClientWorldAccessor worldAccess = capi.World;
@@ -75,7 +77,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
             {                
                 Vec3d offset = new Vec3d(conns.Key.X * chunksize, conns.Key.Y * chunksize, conns.Key.Z * chunksize);
                 foreach (WireConnection con in conns.Value)
-                {                    
+                {
                     AssetLocation wiretexture = new AssetLocation(capi.World.GetBlock(con.BlockId).Attributes["texture"].ToString());
                     int textureid = rpi.GetOrLoadTexture(wiretexture);
                     rpi.BindTexture2d(textureid);
@@ -91,7 +93,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
             {
                 this.capi.Logger.Warning($"Catenary Renderer Overloaded! Took {sw.ElapsedMilliseconds} to render {ConnectionsPerChunk.Values.Count} wires.");
             }
-        }        
+        }
 
         /// <summary>
         /// Rebuilds wire rendering data indexed on chunk position

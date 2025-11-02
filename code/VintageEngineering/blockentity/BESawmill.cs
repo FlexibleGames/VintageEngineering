@@ -195,7 +195,7 @@ namespace VintageEngineering
                 if (isCrafting && RecipeProgress < 1f)
                 {
                     if (Electric.CurrentPower == 0 || Electric.CurrentPower < (Electric.MaxPPS * dt)) return; // we don't have any power to progress.
-                    if (!HasRoomInOutput(2) && !HasRoomInOutput(3) && !HasRoomInOutput(4)) return; // no room in output slots, stop
+                    if (!HasRoomInOutput(2) || !HasRoomInOutput(3) || !HasRoomInOutput(4)) return; // no room in an output slot, stop
                     if (currentRecipe == null) return; // how the heck did this happen?
 
                     float powerpertick = Electric.MaxPPS * dt;
@@ -330,9 +330,15 @@ namespace VintageEngineering
                         isCrafting = false;
                     }
                     recipePowerApplied = 0;
-                    MarkDirty(true, null);
-                    Api.World.BlockAccessor.MarkBlockEntityDirty(this.Pos);
+                    //MarkDirty(true, null);
+                    //Api.World.BlockAccessor.MarkBlockEntityDirty(this.Pos);
                 }
+            }
+            _clientUpdateDelay += dt;
+            if (_clientUpdateDelay > 0.5f)
+            {
+                _clientUpdateDelay = 0f;
+                MarkDirty(true);
             }
         }
 

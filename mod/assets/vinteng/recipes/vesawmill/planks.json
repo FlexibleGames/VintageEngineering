@@ -12,9 +12,9 @@
 			{ "type": "block", "code": "game:log-placed-*-ud", "quantity": 1, "name": "wood" }
 		],
 		"outputs": [
-			{ "type": "item", "code": "game:plank-{wood}", "stacksize": 16 },
-			{ "type": "item", "code": "vinteng:sawdust", "stacksize": 6, "variable": 5 },
-			{ "type": "item", "code": "game:stick", "stacksize": 3, "variable": 2 }
+			{ "type": "item", "code": "game:plank-{wood}", "stacksize": 14 },
+			{ "type": "item", "code": "vinteng:sawdust", "stacksize": 4, "variable": 1 },
+			{ "type": "item", "code": "game:stick", "stacksize": 2, "variable": 1 }
 		]
 	},
 	{
@@ -30,9 +30,9 @@
 			{ "type": "block", "code": "game:logsection-placed-*-ne-ud", "quantity": 1, "name": "wood" }
 		],
 		"outputs": [
-			{ "type": "item", "code": "game:plank-{wood}", "stacksize": 16 },
-			{ "type": "item", "code": "vinteng:sawdust", "stacksize": 6, "variable": 5 },
-			{ "type": "item", "code": "game:stick", "stacksize": 3, "variable": 2 }
+			{ "type": "item", "code": "game:plank-{wood}", "stacksize": 14 },
+			{ "type": "item", "code": "vinteng:sawdust", "stacksize": 4, "variable": 1 },
+			{ "type": "item", "code": "game:stick", "stacksize": 2, "variable": 1 }
 		]
 	},
 	{

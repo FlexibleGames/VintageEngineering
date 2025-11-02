@@ -1,0 +1,49 @@
+v0.4.5
+- New MV Networks! MV Batteries and LV-MV Transformers
+- Major Bugfixes regarding Pipes, pipe networks, and chunk boundaries
+------------------------------------------------DEBUG-------------------------------------------------------------
+- New Debug commands to validate electric network systems:
+  The [] show an optional flag, use delete with extreme caution. An example is /vedebug vpn delete
+  You will need full server access privileges to use any of these.
+  - /vedebug validatepowernetworks [delete]
+  - /vedebug vpn [delete]
+    - Validate all electric networks
+
+  - /vedebug validate id [delete]
+    - Validate a single ID with optional delete
+
+ - New Debug commands to validate pipe networks
+  - /vedebug validatepipenetworks [delete]
+  - /vedebug vpipes [delete]
+    - Validate all pipe networks
+
+  - /vedebug validatepipes id [delete]
+    - Validate a single give pipe network ID
+
+ - New Debug commands to debug Catenary Wire data
+  - /vedebug validatewires [delete]
+  - /vedebug vw [delete]
+    - Validates all Wire Connection objects in Catenary Data, ensures all wire endpoints block types are WiredBlock. Optionally Delete invalid nodes, will not drop wire or fire event.
+
+  - /vedebug numwires
+    - Prints total number of Wire Connections in the data set.
+  - /vedebug printwires
+    - Prints to the VerboseDebug log every WireConnection in the world as stored by the CatenaryMod. Validate first. Use to track down and report odd wires in your world.
+
+  A network is only reported as invalid if ALL nodes are invalid, if one node (aka position) comes back as valid it will report as having valid nodes.
+  To ensure a full game-save cleanup, break down the entire factory: pipes, machines, wires, and relays before running the validate command for each type of network.
+  That way, any full network that is truly invalid can be deleted using the optional flag.
+-------------------------------------------------------------------------------------------------------------------
+ - new Electric ModConfig file that allows players/server owners to customize PPS limits for each tier of network.
+  *(note, this network PPS feature has not yet been implemented, but will be soon! This is added now to prep for that feature.)*
+ - Removed many MarkDirty events to help streamline Client-Server data transfer.
+ - Added special case to Kiln to make QuickLime craftable in the machine, go wild!
+ - Added Null checks to Recipe Handbook function to (hopefully) fix #43
+ - If any output slot is full, Sawmill should now stop processing
+ - Rebalanced slightly Board output of Sawmill log processing recipe. 16->14
+ - Wires will no longer render during Temporal Storms to save on GPU load. Feedback appreciated.
+ - Simple blocks like the Battery and Transformer should never go to Sleep, these entities do not tick so sleeping is not needed.
+ - Change Item Pipe ItemMoveOperation to default to DirectMerge instead of AutoMerge, should behave as if the player forced the items to stack. Can revert if this causes issues.
+ - Fixed: Crash when an extraction pipe is in RoundRobin mode and a new inventory block is placed that connects to the pipe network. (Enumerator error)
+ - (Starting to) Standardize MarkDirty calls for all machine BlockEntities. Should have done this long ago... Default update rate is twice per second.
+ - Newly placed machines should default to On, then go to sleep if required.
