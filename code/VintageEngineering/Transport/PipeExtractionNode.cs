@@ -224,6 +224,9 @@ namespace VintageEngineering.Transport
         public virtual void OnNodeRemoved()
         {
             inventory.SlotModified -= OnSlotModified;
+
+            // what if this is null?
+            PushEnumerator.Dispose();
             DropContents(_pos.ToVec3d());
         }
 

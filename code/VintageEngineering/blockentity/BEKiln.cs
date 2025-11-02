@@ -467,7 +467,12 @@ namespace VintageEngineering
                 // Clamp the power! Clamp it! Clamp it good!
                 Electric.electricpower = Math.Clamp(Electric.electricpower, 0, Electric.MaxPower);
             }
-            this.MarkDirty(true, null);
+            _clientUpdateDelay += dt;
+            if (_clientUpdateDelay > 0.5f)
+            {
+                _clientUpdateDelay = 0f;
+                MarkDirty(true);
+            }
         }
 
         protected virtual void SetState(EnumBEState newstate)

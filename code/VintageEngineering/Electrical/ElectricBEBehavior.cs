@@ -342,7 +342,7 @@ namespace VintageEngineering.Electrical
         public override void OnBlockPlaced(ItemStack byItemStack = null)
         {
             base.OnBlockPlaced(byItemStack);
-            //MachineState = EnumBEState.Sleeping; // when first placed, a machine is on and not crafting.
+            MachineState = EnumBEState.On; // when first placed, a machine is on and not crafting.
         }
 
         /// <summary>

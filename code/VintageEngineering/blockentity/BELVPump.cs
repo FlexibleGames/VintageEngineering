@@ -49,11 +49,12 @@ namespace VintageEngineering.blockentity
         private bool _ischeckingfluid = true;
         private bool _isinfinite = false;        
         private int _pumpcount = 0; // used only on client
+        private float _clientUpdateDelay = 0f;
 
         private int _powerPerBlockPumped = 200;
         private int _powerPerTankPush = 50;
 
-        public ItemSlotLargeLiquid Tank => inventory[0] as ItemSlotLargeLiquid;
+        public ItemSlotLargeLiquid InternalTank => inventory[0] as ItemSlotLargeLiquid;
 
         protected BlockEntityAnimationUtil AnimUtil
         {
@@ -156,13 +157,9 @@ namespace VintageEngineering.blockentity
                         if (_fluidpositions.Count == 0) break;
                     }
                 }
-            }
+            } 
 
-            if (Api.World.BlockAccessor.GetChunk(last.Position.X / GlobalConstants.ChunkSize, 
-                                                 last.Position.Y / GlobalConstants.ChunkSize, 
-                                                 last.Position.Z / GlobalConstants.ChunkSize) == null) return;
-
-            if (Tank.Itemstack != null)
+            if (InternalTank.Itemstack != null)
             {
                 // tank is not empty
                 WaterTightContainableProps props = GetWPropsFromPos(Api.World, last.Position);
@@ -183,12 +180,12 @@ namespace VintageEngineering.blockentity
 
                         float portionperblock = literperblock * portionperliter;
 
-                        if (Tank.Itemstack.StackSize <= portionperblock)
+                        if (InternalTank.Itemstack.StackSize <= portionperblock)
                         {
                             // internal tank has room for another 'block' of fluid
                             if (Electric.MachineState != EnumBEState.On) SetState(EnumBEState.On);
                             
-                            Tank.Itemstack.StackSize += (int)portionperblock; // add fluid to tank
+                            InternalTank.Itemstack.StackSize += (int)portionperblock; // add fluid to tank
                             if (!_isinfinite)
                             {
                                 Api.World.BlockAccessor.SetBlock(0, last.Position, BlockLayersAccess.Fluid);
@@ -196,7 +193,7 @@ namespace VintageEngineering.blockentity
                                 _fluidpositions.Remove(last);
                             }
                             Electric.electricpower -= ((ulong)_powerPerBlockPumped);
-                            MarkDirty(true);
+                            //MarkDirty(true);
                         }
                     }
                 }
@@ -236,14 +233,20 @@ namespace VintageEngineering.blockentity
                         }
                         if (Electric.MachineState != EnumBEState.On) SetState(EnumBEState.On);
                         Electric.electricpower -= ((ulong)_powerPerBlockPumped);
-                        MarkDirty(true);
+                        //MarkDirty(true);
                     }
                 }
             }
             if (!inventory[0].Empty && IsTankOnTop()) // need to call this even if we didn't pump anything this tick
             {
                 TryPushIntoTank(); // will try to push whatever it can into a tank...
-            }            
+            }
+            _clientUpdateDelay += dt;
+            if (_clientUpdateDelay > 0.5f)
+            {
+                _clientUpdateDelay = 0f;
+                MarkDirty(true);
+            }
         }
 
         public static WaterTightContainableProps GetWPropsFromPos(IWorldAccessor world, BlockPos pos)

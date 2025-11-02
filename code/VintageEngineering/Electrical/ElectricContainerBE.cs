@@ -12,6 +12,8 @@ namespace VintageEngineering.Electrical
     {
         public ElectricBEBehavior Electric { get; private set; }
 
+        internal float _clientUpdateDelay = 0f;
+
         /// <summary>
         /// Utility for setting, starting, and stopping animations.
         /// </summary>

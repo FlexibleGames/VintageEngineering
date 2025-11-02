@@ -24,26 +24,5 @@ namespace VintageEngineering
                 capi = api as ICoreClientAPI;
             }
         }
-
-        public override void OnNeighbourBlockChange(IWorldAccessor world, BlockPos pos, BlockPos neibpos)
-        {
-            base.OnNeighbourBlockChange(world, pos, neibpos);
-            BELVGenerator bETestGen = world.BlockAccessor.GetBlockEntity(pos) as BELVGenerator;
-            if (bETestGen != null)
-            {
-                bETestGen.NeighborUpdate(world);
-            }
-        }
-
-        public override void OnBlockPlaced(IWorldAccessor world, BlockPos blockPos, ItemStack byItemStack = null)
-        {
-            base.OnBlockPlaced(world, blockPos, byItemStack);
-            BELVGenerator bETestGen = world.BlockAccessor.GetBlockEntity(blockPos) as BELVGenerator;
-            if (bETestGen != null)
-            {
-                bETestGen.NeighborUpdate(world);
-            }
-        }
-
     }
 }

@@ -23,6 +23,7 @@ namespace VintageEngineering
         private ICoreClientAPI capi;
         private ICoreServerAPI sapi;
         private GUIBlastFurnace _clientDialog;
+        private float _clientUpdateDelay = 0f;
 
         #region InventoryStuff
         private InvBlastFurnace _inventory;        
@@ -657,9 +658,13 @@ namespace VintageEngineering
                     {
                         SetState(EnumBEState.Sleeping);
                     }
-                    MarkDirty(true, null);
-                    Api.World.BlockAccessor.MarkBlockEntityDirty(this.Pos);
                 }
+            }
+            _clientUpdateDelay += dt;
+            if (_clientUpdateDelay > 0.5f)
+            {
+                _clientUpdateDelay = 0f;
+                MarkDirty(true);
             }
         }
 

@@ -308,9 +308,15 @@ namespace VintageEngineering
                         isCrafting = false;
                     }
                     recipePowerApplied = 0;
-                    MarkDirty(true, null);
-                    Api.World.BlockAccessor.MarkBlockEntityDirty(this.Pos);
+                    //MarkDirty(true, null);
+                    //Api.World.BlockAccessor.MarkBlockEntityDirty(this.Pos);
                 }
+            }
+            _clientUpdateDelay += dt;
+            if (_clientUpdateDelay > 0.5f)
+            {
+                _clientUpdateDelay = 0f;
+                MarkDirty(true);
             }
         }
 

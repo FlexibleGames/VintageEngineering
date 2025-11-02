@@ -355,8 +355,18 @@ namespace VintageEngineering.Transport.Handlers
                 }
                 else
                 {
-                    if (!node.PushEnumerator.MoveNext())
+                    try
                     {
+                        if (!node.PushEnumerator.MoveNext())
+                        {
+                            node.PushEnumerator.Dispose();
+                            node.PushEnumerator = pushcons.GetEnumerator();
+                            node.PushEnumerator.MoveNext();
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        // a more elegant solution would be most welcome
                         node.PushEnumerator.Dispose();
                         node.PushEnumerator = pushcons.GetEnumerator();
                         node.PushEnumerator.MoveNext();

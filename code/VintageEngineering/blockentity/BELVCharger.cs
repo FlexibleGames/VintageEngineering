@@ -134,8 +134,7 @@ namespace VintageEngineering
             }
             UpdateClient(dt);
         }
-
-        private float _clientUpdate = 0f;
+        
         /// <summary>
         /// Push updated information to client on a delay.
         /// </summary>
@@ -144,11 +143,11 @@ namespace VintageEngineering
         {
             if (Api.Side == EnumAppSide.Client) return;
 
-            _clientUpdate += dt;
-            if (_clientUpdate >= 1.0f)
+            _clientUpdateDelay += dt;
+            if (_clientUpdateDelay > 0.5f)
             {
+                _clientUpdateDelay = 0f;
                 MarkDirty(true);
-                _clientUpdate = 0.0f;
             }
         }
 
