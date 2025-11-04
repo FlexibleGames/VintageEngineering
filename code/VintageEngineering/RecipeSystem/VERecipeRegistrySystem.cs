@@ -269,8 +269,8 @@ namespace VintageEngineering.RecipeSystem
                 {
                     for (int outputIndex = 0; outputIndex < recipe.Outputs.Length; ++outputIndex)
                     {
-                        if (recipe.GetResolvedOutput(outputIndex).Equals(
-                                capi.World, output, GlobalConstants.IgnoredStackAttributes)) // the null ref was on this line
+                        if (recipe.GetResolvedOutput(outputIndex)?.Equals(
+                                capi.World, output, GlobalConstants.IgnoredStackAttributes) ?? false) // the null ref was on this line
                         {
                             for (int inputIndex = 0; inputIndex < recipe.Ingredients.Length; ++inputIndex)
                             {
