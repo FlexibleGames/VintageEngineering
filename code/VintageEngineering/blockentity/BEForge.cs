@@ -223,6 +223,7 @@ namespace VintageEngineering
                     }
                     else
                     {
+                        _currentTempGoal = tempGoal;
                         isHeating = true;
                         SetState(EnumBEState.On);
                         return true;
@@ -277,18 +278,25 @@ namespace VintageEngineering
         /// <returns>New Temp</returns>
         private float ChangeTemperature(float fromTemp, float toTemp, float deltatime)
         {
+            float TARGET_CLAMP = 1100f;
+            float effectiveTarget = toTemp;
+            bool isHeating = fromTemp < toTemp;
+            bool isHighGoal = toTemp > TARGET_CLAMP;
+            if (isHeating && isHighGoal && fromTemp < TARGET_CLAMP) effectiveTarget = TARGET_CLAMP;
+
             float basechange = 0f;
             if (fromTemp < 600) basechange = HeatPerSecondBase * deltatime;
             else
             {
-                float diff = Math.Abs(fromTemp - toTemp);
+                float diff = Math.Abs(fromTemp - effectiveTarget);
                 basechange = deltatime + deltatime * (diff / 6); 
-                if (diff < basechange) return toTemp;
+                if (diff < basechange) return effectiveTarget;
             }
-            if (fromTemp > toTemp) basechange = -basechange;
-            if (Math.Abs(fromTemp - toTemp) < 1f) return toTemp;
+            if (fromTemp > effectiveTarget) basechange = -basechange;
+            if (Math.Abs(fromTemp - effectiveTarget) < 1f) return effectiveTarget;
+
             float newtemp = fromTemp + basechange;
-            if (newtemp < -273) return toTemp; // something odd happened, can't go below absolute 0.
+            if (newtemp < -273) return effectiveTarget; // something odd happened, can't go below absolute 0.
             return newtemp;
         }
         #endregion
