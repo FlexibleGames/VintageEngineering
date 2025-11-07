@@ -11,8 +11,13 @@ namespace VintageEngineering.Multiblock
     /// <summary>
     /// Dummy Block for VE Multiblock System
     /// </summary>
-    public class VEMBDummy : Block
+    public class VEMBDummy : Block, IMultiblockOffset
     {
+        public BlockPos GetControlBlockPos(BlockPos pos)
+        {
+            return GetOffset(pos).AsBlockPos;
+        }
+
         /// <summary>
         /// Gets Multiblock offset at given pos<br/>
         /// Returns null if given pos is not a VEMultiblockEntity
