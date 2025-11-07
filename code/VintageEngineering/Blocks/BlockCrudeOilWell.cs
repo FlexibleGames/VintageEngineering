@@ -72,7 +72,7 @@ namespace VintageEngineering.Blocks
             if (this.EntityClass != null && blockPos.Y < 20)
             {
                 world.BlockAccessor.SpawnBlockEntity(this.EntityClass, blockPos.Copy(), null);
-                IOilWell bewell = world.BlockAccessor.GetBlockEntity(blockPos) as IOilWell; // grab the BE of the well
+                IFluidWell bewell = world.BlockAccessor.GetBlockEntity(blockPos) as IFluidWell; // grab the BE of the well
                 if (bewell != null)
                 {
                     // initalize the well object
@@ -114,7 +114,7 @@ namespace VintageEngineering.Blocks
             if (this.EntityClass != null)
             {
                 access.SpawnBlockEntity(this.EntityClass, pos.Copy(), null);
-                IOilWell bewell = access.GetBlockEntity(pos) as IOilWell; // grab the BE of the well
+                IFluidWell bewell = access.GetBlockEntity(pos) as IFluidWell; // grab the BE of the well
                 if (bewell != null)
                 {
                     // initalize the well object

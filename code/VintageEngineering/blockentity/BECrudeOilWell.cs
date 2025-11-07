@@ -14,7 +14,7 @@ using Vintagestory.GameContent;
 
 namespace VintageEngineering
 {
-    public class BECrudeOilWell : BlockEntity, IOilWell
+    public class BECrudeOilWell : BlockEntity, IFluidWell
     {
         private ICoreServerAPI sapi;
         private long _fluidportions;        
@@ -22,9 +22,9 @@ namespace VintageEngineering
 
         public long MaxPPS => (long)base.Block.Attributes["portionpersecond"].AsDouble(50);
 
-        public string OilBlockCode => base.Block.Attributes["oilblockcode"].AsString("vinteng:crudeoil");
+        public string FluidBlockCode => base.Block.Attributes["fluidblockcode"].AsString("vinteng:crudeoil");
 
-        public string OilPortionCode => base.Block.Attributes["oilportioncode"].AsString("vinteng:crudeoilportion");
+        public string FluidPortionCode => base.Block.Attributes["fluidportioncode"].AsString("vinteng:crudeoilportion");
 
         public int TricklePortions => base.Block.Attributes["trickleportions"].AsInt(100);
 
@@ -95,7 +95,7 @@ namespace VintageEngineering
         public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
         {
             // this is called on the client, while the values are on the server, need to push values to client
-            Item portion = Api.World.GetItem(new AssetLocation(OilPortionCode));
+            Item portion = Api.World.GetItem(new AssetLocation(FluidPortionCode));
             int perliter = 100;
             if (portion != null) 
             {
@@ -126,7 +126,7 @@ namespace VintageEngineering
             if (numblocks < 0) numblocks = long.MaxValue; // value overrun, make it effectively infinite
             try
             {
-                AssetLocation portion = new AssetLocation(OilPortionCode);
+                AssetLocation portion = new AssetLocation(FluidPortionCode);
                 ItemStack portionstack = new ItemStack(l_api.World.GetItem(portion));
                 WaterTightContainableProps props = BlockLiquidContainerBase.GetContainableProps(portionstack);
                 if (props != null)

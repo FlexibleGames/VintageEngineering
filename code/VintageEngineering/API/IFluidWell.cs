@@ -9,9 +9,9 @@ using Vintagestory.API.MathTools;
 namespace VintageEngineering.API
 {
     /// <summary>
-    /// Defines values used by the CrudeOilWell Block Entity for the MV tier pumpjack interaction
+    /// Defines values used by the CrudeOilWell Block Entity, but used for the MV tier pumpjack interaction
     /// </summary>
-    public interface IOilWell
+    public interface IFluidWell
     {
         /// <summary>
         /// How many fluid portions are still available, set when block is spawned.
@@ -22,13 +22,13 @@ namespace VintageEngineering.API
         /// </summary>
         long MaxPPS { get; }
         /// <summary>
-        /// Oil Block code, set in JSON
+        /// Fluid Block code, set in JSON
         /// </summary>
-        string OilBlockCode { get; }
+        string FluidBlockCode { get; }
         /// <summary>
-        /// Oil Portion Code, set in JSON
+        /// Fluid Portion Code, set in JSON
         /// </summary>
-        string OilPortionCode { get; }
+        string FluidPortionCode { get; }
         /// <summary>
         /// How many portions to give per second when deposit is depleted.
         /// </summary>
