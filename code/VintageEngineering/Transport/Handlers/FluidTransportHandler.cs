@@ -364,7 +364,7 @@ namespace VintageEngineering.Transport.Handlers
                             node.PushEnumerator.MoveNext();
                         }
                     }
-                    catch (Exception e)
+                    catch// (Exception e)
                     {
                         // a more elegant solution would be most welcome
                         node.PushEnumerator.Dispose();

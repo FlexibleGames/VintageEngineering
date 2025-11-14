@@ -1,0 +1,22 @@
+{
+	"code": "vembdummy",
+	"class": "VEMBDummy",
+	"entityClass": "VEMBEntityDummy",
+	"behaviors": [
+		{ "name": "HorizontalOrientable", "properties": { }}
+	],
+	"handbook": { "exclude": true },
+	"variantgroups": [
+		{ "code": "io", "states": ["none", "item", "fluid", "power", "signal", "gas", "mechanical", "interaction" ] },
+		{ "code": "side", "loadFromProperties": "abstract/horizontalorientation" }
+	],
+	"shape": { "base": "block/basic/nothing" },
+	"drawtype": "json",
+	"sidesolid": { "all": false },
+	"sideopaque": { "all": false },
+	"blockmaterial": "Metal",
+	"replaceable": 160,
+	"resistance": 4,
+	"lightAbsorption": 0,
+	"drops": []
+}

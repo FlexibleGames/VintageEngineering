@@ -1,0 +1,40 @@
+{
+	"code": "vemultiblockio",
+	"class": "Block",
+	"creativeinventory": {
+		"vinteng": [ "*" ]
+	},
+	"variantgroups": [
+		{ "code": "io", "states": [ "item", "fluid", "power", "signal", "gas", "mechanical", "interaction" ] }
+	],
+	"entityClassByType": {
+		"*-interaction": "MBBEInteractable",
+		"*": ""
+	},
+	"attributesByType": {
+
+	},
+	"blockmaterial": "Metal",
+	"drawtype": "cube",
+	"sidesolid": { "all": true },
+	"sideopaque": { "all": true },
+	"maxStackSize": 64,
+
+	"shapeByType": {
+		"*-item": 			{ "base": "vinteng:block/multiblock/itemio" },
+		"*-fluid": 			{ "base": "vinteng:block/multiblock/fluidio" },
+		"*-power": 			{ "base": "vinteng:block/multiblock/powerio" },
+		"*-signal":			{ "base": "vinteng:block/multiblock/powerio" },
+		"*-gas":			{ "base": "vinteng:block/multiblock/powerio" },
+		"*-mechanical":		{ "base": "vinteng:block/multiblock/powerio" },
+		"*-interaction":	{ "base": "vinteng:block/multiblock/interaction" }
+	},
+	"resistance": 2,
+	"lightAbsorption": 1,
+	"sounds": {
+		"place": "game:block/chute",
+		"break": "game:block/anvil",
+		"hit": "game:block/anvil",
+		"walk": "game:walk/stone"
+	}
+}

@@ -1,0 +1,27 @@
+{
+	"editor": {
+		"allAngles": false,
+		"entityTextureMode": false
+	},
+	"textureWidth": 16,
+	"textureHeight": 16,
+	"textureSizes": {
+	},
+	"textures": {
+		"interaction": "block/multiblocks/interaction"
+	},
+	"elements": [
+		{
+			"name": "Cube2",
+			"from": [ 0.0, 0.0, 0.0 ],
+			"to": [ 16.0, 16.0, 16.0 ],
+			"faces": {
+				"north": { "texture": "#interaction", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
+				"east": { "texture": "#interaction", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
+				"south": { "texture": "#interaction", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
+				"west": { "texture": "#interaction", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
+				"up": { "texture": "#interaction", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
+				"down": { "texture": "#interaction", "uv": [ 0.0, 0.0, 16.0, 16.0 ] }
+			}
+		}
+	]}

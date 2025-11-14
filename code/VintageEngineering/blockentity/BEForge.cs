@@ -18,8 +18,7 @@ namespace VintageEngineering
         private ICoreClientAPI capi;
         private ICoreServerAPI sapi;
         private float updateBouncer = 0f;
-        private GUIForge clientDialog;
-        private int tempOverrideScale = 0;
+        private GUIForge clientDialog;        
 
         public string DialogTitle
         {

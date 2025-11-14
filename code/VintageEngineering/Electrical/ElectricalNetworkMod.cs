@@ -87,11 +87,17 @@ namespace VintageEngineering.Electrical
             base.Start(api);
             this.api = _api;
             RegisterBlockEntityBehaviors(api);
+            RegisterBlockEntities(api);
         }
 
         private void RegisterBlockEntityBehaviors(ICoreAPI api)
         {
             api.RegisterBlockEntityBehaviorClass("Electric", typeof(ElectricBEBehavior));
+        }
+
+        private void RegisterBlockEntities(ICoreAPI api)
+        {
+            api.RegisterBlockEntityClass("VEBEPowerConnector", typeof(BEPowerConnector));
         }
 
         //public override void StartClientSide(ICoreClientAPI api)

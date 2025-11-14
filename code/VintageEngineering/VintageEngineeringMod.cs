@@ -13,6 +13,7 @@ using System.IO;
 using VintageEngineering.blockentity;
 using VintageEngineering.Blocks;
 using VintageEngineering.blockBhv;
+using Vintagestory.API.Config;
 
 [assembly: ModInfo("VintageEngineering",
                     Authors = new string[] { "Flexible Games", "bluelightning32" },
@@ -105,6 +106,8 @@ namespace VintageEngineering
                 sapi_vechannel = sapi.Network.RegisterChannel("vepipefiltersync")
                     .RegisterMessageType(typeof(PipeFilterPacket))
                     .SetMessageHandler<PipeFilterPacket>(OnFilterDataSyncFromClient);
+
+                //RuntimeEnv.DebugOutOfRangeBlockAccess = true;
             }
             RegisterItems(api);
             RegisterBlocks(api);

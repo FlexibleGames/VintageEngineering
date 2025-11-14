@@ -3,7 +3,58 @@
 	"class": "Block",
 	"entityClass": "",
 	"behaviors": [
-		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "vembcreosoteoven-incomplete-north" }}}
+		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "vembcreosoteoven-incomplete-north" }}},
+		{"name": "VEMultiblockBeh", "properties": {
+			"highlightID": 55,
+			"blockHighlightColors": [
+				{ "w": 1, "r": 215, "g": 94, "b": 94, "a": 64 },
+				{ "w": 2, "r": 94, "g": 215, "b": 94, "a": 64 }
+			],
+			"multiblockStructure": {
+				"blockNumbers": {
+					"game:brickcourse-four-running-gray": 1,
+					"vinteng:vembcreosoteoven-incomplete-north": 2
+				},
+				"offsets": [
+					{ "x": 0, "y": 2, "z": 0, "w": 1 },
+					{ "x": 0, "y": 2, "z": 1, "w": 1 },
+					{ "x": 0, "y": 2, "z": -1, "w": 1 },
+					{ "x": 0, "y": 3, "z": 0, "w": 1 },
+					{ "x": 0, "y": 3, "z": 1, "w": 1 },
+					{ "x": 0, "y": 3, "z": -1, "w": 1 },
+					{ "x": 0, "y": 1, "z": 0, "w": 1 },
+					{ "x": 0, "y": 1, "z": 1, "w": 1 },
+					{ "x": 0, "y": 1, "z": -1, "w": 1 },
+					{ "x": 0, "y": 0, "z": 0, "w": 2 },
+					{ "x": 0, "y": 0, "z": 1, "w": 1 },
+					{ "x": 0, "y": 0, "z": -1, "w": 1 },
+					{ "x": 1, "y": 2, "z": 0, "w": 1 },
+					{ "x": 1, "y": 2, "z": 1, "w": 1 },
+					{ "x": 1, "y": 2, "z": -1, "w": 1 },
+					{ "x": 1, "y": 3, "z": 0, "w": 1 },
+					{ "x": 1, "y": 3, "z": 1, "w": 1 },
+					{ "x": 1, "y": 3, "z": -1, "w": 1 },
+					{ "x": 1, "y": 1, "z": 0, "w": 1 },
+					{ "x": 1, "y": 1, "z": 1, "w": 1 },
+					{ "x": 1, "y": 1, "z": -1, "w": 1 },
+					{ "x": 1, "y": 0, "z": 0, "w": 1 },
+					{ "x": 1, "y": 0, "z": 1, "w": 1 },
+					{ "x": 1, "y": 0, "z": -1, "w": 1 },
+					{ "x": -1, "y": 2, "z": 0, "w": 1 },
+					{ "x": -1, "y": 2, "z": 1, "w": 1 },
+					{ "x": -1, "y": 2, "z": -1, "w": 1 },
+					{ "x": -1, "y": 3, "z": 0, "w": 1 },
+					{ "x": -1, "y": 3, "z": 1, "w": 1 },
+					{ "x": -1, "y": 3, "z": -1, "w": 1 },
+					{ "x": -1, "y": 1, "z": 0, "w": 1 },
+					{ "x": -1, "y": 1, "z": 1, "w": 1 },
+					{ "x": -1, "y": 1, "z": -1, "w": 1 },
+					{ "x": -1, "y": 0, "z": 0, "w": 1 },
+					{ "x": -1, "y": 0, "z": 1, "w": 1 },
+					{ "x": -1, "y": 0, "z": -1, "w": 1 }
+				]
+			}
+		}}
 	],
 	"variantgroups": [
 		{ "code": "state", "states": ["incomplete", "built"]},
@@ -26,51 +77,7 @@
 		"heatpersecond": 180,
         "recipeMachineByType": {
             "*-north": [ "creosoteoven" ]
-        },
-		"multiblockStructure": {
-			"blockNumbers": {
-				"game:brickcourse-four-running-gray": 1,
-				"vinteng:vembcreosoteoven-incomplete-north": 2
-			},
-			"offsets": [
-				{ "x": 0, "y": 2, "z": 0, "w": 1 },
-				{ "x": 0, "y": 2, "z": 1, "w": 1 },
-				{ "x": 0, "y": 2, "z": -1, "w": 1 },
-				{ "x": 0, "y": 3, "z": 0, "w": 1 },
-				{ "x": 0, "y": 3, "z": 1, "w": 1 },
-				{ "x": 0, "y": 3, "z": -1, "w": 1 },
-				{ "x": 0, "y": 1, "z": 0, "w": 1 },
-				{ "x": 0, "y": 1, "z": 1, "w": 1 },
-				{ "x": 0, "y": 1, "z": -1, "w": 1 },
-				{ "x": 0, "y": 0, "z": 0, "w": 2 },
-				{ "x": 0, "y": 0, "z": 1, "w": 1 },
-				{ "x": 0, "y": 0, "z": -1, "w": 1 },
-				{ "x": 1, "y": 2, "z": 0, "w": 1 },
-				{ "x": 1, "y": 2, "z": 1, "w": 1 },
-				{ "x": 1, "y": 2, "z": -1, "w": 1 },
-				{ "x": 1, "y": 3, "z": 0, "w": 1 },
-				{ "x": 1, "y": 3, "z": 1, "w": 1 },
-				{ "x": 1, "y": 3, "z": -1, "w": 1 },
-				{ "x": 1, "y": 1, "z": 0, "w": 1 },
-				{ "x": 1, "y": 1, "z": 1, "w": 1 },
-				{ "x": 1, "y": 1, "z": -1, "w": 1 },
-				{ "x": 1, "y": 0, "z": 0, "w": 1 },
-				{ "x": 1, "y": 0, "z": 1, "w": 1 },
-				{ "x": 1, "y": 0, "z": -1, "w": 1 },
-				{ "x": -1, "y": 2, "z": 0, "w": 1 },
-				{ "x": -1, "y": 2, "z": 1, "w": 1 },
-				{ "x": -1, "y": 2, "z": -1, "w": 1 },
-				{ "x": -1, "y": 3, "z": 0, "w": 1 },
-				{ "x": -1, "y": 3, "z": 1, "w": 1 },
-				{ "x": -1, "y": 3, "z": -1, "w": 1 },
-				{ "x": -1, "y": 1, "z": 0, "w": 1 },
-				{ "x": -1, "y": 1, "z": 1, "w": 1 },
-				{ "x": -1, "y": 1, "z": -1, "w": 1 },
-				{ "x": -1, "y": 0, "z": 0, "w": 1 },
-				{ "x": -1, "y": 0, "z": 1, "w": 1 },
-				{ "x": -1, "y": 0, "z": -1, "w": 1 }
-			]
-		}
+        }
 	},
 	"shapeinventory": { "base": "block/lv/creosoteoven-inventory" },
 	"creativeinventory": { "general": ["vembcreosoteoven-incomplete-north"], "terrain": ["*"], "mechanics": ["*"], "vinteng": ["*-incomplete-north"] },

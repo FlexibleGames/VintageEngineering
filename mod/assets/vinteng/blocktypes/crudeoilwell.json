@@ -9,7 +9,7 @@
 	"attributes": {
 		"maxDepositRadius": 9,
 		"minDepositRadius": 5,
-		"minTempForLarge": 28,
+		"minTempForLarge": 18,
 		"maxTempForLarge": 50,
 		"minRainForLarge": 0,
 		"maxRainForLarge": 0.4,

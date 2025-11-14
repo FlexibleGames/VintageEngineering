@@ -4,16 +4,23 @@ using System.Linq;
 using System.Threading.Tasks;
 using VintageEngineering.Electrical;
 using VintageEngineering.Electrical.Systems.Catenary;
+using Vintagestory.API.MathTools;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
+using Vintagestory.GameContent;
+using Vintagestory.API.Client;
 
 namespace VintageEngineering.Multiblock
 {
     /// <summary>
-    /// The Core Block of Multiblock Machines
+    /// The Core Block of Multiblock Machines<br/>
+    /// Multiblocks are not directly wire-connectable but will require a Wire Connection block (of the correct tier) placed in the proper location on the multiblock.
     /// </summary>
     public class VEMBCore : ElectricBlock
     {
+
+        public VEMultiblockBeh Multiblock { get { return this.GetBehavior<VEMultiblockBeh>(); } } 
+
         private EnumElectricalPowerTier[] powerTiers;
         public override void OnLoaded(ICoreAPI api)
         {
@@ -32,6 +39,11 @@ namespace VintageEngineering.Multiblock
             }
         }
 
+        /// <summary>
+        /// Retrieves the Power Tier supported at a given connection Index
+        /// </summary>
+        /// <param name="connectionIndex">Connection Index</param>
+        /// <returns>EnumElectricalPowerTier</returns>
         public EnumElectricalPowerTier GetPowerTierAt(int connectionIndex)
         {
             if (powerTiers == null) return EnumElectricalPowerTier.None;
@@ -45,5 +57,6 @@ namespace VintageEngineering.Multiblock
 
             return false;
         }
+
     }
 }

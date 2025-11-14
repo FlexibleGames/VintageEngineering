@@ -22,7 +22,7 @@ namespace VintageEngineering
 
         public long MaxPPS => (long)base.Block.Attributes["portionpersecond"].AsDouble(50);
 
-        public string FluidBlockCode => base.Block.Attributes["fluidblockcode"].AsString("vinteng:crudeoil");
+        public string FluidBlockCode => base.Block.Attributes["fluidblockcode"].AsString("vinteng:crudeoil-still-7");
 
         public string FluidPortionCode => base.Block.Attributes["fluidportioncode"].AsString("vinteng:crudeoilportion");
 
@@ -55,6 +55,12 @@ namespace VintageEngineering
             if (api.Side == EnumAppSide.Server) 
             {
                 sapi = api as ICoreServerAPI;
+                BlockCrudeOilWell bl = base.Block as BlockCrudeOilWell;
+                if (bl != null && !bl.GenDeposits && !bl.GenPool && !bl.GenSpouts)
+                {
+                    // if the player disables deposit generation, do not attempt it, ever.
+                    IsGenerated = true;
+                }
                 if (!IsGenerated) _tickHandler = RegisterGameTickListener(OnGameTick, 3000, 100);
             }
         }
