@@ -26,6 +26,7 @@ namespace VintageEngineering.Multiblock
             {
                 sapi = api as ICoreServerAPI;
             }
+            RegisterClasses(api);
         }
 
         private void RegisterClasses(ICoreAPI api)
@@ -34,7 +35,8 @@ namespace VintageEngineering.Multiblock
             api.RegisterBlockClass("VEMBDummy", typeof(VEMBDummy));
 
             // block entities are second
-            api.RegisterBlockClass("VEMBEntityDummy", typeof(VEMBEntityDummy));
+            api.RegisterBlockEntityClass("VEMBEntityDummy", typeof(VEMBEntityDummy));
+            api.RegisterBlockEntityClass("MBBEInteractable", typeof(MBBEInteractable));
 
             // block behaviors are third
             api.RegisterBlockBehaviorClass("VEMultiblockBeh", typeof(VEMultiblockBeh));
