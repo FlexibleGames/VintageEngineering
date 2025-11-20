@@ -125,7 +125,7 @@ namespace VintageEngineering.Multiblock
 
                 if (!WildcardUtil.Match(BlockCodes[offset.W], block.Code))
                 {
-                    onMismatch?.Invoke(block, BlockCodes[offset.W]);                    
+                    onMismatch?.Invoke(block, BlockCodes[offset.W]);
                     qinc++;
                 }
             }

@@ -12,6 +12,7 @@ namespace VintageEngineering.Multiblock
     {
         public override void OnNeighbourBlockChange(IWorldAccessor world, BlockPos pos, BlockPos neibpos)
         {
+            // TODO: Detect if we're linked to Core, if not, try to find it.
             base.OnNeighbourBlockChange(world, pos, neibpos);
         }
 
@@ -22,7 +23,7 @@ namespace VintageEngineering.Multiblock
                 MBBEInteractable be = world.BlockAccessor.GetBlockEntity<MBBEInteractable>(blockSel.Position);
                 if (be != null)
                 {
-                    return be.TriggerValidation(world, byPlayer, blockSel);
+                   // return be.TriggerValidation(world, byPlayer, blockSel);
                 }
             }
             return base.OnBlockInteractStart(world, byPlayer, blockSel);

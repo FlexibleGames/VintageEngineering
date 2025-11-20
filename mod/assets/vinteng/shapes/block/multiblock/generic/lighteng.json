@@ -1,0 +1,27 @@
+{
+	"editor": {
+		"allAngles": false,
+		"entityTextureMode": false
+	},
+	"textureWidth": 16,
+	"textureHeight": 16,
+	"textureSizes": {
+	},
+	"textures": {
+		"light_engineering": "block/multiblocks/light_engineering"
+	},
+	"elements": [
+		{
+			"name": "Cube2",
+			"from": [ 0.0, 0.0, 0.0 ],
+			"to": [ 16.0, 16.0, 16.0 ],
+			"faces": {
+				"north": { "texture": "#light_engineering", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
+				"east": { "texture": "#light_engineering", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
+				"south": { "texture": "#light_engineering", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
+				"west": { "texture": "#light_engineering", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
+				"up": { "texture": "#light_engineering", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
+				"down": { "texture": "#light_engineering", "uv": [ 0.0, 0.0, 16.0, 16.0 ] }
+			}
+		}
+	]}

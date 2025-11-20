@@ -1,0 +1,65 @@
+{
+    "code": "treatedwood",
+	"variantgroups": [
+		{ "code": "type", "states": [ "horizontal", "bordered", "path", "reinforced", "vertical", "banded", "iron" ] },
+        { "code":"side", "loadFromProperties": "abstract/horizontalorientation" }
+	],
+	"behaviors": [
+		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "treatedwood-{type}-north" }}}
+	],
+	"attributes": {
+		"handbook": {
+			"groupBy": ["treatedwood-*"],
+			"excludeByType": {
+				"*-north": false,
+				"*": true
+			}
+		}
+    },
+    "creativeinventory": {
+        "vinteng-decor": ["*"]
+    },
+    "maxStackSize": 64,
+    "blockmaterial": "Wood",
+	"shapeByType": {
+		"*-horizontal-north": 			{ "base": "vinteng:block/multiblock/treatedwood/horizontal", "rotateY":0 },
+		"*-bordered-north": 			{ "base": "vinteng:block/multiblock/treatedwood/bordered", "rotateY":0 },
+		"*-path-north": 			    { "base": "vinteng:block/multiblock/treatedwood/path", "rotateY":0 },
+		"*-reinforced-north":			{ "base": "vinteng:block/multiblock/treatedwood/reinforced", "rotateY":0 },
+		"*-vertical-north":			    { "base": "vinteng:block/multiblock/treatedwood/vertical", "rotateY":0 },
+        "*-banded-north":			    { "base": "vinteng:block/multiblock/treatedwood/banded", "rotateY":0 },
+		"*-iron-north":			        { "base": "vinteng:block/multiblock/treatedwood/iron", "rotateY":0 },
+
+		"*-horizontal-east": 			{ "base": "vinteng:block/multiblock/treatedwood/horizontal", "rotateY":270 },
+		"*-bordered-east": 			    { "base": "vinteng:block/multiblock/treatedwood/bordered", "rotateY":270 },
+		"*-path-east": 			        { "base": "vinteng:block/multiblock/treatedwood/path", "rotateY":270 },
+		"*-reinforced-east":			{ "base": "vinteng:block/multiblock/treatedwood/reinforced", "rotateY":270 },
+		"*-vertical-east":			    { "base": "vinteng:block/multiblock/treatedwood/vertical", "rotateY":270 },
+        "*-banded-east":			    { "base": "vinteng:block/multiblock/treatedwood/banded", "rotateY":270 },
+		"*-iron-east":			        { "base": "vinteng:block/multiblock/treatedwood/iron", "rotateY":270 },
+
+		"*-horizontal-south": 			{ "base": "vinteng:block/multiblock/treatedwood/horizontal", "rotateY":180 },
+		"*-bordered-south": 			{ "base": "vinteng:block/multiblock/treatedwood/bordered", "rotateY":180 },
+		"*-path-south": 			    { "base": "vinteng:block/multiblock/treatedwood/path", "rotateY":180 },
+		"*-reinforced-south":			{ "base": "vinteng:block/multiblock/treatedwood/reinforced", "rotateY":180 },
+		"*-vertical-south":			    { "base": "vinteng:block/multiblock/treatedwood/vertical", "rotateY":180 },
+        "*-banded-south":			    { "base": "vinteng:block/multiblock/treatedwood/banded", "rotateY":180 },
+		"*-iron-south":			        { "base": "vinteng:block/multiblock/treatedwood/iron", "rotateY":180 },
+
+		"*-horizontal-west": 			{ "base": "vinteng:block/multiblock/treatedwood/horizontal", "rotateY":90 },
+		"*-bordered-west": 			    { "base": "vinteng:block/multiblock/treatedwood/bordered", "rotateY":90 },
+		"*-path-west": 			        { "base": "vinteng:block/multiblock/treatedwood/path", "rotateY":90 },
+		"*-reinforced-west":			{ "base": "vinteng:block/multiblock/treatedwood/reinforced", "rotateY":90 },
+		"*-vertical-west":			    { "base": "vinteng:block/multiblock/treatedwood/vertical", "rotateY":90 },
+        "*-banded-west":			    { "base": "vinteng:block/multiblock/treatedwood/banded", "rotateY":90 },
+		"*-iron-west":			        { "base": "vinteng:block/multiblock/treatedwood/iron", "rotateY":90 }
+	},
+    "resistance": 1,
+    "sounds": {
+		"hit": "game:block/planks",
+		"break": "game:block/planks",
+		"place": "game:block/planks",
+        "walk": "game:walk/wood"
+    },
+    "walkspeedmultiplier": 1.2
+}

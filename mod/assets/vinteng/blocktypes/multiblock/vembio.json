@@ -8,18 +8,15 @@
 		{ "code": "io", "states": [ "item", "fluid", "power", "signal", "gas", "mechanical", "interaction" ] }
 	],
 	"entityClassByType": {
-		"*-interaction": "MBBEInteractable",
-		"*": ""
+		"*-interaction": "MBBEInteractable"
 	},
 	"attributesByType": {
 
 	},
 	"blockmaterial": "Metal",
-	"drawtype": "cube",
 	"sidesolid": { "all": true },
 	"sideopaque": { "all": true },
 	"maxStackSize": 64,
-
 	"shapeByType": {
 		"*-item": 			{ "base": "vinteng:block/multiblock/itemio" },
 		"*-fluid": 			{ "base": "vinteng:block/multiblock/fluidio" },

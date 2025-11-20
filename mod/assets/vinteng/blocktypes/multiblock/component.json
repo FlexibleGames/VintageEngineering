@@ -1,0 +1,27 @@
+{
+	"code": "vembcomponent",
+	"class": "Block",
+	"creativeinventory": {
+		"vinteng": [ "*" ]
+	},
+	"variantgroups": [
+		{ "code": "type", "states": [ "lighteng", "heavyeng", "steel" ] }
+	],
+	"blockmaterial": "Metal",
+	"sidesolid": { "all": true },
+	"sideopaque": { "all": true },
+	"maxStackSize": 64,
+	"shapeByType": {
+		"*-lighteng": 			{ "base": "vinteng:block/multiblock/generic/lighteng" },
+		"*-heavyeng": 			{ "base": "vinteng:block/multiblock/generic/heavyeng" },
+		"*-steel": 				{ "base": "vinteng:block/multiblock/generic/steelreinforced" }
+	},
+	"resistance": 2,
+	"lightAbsorption": 1,
+	"sounds": {
+		"place": "game:block/chute",
+		"break": "game:block/anvil",
+		"hit": "game:block/anvil",
+		"walk": "game:walk/stone"
+	}
+}
