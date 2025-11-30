@@ -238,7 +238,7 @@ namespace VintageEngineering.Transport.Handlers
                             node.PushEnumerator.MoveNext();
                         }
                     }
-                    catch (Exception e)
+                    catch //(Exception e)
                     {
                         node.PushEnumerator.Dispose();
                         node.PushEnumerator = pushcons.GetEnumerator();

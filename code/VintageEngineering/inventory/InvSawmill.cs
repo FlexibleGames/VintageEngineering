@@ -11,6 +11,9 @@ using Vintagestory.API.Server;
 
 namespace VintageEngineering.inventory
 {
+    /// <summary>
+    /// SlotID 0 is input, 1 is Sawblade, 2-4 are Output
+    /// </summary>
     public class InvSawmill : InventoryBase
     {
         ICoreClientAPI capi;

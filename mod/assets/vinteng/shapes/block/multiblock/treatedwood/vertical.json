@@ -1,0 +1,28 @@
+{
+	"editor": {
+		"allAngles": false,
+		"entityTextureMode": false
+	},
+	"textureWidth": 16,
+	"textureHeight": 16,
+	"textureSizes": {
+	},
+	"textures": {
+		"treated_wood_bordered": "block/multiblocks/treated_wood_bordered",
+		"treated_wood_vertical": "block/multiblocks/treated_wood_vertical"
+	},
+	"elements": [
+		{
+			"name": "Cube2",
+			"from": [ 0.0, 0.0, 0.0 ],
+			"to": [ 16.0, 16.0, 16.0 ],
+			"faces": {
+				"north": { "texture": "#treated_wood_vertical", "uv": [ 0.0, 0.0, 16.0, 16.0 ], "rotation": 180 },
+				"east": { "texture": "#treated_wood_vertical", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
+				"south": { "texture": "#treated_wood_vertical", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
+				"west": { "texture": "#treated_wood_vertical", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
+				"up": { "texture": "#treated_wood_bordered", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
+				"down": { "texture": "#treated_wood_bordered", "uv": [ 0.0, 0.0, 16.0, 16.0 ] }
+			}
+		}
+	]}

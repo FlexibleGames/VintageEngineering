@@ -358,5 +358,38 @@
 	"vinteng:block-vemvbattery": "VE MV Battery",
 	"vinteng:blockdesc-vemvbattery": "A Battery for storing power on an MV network. The MV battery stores 20000 power and is capable of moving 500 power per second (pps) by default.",
 
+	"vinteng:block-vemultiblockio-item": "Multiblock IO (Items)",
+	"vinteng:blockdesc-vemultiblockio-item": "Multiblock building component to indicate item input/output location.",
+	"vinteng:block-vemultiblockio-fluid": "Multiblock IO (Fluids)",
+	"vinteng:blockdesc-vemultiblockio-fluid": "Multiblock building component to indicate fluid input/output location.",
+	"vinteng:block-vemultiblockio-power": "Multiblock IO (Power)",
+	"vinteng:blockdesc-vemultiblockio-power": "Multiblock building component to indicate power input/output location.",
+	"vinteng:block-vemultiblockio-signal": "Multiblock IO (Signal)",
+	"vinteng:blockdesc-vemultiblockio-signal": "Multiblock building component to indicate signal input/output location.",
+	"vinteng:block-vemultiblockio-gas": "Multiblock IO (Gas)",
+	"vinteng:blockdesc-vemultiblockio-gas": "Multiblock building component to indicate gas input/output location.",
+	"vinteng:block-vemultiblockio-mechanical": "Multiblock IO (Mechanical)",
+	"vinteng:blockdesc-vemultiblockio-mechanical": "Multiblock building component to indicate mechanical input/output location.",
+	"vinteng:block-vemultiblockio-interaction": "Multiblock IO (Interaction)",
+	"vinteng:blockdesc-vemultiblockio-interaction": "Multiblock building component to indicate player interaction location. This special location is what you right click with a wrench to validate and form the multiblock! Also used to validate current building layer and progress to the next layer.",
+
+	"vinteng:item-plank-treated": "Treated Wood Board",
+	"vinteng:itemdesc-plank-treated": "Any wooden board type treated with Coal-Tar Creosote turns into a Treated Wood Board. Used for all Treated Wood block variants.",
+	"vinteng:block-treatedwood-horizontal-*": "Treated Wood (Horizontal)",
+	"vinteng:blockdesc-treatedwood-*": "Treated wood block variant.",
+	"vinteng:block-treatedwood-bordered-*": "Treated Wood (Bordered)",
+	"vinteng:block-treatedwood-path-*": "Treated Wood (Path)",
+	"vinteng:block-treatedwood-reinforced-*": "Treated Wood (Reinforced)",
+	"vinteng:block-treatedwood-vertical-*": "Treated Wood (Vertical)",
+	"vinteng:block-treatedwood-banded-*": "Treated Wood (Banded)",
+	"vinteng:block-treatedwood-iron-*": "Treated Wood (Iron)",
+
+	"vinteng:block-vembcomponent-lighteng": "Multiblock Component (Light Engineering)",
+	"vinteng:blockdesc-vembcomponent-lighteng": "Light Engineering block for use in Multiblock construction. Can also be used as an expensive deco block.",
+	"vinteng:block-vembcomponent-heavyeng": "Multiblock Component (Heavy Engineering)",
+	"vinteng:blockdesc-vembcomponent-heavyeng": "Heavy Engineering block for use in Multiblock construction. Can also be used as an expensive deco block.",
+	"vinteng:block-vembcomponent-steel": "Multiblock Component (Reinforced Steel)",
+	"vinteng:blockdesc-vembcomponent-steel": "Reinforced Steel block for use in Multiblock construction. Can also be used as an expensive deco block.",
+
 	"eof": "End Of File"
 }

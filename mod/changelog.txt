@@ -1,3 +1,14 @@
+v0.4.8
+- Multiblock progress, nothing to use yet, but progress is progress...
+- New Block types added for Multiblock (MB) construction:
+  - Treated Wood variants
+  - IO Blocks to indicate MB interaction points (Item, Fluid, Power, etc.)
+  - Metal Component Blocks (Light/Heavy Engineering blocks and Steel Reinforced Block)
+  - Interaction IO Block type is a special block for MB validation and construction and should not be used as a Deco block.
+- Handbook crash Bug Fixed, fixes #43
+- Fixed #46, forge heating ingots properly.
+
+
 v0.4.5
 - New MV Networks! MV Batteries and LV-MV Transformers
 - Major Bugfixes regarding Pipes, pipe networks, and chunk boundaries

@@ -30,9 +30,9 @@ namespace VintageEngineering.blockBhv
         //How much torq will be provided at max
         //private static float resistance_Max = 1f;
         //How fast can be at max, vanilla 0-1
-        private static float speed_max = 1f;
+        //private static float speed_max = 1f;
         //How high should we clamp _torque?
-        private static float torque_max = 5f;
+        //private static float torque_max = 5f;
 
         /// <summary>
         /// Given the set speed and torque settings how much electrical power per tick is required
@@ -154,8 +154,6 @@ namespace VintageEngineering.blockBhv
             // wind speed is 0 -> 1
             // GetTorque returns speed * TorqueFactor.
             _torque = (_speedSet * l_curtorquesetting);
-
-            
 
             // if power is < 1, don't try to turn at all... 
             if (powAmnt <= Power_Min) { return 0f; }

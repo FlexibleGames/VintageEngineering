@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using VintageEngineering.Electrical;
 using Vintagestory.API.Common;
+using Vintagestory.API.Datastructures;
 
 namespace VintageEngineering.Multiblock
 {
@@ -13,6 +14,14 @@ namespace VintageEngineering.Multiblock
     /// </summary>
     public class VEMBEntityCore : ElectricContainerBE
     {
+
+        internal int activelayer = 0;
+
+        public override void Initialize(ICoreAPI api)
+        {
+            base.Initialize(api);            
+        }
+
         public override InventoryBase Inventory => throw new NotImplementedException();
 
         public override string InventoryClassName => throw new NotImplementedException();
@@ -20,6 +29,18 @@ namespace VintageEngineering.Multiblock
         public override bool OnPlayerRightClick(IPlayer byPlayer, BlockSelection blockSel)
         {
             return true;
+        }
+
+        public override void ToTreeAttributes(ITreeAttribute tree)
+        {
+            base.ToTreeAttributes(tree);
+            tree.SetInt("activelayer", activelayer);
+        }
+
+        public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldForResolving)
+        {
+            base.FromTreeAttributes(tree, worldForResolving);
+            activelayer = tree.GetInt("activelayer", 0);
         }
     }
 }

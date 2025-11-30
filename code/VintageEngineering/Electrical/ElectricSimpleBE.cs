@@ -13,7 +13,7 @@ namespace VintageEngineering.Electrical
 
         public ElectricBEBehavior Electric { get; private set; }
 
-        private long ListenerID { get; set; }
+        internal long ListenerID { get; set; }
 
         //private float clientUpdateBouncer = 0;
 

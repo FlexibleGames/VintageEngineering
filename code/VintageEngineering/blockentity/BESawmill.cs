@@ -224,7 +224,7 @@ namespace VintageEngineering
                             else if (capleft >= outputprimary.StackSize) inv[2].Itemstack.StackSize += outputprimary.StackSize;
                             else
                             {
-                                inv[1].Itemstack.StackSize += capleft;
+                                inv[2].Itemstack.StackSize += capleft;
                                 outputprimary.StackSize -= capleft;
                                 Api.World.SpawnItemEntity(outputprimary, Pos.UpCopy(1).ToVec3d());
                             }

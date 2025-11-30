@@ -1,0 +1,28 @@
+{
+	"editor": {
+		"allAngles": false,
+		"entityTextureMode": false
+	},
+	"textureWidth": 16,
+	"textureHeight": 16,
+	"textureSizes": {
+	},
+	"textures": {
+		"powerio": "block/multiblocks/powerio",
+		"powerio-bot": "block/multiblocks/powerio-bot"
+	},
+	"elements": [
+		{
+			"name": "Cube2",
+			"from": [ 0.0, 0.0, 0.0 ],
+			"to": [ 16.0, 16.0, 16.0 ],
+			"faces": {
+				"north": { "texture": "#powerio", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
+				"east": { "texture": "#powerio", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
+				"south": { "texture": "#powerio", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
+				"west": { "texture": "#powerio", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
+				"up": { "texture": "#powerio", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
+				"down": { "texture": "#powerio-bot", "uv": [ 0.0, 0.0, 16.0, 16.0 ] }
+			}
+		}
+	]}
