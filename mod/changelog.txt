@@ -1,3 +1,7 @@
+v0.4.9
+- Added new component for IBlockEntityContainer interface that was added in 1.21.6.
+- This seemed to have cause all sorts of issues. Please devs, no major API changes for sub-version releases. This really threw me.
+
 v0.4.8
 - Multiblock progress, nothing to use yet, but progress is progress...
 - New Block types added for Multiblock (MB) construction:
