@@ -101,7 +101,7 @@ namespace VintageEngineering.Blocks
 
         public override bool TryPlaceBlockForWorldGen(IBlockAccessor access, BlockPos pos, BlockFacing face, IRandom wrand, BlockPatchAttributes attributes = null)
         {
-            if (pos.Y >= 1 && pos.Y < 20) // clamp range even more, making these even harder to find.
+            if (pos.Y >= 1 && pos.Y < 10) // clamp range even more, making these even harder to find.
             {
                 if (wrand.NextFloat() > 0.5f)
                 {
