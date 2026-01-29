@@ -391,5 +391,9 @@
 	"vinteng:block-vembcomponent-steel": "Multiblock Component (Reinforced Steel)",
 	"vinteng:blockdesc-vembcomponent-steel": "Reinforced Steel block for use in Multiblock construction. Can also be used as an expensive deco block.",
 
+	"vinteng:block-vembcreosoteoven-incomplete-*": "Creosote Oven Core",
+	"vinteng:block-vembcreosoteoven-built-*": "Creosote Oven",
+	"vinteng:blockdesc-vembcreosoteoven-*": "Creosote Oven is a Multiblock (MB) structure that can create Wood-Tar Creosote from Oak and Pine logs and charcoal from all other wood logs as well as Coal-Tar Creosote from all coal variants.<br>To build, craft and place the <a href=\"handbook://block-vinteng:vembcreosoteoven-incomplete-north\">Creosote Oven Core</a> then right click core with wrench to show missing blocks. These blocks are color-coded by type outlined below.<br><br>Light Blue : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"game:brickcourse-four-running-gray\"/><br>Green : <itemstack rsize=\"1\" type=\"block\" code=\"vinteng:vemultiblockio-item\"/><br>Red : <itemstack rsize=\"1\" type=\"block\" code=\"vinteng:vemultiblockio-interaction\"/><br>Yellow : <itemstack rsize=\"1\" type=\"block\" code=\"vinteng:vemultiblockio-fluid\"/><br><br>Once the Core is inaccessable, right click the Interaction block to progress layers or validate the structure.",
+
 	"eof": "End Of File"
 }
