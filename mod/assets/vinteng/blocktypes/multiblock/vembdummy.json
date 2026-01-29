@@ -7,7 +7,7 @@
 	],
 	"handbook": { "exclude": true },
 	"variantgroups": [
-		{ "code": "io", "states": ["none", "item", "fluid", "power", "signal", "gas", "mechanical", "interaction" ] },
+		{ "code": "io", "states": ["none", "item", "fluid", "power", "signal", "gas", "mechanical", "interaction", "casting" ] },
 		{ "code": "side", "loadFromProperties": "abstract/horizontalorientation" }
 	],
 	"shape": { "base": "game:block/basic/nothing" },
