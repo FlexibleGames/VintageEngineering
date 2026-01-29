@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using VintageEngineering.API;
+using VintageEngineering.Multiblock;
 using VintageEngineering.Transport.API;
 using VintageEngineering.Transport.Handlers;
 using Vintagestory.API.Common;
@@ -45,6 +46,16 @@ namespace VintageEngineering.Transport.Pipes
                 foreach (ItemSlot slot in bec.Inventory)
                 {
                     if (slot is ItemSlotLiquidOnly) return true;
+                }
+            }
+            // VEMultiblock Checks
+            Block target = world.BlockAccessor.GetBlock(pos);
+            if (target is VEMBDummy targetdummy)
+            {
+                string variant = targetdummy.Variant["io"];
+                if (variant == "fluid")
+                {
+                    return true;
                 }
             }
 
