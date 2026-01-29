@@ -19,7 +19,7 @@ namespace VintageEngineering.Multiblock
     /// </summary>
     public class VEMultiblockStructure
     {
-        public int HighlightSlotID = 0;
+        public int HighlightSlotID = 0;        
 
         public Dictionary<AssetLocation, int> BlockNumbers = new Dictionary<AssetLocation, int>();
         
@@ -30,6 +30,7 @@ namespace VintageEngineering.Multiblock
         public Dictionary<int, AssetLocation> BlockCodes;
         public List<BlockOffsetAndNumber> TransformedOffsets;
         public Dictionary<int, int> BlockHighlightColors;
+        public Dictionary<int, string> BlockSwapMapping;
 
         public int MaxY => TransformedOffsets?.Max(v => v.Y) ?? int.MinValue;
 
@@ -50,7 +51,7 @@ namespace VintageEngineering.Multiblock
             TransformedOffsets = new List<BlockOffsetAndNumber>();
 
             foreach (KeyValuePair<AssetLocation, int> val in BlockNumbers)
-            {
+            {                
                 BlockCodes[val.Value] = val.Key;
             }
 
@@ -59,9 +60,16 @@ namespace VintageEngineering.Multiblock
                 Vec4i offset = Offsets[i];
                 Vec4f offsetTf = new Vec4f(offset.X, offset.Y, offset.Z, 0);
                 Vec4f tfedOffset = mat.TransformVector(offsetTf);
-
                 TransformedOffsets.Add(new BlockOffsetAndNumber() { X = (int)Math.Round(tfedOffset.X), Y = (int)Math.Round(tfedOffset.Y), Z = (int)Math.Round(tfedOffset.Z), W = offset.W });
             }
+        }
+
+        public string RotDegToDirection(float rotateYDeg)
+        {
+            if (rotateYDeg == 0) return "north";
+            if (rotateYDeg == 90) return "west";
+            if (rotateYDeg == 180) return "south";
+            return "east";
         }
 
         public void InitHighlightColors(JsonObject json)
@@ -72,6 +80,52 @@ namespace VintageEngineering.Multiblock
             {
                 int color = ColorUtil.ColorFromRgba(obj["r"].AsInt(), obj["g"].AsInt(), obj["b"].AsInt(), obj["a"].AsInt());
                 BlockHighlightColors.Add(obj["w"].AsInt(), color);
+            }
+        }
+
+        public void InitBlockSwapMapping(JsonObject json)
+        {
+            JsonObject[] array = json.AsArray();
+            BlockSwapMapping = new Dictionary<int, string>();
+            foreach (JsonObject obj in array)
+            {
+                BlockSwapMapping.Add(obj["w"].AsInt(), obj["tocode"].AsString());
+            }
+        }
+
+        public void SwapBlocks(IWorldAccessor world, BlockPos centerPos, bool isComplete, string side)
+        {
+            //IBulkBlockAccessor bulk = world.GetBlockAccessorBulkUpdate(true, true, false);
+            if (isComplete)
+            {
+                for (int i = 0; i < TransformedOffsets.Count; i++)
+                {
+                    Vec4i offset = TransformedOffsets[i];
+                    if (offset.X == 0 && offset.Y == 0 && offset.Z == 0) continue;
+                    Block toswap = world.GetBlock(new AssetLocation(BlockSwapMapping[offset.W] + $"-{side}"));
+                    if (toswap != null)
+                    {
+                        BlockPos swappos = new BlockPos(centerPos.X + offset.X, centerPos.InternalY + offset.Y, centerPos.Z + offset.Z);
+                        world.BlockAccessor.SetBlock(toswap.Id, swappos);
+                        world.BlockAccessor.GetBlockEntity<VEMBEntityDummy>(swappos)?.SetOffset(offset);
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 0; i < TransformedOffsets.Count;i++)
+                {
+                    Vec4i offset = TransformedOffsets[i];
+                    if (offset.X == 0 && offset.Y == 0 && offset.Z == 0) continue;
+                    Block swapback = world.GetBlock(new AssetLocation(BlockCodes[offset.W]));
+                    if (swapback != null)
+                    {
+                        BlockPos swappos = new BlockPos(centerPos.X + offset.X, centerPos.InternalY + offset.Y, centerPos.Z + offset.Z);
+                        world.BlockAccessor.SetBlock(0, swappos);
+                        world.BlockAccessor.SetBlock(swapback.Id, swappos);
+                        world.BlockAccessor.MarkBlockModified(swappos);
+                    }
+                }
             }
         }
 
@@ -120,6 +174,7 @@ namespace VintageEngineering.Multiblock
                 if (layer != -1 && TransformedOffsets[i].Y > layer) continue;
 
                 Vec4i offset = TransformedOffsets[i];
+                if (offset.X == 0 && offset.Y == 0 && offset.Z == 0) continue;
 
                 Block block = world.BlockAccessor.GetBlockRaw(centerPos.X + offset.X, centerPos.InternalY + offset.Y, centerPos.Z + offset.Z);
 
@@ -159,7 +214,7 @@ namespace VintageEngineering.Multiblock
                 if (layer != -1 && TransformedOffsets[i].Y > layer) continue;
 
                 Vec4i offset = TransformedOffsets[i];
-
+                if (offset.X == 0 && offset.Y == 0 && offset.Z == 0) continue;
                 Block block = world.BlockAccessor.GetBlockRaw(centerPos.X + offset.X, centerPos.InternalY + offset.Y, centerPos.Z + offset.Z);
                 AssetLocation desireBlockLoc = BlockCodes[offset.W];
 
@@ -176,12 +231,12 @@ namespace VintageEngineering.Multiblock
                         //colors.Add(ColorUtil.ColorFromRgba(215, 94, 94, 64));
                     }
                     else
-                    {                   
+                    {
                         // Air Blocks... 
-                        int col = world.SearchBlocks(desireBlockLoc)[0].GetColor(world.Api as ICoreClientAPI, centerPos);
-                        col &= ~(255 << 24);
-                        col |= 96 << 24;
-                        colors.Add(col);
+                        //int col = world.SearchBlocks(desireBlockLoc)[0].GetColor(world.Api as ICoreClientAPI, centerPos);
+                        //col &= ~(255 << 24);
+                        //col |= 96 << 24;
+                        colors.Add(BlockHighlightColors[offset.W]);
                     }
                 }
             }

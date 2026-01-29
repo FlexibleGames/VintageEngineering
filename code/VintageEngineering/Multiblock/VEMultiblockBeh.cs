@@ -41,6 +41,7 @@ namespace VintageEngineering.Multiblock
             mbs = properties["multiblockStructure"]?.AsObject<VEMultiblockStructure>();
             mbs.HighlightSlotID = properties["highlightID"].AsInt(23);
             mbs.InitHighlightColors(properties["blockHighlightColors"]);
+            mbs.InitBlockSwapMapping(properties["blockMapping"]);
             mbs?.InitForUse(RotateY);
 
         }
@@ -66,7 +67,19 @@ namespace VintageEngineering.Multiblock
                     if (layer == mbs.MaxY)
                     {
                         // holy cow, it's built! 
-                        if (world.Side == EnumAppSide.Client) mbs.ClearHighlights(world, byPlayer);
+                        if (world.Side == EnumAppSide.Client)
+                        {
+                            (world.Api as ICoreClientAPI).SendChatMessage("Multiblock Completed!");
+                            mbs.ClearHighlights(world, byPlayer);
+                        }
+                        else
+                        {
+                            // server stuff once completed
+                            mbs.SwapBlocks(world, core, true, base.block.Variant["side"]);
+                            mbs.ClearHighlights(world, byPlayer);
+                            Block newcore = world.GetBlock(base.block.CodeWithVariant("state", "built"));
+                            world.BlockAccessor.ExchangeBlock(newcore.Id, core);
+                        }
                     }
                     else
                     {
@@ -100,8 +113,13 @@ namespace VintageEngineering.Multiblock
         #region IMultiBlockBlockBreaking
         public void MBOnBlockBroken(IWorldAccessor world, BlockPos pos, Vec3i offset, IPlayer byPlayer, float dropQuantityMultiplier = 1)
         {
-            // this is going to be a huge PITA
-            throw new NotImplementedException();
+            mbs.ClearHighlights(world, byPlayer);
+            BlockPos core = pos.AddCopy(offset);
+            mbs.SwapBlocks(world, core, false, base.block.Variant["side"]);
+            Block newcore = world.GetBlock(base.block.CodeWithVariant("state", "incomplete"));
+            VEMBEntityCore coreentity = world.BlockAccessor.GetBlockEntity<VEMBEntityCore>(core);
+            if (coreentity != null) coreentity.Inventory?.DropAll(byPlayer.Entity.Pos.AsBlockPos.ToVec3d(), 0);
+            world.BlockAccessor.ExchangeBlock(newcore.Id, core);
         }
 
         public int MBGetRandomColor(ICoreClientAPI capi, BlockPos pos, BlockFacing facing, int rndIndex, Vec3i offsetInv)
