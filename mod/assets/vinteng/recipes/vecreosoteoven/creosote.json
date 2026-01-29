@@ -9,7 +9,7 @@
 		{ "type": "item", "code": "game:ore-*", "name": "type", "allowedVariants":["lignite", "bituminouscoal", "anthracite"], "quantity": 1 }
 	],
 	"outputs": [
-		{ "type": "item", "code": "vinteng:creosoteportion-coal", "litres": 0.5 }
+		{ "type": "item", "code": "vinteng:creosoteportion-coal", "litres": 0.5 }		
 	]
 },
 {
@@ -22,7 +22,8 @@
 		{ "type": "block", "code": "game:log-placed-*-ud", "name": "wood", "allowedVariants":["pine", "oak"], "quantity": 1 }
 	],
 	"outputs": [
-		{ "type": "item", "code": "vinteng:creosoteportion-wood", "litres": 0.25 }
+		{ "type": "item", "code": "vinteng:creosoteportion-wood", "litres": 0.25 },
+		{ "type": "item", "code": "game:charcoal", "quantity": 1 }
 	]
 }
 ]
