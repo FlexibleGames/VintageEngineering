@@ -1,3 +1,10 @@
+v0.5.0
+- Fix Tank-Bucket interaction when holding stacks of buckets.
+- Reduce by a further 50% the spawn chance of Oil Geysers.
+- Add Creosote Oven as a Multiblock (MB) that you have to build block-by-block
+- Fix Pipe Filter bug #56
+- Add all MB component pieces and recipes. Recipes not final, balance suggestions welcome.
+
 v0.4.9
 - Added new component for IBlockEntityContainer interface that was added in 1.21.6.
 - This seemed to have cause all sorts of issues. Please devs, no major API changes for sub-version releases. This really threw me.
