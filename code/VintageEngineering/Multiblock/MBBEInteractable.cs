@@ -22,7 +22,7 @@ namespace VintageEngineering.Multiblock
             base.Initialize(api);
             if (corePosition == null)
             {
-                //FindMBCore(api.World);
+                FindMBCore(api.World);
             }
         }
 
@@ -36,6 +36,8 @@ namespace VintageEngineering.Multiblock
 
             blocksChecked.Add(this.Pos);
             blocksToCheck.Add(this.Pos);
+
+            bool found = false;
 
             while (blocksToCheck.Count > 0)
             {
@@ -67,9 +69,10 @@ namespace VintageEngineering.Multiblock
                                     {
                                         // WE FOUND IT!
                                         corePosition = bcheck.Copy();
-                                        blocksToCheck.Clear();
+                                        //blocksToCheck.Clear();
+                                        found = true;
                                         blockstoadd.Clear();
-                                        blocksChecked.Clear();
+                                        //blocksChecked.Clear();
                                         return;
                                     }
                                 }
@@ -81,20 +84,21 @@ namespace VintageEngineering.Multiblock
                             }
                         }
                     }, false);
+                    if (found) break;
                 }
                 blocksToCheck.Clear();
                 if (blockstoadd.Count > 0 && blocksChecked.Count < limit) { blocksToCheck.AddRange(blockstoadd); }
                 blockstoadd.Clear();
             }
             blocksChecked.Clear();
-        }
+        }        
 
         public bool TriggerValidation(IWorldAccessor world, IPlayer byPlayer, BlockSelection sel)
         {
             if (corePosition == null) FindMBCore(world);
-            else
+            if (corePosition != null)
             {
-                VEMultiblockBeh beh = world.BlockAccessor.GetBlockEntity(corePosition)?.GetBehavior<VEMultiblockBeh>();
+                VEMultiblockBeh beh = world.BlockAccessor.GetBlock(corePosition)?.GetBehavior<VEMultiblockBeh>();
                 if (beh != null)
                 {
                     beh.TriggerValidation(world, byPlayer, sel, corePosition);
