@@ -1,6 +1,9 @@
 {
 	"code": "vemultiblockio",
-	"class": "Block",
+	"classByType": {
+		"*-interaction": "VEMBInteractable",
+		"*": "Block"
+	},
 	"creativeinventory": {
 		"vinteng": [ "*" ]
 	},
