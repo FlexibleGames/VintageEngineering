@@ -16,6 +16,9 @@ namespace VintageEngineering.inventory
     {
         ICoreClientAPI capi;
         ICoreServerAPI sapi;
+        /// <summary>
+        /// 0 = input, 1 = fuel, 2 = output, 3 = fluid output
+        /// </summary>
         private ItemSlot[] _slots;
         public IPlayer machineuser;
 
@@ -130,22 +133,50 @@ namespace VintageEngineering.inventory
         }
 
         public override ItemSlot GetAutoPushIntoSlot(BlockFacing atBlockFace, ItemSlot fromSlot)
-        {
-            if (fromSlot == null || fromSlot.Empty) return null;
+        {            
+            if (Pos != null && sapi != null)
+            {
+                Block block = sapi.World.BlockAccessor.GetBlock(Pos);
+                string rotside = block?.Variant["side"];
+                BlockFacing parentdir = BlockFacing.FromCode(rotside);
 
-            CombustibleProperties props = fromSlot.Itemstack.Collectible.CombustibleProps;
-            bool isfuel = props != null ? props.BurnTemperature > 0 : false;
-            
-            // if U or D face, only fuel
-            if (atBlockFace.IsVertical) return _slots[1];
+                string atface = atBlockFace.Code;
+                bool checkfuel = false;
+                if (parentdir.IsAxisNS)
+                {
+                    if (atBlockFace.IsAxisWE) checkfuel = true;
+                }
+                else
+                {
+                    if (atBlockFace.IsAxisNS) checkfuel = true;
+                }
+                if (atBlockFace == BlockFacing.UP) return _slots[0];
+                if (atBlockFace == parentdir.Opposite) return null; // _slots[2];
 
-            else return _slots[0];
+                if (fromSlot == null || fromSlot.Empty) return null;
+
+                if (checkfuel)
+                {
+                    CombustibleProperties props = fromSlot.Itemstack.Collectible.CombustibleProps;                    
+                    bool isfuel = props != null && props.BurnTemperature > 0;
+                    if (isfuel) return _slots[1];
+                }
+            }
+            return null;
         }
 
         public override ItemSlot GetAutoPullFromSlot(BlockFacing atBlockFace)
         {
-            return _slots[2]; // chutes can only pull from item slot, not fluid
-            // fluid pipes ignore this call all-together and only check the slots for a LiquidOnly slot type.
+            if (Pos != null && sapi != null)
+            {
+                Block block = sapi.World.BlockAccessor.GetBlock(Pos);
+                string rotside = block?.Variant["side"];
+                BlockFacing parentdir = BlockFacing.FromCode(rotside);
+
+                if (atBlockFace == parentdir.Opposite) return _slots[2];
+            }
+
+            return null;             
         }
 
         public override void FromTreeAttributes(ITreeAttribute tree)
