@@ -1,40 +1,52 @@
 {
 	"code": "vembcreosoteoven",
-	"class": "Block",
-	"entityClass": "",
+	"class": "VEMBCore",
+	"entityClass": "VEBECreosoteOven",
 	"behaviors": [
 		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "vembcreosoteoven-incomplete-north" }}},
 		{"name": "VEMultiblockBeh", "properties": {
 			"highlightID": 55,
 			"blockHighlightColors": [
-				{ "w": 1, "r": 215, "g": 94, "b": 94, "a": 64 },
-				{ "w": 2, "r": 94, "g": 215, "b": 94, "a": 64 }
+				{ "w": 1, "r": 0, "g": 140, "b": 255, "a": 180 },
+				{ "w": 2, "r": 5, "g": 215, "b": 5, "a": 180 },
+				{ "w": 3, "r": 250, "g": 0, "b": 0, "a": 180 },
+				{ "w": 4, "r": 215, "g": 215, "b": 215, "a": 180 },
+				{ "w": 5, "r": 215, "g": 215, "b": 5, "a": 180 }
+			],
+			"blockMapping": [
+				{ "w": 1, "tocode": "vinteng:vembdummy-none" },
+				{ "w": 2, "tocode": "vinteng:vembdummy-item" },
+				{ "w": 3, "tocode": "vinteng:vembdummy-interaction" },
+				{ "w": 5, "tocode": "vinteng:vembdummy-fluid" }
 			],
 			"multiblockStructure": {
 				"blockNumbers": {
-					"game:brickcourse-four-running-gray": 1,
-					"vinteng:vembcreosoteoven-incomplete-north": 2
+					"brickcourse-four-running-gray": 1,
+					"vinteng:vemultiblockio-item": 2,
+					"vinteng:vemultiblockio-interaction": 3,
+					"vinteng:vembcreosoteoven-incomplete-north": 4,
+					"vinteng:vemultiblockio-fluid": 5
 				},
 				"offsets": [
 					{ "x": 0, "y": 2, "z": 0, "w": 1 },
 					{ "x": 0, "y": 2, "z": 1, "w": 1 },
 					{ "x": 0, "y": 2, "z": -1, "w": 1 },
-					{ "x": 0, "y": 3, "z": 0, "w": 1 },
+					{ "x": 0, "y": 3, "z": 0, "w": 2 },
 					{ "x": 0, "y": 3, "z": 1, "w": 1 },
 					{ "x": 0, "y": 3, "z": -1, "w": 1 },
 					{ "x": 0, "y": 1, "z": 0, "w": 1 },
-					{ "x": 0, "y": 1, "z": 1, "w": 1 },
+					{ "x": 0, "y": 1, "z": 1, "w": 3 },
 					{ "x": 0, "y": 1, "z": -1, "w": 1 },
-					{ "x": 0, "y": 0, "z": 0, "w": 2 },
-					{ "x": 0, "y": 0, "z": 1, "w": 1 },
-					{ "x": 0, "y": 0, "z": -1, "w": 1 },
+					{ "x": 0, "y": 0, "z": 0, "w": 4 },
+					{ "x": 0, "y": 0, "z": 1, "w": 2 },
+					{ "x": 0, "y": 0, "z": -1, "w": 5 },
 					{ "x": 1, "y": 2, "z": 0, "w": 1 },
 					{ "x": 1, "y": 2, "z": 1, "w": 1 },
 					{ "x": 1, "y": 2, "z": -1, "w": 1 },
 					{ "x": 1, "y": 3, "z": 0, "w": 1 },
 					{ "x": 1, "y": 3, "z": 1, "w": 1 },
 					{ "x": 1, "y": 3, "z": -1, "w": 1 },
-					{ "x": 1, "y": 1, "z": 0, "w": 1 },
+					{ "x": 1, "y": 1, "z": 0, "w": 2 },
 					{ "x": 1, "y": 1, "z": 1, "w": 1 },
 					{ "x": 1, "y": 1, "z": -1, "w": 1 },
 					{ "x": 1, "y": 0, "z": 0, "w": 1 },
@@ -46,7 +58,7 @@
 					{ "x": -1, "y": 3, "z": 0, "w": 1 },
 					{ "x": -1, "y": 3, "z": 1, "w": 1 },
 					{ "x": -1, "y": 3, "z": -1, "w": 1 },
-					{ "x": -1, "y": 1, "z": 0, "w": 1 },
+					{ "x": -1, "y": 1, "z": 0, "w": 2 },
 					{ "x": -1, "y": 1, "z": 1, "w": 1 },
 					{ "x": -1, "y": 1, "z": -1, "w": 1 },
 					{ "x": -1, "y": 0, "z": 0, "w": 1 },
@@ -61,7 +73,16 @@
 		{ "code":"side", "loadFromProperties": "abstract/horizontalorientation" }
 	],
 	"entityBehaviors": [
-
+		{
+			"name": "Electric",
+			"properties": {
+				"canExtractPower": false,
+				"canReceivePower": false,
+				"entitytype": "Consumer",
+				"maxpower": 0,
+				"maxpps": 0
+			}
+		}
 	],
 	"attributes": {
 		"handbook": {

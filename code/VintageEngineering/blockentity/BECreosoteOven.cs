@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using VintageEngineering.API;
 using VintageEngineering.Electrical;
 using VintageEngineering.inventory;
+using VintageEngineering.Multiblock;
 using VintageEngineering.RecipeSystem;
 using VintageEngineering.RecipeSystem.Recipes;
 using Vintagestory.API.Client;
@@ -18,13 +19,13 @@ using Vintagestory.GameContent;
 
 namespace VintageEngineering
 {
-    public class BECreosoteOven : BlockEntityOpenableContainer, IVELiquidInterface
+    public class BECreosoteOven : VEMBEntityCore, IVELiquidInterface
     {
 
         private ICoreClientAPI capi;
         private ICoreServerAPI sapi;
         private GUICreosoteOven _clientDialog;
-        private float _clientUpdateDelay = 0f;
+        //private float _clientUpdateDelay = 0f;
 
         #region InventoryStuff
         public virtual bool AllowPipeLiquidTransfer
@@ -80,6 +81,9 @@ namespace VintageEngineering
 
         public ItemSlotLiquidOnly GetLiquidAutoPullFromSlot(BlockFacing blockFacing)
         {
+            string rotside = base.Block.Variant["side"];
+            if (rotside != blockFacing.Code) return null;
+
             foreach (int slot in OutputLiquidContainerSlotIDs)
             {
                 if (!Inventory[slot].Empty) return Inventory[slot] as ItemSlotLiquidOnly;
@@ -88,7 +92,10 @@ namespace VintageEngineering
         }
 
         public ItemSlotLiquidOnly GetLiquidAutoPushIntoSlot(BlockFacing blockFacing, ItemSlot fromSlot)
-        {           
+        {
+            //string rotside = base.Block.Variant["side"];
+            //if (rotside != blockFacing.Code) return null;
+
             return null;
         }
         private void SlotModified(int slotid)
@@ -270,13 +277,13 @@ namespace VintageEngineering
 
         #endregion
 
-        public BlockEntityAnimationUtil AnimUtil
-        {
-            get
-            {
-                return this.GetBehavior<BEBehaviorAnimatable>()?.animUtil;
-            }
-        }
+        //public BlockEntityAnimationUtil AnimUtil
+        //{
+        //    get
+        //    {
+        //        return this.GetBehavior<BEBehaviorAnimatable>()?.animUtil;
+        //    }
+        //}
         public string DialogTitle
         {
             get
@@ -401,6 +408,8 @@ namespace VintageEngineering
 
         public override bool OnPlayerRightClick(IPlayer byPlayer, BlockSelection blockSel)
         {
+            if (this.Block.Variant["state"] == "incomplete") return true;
+
             if (this.Api != null && Api.Side == EnumAppSide.Client)
             {
                 base.toggleInventoryDialogClient(byPlayer, delegate

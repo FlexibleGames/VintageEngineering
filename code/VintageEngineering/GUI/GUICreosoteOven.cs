@@ -154,6 +154,18 @@ namespace VintageEngineering
                 ctx.Restore();
             }
         }
+
+        public override bool IsInRangeOfBlock(BlockPos blockEntityPos)
+        {
+            BlockPos player = capi.World.Player.Entity.Pos.AsBlockPos.Copy();
+
+            float dist = player.DistanceTo(blockEntityPos);
+            if (dist > capi.World.Player.WorldData.PickingRange + 2.5f) return false;
+
+            return true;
+
+        }
+
         private void OnProgressDraw(Context ctx, ImageSurface surface, ElementBounds currentBounds)
         {
             ctx.Save();

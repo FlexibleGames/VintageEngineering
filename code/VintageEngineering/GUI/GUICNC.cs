@@ -149,7 +149,15 @@ namespace VintageEngineering
                 // Now lets give some feedback on potential issues.
                 if (betestmach.Electric.CurrentPower < 10) outputhelptext = Lang.Get("vinteng:gui-machine-lowpower");
 
-                if (!betestmach.ValidateInput()) outputhelptext = betestmach.recipeClayNeeded + " " + currentRecipe.Ingredient.ResolvedItemstack.GetName() + " " + Lang.Get("vinteng:gui-word-needed");
+                if (currentRecipe.Ingredient == null)
+                {
+                    return $"Ingredient Error. Ingredient is null.";
+                }
+                if (currentRecipe.Ingredient.ResolvedItemstack == null)
+                {
+                    return $"Ingredient not resolved. Likely a mod issue.";
+                }
+                else if (!betestmach.ValidateInput()) outputhelptext = betestmach.recipeClayNeeded + " " + currentRecipe.Ingredient.ResolvedItemstack.GetName() + " " + Lang.Get("vinteng:gui-word-needed");
             }
             else
             {

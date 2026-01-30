@@ -1,0 +1,9 @@
+{
+	"ingredientPattern": "C",
+	"ingredients": {
+		"C": { "type": "block", "code": "vinteng:vecreosoteoven-north" }
+	},
+	"width": 1,
+	"height": 1,
+	"output": { "type": "block", "code": "vinteng:vembcreosoteoven-incomplete-north", "quantity": 1  }
+}

@@ -38,6 +38,7 @@ namespace VintageEngineering.Transport
         {
             _capi = capi;
             Code = code;
+            IsBlock = isblock;
             //_unspoilableInventory = new DummyInventory(capi, 1);
             if (IsWildcard)
             {

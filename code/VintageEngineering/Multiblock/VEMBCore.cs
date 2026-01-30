@@ -14,7 +14,7 @@ namespace VintageEngineering.Multiblock
 {
     /// <summary>
     /// The Core Block of Multiblock Machines<br/>
-    /// Multiblocks are not directly wire-connectable but will require a Wire Connection block (of the correct tier) placed in the proper location on the multiblock.
+    /// Multiblocks are not directly wire-connectable but will require a Power Connection block (of the correct tier) placed in the proper location on the multiblock.
     /// </summary>
     public class VEMBCore : ElectricBlock
     {
@@ -36,6 +36,31 @@ namespace VintageEngineering.Multiblock
                         powerTiers[i] = Enum.Parse<EnumElectricalPowerTier>(nodes[i]["powertier"]?.AsString("None"));
                     }
                 }
+            }
+        }
+
+        public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
+        {
+            if (byPlayer != null && !byPlayer.InventoryManager.ActiveHotbarSlot.Empty)
+            {
+                if (byPlayer.InventoryManager.ActiveHotbarSlot.Itemstack.Collectible?.Tool == EnumTool.Wrench)
+                {
+                    Multiblock.TriggerValidation(world, byPlayer, blockSel, blockSel.Position);
+                }
+            }
+            return base.OnBlockInteractStart(world, byPlayer, blockSel);
+        }
+
+        public override void OnBlockBroken(IWorldAccessor world, BlockPos pos, IPlayer byPlayer, float dropQuantityMultiplier = 1)
+        {
+            if (Variant["state"] == "built")
+            { 
+                Multiblock?.MBOnBlockBroken(world, pos, Vec3i.Zero, byPlayer, dropQuantityMultiplier); 
+            }            
+            else 
+            {
+                Multiblock.mbs.ClearHighlights(world, byPlayer);
+                base.OnBlockBroken(world, pos, byPlayer, dropQuantityMultiplier); 
             }
         }
 

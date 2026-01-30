@@ -6,10 +6,10 @@
 		"mintemp": 230
 	},
 	"ingredients": [
-		{ "type": "block", "code": "game:log-placed-*-ud", "name": "wood", "allowedVariants":["redwood", "birch", "maple", "ebony", "walnut", "purpleheart"], "quantity": 1 }
+		{ "type": "block", "code": "game:log-placed-*-ud", "name": "wood", "skipVariants":["oak", "pine"], "quantity": 1 }
 	],
 	"outputs": [
-		{ "type": "item", "code": "game:charcoal", "quantity": 1 }
+		{ "type": "item", "code": "game:charcoal", "quantity": 2 }
 	]
 },
 {
@@ -19,10 +19,10 @@
 		"mintemp": 230
 	},
 	"ingredients": [
-		{ "type": "block", "code": "game:logsection-placed-*-ne-ud", "name": "wood", "allowedVariants":["redwood"], "quantity": 1 }
+		{ "type": "block", "code": "game:logsection-placed-*-ne-ud", "name": "wood", "quantity": 1 }
 	],
 	"outputs": [
-		{ "type": "item", "code": "game:charcoal", "quantity": 1 }
+		{ "type": "item", "code": "game:charcoal", "quantity": 2 }
 	]
 }
 ]

@@ -18,12 +18,15 @@ namespace VintageEngineering.Multiblock
 
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
         {
-            if (byPlayer.Entity.Controls.Sneak && (!byPlayer.InventoryManager.ActiveHotbarSlot?.Empty ?? false))
+            if (byPlayer != null && !byPlayer.InventoryManager.ActiveHotbarSlot.Empty)
             {
-                MBBEInteractable be = world.BlockAccessor.GetBlockEntity<MBBEInteractable>(blockSel.Position);
-                if (be != null)
+                if (byPlayer.InventoryManager.ActiveHotbarSlot.Itemstack.Collectible?.Tool == EnumTool.Wrench)
                 {
-                   // return be.TriggerValidation(world, byPlayer, blockSel);
+                    MBBEInteractable be = world.BlockAccessor.GetBlockEntity<MBBEInteractable>(blockSel.Position);
+                    if (be != null)
+                    {
+                        return be.TriggerValidation(world, byPlayer, blockSel);
+                    }
                 }
             }
             return base.OnBlockInteractStart(world, byPlayer, blockSel);

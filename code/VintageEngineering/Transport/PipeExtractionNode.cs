@@ -93,6 +93,11 @@ namespace VintageEngineering.Transport
         public IInventory Inventory => inventory;
         
         public string InventoryClassName => $"PipeInventory-{faceCode}";
+        public void CheckInventoryClearedMidTick()
+        {
+            // new in 1.21.6
+            // going to ignore until I figure out why it exists.
+        }
 
         public PipeExtractionNode()
         {

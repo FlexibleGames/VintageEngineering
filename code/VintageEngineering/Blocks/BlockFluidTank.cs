@@ -1,3 +1,4 @@
+using System.Reflection.Metadata.Ecma335;
 using VintageEngineering.API;
 using VintageEngineering.blockentity;
 using Vintagestory.API.Client;
@@ -19,6 +20,8 @@ namespace VintageEngineering.Blocks
 
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
         {
+            ItemSlot hotbarSlot = byPlayer.InventoryManager.ActiveHotbarSlot;
+
             if (blockSel != null && !world.Claims.TryAccess(byPlayer, blockSel.Position, EnumBlockAccessFlags.Use))
             {
                 return false;
@@ -30,64 +33,73 @@ namespace VintageEngineering.Blocks
             }
             if (betank == null) return false;
 
-            if (byPlayer != null && byPlayer.InventoryManager.ActiveHotbarSlot != null && !byPlayer.InventoryManager.ActiveHotbarSlot.Empty)
+            if (byPlayer != null && hotbarSlot != null && !hotbarSlot.Empty)
             {
-                ILiquidSink bucket = byPlayer.InventoryManager.ActiveHotbarSlot.Itemstack.Collectible as ILiquidSink;
-                if (bucket != null)
-                {
-                    ItemStack contents = bucket.GetContent(byPlayer.InventoryManager.ActiveHotbarSlot.Itemstack);
-                    if (contents != null)
-                    {
-                        DummySlot topush = new DummySlot(contents);
-                        IVELiquidInterface ivel = betank as IVELiquidInterface;
-                        ItemSlotLargeLiquid push = (ItemSlotLargeLiquid)ivel.GetLiquidAutoPushIntoSlot(blockSel.Face, topush);
-                        if (push == null) return true;
-                        WaterTightContainableProps props = BlockLiquidContainerBase.GetContainableProps(contents);
-                        int capacityavailable = (int)(push.CapacityLitres * props.ItemsPerLitre) - (int)(push.StackSize);
-                        if (capacityavailable >= contents.StackSize)
-                        {
-                            push.TryTakeFrom(world, topush, topush.StackSize);
-                            //topush.TryPutInto(api.World, push, topush.StackSize);
-                            bucket.SetContent(byPlayer.InventoryManager.ActiveHotbarSlot.Itemstack, null);
-                        }
-                        else
-                        {
-                            int moved = push.TryTakeFrom(world, topush, topush.StackSize); // topush.TryPutInto(api.World, push, topush.StackSize);
-                            contents.StackSize -= moved;
-                            bucket.SetContent(byPlayer.InventoryManager.ActiveHotbarSlot.Itemstack, contents);
-                        }
-                        betank.MarkDirty(true);
-                        return true;
-                    }
-                    else
-                    {
-                        IVELiquidInterface ivel = betank as IVELiquidInterface;
-                        ItemSlotLiquidOnly pull = ivel.GetLiquidAutoPullFromSlot(blockSel.Face);
-                        if (pull == null) return true;
-                        WaterTightContainableProps props = BlockLiquidContainerBase.GetContainableProps(pull.Itemstack);
-                        int cancontain = (int)(bucket.CapacityLitres * props.ItemsPerLitre);
-                        if (cancontain >= pull.Itemstack.StackSize)
-                        {
-                            bucket.SetContent(byPlayer.InventoryManager.ActiveHotbarSlot.Itemstack, pull.Itemstack.Clone());
-                            pull.TakeOutWhole();
-                        }
-                        else
-                        {
-                            ItemStack pulled = pull.Itemstack.Clone();
-                            pulled.StackSize = cancontain;
-                            bucket.SetContent(byPlayer.InventoryManager.ActiveHotbarSlot.Itemstack, pulled.Clone());
-                            pull.TakeOut(cancontain);
-                        }
-                        betank.MarkDirty(true);
-                        return true;
-                    }
-                }
-                else if (byPlayer.InventoryManager.ActiveHotbarSlot.Itemstack.Collectible.Code.Path.Contains("stick"))
-                {
+                if (hotbarSlot.Itemstack.Collectible.Code.Path.Contains("stick"))
+                {                    
                     ItemSlotLiquidOnly pull = betank?.GetLiquidAutoPullFromSlot(blockSel.Face);
                     if (pull != null)
                     {
                         pull.TakeOutWhole(); // void the tank
+                    }
+                }
+                ILiquidSource source = hotbarSlot.Itemstack.Collectible as ILiquidSource;
+                if (source != null)
+                {
+                    if (!source.AllowHeldLiquidTransfer) return false;
+                    ItemStack contentstomove = source.GetContent(hotbarSlot.Itemstack);
+                    if (contentstomove != null && contentstomove.StackSize > 0)
+                    {
+                        DummySlot topush; // = new(contentstomove);
+                        if (hotbarSlot.Itemstack.StackSize > 1)
+                        {
+                            // we are holding more than one bucket
+                            ItemStack singlebucket = hotbarSlot.Itemstack.Clone();
+                            singlebucket.StackSize = 1;
+                            topush = new((singlebucket.Collectible as ILiquidSource).GetContent(singlebucket));
+                        }
+                        else
+                        {
+                            // just one bucket
+                            topush = new(contentstomove);
+                        }
+                        IVELiquidInterface ivel = betank as IVELiquidInterface;
+                        ItemSlotLargeLiquid pushto = (ItemSlotLargeLiquid)ivel.GetLiquidAutoPushIntoSlot(blockSel.Face, topush);
+                        if (pushto == null) return true;
+                        WaterTightContainableProps props = BlockLiquidContainerBase.GetContainableProps(contentstomove);
+                        int capacityavailable = (int)(pushto.CapacityLitres * props.ItemsPerLitre) - (int)(pushto.StackSize);
+
+                        int nummoved = pushto.TryTakeFrom(world, topush, topush.StackSize);
+                        
+                        if (nummoved > 0)
+                        {
+                            SplitStackAndPerformAction(byPlayer.Entity, hotbarSlot, delegate (ItemStack stack)
+                            {
+                                source.TryTakeContent(stack, nummoved);
+                                return nummoved;
+                            });
+                            DoLiquidMovedEffects(byPlayer, contentstomove, nummoved, EnumLiquidDirection.Pour);
+                            betank.MarkDirty(true);
+                            return true;
+                        }
+                    }
+                }
+
+                ILiquidSink sink = hotbarSlot.Itemstack.Collectible as ILiquidSink;
+                if (sink != null)
+                {
+                    if (!sink.AllowHeldLiquidTransfer) return false;
+                    ItemStack owncontentstack = GetContent(blockSel.Position);
+                    if (owncontentstack == null) return base.OnBlockInteractStart(world, byPlayer, blockSel);
+                    ItemStack liquidstackforparticles = owncontentstack.Clone();
+
+                    float liters = GameMath.Max(sink.TransferSizeLitres, sink.CapacityLitres);
+                    int moved2 = SplitStackAndPerformAction(byPlayer.Entity, hotbarSlot, (ItemStack stack) => sink.TryPutLiquid(stack, owncontentstack, liters));
+                    if (moved2 > 0)
+                    {
+                        TryTakeContent(blockSel.Position, moved2);
+                        DoLiquidMovedEffects(byPlayer, liquidstackforparticles, moved2, EnumLiquidDirection.Fill);
+                        return true;
                     }
                 }
             }
@@ -96,7 +108,7 @@ namespace VintageEngineering.Blocks
 
             return true;
         }
-        
+
         public MeshData GenMesh(ItemStack liquidContentStack, float capacity)
         {
             if (liquidContentStack == null || api.Side == EnumAppSide.Server) return null;

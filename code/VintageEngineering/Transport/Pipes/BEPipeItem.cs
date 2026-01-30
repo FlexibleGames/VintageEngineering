@@ -1,4 +1,5 @@
-﻿using VintageEngineering.Transport.API;
+﻿using VintageEngineering.Multiblock;
+using VintageEngineering.Transport.API;
 using VintageEngineering.Transport.Handlers;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
@@ -37,6 +38,15 @@ namespace VintageEngineering.Transport.Pipes
             else
             {
                 bec = world.BlockAccessor.GetBlock(targetpos).GetInterface<IBlockEntityContainer>(world, targetpos);
+            }
+            // VEMultiblock Checks
+            if (target is VEMBDummy targetdummy)
+            {
+                string variant = targetdummy.Variant["io"];
+                if (variant == "item")
+                {
+                    return true;
+                }
             }
             if (bec != null)
             {

@@ -1,11 +1,14 @@
 {
 	"code": "vemultiblockio",
-	"class": "Block",
+	"classByType": {
+		"*-interaction": "VEMBInteractable",
+		"*": "Block"
+	},
 	"creativeinventory": {
 		"vinteng": [ "*" ]
 	},
 	"variantgroups": [
-		{ "code": "io", "states": [ "item", "fluid", "power", "signal", "gas", "mechanical", "interaction" ] }
+		{ "code": "io", "states": [ "item", "fluid", "power", "signal", "gas", "mechanical", "interaction", "casting" ] }
 	],
 	"entityClassByType": {
 		"*-interaction": "MBBEInteractable"
@@ -24,7 +27,8 @@
 		"*-signal":			{ "base": "vinteng:block/multiblock/powerio" },
 		"*-gas":			{ "base": "vinteng:block/multiblock/powerio" },
 		"*-mechanical":		{ "base": "vinteng:block/multiblock/powerio" },
-		"*-interaction":	{ "base": "vinteng:block/multiblock/interaction" }
+		"*-interaction":	{ "base": "vinteng:block/multiblock/interaction" },
+		"*-casting":		{ "base": "vinteng:block/multiblock/powerio" }
 	},
 	"resistance": 2,
 	"lightAbsorption": 1,

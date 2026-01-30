@@ -14,12 +14,13 @@ namespace VintageEngineering.Multiblock
     /// </summary>
     public class VEMBEntityCore : ElectricContainerBE
     {
+        public VEMultiblockBeh Multiblock { get { return this.GetBehavior<VEMultiblockBeh>(); } }
 
         internal int activelayer = 0;
 
         public override void Initialize(ICoreAPI api)
         {
-            base.Initialize(api);            
+            base.Initialize(api);
         }
 
         public override InventoryBase Inventory => throw new NotImplementedException();

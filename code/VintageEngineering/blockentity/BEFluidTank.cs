@@ -117,7 +117,7 @@ namespace VintageEngineering.blockentity
             foreach (int slot in InputLiquidContainerSlotIDs)
             {
                 if (Inventory[slot].Empty) continue;
-                if (fromSlot != null && fromSlot.Itemstack.Equals(Api.World, Inventory[slot].Itemstack, GlobalConstants.IgnoredStackAttributes))
+                if (fromSlot != null && fromSlot.Itemstack != null && fromSlot.Itemstack.Equals(Api.World, Inventory[slot].Itemstack, GlobalConstants.IgnoredStackAttributes))
                 {                    
                     if (Inventory[slot].Itemstack.StackSize == Inventory[slot].MaxSlotStackSize) continue;
 

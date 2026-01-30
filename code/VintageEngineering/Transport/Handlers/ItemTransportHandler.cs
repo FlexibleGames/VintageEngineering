@@ -36,7 +36,7 @@ namespace VintageEngineering.Transport.Handlers
                 }
                 if (!BEPipeBase.IsChunkLoaded(world, connectedto)) return;
             }
-            InventoryBase inv = (InventoryBase)((world.BlockAccessor.GetBlock(connectedto).GetInterface<IBlockEntityContainer>(world, connectedto)).Inventory);
+            InventoryBase inv = (InventoryBase)((world.BlockAccessor.GetBlock(connectedto).GetInterface<IBlockEntityContainer>(world, connectedto))?.Inventory);
             if (inv == null) return; // sanity check 2
             int stacksize = node.UpgradeRate;
             ItemSlot pull;
@@ -179,9 +179,9 @@ namespace VintageEngineering.Transport.Handlers
                         if (!BEPipeBase.IsChunkLoaded(world, target)) return null;
                     }                    
                     IBlockEntityContainer contain = world.BlockAccessor.GetBlock(target).GetInterface<IBlockEntityContainer>(world, target);
-                    if (contain.Inventory is InventoryBase inv)
+                    if (contain != null && contain.Inventory is InventoryBase inv)
                     {                        
-                        ItemSlot push = inv.GetAutoPushIntoSlot(BlockFacing.FromCode(node.FaceCode).Opposite, pullfrom);
+                        ItemSlot push = inv.GetAutoPushIntoSlot(BlockFacing.FromCode(conarray[x].FaceCon).Opposite, pullfrom);
                         if (push == null) 
                         {                             
                             continue; 

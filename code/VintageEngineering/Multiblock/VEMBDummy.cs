@@ -74,6 +74,11 @@ namespace VintageEngineering.Multiblock
             return api.World.BlockAccessor.GetBlockEntity<VEMBEntityDummy>(pos)?.Offset;
         }
 
+        public bool IsValid(BlockPos pos)
+        {
+            return api.World.BlockAccessor.GetBlockEntity<VEMBEntityDummy>(pos) != null;
+        }
+
         #region BlatentBaseMultiblockCode
         // This section is tweaked to not rely on encoding offset into the block but rather a block entity.
         // While this strategy creates more block entities in a multiblock, it prevents the need of adding
@@ -127,7 +132,7 @@ namespace VintageEngineering.Multiblock
             Handle<IMultiBlockActivate>(world.BlockAccessor, bsOffseted.Position.X, bsOffseted.Position.InternalY, bsOffseted.Position.Z,
                 (inf) => inf.MBActivate(world, caller, bsOffseted, activationArgs, offsetinv),
                 (block) => base.Activate(world, caller, bsOffseted, activationArgs),
-                (block) => block.Activate(world, caller, bsOffseted, activationArgs));                
+                (block) => block.Activate(world, caller, bsOffseted, activationArgs));
         }
 
         public override BlockSounds GetSounds(IBlockAccessor ba, BlockSelection blockSel, ItemStack stack = null)
@@ -225,14 +230,19 @@ namespace VintageEngineering.Multiblock
 
         public override ItemStack OnPickBlock(IWorldAccessor world, BlockPos pos)
         {
-            Vec3i offsetinv = -GetOffset(pos);
-            return Handle<ItemStack, IMultiBlockInteract>(
-                world.BlockAccessor,
-                pos.X + offsetinv.X, pos.InternalY + offsetinv.Y, pos.Z + offsetinv.Z,
-                (inf) => inf.MBOnPickBlock(world, pos, offsetinv),
-                (block) => base.OnPickBlock(world, pos.AddCopy(offsetinv)),
-                (block) => block.OnPickBlock(world, pos.AddCopy(offsetinv))
-            );
+            Vec3i offsetinv = GetOffset(pos);
+            if (offsetinv != null)
+            {
+                offsetinv = -offsetinv;
+                return Handle<ItemStack, IMultiBlockInteract>(
+                    world.BlockAccessor,
+                    pos.X + offsetinv.X, pos.InternalY + offsetinv.Y, pos.Z + offsetinv.Z,
+                    (inf) => inf.MBOnPickBlock(world, pos, offsetinv),
+                    (block) => base.OnPickBlock(world, pos.AddCopy(offsetinv)),
+                    (block) => block.OnPickBlock(world, pos.AddCopy(offsetinv))
+                );
+            }
+            else return base.OnPickBlock(world, pos);
         }
 
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
@@ -310,6 +320,8 @@ namespace VintageEngineering.Multiblock
 
         public override string GetPlacedBlockInfo(IWorldAccessor world, BlockPos pos, IPlayer forPlayer)
         {
+            if (!IsValid(pos)) return base.GetPlacedBlockInfo(world, pos, forPlayer);
+
             Vec3i offsetinv = -GetOffset(pos);
             BlockPos mainPos = pos.AddCopy(offsetinv);
             Block block = world.BlockAccessor.GetBlock(mainPos);
@@ -446,6 +458,22 @@ namespace VintageEngineering.Multiblock
             }
 
             return new AssetLocation(Code.Domain, "vembdummy-" + Variant["io"] + "-" + rotatedcode);
+        }
+
+        public override T GetInterface<T>(IWorldAccessor world, BlockPos pos)
+        {
+            Vec3i offsetinv = -GetOffset(pos);
+
+            T blockt = this as T;
+            if (blockt != null)
+            {
+                return blockt;
+            }
+
+            Block block = world.BlockAccessor.GetBlock(pos.AddCopy(offsetinv));
+            if (block is VEMBDummy) return base.GetInterface<T>(world, pos); // prevent infinite loop
+
+            return block.GetInterface<T>(world, pos.AddCopy(offsetinv));
         }
 
         #endregion

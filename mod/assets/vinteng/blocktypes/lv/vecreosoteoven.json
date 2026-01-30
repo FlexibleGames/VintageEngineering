@@ -4,7 +4,7 @@
 	"entityClass": "VEBECreosoteOven",
 	"behaviors": [
 		{ "name": "Multiblock", "properties": { "sizex": 3, "sizey": 4, "sizez": 3, "cposition": { "x": 1, "y": 0, "z": 1 } } },
-		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "vecreosoteoven-north" }}}
+		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "vembcreosoteoven-incomplete-north" }}}
 	],
 	"variantgroups": [
 		{ "code":"side", "loadFromProperties": "abstract/horizontalorientation" }

@@ -32,7 +32,9 @@ namespace VintageEngineering.Multiblock
         private void RegisterClasses(ICoreAPI api)
         {
             // blocks are first
+            api.RegisterBlockClass("VEMBCore", typeof(VEMBCore));
             api.RegisterBlockClass("VEMBDummy", typeof(VEMBDummy));
+            api.RegisterBlockClass("VEMBInteractable", typeof(BlockInteractable));
 
             // block entities are second
             api.RegisterBlockEntityClass("VEMBEntityDummy", typeof(VEMBEntityDummy));

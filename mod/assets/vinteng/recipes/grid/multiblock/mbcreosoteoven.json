@@ -1,0 +1,12 @@
+[
+	{
+		"ingredientPattern": "X_X,_M_,X_X",
+		"ingredients": {
+			"X": { "type": "block", "code": "game:brickcourse-four-running-gray", "quantity": 1 },
+			"M": { "type": "block", "code": "vinteng:machineryblock-*", "allowedVariants": ["tinbronze"], "quantity": 1 }
+		},
+		"width": 3,
+		"height": 3,
+		"output": { "type": "block", "code": "vinteng:vembcreosoteoven-incomplete-north", "quantity": 1  }
+	}
+]

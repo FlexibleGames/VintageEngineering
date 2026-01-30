@@ -1,0 +1,36 @@
+[
+	{
+		"ingredientPattern": "SPS,PRP,SPS",
+		"ingredients": {
+			"R": { "type": "block", "code": "vinteng:machineryblock-iron", "quantity": 2 },
+			"S": { "type": "item", "code": "vinteng:screw-*", "allowedVariants":["brass"],  "quantity": 2 },
+			"P": { "type": "item", "code": "vinteng:machineplate-tinbronze", "quantity": 1 }
+		},
+		"width": 3,
+		"height": 3,
+		"output": { "type": "block", "code": "vinteng:vembcomponent-lighteng", "quantity": 4  }
+	},
+	{
+		"ingredientPattern": "SPS,PRP,SPS",
+		"ingredients": {
+			"R": { "type": "block", "code": "vinteng:machineryblock-steel", "quantity": 2 },
+			"S": { "type": "item", "code": "vinteng:screw-*", "allowedVariants":["steel"],  "quantity": 2 },
+			"P": { "type": "item", "code": "vinteng:machineplate-steel", "quantity": 1 }
+		},
+		"width": 3,
+		"height": 3,
+		"output": { "type": "block", "code": "vinteng:vembcomponent-heavyeng", "quantity": 4  }
+	},
+	{
+		"ingredientPattern": "SPS,P_P,SPS",
+		"ingredients": {
+			"S": { "type": "item", "code": "vinteng:screw-*", "allowedVariants":["steel"],  "quantity": 2 },
+			"P": { "type": "item", "code": "vinteng:machineplate-steel", "quantity": 1 }
+		},
+		"width": 3,
+		"height": 3,
+		"output": { "type": "block", "code": "vinteng:vembcomponent-steel", "quantity": 2  }
+	}
+]
+
+

@@ -550,5 +550,11 @@ namespace VintageEngineering.blockentity
         public void DropContents(Vec3d atPos)
         {            
         }
+
+        public void CheckInventoryClearedMidTick()
+        {
+            // new in 1.21.6
+            // going to ignore until I figure out why it exists.            
+        }
     }
 }
