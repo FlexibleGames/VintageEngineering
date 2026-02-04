@@ -42,7 +42,9 @@ namespace VintageEngineering.Multiblock
             mbs.HighlightSlotID = properties["highlightID"].AsInt(23);
             mbs.InitHighlightColors(properties["blockHighlightColors"]);
             mbs.InitBlockSwapMapping(properties["blockMapping"]);
-            mbs?.InitForUse(RotateY);
+            if (properties["attachable"].Exists) mbs.InitAttachable(properties["attachable"]);
+            if (properties["attributes"].Exists) mbs.InitAttributes(properties["attributes"]);
+            mbs.InitForUse(RotateY);
 
         }
 
@@ -144,7 +146,24 @@ namespace VintageEngineering.Multiblock
         #region IMultiBlockBlockProperties
         public bool MBCanAttachBlockAt(IBlockAccessor blockAccessor, Block block, BlockPos pos, BlockFacing blockFace, Cuboidi attachmentArea, Vec3i offsetInv)
         {
-            //BlockPos bs = pos.AddCopy(offsetInv);
+            Block checkblock = blockAccessor.GetBlock(pos);
+            if (checkblock != null && mbs.Attachables != null && mbs.Attachables.Count > 0)
+            {
+                if (checkblock is VEMBDummy dummy)
+                {
+                    if (mbs.BlockSwapMapping.ContainsValue(dummy.Code.Domain + ":" + dummy.CodeWithoutParts(1)))
+                    {
+                        int numb = mbs.GetBlockNumFromOffset(-offsetInv);
+                        if (mbs.Attachables.ContainsKey(numb))
+                        {
+                            if (mbs.Attachables[numb].Contains(blockFace.Code))
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
             return base.block.CanAttachBlockAt(blockAccessor, block, pos, blockFace, attachmentArea);
         }
 
