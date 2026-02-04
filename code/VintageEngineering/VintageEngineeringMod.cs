@@ -16,7 +16,7 @@ using VintageEngineering.blockBhv;
 using Vintagestory.API.Config;
 
 [assembly: ModInfo("VintageEngineering",
-                    Authors = new string[] { "Flexible Games", "bluelightning32" },
+                    Authors = new string[] { "Flexible Games" },
                     Description = "Late game tech, automation, power, and mining.",
                     Version = "1.0.0")]
 
@@ -215,8 +215,7 @@ namespace VintageEngineering
             api.RegisterBlockEntityClass("VEBECNC", typeof(BECNC));
             api.RegisterBlockEntityClass("VEBEMixer", typeof(BEMixer));
             api.RegisterBlockEntityClass("VEBEBattery", typeof(BEBattery));
-            api.RegisterBlockEntityClass("VEBELVCharger", typeof(BELVCharger));
-            api.RegisterBlockEntityClass("VEBECreosoteOven", typeof(BECreosoteOven));
+            api.RegisterBlockEntityClass("VEBELVCharger", typeof(BELVCharger));            
             api.RegisterBlockEntityClass("VEBEBlastFurnace", typeof(BEBlastFurnace));
             api.RegisterBlockEntityClass("VEBEBlower", typeof(BEBlower));
 
@@ -228,6 +227,10 @@ namespace VintageEngineering
             api.RegisterBlockEntityClass("VEBECrudeOilWell", typeof(BECrudeOilWell));
 
             api.RegisterBlockEntityClass("VEBEMVTransformer", typeof(BEMVTransformer));
+
+            // Multiblocks
+            api.RegisterBlockEntityClass("VEBECreosoteOven", typeof(BECreosoteOven));
+            api.RegisterBlockEntityClass("VEBEPumpjack", typeof(BEMBPumpJack));
         }
 
         public void RegisterBlockEntityBehaviors(ICoreAPI api)
