@@ -31,6 +31,8 @@ namespace VintageEngineering.Multiblock
         public List<BlockOffsetAndNumber> TransformedOffsets;
         public Dictionary<int, int> BlockHighlightColors;
         public Dictionary<int, string> BlockSwapMapping;
+        public Dictionary<int, string[]> Attachables;
+        public Dictionary<int, JsonObject> AttributesByNumber;
 
         public int MaxY => TransformedOffsets?.Max(v => v.Y) ?? int.MinValue;
 
@@ -64,6 +66,21 @@ namespace VintageEngineering.Multiblock
             }
         }
 
+        /// <summary>
+        /// Checks the given offset for a match in TransformedOffsets of this structure, returns the Block Number if found.
+        /// </summary>
+        /// <param name="offsetcheck"></param>
+        /// <returns></returns>
+        public int GetBlockNumFromOffset(Vec3i offsetcheck)
+        {
+            int? w = TransformedOffsets.FirstOrDefault(b =>
+                b.X == offsetcheck.X &&
+                b.Y == offsetcheck.Y &&
+                b.Z == offsetcheck.Z)?.W;
+
+            return w ?? -1;
+        }
+
         public string RotDegToDirection(float rotateYDeg)
         {
             if (rotateYDeg == 0) return "north";
@@ -90,6 +107,34 @@ namespace VintageEngineering.Multiblock
             foreach (JsonObject obj in array)
             {
                 BlockSwapMapping.Add(obj["w"].AsInt(), obj["tocode"].AsString());
+            }
+        }
+
+        public void InitAttachable(JsonObject json)
+        {
+            if (json == null) return;
+            JsonObject[] array = json.AsArray();
+            if (array == null || array.Length == 0) return;
+
+            Attachables = new Dictionary<int, string[]>();
+
+            foreach (JsonObject obj in array)
+            {
+                Attachables.Add(obj["w"].AsInt(), obj["sides"].AsArray<string>(Array.Empty<string>(), null));
+            }
+        }
+
+        public void InitAttributes(JsonObject json)
+        {
+            if (json == null) return;
+            JsonObject[] array = json.AsArray();
+            if (array == null || array.Length == 0) return;
+
+            AttributesByNumber = new Dictionary<int, JsonObject>();
+
+            foreach (JsonObject obj in array)
+            {
+                AttributesByNumber.Add(obj["w"].AsInt(), obj["attributes"]);
             }
         }
 
