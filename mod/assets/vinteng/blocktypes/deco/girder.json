@@ -3,7 +3,7 @@
 	"creativeinventory": {
 		"vinteng-decor": [ "*" ]
 	},
-	"blockmaterial": "Wood",
+	"blockmaterial": "Metal",
 	"drawtype": "json",
 	"shape": { "base": "block/deco/girder" },
 	"resistance": 2,
