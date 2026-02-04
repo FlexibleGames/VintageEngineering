@@ -112,7 +112,7 @@ namespace VintageEngineering
                     perliter = (int)props.ItemsPerLitre;
                 }
             }
-            if (RemainingPortions > 0) dsc.AppendLine($"{RemainingPortions / perliter}L {Lang.Get("vinteng:gui-word-remaining")}");
+            if (RemainingPortions > 0) dsc.AppendLine($"{(RemainingPortions / perliter)/1000}{Lang.Get("vinteng:gui-word-blocks")} {portion.GetHeldItemName(new ItemStack(portion))} {Lang.Get("vinteng:gui-word-remaining")}");
             else 
             {
                 if (CanBeInfinite) dsc.AppendLine($"{Lang.Get("vinteng:gui-depleted")}, {Lang.Get("vinteng:gui-isinfinite")}");
@@ -151,19 +151,21 @@ namespace VintageEngineering
             }
         }
 
-        public long PumpTick(float dt)
+        public long PumpTick(float dt, long ppscap = long.MaxValue)
         {
             if (Api.Side == EnumAppSide.Client) return -1;
             long amount = 0;
             if (_fluidportions > 0)
             {
                 amount = (long)(MaxPPS * dt);
+                amount = (long)Math.Min(amount, ppscap * dt);
                 if (amount > _fluidportions) amount = _fluidportions;
                 _fluidportions -= amount;
             }
             else
             {
                 amount = (long)(TricklePortions * dt);
+                amount = (long)Math.Min(amount, ppscap * dt);
                 if (!CanBeInfinite) amount = 0;
             }
             return amount;
