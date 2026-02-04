@@ -17,6 +17,9 @@
 	"vinteng:guide-power-title": "VintEng: Power",
 	"vinteng:guide-power-text": "<strong>Virtual Voltage</strong><br>The power system of Vintage Engineering was built with every effort to make it available to all modders to use and augment.<br>First, the wire system itself is a seperate mod (Catenary Mod) and has support for many different wire use cases. The wire use types can easily be expanded via JSON Patches as it is defined in the assets/game/blocktypes/wire/catenary.json file of the mod.<br>For Vintage Engineering I currently implement LV Power wire. LV stands for Low Voltage and this will become more important as MV and HV tiers are built.<br>Crafting <a href=\"handbook://block-catenary-lvpower\">LV Wire</a> is done via smithing in the early game (with copper ingots), or via the Extruder using the LV Gauge Die Cast and Copper Rods. Using Machines is always the most efficient method.<br>With LV Wire in your hand, right click the little gold nub on any machine and it will form a wire connection you can then stretch to another connection point.<br>By default, machines only allow ONE connection, so for more complex electric networks you will need to craft some <a href=\"handbook://block-wirerelay-lvpower-up\">LV Relays</a>. These require some Clayforming and glass. LV Relays allow up to 5 connections per relay. These settings can be changed using vanilla JSON patch mechanics.<br>LV Batteries require only 1 connection and are both an input and output of power.<br>If you sneak-right-click on a wire node with Wire Cutters it will sever all wire connections on that node. There is no way that I have found to easily single out a wire as the wires are not actual physical objects in the world.As the mod progresses LV Tier will be updated to only allow a finite amount of power per second and any needs over that you will require converting from and to MV networks. But this has not been implemented yet.",
 
+	"vinteng:guide-oil-title": "VintEng: Oil",
+	"vinteng:guide-oil-text": "<strong>Oil and MV Power</strong><br>Oil, aka Texas Tea, aka Black Gold, is a hydrocarbon with enormous potential. In order to harness and extract this potential you must first find, tap, and pump the thick liquid.<br><strong>Step One</strong><br>Oil can be found inside deep sedimentary rock layers which have no signs on the surface they even exist, or in deposits so good they form gysers on the surface. The center of these gysers can be tracked down to a Crude Oil Well source which has even more oil that is only extractable with specialized machines.<br><strong>Step Two</strong><br>Use a normal pump to extract what fluid you find on the surface. This will provide a little jump-start to your blossoming oil industry. Once the surface is down to the center hole you will need to construct an Oil Derrick centered over the top of that hole. This huge machine will place Well Casing, which you need to provide, and extract any oil it finds on the way to the well block.<br><strong>Step Three</strong><br>Once the Well Casing goes down to the well block dismantle the Derrick and build a Pumpjack, placed so the head of the multiblock (Light Engineering block) is on top of the Well Casing. Do not place the Pumpjack core on the casing.<br><strong>Step Four</strong><br>You have oil, you likely have a lot of oil. Now it is time to refine it into one or more parts. The Distillation tower is a very special machine. You can build the basic unit and output a single type, Fuel, for use in generators. If you want more outputs, you will need to build Distillation Extensions on top of it, one for every new output, up to 6 max extensions.<br><strong>Step Five</strong><br>Cracking, you knew it was coming. The more products the tower produces the more can get out of each liter of input. Also by outputing more products you can now take those products and further refine them to get more of what you want. Build a Refinery to crack Heavy Fuel Oil into Diesel and Gasoline using water.<strong>Misc Notes</strong><br>- The more outputs the Distillation tower makes the more power the base will require. This is a hyperbolic curve, so the max 7 outputs will require exponentially more power than 3 outputs.<br>- Oil can be found in non-gyser desposits underground in deep sedimentary rock. Use a normal fluid pump to tap these deposits.<br>- Need more fuel? Build a second Distillation tower. The more outputs the tower makes the more efficient the process, but it can't be sped up.<br>- Different fuels provide different power output profiles.<br>- My hope is that other mod authors use this process to expand this stage of the mod to great heights! Recipes can be added and are patchable, all machine stats are patchable, maximum flexiblility.",
+
 	"vinteng:block-velvgenerator-*": "VE Generator (LV)",
 	"vinteng:blockdesc-velvgenerator-*": "Burns combustibles to generate power, inefficient, upgrade as soon as possible.",
 	"vinteng:block-vemetalpress-*": "VE Metal Press",
@@ -190,6 +193,9 @@
 	"vinteng:gui-word-seconds": "Seconds",
 	"vinteng:gui-word-temp": "Temp:",
 	"vinteng:gui-word-time": "Time",
+	"vinteng:gui-word-fluid": "Fluid",
+	"vinteng:gui-word-gas": "Gas",
+	"vinteng:gui-word-heat": "Heat",
 	"vinteng:gui-machine-pps": "Power Per Second",
 	"vinteng:gui-machine-notcrafting": "Not Crafting",
 	"vinteng:gui-machine-paused": "Paused, likely out of power.",
@@ -308,7 +314,7 @@
 	"vinteng:gui-isinfinite": "Source is considered infinite.",
 	"vinteng:gui-depleted": "Well Depleted",
 	"vinteng:gui-word-fuel": "Fuel",
-
+	"vinteng:gui-word-blocks": "Blocks",
 	"vinteng:block-velvcharger-*": "Item Charger (LV)",
 	"vinteng:blockdesc-velvcharger-*": "Charges items placed inside it. Chargable items should either have the JSON attribute \"chargable:true\" which will use base-game durability or the Item class can implement the IChargable interface from the VE API for more fine-tuned and controlable charging.",
 	"vinteng:gui-word-charging": "Charging",
@@ -396,6 +402,15 @@
 	"vinteng:block-vembcreosoteoven-incomplete-*": "Creosote Oven Core",
 	"vinteng:block-vembcreosoteoven-built-*": "Creosote Oven",
 	"vinteng:blockdesc-vembcreosoteoven-*": "Creosote Oven is a Multiblock (MB) structure that can create Wood-Tar Creosote from Oak and Pine logs and charcoal from all other wood logs as well as Coal-Tar Creosote from all coal variants.<br>To build, craft and place the Creosote Oven Core then right click core with wrench to show missing blocks. These blocks are color-coded by type outlined below.<br><br>Light Blue : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"game:brickcourse-four-running-gray\"/><br>Green : <itemstack rsize=\"1\" type=\"block\" code=\"vinteng:vemultiblockio-item\"/><br>Red : <itemstack rsize=\"1\" type=\"block\" code=\"vinteng:vemultiblockio-interaction\"/><br>Yellow : <itemstack rsize=\"1\" type=\"block\" code=\"vinteng:vemultiblockio-fluid\"/><br><br>Once the Core is inaccessable, right click the Interaction block to progress layers or validate the structure.",
+
+	"vinteng:block-vembpumpjack-incomplete-*": "PumpJack Core",
+	"vinteng:block-vembpumpjack-built-*": "PumpJack",
+	"vinteng:blockdesc-vembpumpjack-incomplete-*": "The PumpJack is a Multiblock (MB) and should be built so the head (Light Engineering block <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"vinteng:vembcomponent-lighteng\"/>) is directly over the pipe leading to the well which were placed by the oil derrick.",
+	"vinteng:block-wellcasing": "Well Casing",
+	"vinteng:blockdesc-wellcasing": "Well Casing needs to be supplied to the Derrick which places these as it pushes deeper into the ground. In order for the PumpJack to access the Well these are required in every space all the way to the Well source block.<br>Crafted in the Mixer.",
+
+	"vinteng:gui-wellinfo": "Well Details:",
+	"vinteng:gui-wellerror": "Well Not Found!",
 
 	"eof": "End Of File"
 }
