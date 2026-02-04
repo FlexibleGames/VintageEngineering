@@ -247,45 +247,67 @@ namespace VintageEngineering.Multiblock
 
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
         {
-            Vec3i offsetinv = -GetOffset(blockSel.Position);
-            BlockSelection bsOffseted = blockSel.Clone();
-            bsOffseted.Position.Add(offsetinv);
+            if (byPlayer.Entity.Controls.Sneak)
+            {
+                return base.OnBlockInteractStart(world, byPlayer, blockSel);
+            }
+            else
+            {
+                Vec3i offsetinv = -GetOffset(blockSel.Position);
+                BlockSelection bsOffseted = blockSel.Clone();
+                bsOffseted.Position.Add(offsetinv);
 
-            return Handle<bool, IMultiBlockInteract>(
-                world.BlockAccessor,
-                bsOffseted.Position.X, bsOffseted.Position.InternalY, bsOffseted.Position.Z,
-                (inf) => inf.MBOnBlockInteractStart(world, byPlayer, blockSel, offsetinv),
-                (block) => base.OnBlockInteractStart(world, byPlayer, bsOffseted),
-                (block) => block.OnBlockInteractStart(world, byPlayer, bsOffseted)
-            );
-        }
+                return Handle<bool, IMultiBlockInteract>(
+                    world.BlockAccessor,
+                    bsOffseted.Position.X, bsOffseted.Position.InternalY, bsOffseted.Position.Z,
+                    (inf) => inf.MBOnBlockInteractStart(world, byPlayer, blockSel, offsetinv),
+                    (block) => base.OnBlockInteractStart(world, byPlayer, bsOffseted),
+                    (block) => block.OnBlockInteractStart(world, byPlayer, bsOffseted)
+                );
+            }
+        }        
+
         public override bool OnBlockInteractStep(float secondsUsed, IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
         {
-            Vec3i offsetinv = -GetOffset(blockSel.Position);
-            BlockSelection bsOffseted = blockSel.Clone();
-            bsOffseted.Position.Add(offsetinv);
+            if (byPlayer.Entity.Controls.Sneak)
+            {
+                return base.OnBlockInteractStep(secondsUsed, world, byPlayer, blockSel);
+            }
+            else
+            {
+                Vec3i offsetinv = -GetOffset(blockSel.Position);
+                BlockSelection bsOffseted = blockSel.Clone();
+                bsOffseted.Position.Add(offsetinv);
 
-            return Handle<bool, IMultiBlockInteract>(
-                world.BlockAccessor,
-                bsOffseted.Position.X, bsOffseted.Position.InternalY, bsOffseted.Position.Z,
-                (inf) => inf.MBOnBlockInteractStep(secondsUsed, world, byPlayer, blockSel, offsetinv),
-                (block) => base.OnBlockInteractStep(secondsUsed, world, byPlayer, bsOffseted),
-                (block) => block.OnBlockInteractStep(secondsUsed, world, byPlayer, bsOffseted)
-            );
+                return Handle<bool, IMultiBlockInteract>(
+                    world.BlockAccessor,
+                    bsOffseted.Position.X, bsOffseted.Position.InternalY, bsOffseted.Position.Z,
+                    (inf) => inf.MBOnBlockInteractStep(secondsUsed, world, byPlayer, blockSel, offsetinv),
+                    (block) => base.OnBlockInteractStep(secondsUsed, world, byPlayer, bsOffseted),
+                    (block) => block.OnBlockInteractStep(secondsUsed, world, byPlayer, bsOffseted)
+                );
+            }
         }
         public override void OnBlockInteractStop(float secondsUsed, IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
         {
-            Vec3i offsetinv = -GetOffset(blockSel.Position);
-            BlockSelection bsOffseted = blockSel.Clone();
-            bsOffseted.Position.Add(offsetinv);
+            if (byPlayer.Entity.Controls.Sneak)
+            {
+                base.OnBlockInteractStop(secondsUsed, world, byPlayer, blockSel);
+            }
+            else
+            {
+                Vec3i offsetinv = -GetOffset(blockSel.Position);
+                BlockSelection bsOffseted = blockSel.Clone();
+                bsOffseted.Position.Add(offsetinv);
 
-            Handle<IMultiBlockInteract>(
-                world.BlockAccessor,
-                bsOffseted.Position.X, bsOffseted.Position.InternalY, bsOffseted.Position.Z,
-                (inf) => inf.MBOnBlockInteractStop(secondsUsed, world, byPlayer, blockSel, offsetinv),
-                (block) => base.OnBlockInteractStop(secondsUsed, world, byPlayer, bsOffseted),
-                (block) => block.OnBlockInteractStop(secondsUsed, world, byPlayer, bsOffseted)
-            );
+                Handle<IMultiBlockInteract>(
+                    world.BlockAccessor,
+                    bsOffseted.Position.X, bsOffseted.Position.InternalY, bsOffseted.Position.Z,
+                    (inf) => inf.MBOnBlockInteractStop(secondsUsed, world, byPlayer, blockSel, offsetinv),
+                    (block) => base.OnBlockInteractStop(secondsUsed, world, byPlayer, bsOffseted),
+                    (block) => block.OnBlockInteractStop(secondsUsed, world, byPlayer, bsOffseted)
+                );
+            }
         }
 
         public override bool OnBlockInteractCancel(float secondsUsed, IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel, EnumItemUseCancelReason cancelReason)
