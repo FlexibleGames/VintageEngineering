@@ -1,0 +1,15 @@
+{
+	"code": "wellcasing",
+	"creativeinventory": {
+		"vinteng-decor": [ "*" ]
+	},
+	"maxStackSize": 50,
+	"blockmaterial": "Stone",
+	"drawtype": "json",
+	"shape": { "base": "block/pipes/well-casing" },
+	"resistance": 1,
+	"sounds": {
+		"place": "game:block/stone",
+		"walk": "game:walk/stone"
+	}
+}
