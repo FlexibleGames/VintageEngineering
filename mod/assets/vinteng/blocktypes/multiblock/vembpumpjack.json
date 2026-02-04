@@ -1,0 +1,136 @@
+{
+	"code": "vembpumpjack",
+	"class": "VEMBCore",
+	"entityClass": "VEBEPumpjack",
+	"behaviors": [
+		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "vembpumpjack-incomplete-north" }}},
+		{"name": "VEMultiblockBeh", "properties": {
+			"highlightID": 56,
+			"blockHighlightColors": [
+				{ "w": 1, "r": 50, "g": 50, "b": 50, "a": 180 },
+				{ "w": 2, "r": 180, "g": 180, "b": 180, "a": 180 },
+				{ "w": 3, "r": 250, "g": 0, "b": 0, "a": 180 },
+				{ "w": 4, "r": 215, "g": 215, "b": 215, "a": 180 },
+				{ "w": 5, "r": 81, "g": 41, "b": 26, "a": 180 },
+				{ "w": 6, "r": 0, "g": 215, "b": 0, "a": 180 },
+				{ "w": 7, "r": 215, "g": 215, "b": 0, "a": 180 },
+				{ "w": 8, "r": 147, "g": 0, "b": 147, "a": 180 }
+			],
+			"blockMapping": [
+				{ "w": 1, "tocode": "vinteng:vembdummy-none" },
+				{ "w": 2, "tocode": "vinteng:vembdummy-none" },
+				{ "w": 3, "tocode": "vinteng:vembdummy-interaction" },
+				{ "w": 5, "tocode": "vinteng:vembdummy-none" },
+				{ "w": 6, "tocode": "vinteng:vembdummy-none" },
+				{ "w": 7, "tocode": "vinteng:vembdummy-fluid" },
+				{ "w": 8, "tocode": "vinteng:vembdummy-power" }
+			],
+			"attachable": [
+				{ "w": 8, "sides": ["up"] }
+			],
+			"attributes": [
+				{ "w": 8, "attributes": { "wirefunction": "Power", "powertier": "MV" } }
+			],
+			"multiblockStructure": {
+				"blockNumbers": {
+					"vinteng:vembcomponent-heavyeng": 1,
+					"vinteng:vembcomponent-steel": 2,
+					"vinteng:vemultiblockio-interaction": 3,
+					"vinteng:vembpumpjack-incomplete-north": 4,
+					"vinteng:treatedwood-horizontal-north": 5,
+					"vinteng:vembcomponent-lighteng": 6,
+					"vinteng:vemultiblockio-fluid": 7,
+					"vinteng:vemultiblockio-power": 8
+				},
+				"offsets": [
+					{ "x": 0, "y": 2, "z": 0, "w": 1 },
+					{ "x": 0, "y": 2, "z": -2, "w": 2 },
+					{ "x": 0, "y": 3, "z": 0, "w": 2 },
+					{ "x": 0, "y": 3, "z": 1, "w": 2 },
+					{ "x": 0, "y": 3, "z": -1, "w": 2 },
+					{ "x": 0, "y": 3, "z": 2, "w": 2 },
+					{ "x": 0, "y": 3, "z": -2, "w": 2 },
+					{ "x": 0, "y": 1, "z": 0, "w": 3 },
+					{ "x": 0, "y": 1, "z": 1, "w": 1 },
+					{ "x": 0, "y": 4, "z": -2, "w": 2 },
+					{ "x": 0, "y": 0, "z": 0, "w": 4 },
+					{ "x": 0, "y": 0, "z": 1, "w": 5 },
+					{ "x": 0, "y": 0, "z": -1, "w": 5 },
+					{ "x": 0, "y": 0, "z": 2, "w": 5 },
+					{ "x": 0, "y": 0, "z": -2, "w": 6 },
+					{ "x": 1, "y": 0, "z": 0, "w": 7 },
+					{ "x": 1, "y": 0, "z": 1, "w": 5 },
+					{ "x": 1, "y": 0, "z": -1, "w": 5 },
+					{ "x": 1, "y": 0, "z": 2, "w": 5 },
+					{ "x": -1, "y": 1, "z": 2, "w": 8 },
+					{ "x": -1, "y": 0, "z": 0, "w": 7 },
+					{ "x": -1, "y": 0, "z": 1, "w": 5 },
+					{ "x": -1, "y": 0, "z": -1, "w": 5 },
+					{ "x": -1, "y": 0, "z": 2, "w": 5 }
+				]
+			}
+		}}
+	],
+	"variantgroups": [
+		{ "code": "state", "states": ["incomplete", "built"]},
+		{ "code":"side", "loadFromProperties": "abstract/horizontalorientation" }
+	],
+	"entityBehaviors": [
+		{ "name": "Animatable" },
+		{
+			"name": "Electric",
+			"properties": {
+				"canExtractPower": false,
+				"canReceivePower": true,
+				"entitytype": "Consumer",
+				"maxpower": 2000,
+				"maxpps": 500
+			}
+		}
+	],
+	"attributes": {
+		"handbook": {
+			"groupBy": ["vembpumpjack-*"],
+			"excludeByType": {
+				"*-incomplete-north": false,
+				"*": true
+			}
+		},
+		"craftinganimcode": "pumping",
+		"allowHeldLiquidTransfer": true,
+		"allowPipeLiquidTransfer": true,
+		"sourceBlocksPerSecond": 1,
+		"fluidCapacityLiters": 8000,
+		"wellCasingCode": "vinteng:wellcasing"
+	},
+	"shapeinventory": { "base": "block/multiblock/machine/pumpjack-core" },
+	"creativeinventory": { "general": ["vembpumpjack-incomplete-north"], "terrain": ["*"], "mechanics": ["*"], "vinteng": ["*-incomplete-north"] },
+	"shapeByType": {
+		"*-incomplete-north": 	{ "base": "vinteng:block/multiblock/machine/pumpjack-core", "rotateY":0 },
+		"*-incomplete-east": 	{ "base": "vinteng:block/multiblock/machine/pumpjack-core", "rotateY":270 },
+		"*-incomplete-south": 	{ "base": "vinteng:block/multiblock/machine/pumpjack-core", "rotateY":180 },
+		"*-incomplete-west": 	{ "base": "vinteng:block/multiblock/machine/pumpjack-core", "rotateY":90 },
+		"*-built-north": 	{ "base": "vinteng:block/multiblock/machine/pumpjack", "rotateY":0 },
+		"*-built-east": 	{ "base": "vinteng:block/multiblock/machine/pumpjack", "rotateY":270 },
+		"*-built-south": 	{ "base": "vinteng:block/multiblock/machine/pumpjack", "rotateY":180 },
+		"*-built-west": 	{ "base": "vinteng:block/multiblock/machine/pumpjack", "rotateY":90 }
+	},
+	"blockmaterial": "Metal",
+	"drawtype": "json",
+	"sidesolid": {
+		"all": false, "down": true
+	},
+	"sideopaque": {
+		"all": false
+	},
+	"lightAbsorption": 1,
+	"maxStackSize": 8,
+	"replaceable": 600,
+	"resistance": 1.5,
+	"collisionSelectionBoxes": [
+		{ "x1": 0, "y1": 0, "z1": 0, "x2": 1, "y2": 1, "z2": 1 }
+	],
+	"guiTransform": {
+		"rotation": { "x": -22.6, "y": -149, "z": 0 }
+	}
+}
