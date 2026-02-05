@@ -31,6 +31,10 @@
         /// </summary>
         Relay,
         /// <summary>
+        /// Special type that will pass all calls to another entity.
+        /// </summary>
+        PassThrough,
+        /// <summary>
         /// Some other type of entity not covered in any other given types.
         /// </summary>
         Other

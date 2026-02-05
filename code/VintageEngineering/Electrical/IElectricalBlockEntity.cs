@@ -28,7 +28,7 @@ namespace VintageEngineering.Electrical
 
         /// <summary>
         /// What sort of Machine is this?
-        /// <br>Valid Types: Consumer, Producer, Storage, Transformer, Toggle, Relay, Other</br>
+        /// <br>Valid Types: Consumer, Producer, Storage, Transformer, Toggle, Relay, PassThrough, Other</br>
         /// </summary>
         EnumElectricalEntityType ElectricalEntityType { get; }
 
