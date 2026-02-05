@@ -38,7 +38,7 @@ namespace VintageEngineering
         public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
         {
             float powerpercent = 0f;
-            if (Electric.MaxPower > 0) powerpercent = Electric.CurrentPower / Electric.MaxPower;
+            if (Electric.MaxPower > 0) powerpercent = (float)((double)Electric.CurrentPower / (double)Electric.MaxPower);
             int percentpower = (int)(powerpercent * 100);
 
             base.GetBlockInfo(forPlayer, dsc);            
@@ -132,7 +132,7 @@ namespace VintageEngineering
                 else 
                 {
                     // well is valid, but we may have to wake up
-                    if (MachineState == EnumBEState.Sleeping)
+                    if (MachineState == EnumBEState.Sleeping || MachineState == EnumBEState.Off)
                     {
                         newstate = EnumBEState.On;
                     }
@@ -144,41 +144,41 @@ namespace VintageEngineering
                 // if we're supposed to be on, but we don't have enough power, sleep
                 if (newstate == EnumBEState.On) newstate = EnumBEState.Sleeping;
             }
-            else
-            {
-                if (newstate == EnumBEState.On)
-                {
-                    // we have enough power and a valid well! \o/
-                    int literspersecond = _sourceBlocksPerSecond * 1000;
-                    int portionperliter = 100;
-                    IFluidWell thewell = GetWellAt(_wellPosition);
-                    Item portion = Api.World.GetItem(new AssetLocation(thewell?.FluidPortionCode));
-                    if (portion != null)
-                    {
-                        ItemStack portionstack = new ItemStack(portion);
-                        WaterTightContainableProps props = BlockLiquidContainerBase.GetContainableProps(portionstack);
-                        if (props != null)
-                        {
-                            // this is an insane chain of things I have to do just to get the damn props
-                            portionperliter = ((int)props.ItemsPerLitre); // almost always 100, should be 1000 for milliliters. 
-                        }
-                    }
-                    // a truly crazy way of turning blocks/s of source fluid into portions/s
-                    // by default 1 block/s * 1000 * 100 = 100,000 portions per second
-                    long portionpersecond = literspersecond * portionperliter;
-                    float availliters = Output.CapacityLitres * 100; // 100 portions per liter is the standard... default to this
-                    if (!_inventory[0].Empty) availliters = Output.CapacityLitres * BlockLiquidContainerBase.GetContainableProps(Output.Itemstack).ItemsPerLitre - _inventory[0].Itemstack.StackSize;
-                    long availportion = (long)(availliters * portionperliter);
-                    portionpersecond = Math.Min(portionpersecond, availportion);
+            else newstate = EnumBEState.On; // power is green
 
-                    long texastea = thewell.PumpTick(dt, portionpersecond);
-                    if (!_inventory[0].Empty) _inventory[0].Itemstack.StackSize += ((int)texastea);
-                    else
+            if (newstate == EnumBEState.On)
+            {
+                // we have enough power and a valid well! \o/
+                int literspersecond = _sourceBlocksPerSecond * 1000;
+                int portionperliter = 100;
+                IFluidWell thewell = GetWellAt(_wellPosition);
+                Item portion = Api.World.GetItem(new AssetLocation(thewell?.FluidPortionCode));
+                if (portion != null)
+                {
+                    ItemStack portionstack = new ItemStack(portion);
+                    WaterTightContainableProps props = BlockLiquidContainerBase.GetContainableProps(portionstack);
+                    if (props != null)
                     {
-                        _inventory[0].Itemstack = new ItemStack(portion, ((int)texastea));
+                        // this is an insane chain of things I have to do just to get the damn props
+                        portionperliter = ((int)props.ItemsPerLitre); // almost always 100, should be 1000 for milliliters. 
                     }
-                    Electric.electricpower -= Electric.RatedPower(dt, false);
                 }
+                // a truly crazy way of turning blocks/s of source fluid into portions/s
+                // by default 1 block/s * 1000 * 100 = 100,000 portions per second
+                long portionpersecond = literspersecond * portionperliter;
+                double availportion = Output.CapacityLitres * 100; // 100 portions per liter is the standard... default to this, if it's empty this is the available by default.
+                if (!_inventory[0].Empty) availportion = Output.CapacityLitres * BlockLiquidContainerBase.GetContainableProps(Output.Itemstack).ItemsPerLitre - _inventory[0].Itemstack.StackSize;
+
+                portionpersecond = Math.Min(portionpersecond, (long)availportion);
+
+                long texastea = thewell.PumpTick(dt, portionpersecond);
+                if (!_inventory[0].Empty) _inventory[0].Itemstack.StackSize += ((int)texastea);
+                else
+                {
+                    _inventory[0].Itemstack = new ItemStack(portion, ((int)texastea));
+                }
+                if (texastea > 0) Electric.electricpower -= Electric.RatedPower(dt, false);
+                
             }
             if (MachineState != newstate) SetState(newstate);
 
@@ -316,7 +316,7 @@ namespace VintageEngineering
             string ccw = BlockFacing.FromCode(rotside).GetCCW().Code;
 
             // check left and right faces at the very least.
-            if (blockFacing.Code != cw || blockFacing.Code != ccw) return null;
+            if (blockFacing.Code != cw && blockFacing.Code != ccw) return null;
 
             return OutputSlot as ItemSlotLiquidOnly;
         }
@@ -375,7 +375,7 @@ namespace VintageEngineering
                     AnimUtil.StopAnimation(base.Block.Attributes["craftinganimcode"].AsString());
                 }
             }
-            _clientUpdateDelay += 0.05f; //MarkDirty(true);
+            MarkDirty(true); // _clientUpdateDelay += 0.05f; 
         }
         #endregion
 
@@ -393,8 +393,9 @@ namespace VintageEngineering
         {
             base.FromTreeAttributes(tree, worldForResolving);
             _inventory.FromTreeAttributes(tree.GetTreeAttribute("inventory"));
-            if (tree.HasAttribute("wellposition")) _wellPosition = tree.GetBlockPos("wellposition", null);
-            _state = Enum.Parse<EnumBEState>(tree.GetString("machinestate", "On"));
+            _wellPosition = tree.GetBlockPos("wellposition", null);
+            EnumBEState syncstate = Enum.Parse<EnumBEState>(tree.GetString("machinestate", "On"));
+            if (MachineState != syncstate) SetState(syncstate);
         }
         #endregion
     }
