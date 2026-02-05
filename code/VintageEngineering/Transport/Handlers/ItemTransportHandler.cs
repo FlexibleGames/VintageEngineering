@@ -49,9 +49,9 @@ namespace VintageEngineering.Transport.Handlers
                 pull = GetPullSlot(inv, node, false); 
             }
             if (pull == null) return;
-            if (stacksize == -1)
+            if (stacksize == -1) // stacksize -1 means the steel upgrade, 10 stacks per tick
             {
-                stacksize = pull.Itemstack?.Collectible.MaxStackSize ?? 1;
+                stacksize = pull.Itemstack?.Collectible.MaxStackSize*10 ?? 1;
             }
             ItemStackMoveOperation ismo = new ItemStackMoveOperation(world, EnumMouseButton.Left, (EnumModifierKey)0, EnumMergePriority.DirectMerge, stacksize);            
 

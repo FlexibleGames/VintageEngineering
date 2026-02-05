@@ -71,9 +71,9 @@ namespace VintageEngineering.Transport.Handlers
             {                 
                 return; 
             }
-            if (stacksize == -1)
+            if (stacksize == -1) // stacksize -1 here means the steel upgrade, which is 10 stacks at a time
             {
-                stacksize = pull.Itemstack.Collectible.MaxStackSize;
+                stacksize = pull.Itemstack.Collectible.MaxStackSize * 10;
             }
             else
             {
