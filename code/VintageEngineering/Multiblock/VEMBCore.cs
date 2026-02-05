@@ -47,8 +47,19 @@ namespace VintageEngineering.Multiblock
                 {
                     Multiblock.TriggerValidation(world, byPlayer, blockSel, blockSel.Position);
                 }
+                if (byPlayer.InventoryManager.ActiveHotbarSlot != null &&
+                    !byPlayer.InventoryManager.ActiveHotbarSlot.Empty &&
+                    byPlayer.InventoryManager.ActiveHotbarSlot.Itemstack.Collectible.Code.Path.Contains("stick"))
+                {
+                    bool extDebug = true;
+                    if (extDebug)
+                    {
+                        VEMBEntityCore core = world.BlockAccessor.GetBlockEntity<VEMBEntityCore>(blockSel.Position);
+                        if (core != null) core.Electric.electricpower = 0;
+                    }
+                }
             }
-            return base.OnBlockInteractStart(world, byPlayer, blockSel);
+             return base.OnBlockInteractStart(world, byPlayer, blockSel);
         }
 
         public override void OnBlockBroken(IWorldAccessor world, BlockPos pos, IPlayer byPlayer, float dropQuantityMultiplier = 1)
