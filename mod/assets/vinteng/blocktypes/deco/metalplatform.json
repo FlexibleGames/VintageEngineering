@@ -6,11 +6,10 @@
 	"attributes": {
 		"canChisel": false
 	},
-	"climbable": true,
 	"blockmaterial": "Metal",
 	"drawtype": "json",
 	"shape": { "base": "block/deco/metalplatform" },
-
+	"rainPermeable": true,
 	"resistance": 4,
 	"sideopaque": {
 		"all": false
