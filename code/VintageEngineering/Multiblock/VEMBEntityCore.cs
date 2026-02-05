@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using VintageEngineering.Electrical;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
+using Vintagestory.API.Server;
 
 namespace VintageEngineering.Multiblock
 {
@@ -14,7 +15,7 @@ namespace VintageEngineering.Multiblock
     /// </summary>
     public class VEMBEntityCore : ElectricContainerBE
     {
-        public VEMultiblockBeh Multiblock { get { return this.GetBehavior<VEMultiblockBeh>(); } }
+        public VEMultiblockBeh Multiblock { get { return this.Block.GetBehavior<VEMultiblockBeh>(); } }
 
         internal int activelayer = 0;
 
