@@ -87,8 +87,12 @@ namespace VintageEngineering.Blocks
             // this is for debugging, far easier to plop one of these down
             if (this.EntityClass != null && blockPos.Y < 20)
             {
-                world.BlockAccessor.SpawnBlockEntity(this.EntityClass, blockPos.Copy(), null);
+                //world.BlockAccessor.SpawnBlockEntity(this.EntityClass, blockPos.Copy(), null);
                 IFluidWell bewell = world.BlockAccessor.GetBlockEntity(blockPos) as IFluidWell; // grab the BE of the well
+                if (world.BlockAccessor.GetBlockEntity(blockPos) is BECrudeOilWell well)
+                {
+                    well.IsGenerated = true;
+                }
                 if (bewell != null)
                 {
                     // initalize the well object

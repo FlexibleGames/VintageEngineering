@@ -49,6 +49,8 @@ namespace VintageEngineering
         /// </summary>
         private long _tickHandler = 0;
 
+        private float _clientUpdateTick = 0f;
+
         public override void Initialize(ICoreAPI api)
         {
             base.Initialize(api);
@@ -102,6 +104,7 @@ namespace VintageEngineering
         {
             // this is called on the client, while the values are on the server, need to push values to client
             Item portion = Api.World.GetItem(new AssetLocation(FluidPortionCode));
+            Block fblock = Api.World.GetBlock(new AssetLocation(FluidBlockCode));
             int perliter = 100;
             if (portion != null) 
             {
@@ -112,7 +115,7 @@ namespace VintageEngineering
                     perliter = (int)props.ItemsPerLitre;
                 }
             }
-            if (RemainingPortions > 0) dsc.AppendLine($"{(RemainingPortions / perliter)/1000}{Lang.Get("vinteng:gui-word-blocks")} {portion.GetHeldItemName(new ItemStack(portion))} {Lang.Get("vinteng:gui-word-remaining")}");
+            if (RemainingPortions > 0) dsc.AppendLine($"{(RemainingPortions / perliter)/1000} {Lang.Get("vinteng:gui-word-blocks")} {fblock.GetHeldItemName(new ItemStack(fblock))} {Lang.Get("vinteng:gui-word-remaining")}");
             else 
             {
                 if (CanBeInfinite) dsc.AppendLine($"{Lang.Get("vinteng:gui-depleted")}, {Lang.Get("vinteng:gui-isinfinite")}");
@@ -154,6 +157,7 @@ namespace VintageEngineering
         public long PumpTick(float dt, long ppscap = long.MaxValue)
         {
             if (Api.Side == EnumAppSide.Client) return -1;
+            _clientUpdateTick += dt;
             long amount = 0;
             if (_fluidportions > 0)
             {
@@ -168,7 +172,9 @@ namespace VintageEngineering
                 amount = (long)Math.Min(amount, ppscap * dt);
                 if (!CanBeInfinite) amount = 0;
             }
-            return amount;
+            if (_clientUpdateTick > 0.5) MarkDirty(true);
+
+            return ppscap == 1 ? 1 : amount;            
         }
 
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldAccessForResolve)
