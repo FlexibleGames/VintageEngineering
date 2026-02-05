@@ -12,7 +12,7 @@
             { "type": "block", "code": "game:chute-straight-ns", "quantity": 1 }
 		],
 		"outputs": [
-          { "type": "block", "code": "vinteng:well-casing", "quantity": 4 }
+          { "type": "block", "code": "vinteng:wellcasing", "quantity": 4 }
         ]
 	}
 ]

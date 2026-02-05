@@ -8,6 +8,8 @@
 	"drawtype": "json",
 	"shape": { "base": "block/pipes/well-casing" },
 	"resistance": 1,
+	"sideSolid": { "all": true },
+	"sideOpaque": {"all": false },
 	"sounds": {
 		"place": "game:block/stone",
 		"walk": "game:walk/stone"
