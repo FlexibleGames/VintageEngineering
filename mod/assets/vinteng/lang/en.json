@@ -412,5 +412,14 @@
 	"vinteng:gui-wellinfo": "Well Details:",
 	"vinteng:gui-wellerror": "Well Not Found!",
 
+	"vinteng:block-vembderrick-incomplete-*": "Derrick Core",
+	"vinteng:blockdesc-vembderrick-incomplete-*": "The Derrick is a giant structure multiblock (MB) that requires Well Casing to finalize and make ready the well for the Pumpjack to access the source block. Supply Well Casing to this while extracting the fluid it finds and pumps out of the deposit.",
+	"vinteng:block-vembderrick-built-*": "Drill Derrick",
+
+	"vinteng:gui-drillingat": "Drilling At",
+	"vinteng:gui-wellfoundat": "Well Found At",
+	"vinteng:gui-missingcasing": "Well Casings Missing",
+	"vinteng:gui-word-depth": "Depth",
+
 	"eof": "End Of File"
 }

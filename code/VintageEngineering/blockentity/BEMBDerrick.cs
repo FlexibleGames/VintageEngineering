@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using VintageEngineering.API;
 using VintageEngineering.GUI;
 using VintageEngineering.Multiblock;
@@ -14,29 +15,52 @@ using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 
 namespace VintageEngineering
-{ 
-    public class BEMBPumpJack : VEMBEntityCore, IVELiquidInterface
+{
+    /// <summary>
+    /// Derrick finishes the extraction process by pumping out the remaining material and placing the well casing blocks down to the well source block.<br/>
+    /// Inventory slot 0 = item, 1 = fluid
+    /// </summary>
+    public class BEMBDerrick : VEMBEntityCore, IVELiquidInterface
     {
         private ICoreServerAPI sapi;
         private ICoreClientAPI capi;
+        /// <summary>
+        /// Code of the expected and required Well Casing block.
+        /// </summary>
+        private string _wellCasingCode = string.Empty;
+        /// <summary>
+        /// Code of the fluid this Derrick will look for, set with whatever fluid<br/>
+        /// is directly below the Derrick Core block. Ensures Water or Lava does not<br/>
+        /// contaminate the process.
+        /// </summary>
+        private string _wellFluidBlockCode = string.Empty;
         private int _sourceBlocksPerSecond = 0;
         private float _wellValidationDelay = 0f;
 
         /// <summary>
-        /// Represents the position of the Well Source block, entity includes the interface IFluidWell.
+        /// Represents the current Y position the Derrick is at, not the position of the well block.<br/>
+        /// For this machine, this value should be at the center of the Derrick, but at a deeper Y level<br/>
+        /// Y should always be less than machines Y level.
         /// </summary>
         private BlockPos _wellPosition = null;
+        /// <summary>
+        /// List of all positions for the current layer being cleared of fluid, includes Distance value for sorting.<br/>
+        /// Not saved or synced. Rebuilt on load based on _wellPosition as origin.
+        /// </summary>
+        private List<BlockPosAndDist> _currentLayer = new List<BlockPosAndDist>();
 
-        #region InitAndMisc
-        public BEMBPumpJack()
-        {            
+        #region InitAndMisc 
+        public BEMBDerrick()
+        {
             float capacity = 8001f;
-            _inventory = new InventoryGeneric(1, null, null, delegate (int id, InventoryGeneric self)
+            _inventory = new InventoryGeneric(2, null, null, delegate (int id, InventoryGeneric self)
             {
+                if (id == 0) return new ItemSlot(self);
                 return new ItemSlotLiquidOnly(self, capacity);
             });
             _inventory.SlotModified += this.SlotModified;
             _inventory.OnGetSuitability += this.GetSuitability;
+            _inventory.OnGetAutoPushIntoSlot += this.GetAutoPushIntoSlot;
         }
 
         public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
@@ -45,21 +69,25 @@ namespace VintageEngineering
             if (Electric.MaxPower > 0) powerpercent = (float)((double)Electric.CurrentPower / (double)Electric.MaxPower);
             int percentpower = (int)(powerpercent * 100);
 
-            base.GetBlockInfo(forPlayer, dsc);            
+            base.GetBlockInfo(forPlayer, dsc);
             dsc.AppendLine($"{Lang.Get("vinteng:gui-word-fluid")}: {IconHelper.PercentToBar(PercentFluid, 10)} {PercentFluid:N0}%");
             dsc.AppendLine($"{Lang.Get("vinteng:gui-word-power")}: {IconHelper.PercentToBar(percentpower, 10)} {percentpower:N0}%");
             if (_wellPosition != null)
             {
-                IFluidWell thewell = GetWellAt(_wellPosition);
-                if (thewell != null)
-                {
-                    dsc.AppendLine(Lang.Get("vinteng:gui-wellinfo") + ":" + Environment.NewLine);
-                    Api.World.BlockAccessor.GetBlockEntity(_wellPosition)?.GetBlockInfo(forPlayer, dsc);
-                }
+                int depth = this.Pos.Y - _wellPosition.Y;
+                dsc.AppendLine(Lang.Get("vinteng:gui-drillingat") + $" {depth:N0} " + Lang.Get("vinteng:gui-word-depth"));                
             }
             else
             {
                 dsc.AppendLine($"{Lang.Get("vinteng:gui-wellerror")}");
+            }
+            if (InputSlot.Empty || InputSlot.Itemstack.Collectible.Code != _wellCasingCode)
+            {
+                dsc.AppendLine(Lang.Get("vinteng:gui-missingcasing"));
+            }
+            else
+            {
+                dsc.AppendLine($"{Lang.Get("vinteng:block-wellcasing")} : {InputSlot.Itemstack.StackSize}");
             }
         }
 
@@ -85,12 +113,13 @@ namespace VintageEngineering
                 capi = api as ICoreClientAPI;
                 if (AnimUtil != null)
                 {
-                    AnimUtil.InitializeAnimator("vembpumpjack", null, null, new Vec3f(0f, GetRotation(), 0f));
+                    AnimUtil.InitializeAnimator("vembderrick", null, null, new Vec3f(0f, GetRotation(), 0f));
                 }
             }
             _inventory.Pos = this.Pos;
             _inventory.LateInitialize($"{InventoryClassName}-{this.Pos.X}/{this.Pos.Y}/{this.Pos.Z}", api);
-            (_inventory[0] as ItemSlotLiquidOnly).CapacityLitres = base.Block.Attributes["fluidCapacityLiters"].AsFloat(1f);
+            (_inventory[1] as ItemSlotLiquidOnly).CapacityLitres = base.Block.Attributes["fluidCapacityLiters"].AsFloat(1f);
+            _wellCasingCode = base.Block.Attributes["wellCasingCode"].AsString();
         }
 
         /// <summary>
@@ -133,7 +162,7 @@ namespace VintageEngineering
                     // if the well is invalid, shut it down
                     newstate = EnumBEState.Sleeping;
                 }
-                else 
+                else
                 {
                     // well is valid, but we may have to wake up
                     if (MachineState == EnumBEState.Sleeping || MachineState == EnumBEState.Off)
@@ -182,7 +211,7 @@ namespace VintageEngineering
                     _inventory[0].Itemstack = new ItemStack(portion, ((int)texastea));
                 }
                 if (texastea > 0) Electric.electricpower -= Electric.RatedPower(dt, false);
-                
+
             }
             if (MachineState != newstate) SetState(newstate);
 
@@ -228,7 +257,7 @@ namespace VintageEngineering
         public bool ValidateCasings(BlockPos start)
         {
             Block casing = Api.World.GetBlock(new AssetLocation(base.Block.Attributes["wellCasingCode"].AsString()));
-            
+
             while (start.Y > 0)
             {
                 Block blockat = Api.World.BlockAccessor.GetBlock(start.Down());
@@ -244,7 +273,7 @@ namespace VintageEngineering
             }
             return false;
         }
-      
+
         public IFluidWell GetWellAt(BlockPos pos)
         {
             return Api.World.BlockAccessor.GetBlockEntity(pos) as IFluidWell;
@@ -277,17 +306,21 @@ namespace VintageEngineering
                 return base.Block.Attributes["transferLitresPerSecond"].AsFloat(0.01f);
             }
         }
-
+        /// <summary>
+        /// SlotID 0 = Item input, 1 = fluid output
+        /// </summary>
         private InventoryGeneric _inventory;
-        public override string InventoryClassName => "InvPumpJack";
+        public override string InventoryClassName => "InvDerrick";
         public override InventoryBase Inventory => _inventory;
 
-        public ItemSlot OutputSlot => _inventory[0];
+        public ItemSlot OutputSlot => _inventory[1];
         public ItemSlotLiquidOnly Output => OutputSlot as ItemSlotLiquidOnly;
+
+        public ItemSlot InputSlot => _inventory[0];
 
         public int[] InputLiquidContainerSlotIDs => null;
 
-        public int[] OutputLiquidContainerSlotIDs => [ 0 ];
+        public int[] OutputLiquidContainerSlotIDs => [1];
 
         /// <summary>
         /// How full is the internal tank? 0-100
@@ -306,6 +339,18 @@ namespace VintageEngineering
                 }
             }
         }
+        /// <summary>
+        /// Required for Pipe & Chute interaction. Should return the ItemSlot if the fromSlot is NOT empty or a liquid.
+        /// </summary>
+        /// <param name="face">Face being checked</param>
+        /// <param name="fromSlot">What is looking to be pushed into this</param>
+        /// <returns>ItemSlot</returns>
+        public ItemSlot GetAutoPushIntoSlot(BlockFacing face, ItemSlot fromSlot)
+        {
+            if (fromSlot.Empty || fromSlot.Itemstack.Collectible.IsLiquid()) return null;
+
+            return _inventory[0];
+        }
 
         public ItemSlotLiquidOnly GetLiquidAutoPushIntoSlot(BlockFacing blockFacing, ItemSlot fromSlot = null)
         {
@@ -316,30 +361,36 @@ namespace VintageEngineering
         public ItemSlotLiquidOnly GetLiquidAutoPullFromSlot(BlockFacing blockFacing)
         {
             string rotside = base.Block.Variant["side"];
-            string cw = BlockFacing.FromCode(rotside).GetCW().Code;
-            string ccw = BlockFacing.FromCode(rotside).GetCCW().Code;
 
-            // check left and right faces at the very least.
-            if (blockFacing.Code != cw && blockFacing.Code != ccw) return null;
+            // if this is facing North, the south face is the fluid output
+            string opposite = BlockFacing.FromCode(rotside).Opposite.Code;            
+            if (blockFacing.Code != opposite) return null;
 
-            return OutputSlot as ItemSlotLiquidOnly;
+            return Output;
         }
 
         private void SlotModified(int slotid)
         {
-            if (slotid == 0) _clientUpdateDelay += 0.05f; //MarkDirty(true);
+            if (slotid <= 1) _clientUpdateDelay += 0.025f;
         }
 
         public bool HasRoomInOutput(int slotid, ItemStack forStack)
         {
-            if (slotid == 0)
+            if (slotid > 1 || slotid < 0) return false;
+            if (slotid == 1)
             {
                 if (_inventory[slotid].Empty) return true;
-                float capportion = (_inventory[0] as ItemSlotLiquidOnly).CapacityLitres * BlockLiquidContainerBase.GetContainableProps(_inventory[0].Itemstack).ItemsPerLitre;
+                float capportion = (_inventory[1] as ItemSlotLiquidOnly).CapacityLitres * BlockLiquidContainerBase.GetContainableProps(_inventory[1].Itemstack).ItemsPerLitre;
                 if (_inventory[slotid].Itemstack.StackSize == capportion) return false;
                 return true;
             }
-            else return false;
+            else
+            {
+                if (_inventory[slotid].Empty) return true;
+                if (_inventory[slotid].Itemstack.StackSize < _inventory[slotid].Itemstack.Collectible.MaxStackSize) return true;
+            }
+                
+            return false;
         }
 
         public float GetSuitability(ItemSlot sourceslot, ItemSlot targetSlot, bool isMerge)
@@ -390,6 +441,7 @@ namespace VintageEngineering
             ITreeAttribute invtree = new TreeAttribute();
             _inventory.ToTreeAttributes(invtree);
             tree["inventory"] = invtree;
+            if (_wellFluidBlockCode != string.Empty) tree.SetString("wellfluid", _wellFluidBlockCode);
             if (_wellPosition != null) tree.SetBlockPos("wellposition", _wellPosition);
             tree.SetString("machinestate", MachineState.ToString());
         }
@@ -397,7 +449,14 @@ namespace VintageEngineering
         {
             base.FromTreeAttributes(tree, worldForResolving);
             _inventory.FromTreeAttributes(tree.GetTreeAttribute("inventory"));
-            _wellPosition = tree.GetBlockPos("wellposition", null);
+            _wellFluidBlockCode = tree.GetString("wellfluid", string.Empty);
+            BlockPos syncwellPosition = tree.GetBlockPos("wellposition", null);
+            if (syncwellPosition != null && _wellPosition != syncwellPosition)
+            {
+                _wellPosition = syncwellPosition;
+                // TODO: Build Layer Fluid List
+            }
+
             EnumBEState syncstate = Enum.Parse<EnumBEState>(tree.GetString("machinestate", "On"));
             if (MachineState != syncstate) SetState(syncstate);
         }
