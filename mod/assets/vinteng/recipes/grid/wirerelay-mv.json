@@ -1,10 +1,10 @@
 {
-	"ingredientPattern": "G,C,C",
+	"ingredientPattern": "_G_,CGC",
 	"ingredients": {
 		"G": { "type": "block", "code": "game:glassslab-*", "quantity": 1 },
 		"C": { "type": "item", "code": "vinteng:lvrelaybase-burned", "quantity": 1 }
 	},
-	"width": 1,
-	"height": 3,
-	"output": { "type": "block", "code": "game:wirerelay-lvpower-up", "quantity": 1  }
+	"width": 3,
+	"height": 2,
+	"output": { "type": "block", "code": "game:wirerelay-mvpower-up", "quantity": 1  }
 }
