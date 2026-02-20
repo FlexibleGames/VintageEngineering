@@ -156,6 +156,7 @@ namespace VintageEngineering
                 int literspersecond = _sourceBlocksPerSecond * 1000;
                 int portionperliter = 100;
                 IFluidWell thewell = GetWellAt(_wellPosition);
+                //if (thewell == null) return;
                 Item portion = Api.World.GetItem(new AssetLocation(thewell?.FluidPortionCode));
                 if (portion != null)
                 {
@@ -170,7 +171,7 @@ namespace VintageEngineering
                 // a truly crazy way of turning blocks/s of source fluid into portions/s
                 // by default 1 block/s * 1000 * 100 = 100,000 portions per second
                 long portionpersecond = literspersecond * portionperliter;
-                double availportion = Output.CapacityLitres * 100; // 100 portions per liter is the standard... default to this, if it's empty this is the available by default.
+                double availportion = Output.CapacityLitres * portionperliter; // 100 portions per liter is the standard... default to this, if it's empty this is the available by default.
                 if (!_inventory[0].Empty) availportion = Output.CapacityLitres * BlockLiquidContainerBase.GetContainableProps(Output.Itemstack).ItemsPerLitre - _inventory[0].Itemstack.StackSize;
 
                 portionpersecond = Math.Min(portionpersecond, (long)availportion);
@@ -207,6 +208,8 @@ namespace VintageEngineering
         /// <returns>True if well is valid and ready for pumpin'</returns>
         public bool ValidateWell()
         {
+            if (base.Block.Variant["state"] != "built") return false;
+
             AssetLocation casingcode = new AssetLocation(base.Block.Attributes["wellCasingCode"].AsString());
             Block casing = Api.World.GetBlock(casingcode);
             if (casing == null) return false; // if casing can't be found, bounce
@@ -247,6 +250,7 @@ namespace VintageEngineering
       
         public IFluidWell GetWellAt(BlockPos pos)
         {
+            //if (pos == null) return null;
             return Api.World.BlockAccessor.GetBlockEntity(pos) as IFluidWell;
         }
 
@@ -357,10 +361,12 @@ namespace VintageEngineering
 
         protected virtual void SetState(EnumBEState newstate)
         {
+            if (_state == newstate) return;
+
             _state = newstate;
             if (_state == EnumBEState.On)
             {
-                if (AnimUtil != null && base.Block.Attributes["craftinganimcode"].Exists)
+                if (AnimUtil != null && base.Block.Attributes["craftinganimcode"].Exists && capi != null)
                 {
                     AnimUtil.StartAnimation(new AnimationMetaData
                     {

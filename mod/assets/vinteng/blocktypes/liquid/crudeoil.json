@@ -40,7 +40,7 @@
 		},
 		"waterTightContainerProps": {
 			"containable": true,
-			"itemsPerLitre": 0.001,
+			"itemsPerLitre": 0.01,
 			"whenFilled": { "stack": { "type": "item", "code": "vinteng:crudeoilportion" } },
 			"allowSpill": true,
 			"whenSpilled": {

@@ -34,8 +34,10 @@ namespace VintageEngineering
         /// contaminate the process.
         /// </summary>
         private string _wellFluidBlockCode = string.Empty;
+        private string _wellFluidCode = string.Empty;
         private int _sourceBlocksPerSecond = 0;
         private float _wellValidationDelay = 0f;
+        private float _lastPumpDelta = 0f;
 
         /// <summary>
         /// Represents the current Y position the Derrick is at, not the position of the well block.<br/>
@@ -43,6 +45,7 @@ namespace VintageEngineering
         /// Y should always be less than machines Y level.
         /// </summary>
         private BlockPos _wellPosition = null;
+        private bool _wellCompleted = false;
         /// <summary>
         /// List of all positions for the current layer being cleared of fluid, includes Distance value for sorting.<br/>
         /// Not saved or synced. Rebuilt on load based on _wellPosition as origin.
@@ -94,17 +97,29 @@ namespace VintageEngineering
         public override void Initialize(ICoreAPI api)
         {
             base.Initialize(api);
+            _wellCasingCode = base.Block.Attributes["wellCasingCode"].AsString();
+            _inventory.Pos = this.Pos;
+            _inventory.LateInitialize($"{InventoryClassName}-{this.Pos.X}/{this.Pos.Y}/{this.Pos.Z}", api);
+            (_inventory[1] as ItemSlotLiquidOnly).CapacityLitres = base.Block.Attributes["fluidCapacityLiters"].AsFloat(1f);
+
             if (api.Side == EnumAppSide.Server)
             {
                 sapi = api as ICoreServerAPI;
                 RegisterGameTickListener(new Action<float>(OnSimTick), 500, 0);
                 _sourceBlocksPerSecond = base.Block.Attributes["sourceBlocksPerSecond"].AsInt(1);
-                if (_wellPosition == null) // first time initializing (aka just built)
+                //if (_wellPosition == null && _wellCompleted == false) // first time initializing (aka just built)
+                //{
+                //    // there are, of course, many edge cases why position is null here
+                //    // but the tick will revalidate every 120 seconds
+                //    // maybe I should trigger it on the interaction block instead?
+                //    if (!InputSlot.Empty && InputSlot.Itemstack.Collectible.Code == _wellCasingCode)
+                //    {
+                //        ValidateWell(); 
+                //    }
+                //}
+                if (_wellPosition != null)
                 {
-                    // there are, of course, many edge cases why position is null here
-                    // but the tick will revalidate every 120 seconds
-                    // maybe I should trigger it on the interaction block instead?
-                    ValidateWell();
+                    // TODO: Rebuild Fluid Layer Pump list
                 }
                 _wellValidationDelay = 0f;
             }
@@ -115,23 +130,17 @@ namespace VintageEngineering
                 {
                     AnimUtil.InitializeAnimator("vembderrick", null, null, new Vec3f(0f, GetRotation(), 0f));
                 }
-            }
-            _inventory.Pos = this.Pos;
-            _inventory.LateInitialize($"{InventoryClassName}-{this.Pos.X}/{this.Pos.Y}/{this.Pos.Z}", api);
-            (_inventory[1] as ItemSlotLiquidOnly).CapacityLitres = base.Block.Attributes["fluidCapacityLiters"].AsFloat(1f);
-            _wellCasingCode = base.Block.Attributes["wellCasingCode"].AsString();
+            }     
         }
 
         /// <summary>
-        /// What is the BlockPos of the Pumpjack head? Must be over the Well Casing that leads down to the well.
+        /// What is the BlockPos of the Derrick head? Must be over the Well Casing that leads down to the well.
         /// </summary>
         public BlockPos HeadPosition
         {
             get
-            {
-                string side = base.Block.Variant["side"] ?? "north";
-                BlockFacing pointingto = BlockFacing.FromCode(side);
-                return this.Pos.AddCopy(pointingto, 2);
+            {                
+                return this.Pos.Copy();
             }
         }
 
@@ -150,9 +159,19 @@ namespace VintageEngineering
             if (sapi == null) return; // only run this on the server
 
             if (base.Block.Variant["state"] != "built") return;
-
-            _wellValidationDelay += dt;
+            
             EnumBEState newstate = MachineState;
+
+            if (newstate == EnumBEState.Off) return;
+            if (_wellCompleted) return;
+            else
+            {
+                // casing needed before we start/continue
+                if (InputSlot.Empty) return;
+                if (InputSlot.Itemstack.Collectible.Code != _wellCasingCode) return;
+            }
+            
+            _wellValidationDelay += dt;
 
             if (_wellValidationDelay >= 120f)
             {
@@ -177,40 +196,83 @@ namespace VintageEngineering
                 // if we're supposed to be on, but we don't have enough power, sleep
                 if (newstate == EnumBEState.On) newstate = EnumBEState.Sleeping;
             }
-            else newstate = EnumBEState.On; // power is green
+            else 
+            {
+                newstate = EnumBEState.On; // power is green
+            }
 
             if (newstate == EnumBEState.On)
             {
-                // we have enough power and a valid well! \o/
-                int literspersecond = _sourceBlocksPerSecond * 1000;
+                if (_wellPosition == null) // typically the first time the derrick is powered
+                {
+                    _wellPosition = GetFirstPumpablePosition(HeadPosition.DownCopy());
+                    if (_wellPosition == null) return;
+                }
+                // we have enough power and a valid fluid! \o/
+                if (_currentLayer.Count == 0)
+                {
+                    // grab all valid source blocks at or above current pos
+                    BuildPumpableFluidLayer(_wellPosition);
+                }
+                if (_currentLayer.Count == 0) return; // still nothing to pump...
+
+                Block fluidblock = sapi.World.GetBlock(new AssetLocation(_wellFluidBlockCode));
+                ItemStack portionstack = new ItemStack(fluidblock);
+                WaterTightContainableProps bprops = BlockLiquidContainerBase.GetContainableProps(portionstack);
+
+                if (bprops == null) return; // odd, we have a fluid, but no props?
+
+                int literspersecond = 1000; // _sourceBlocksPerSecond * 1000;
                 int portionperliter = 100;
-                IFluidWell thewell = GetWellAt(_wellPosition);
-                Item portion = Api.World.GetItem(new AssetLocation(thewell?.FluidPortionCode));
+
+                _lastPumpDelta += dt * _sourceBlocksPerSecond;
+                if (_lastPumpDelta < 1f) return;
+
+                Item portion = Api.World.GetItem(new AssetLocation(bprops.WhenFilled.Stack.Code));
                 if (portion != null)
                 {
-                    ItemStack portionstack = new ItemStack(portion);
-                    WaterTightContainableProps props = BlockLiquidContainerBase.GetContainableProps(portionstack);
-                    if (props != null)
+                    ItemStack itemportionstack = new ItemStack(portion);
+                    WaterTightContainableProps iprops = BlockLiquidContainerBase.GetContainableProps(itemportionstack);
+                    if (iprops != null)
                     {
                         // this is an insane chain of things I have to do just to get the damn props
-                        portionperliter = ((int)props.ItemsPerLitre); // almost always 100, should be 1000 for milliliters. 
+                        portionperliter = ((int)iprops.ItemsPerLitre); // almost always 100, should be 1000 for milliliters. 
                     }
                 }
+                else return;
                 // a truly crazy way of turning blocks/s of source fluid into portions/s
                 // by default 1 block/s * 1000 * 100 = 100,000 portions per second
                 long portionpersecond = literspersecond * portionperliter;
-                double availportion = Output.CapacityLitres * 100; // 100 portions per liter is the standard... default to this, if it's empty this is the available by default.
-                if (!_inventory[0].Empty) availportion = Output.CapacityLitres * BlockLiquidContainerBase.GetContainableProps(Output.Itemstack).ItemsPerLitre - _inventory[0].Itemstack.StackSize;
+                double availportion = Output.CapacityLitres * portionperliter; // 100 portions per liter is the standard... default to this, if it's empty this is the available by default.
+                if (!_inventory[0].Empty) availportion = Output.CapacityLitres * BlockLiquidContainerBase.GetContainableProps(Output.Itemstack).ItemsPerLitre - Output.Itemstack.StackSize;
 
-                portionpersecond = Math.Min(portionpersecond, (long)availportion);
+                if (availportion < portionpersecond) return; // we do not have enough space for another pump action
 
-                long texastea = thewell.PumpTick(dt, portionpersecond);
-                if (!_inventory[0].Empty) _inventory[0].Itemstack.StackSize += ((int)texastea);
+                // if we are here, we are ready for a pump event
+                BlockPosAndDist nextone = _currentLayer.First();
+
+                if (!Output.Empty) Output.Itemstack.StackSize += (int)portionpersecond;
                 else
                 {
-                    _inventory[0].Itemstack = new ItemStack(portion, ((int)texastea));
+                    ItemStack fluidstack = new ItemStack(portion, (int)portionpersecond);
+                    Output.Itemstack = fluidstack;
                 }
-                if (texastea > 0) Electric.electricpower -= Electric.RatedPower(dt, false);
+                sapi.World.BlockAccessor.SetBlock(0, nextone.Pos);
+                _lastPumpDelta = 0f;
+
+                if (_currentLayer.Count == 1)
+                {
+                    // we are on the very last fluid block to pump
+                    _currentLayer.Clear();
+                    _wellPosition.Down(1);
+                    Block casing = sapi.World.GetBlock(new AssetLocation(_wellCasingCode));
+                    sapi.World.BlockAccessor.SetBlock(casing.Id, nextone.Pos);
+                }
+                else
+                {
+                    _currentLayer.Remove(nextone);
+                }
+                Electric.electricpower -= Electric.RatedPower(dt, false);
 
             }
             if (MachineState != newstate) SetState(newstate);
@@ -236,14 +298,55 @@ namespace VintageEngineering
         /// <returns>True if well is valid and ready for pumpin'</returns>
         public bool ValidateWell()
         {
+            if (base.Block.Variant["state"] != "built") return false;
+
             AssetLocation casingcode = new AssetLocation(base.Block.Attributes["wellCasingCode"].AsString());
             Block casing = Api.World.GetBlock(casingcode);
             if (casing == null) return false; // if casing can't be found, bounce
-            if (Api.World.BlockAccessor.GetBlock(HeadPosition.DownCopy()) != casing) return false; // if casing isn't under the head, bounce
 
-            // this validates all casings down to the well, it also sets the well position if found
-            if (!ValidateCasings(HeadPosition.DownCopy())) return false;
+            // TODO: Place Casing in Air as well is validated
 
+            if (_wellPosition == null)
+            {
+                // Derrick was just built, grab the fluid it should be pumping
+                BlockPos below = HeadPosition.AddCopy(BlockFacing.DOWN);
+                Block check = Api.World.BlockAccessor.GetBlock(below);
+                if (check.IsLiquid()) 
+                {
+                    if (_wellFluidBlockCode == string.Empty)
+                    {
+                        _wellFluidBlockCode = check.Code.ToString();
+                        _wellFluidCode = check.LiquidCode;
+                    }
+                    _wellPosition = below.Copy();
+                }
+                else
+                {
+                    if (check.Id != 0)
+                    {
+                        // block under Center of Derrick is not a liquid and not air
+                        if (check == casing)
+                        {
+                            _wellPosition = GetFirstPumpablePosition(below);
+                            if (_wellPosition == null && _wellCompleted == false) return false;
+                            else return true;
+                        }
+                        else
+                        {
+                            _wellPosition = null;
+                        }
+                    }
+                    else
+                    {
+                        // block under Center of Derrick is air
+                        _wellPosition = GetFirstPumpablePosition(below);
+                        if (_wellPosition == null && _wellCompleted == false) return false;
+                        else return true;
+                    }
+                }
+            }
+            Block atpos = Api.World.BlockAccessor.GetBlock(_wellPosition);
+            if (!atpos.IsLiquid()) return false; // if liquid isn't at our current position, bounce
             return true;
         }
 
@@ -272,6 +375,146 @@ namespace VintageEngineering
                 }
             }
             return false;
+        }
+        /// <summary>
+        /// From Start check down to find the first position that has a valid fluid block to pump, <br/>
+        /// if fluid filter is set, only validates that fluid. If well is hit _wellCompleted is set to true.
+        /// </summary>
+        /// <param name="start">Starting point, Y value of this WILL change.</param>
+        /// <returns>BlockPos if found, null if not found or well completed.</returns>
+        public BlockPos GetFirstPumpablePosition(BlockPos start)
+        {
+            if (Api == null || sapi == null) return null;
+            Block casing = Api.World.GetBlock(new AssetLocation(base.Block.Attributes["wellCasingCode"].AsString()));
+            while (start.Y > 0)
+            {
+                // TODO: Place Casing as search finds air or invalid (not matching filter) fluids
+                Block blockat = sapi.World.BlockAccessor.GetBlock(start.Down());
+                if (blockat == casing) continue;
+                else
+                {
+                    if (blockat.Id == 0) 
+                    {
+                        // we ran out of casing or we have invalid casing, bounce
+                        if (InputSlot.Empty || InputSlot.Itemstack.Collectible.Code != _wellCasingCode) return null;
+
+                        // set the casing and move on
+                        sapi.World.BlockAccessor.SetBlock(casing.Id, start);
+                        this._inventory[1].TakeOut(1);
+                        continue; 
+                    }
+                    if (blockat.IsLiquid())
+                    {
+                        if (_wellFluidBlockCode == string.Empty) 
+                        {
+                            _wellFluidBlockCode = blockat.Code;
+                            _wellFluidCode = blockat.LiquidCode;
+                            return start; 
+                        }
+                        if (blockat.Code == _wellFluidBlockCode || blockat.LiquidCode == _wellFluidCode) return start;
+                        else 
+                        {
+                            // set the casing and move on
+                            sapi.World.BlockAccessor.SetBlock(casing.Id, start);
+                            this._inventory[1].TakeOut(1);
+                            continue; // its a fluid, but not the one we want, skip
+                        }
+                    }
+                    else
+                    {
+                        if (sapi.World.BlockAccessor.GetBlockEntity(start) is IFluidWell)
+                        {
+                            _wellCompleted = true;
+                            return null;
+                        }
+                        else 
+                        {
+                            _wellCompleted = false; // we ran into a solid block that isn't liquid, air, casing, or a well
+                            return null; 
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+
+        /// <summary>
+        /// From the given start position (origin) determine what fluid blocks are available to the machine. <br/>
+        /// Builds the _currentLayer variable if blocks are found. _currentLayer.Count > 0 if we are ready to pump!
+        /// </summary>
+        /// <param name="start">Origin point to check from.</param>
+        /// <returns>true if successful</returns>
+        public bool BuildPumpableFluidLayer(BlockPos start)
+        {
+            if (sapi == null) return false;
+
+            Block startblock = sapi.World.BlockAccessor.GetBlock(start);
+            if (!startblock.IsLiquid()) return false;
+
+            List<BlockPos> tocheck = new List<BlockPos>();
+            List<BlockPos> checkcache = new List<BlockPos>();
+
+            Dictionary<BlockPos, float> arevalid = new Dictionary<BlockPos, float>();
+
+            tocheck.Add(start.Copy());
+
+            List<BlockPos> toadd = new List<BlockPos>();
+
+            while (tocheck.Count > 0 && arevalid.Count < 1000)
+            {                                 
+                foreach (BlockPos bpos in tocheck)
+                {
+                    BlockPos startpos = bpos.AddCopy(-1, 0, -1);
+                    BlockPos endpos = bpos.AddCopy(1, 1, 1);
+                    sapi.World.BlockAccessor.WalkBlocks(startpos, endpos, delegate (Block dblock, int x, int y, int z)
+                    {
+                        if (arevalid.Count > 1000) return;
+                        if (dblock.Id != 0 && dblock.IsLiquid() && dblock.LiquidCode == _wellFluidCode)
+                        {
+                            BlockPos pendingpos = new BlockPos(x, y, z, start.dimension);
+                            float dist = start.DistanceTo(pendingpos);
+                            dist *= Math.Abs(pendingpos.Y - start.Y) + 1;
+
+                            if (!arevalid.ContainsKey(pendingpos))
+                            {
+                                if (dblock.LiquidLevel == 7)
+                                {
+                                    arevalid.Add(pendingpos.Copy(), dist);
+                                    toadd.Add(pendingpos);
+                                }
+                                else
+                                {
+                                    if (!checkcache.Contains(pendingpos))
+                                    {
+                                        checkcache.Add(pendingpos);
+                                        toadd.Add(pendingpos);
+                                    }
+                                }
+                            }
+                        }
+                    }, false);
+                }
+                tocheck.Clear();
+                if (toadd.Count > 0 && arevalid.Count < 1000)
+                {
+                    tocheck.AddRange(toadd);
+                }
+                toadd.Clear();
+            }
+            checkcache.Clear();
+            if (_currentLayer.Count > 0) _currentLayer.Clear();
+
+            if (arevalid.Count > 0)
+            {                
+                foreach (KeyValuePair<BlockPos, float> entry in arevalid)
+                {
+                    _currentLayer.Add(new BlockPosAndDist(entry.Key.Copy(), entry.Value));
+                }
+                _currentLayer.Sort((x, y) => y.Distance.CompareTo(x.Distance));
+            }
+            arevalid.Clear();
+            return true;
         }
 
         public IFluidWell GetWellAt(BlockPos pos)
@@ -441,15 +684,19 @@ namespace VintageEngineering
             ITreeAttribute invtree = new TreeAttribute();
             _inventory.ToTreeAttributes(invtree);
             tree["inventory"] = invtree;
-            if (_wellFluidBlockCode != string.Empty) tree.SetString("wellfluid", _wellFluidBlockCode);
+            if (_wellFluidBlockCode != string.Empty) tree.SetString("wellfluidblock", _wellFluidBlockCode);
+            if (_wellFluidCode != string.Empty) tree.SetString("wellfluid", _wellFluidCode);
             if (_wellPosition != null) tree.SetBlockPos("wellposition", _wellPosition);
+            tree.SetBool("wellcomplete", _wellCompleted);
             tree.SetString("machinestate", MachineState.ToString());
         }
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldForResolving)
         {
             base.FromTreeAttributes(tree, worldForResolving);
             _inventory.FromTreeAttributes(tree.GetTreeAttribute("inventory"));
-            _wellFluidBlockCode = tree.GetString("wellfluid", string.Empty);
+            _wellFluidBlockCode = tree.GetString("wellfluidblock", string.Empty);
+            _wellFluidCode = tree.GetString("wellfluid", string.Empty);
+            _wellCompleted = tree.GetBool("wellcomplete", false);
             BlockPos syncwellPosition = tree.GetBlockPos("wellposition", null);
             if (syncwellPosition != null && _wellPosition != syncwellPosition)
             {
