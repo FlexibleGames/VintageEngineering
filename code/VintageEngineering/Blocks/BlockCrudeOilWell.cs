@@ -91,7 +91,7 @@ namespace VintageEngineering.Blocks
                 IFluidWell bewell = world.BlockAccessor.GetBlockEntity(blockPos) as IFluidWell; // grab the BE of the well
                 if (world.BlockAccessor.GetBlockEntity(blockPos) is BECrudeOilWell well)
                 {
-                    well.IsGenerated = true;
+                    well.IsGenerated = true; // debug flag to prevent well from spawning bubble
                 }
                 if (bewell != null)
                 {
@@ -105,7 +105,7 @@ namespace VintageEngineering.Blocks
 
         public override bool TryPlaceBlockForWorldGen(IBlockAccessor access, BlockPos pos, BlockFacing face, IRandom wrand, BlockPatchAttributes attributes = null)
         {
-            if (pos.Y >= 1 && pos.Y < 10) // clamp range even more, making these even harder to find.
+            if (pos.Y >= 1 && pos.Y < 12) // clamp range even more, making these even harder to find.
             {
                 if (wrand.NextFloat() > 0.5f)
                 {
@@ -125,6 +125,8 @@ namespace VintageEngineering.Blocks
             foreach (BlockFacing bface in BlockFacing.HORIZONTALS)
             {
                 BlockPos tocheck = pos.AddCopy(bface, 1);
+                if (!VEHelpers.IsChunkLoaded(api.World, tocheck)) continue;
+
                 tocheck.Y = access.GetTerrainMapheightAt(tocheck) + 1;
                 if (Math.Abs(tocheck.Y - surfacey) > 4) return false;
                 Block bcheck = access.GetBlock(tocheck);

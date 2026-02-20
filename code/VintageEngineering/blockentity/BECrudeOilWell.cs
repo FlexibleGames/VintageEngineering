@@ -92,7 +92,7 @@ namespace VintageEngineering
                     foreach (KeyValuePair<BlockPos, BlockUpdate> pair in bbaccessor.StagedBlocks)
                     {
                         pair.Value.NewSolidBlockId = 0;// pair.Value.NewFluidBlockId;
-                    }                    
+                    }
                     bbaccessor.Commit();
                     bbaccessor.PostCommitCleanup(bbaccessor.StagedBlocks.Values.ToList<BlockUpdate>());                    
                     IsGenerated = true;
