@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
+using VintageEngineering.API;
 using VintageEngineering.Electrical.Systems.Catenary;
 using VintageEngineering.Multiblock;
 using VintageEngineering.Transport.API;
@@ -467,7 +468,7 @@ namespace VintageEngineering.Electrical.Systems
                     // if the block position is invalid the block could be unloaded OR invalid
                     // if unloaded, then we need to skip.
                     // using a custom call that ignores neighboring chunk status.
-                    if (!BEPipeBase.IsChunkLoaded(api.World, node.blockPos))
+                    if (!VEHelpers.IsChunkLoaded(api.World, node.blockPos))
                     {
                         continue;
                     }

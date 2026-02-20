@@ -69,7 +69,7 @@ namespace VintageEngineering.API
             return !(lhs == rhs); 
         }
         public static bool operator <(BlockPosAndDist lhs, BlockPosAndDist rhs)
-        {
+        {            
             return lhs.Distance < rhs.Distance;
         }
         public static bool operator >(BlockPosAndDist lhs, BlockPosAndDist rhs)

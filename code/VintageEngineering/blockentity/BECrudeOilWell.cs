@@ -83,11 +83,11 @@ namespace VintageEngineering
             }
             else
             {
-                bool ready = sapi.World.IsFullyLoadedChunk(Pos);
+                bool ready = VEHelpers.IsChunkLoadedRadius(Api.World, Pos, 1); // sapi.World.IsFullyLoadedChunk(Pos);
                 if (ready)
                 {
                     IBulkBlockAccessor bbaccessor = sapi.World.GetBlockAccessorBulkUpdate(true, true, false);
-                    bbaccessor.UpdateSnowAccumMap = false;                    
+                    bbaccessor.UpdateSnowAccumMap = false;
                     (this.Block as BlockCrudeOilWell).BuildOilSpout(bbaccessor, Pos.Copy(), null, sapi.World.Rand as NormalRandom, IsLarge);
                     foreach (KeyValuePair<BlockPos, BlockUpdate> pair in bbaccessor.StagedBlocks)
                     {

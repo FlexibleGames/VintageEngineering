@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using VintageEngineering.API;
 using VintageEngineering.Electrical.Systems.Catenary;
 using VintageEngineering.Transport.API;
 using Vintagestory.API.Common;
@@ -115,7 +116,7 @@ namespace VintageEngineering.Electrical.Systems
             {
                 //Block be = sapi.World.BlockAccessor.GetBlock(node.blockPos);
                 IElectricalBlockEntity entity = IElectricalBlockEntity.GetAtPos(sapi.World.BlockAccessor, node.blockPos);
-                bool chunkloaded = BEPipeBase.IsChunkLoaded(sapi.World, node.blockPos);
+                bool chunkloaded = VEHelpers.IsChunkLoaded(sapi.World, node.blockPos);
                 
                 // if the chunk is loaded AND the entity is null
                 if (chunkloaded && entity == null) invalidnodes++;
