@@ -71,6 +71,7 @@ namespace VintageEngineering
                 sapi = api as ICoreServerAPI;
                 RegisterGameTickListener(new Action<float>(OnSimTick), 500, 0);
                 _sourceBlocksPerSecond = base.Block.Attributes["sourceBlocksPerSecond"].AsInt(1);
+                _sourceBlocksPerSecond = Math.Clamp(_sourceBlocksPerSecond, 1, 10);
                 if (_wellPosition == null) // first time initializing (aka just built)
                 {
                     // there are, of course, many edge cases why position is null here
@@ -208,8 +209,7 @@ namespace VintageEngineering
         /// <returns>True if well is valid and ready for pumpin'</returns>
         public bool ValidateWell()
         {
-            if (base.Block.Variant["state"] != "built") return false;
-
+            if (base.Block.Variant["state"] != "built") return false;            
             AssetLocation casingcode = new AssetLocation(base.Block.Attributes["wellCasingCode"].AsString());
             Block casing = Api.World.GetBlock(casingcode);
             if (casing == null) return false; // if casing can't be found, bounce

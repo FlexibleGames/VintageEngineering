@@ -325,7 +325,7 @@ namespace VintageEngineering.blockentity
             else _fluidpositions = new List<FluidPosition>();
 
             BlockPos below = this.Pos.DownCopy(1);
-            Block blockbelow = Api.World.BlockAccessor.GetBlock(below);
+            Block blockbelow = Api.World.BlockAccessor.GetBlock(below);            
             if (blockbelow.IsLiquid())
             {
                 _ischeckingfluid = true;
