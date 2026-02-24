@@ -1,0 +1,81 @@
+{
+	"code": "metalladder",
+	"behaviors": [{ "name": "Ladder", "properties": { "isFlexible": false } }],
+	"attributes": {
+		"ignoreServerReplaceableTest": true,
+		"handbook": {
+			"groupBy": ["metalladder-{material}-*"]
+		}
+	},
+	"variantgroups": [
+		{ "code": "material", "states": ["steel"] },
+		{ "code": "side", "loadFromProperties": "abstract/horizontalorientation" }
+	],
+	"creativeinventory": { "vinteng-decor": ["metalladder-{material}-north"] },
+	"shapeinventory": { "base": "block/deco/ladder-inventory" },
+	"shapebytype": {
+		"*-north": { "base": "block/deco/metalladder", "rotateY": 0 },
+		"*-east": { "base": "block/deco/metalladder", "rotateY": 270 },
+		"*-south": { "base": "block/deco/metalladder", "rotateY": 180 },
+		"*-west": { "base": "block/deco/metalladder", "rotateY": 90 }
+	},
+	"textures": {
+		"ladder": { "baseByType": { "*": "game:block/metal/ingot/{material}"} }
+	},
+	"blockmaterial": "Metal",
+	"replaceable": 500,
+	"lightAbsorption": 0,
+	"rainPermeable": true,
+	"climbable": true,
+	"sidesolid": {
+		"all": false
+	},
+	"sideopaque": {
+		"all": false
+	},
+	"sideAO": {
+		"all": false
+	},
+	"resistance": 2.25,
+	"sounds": {
+		"place": "game:block/metaldoor-place",
+		"hit": "game:block/anvil",
+		"break": "game:block/anvil",
+		"walk": "game:walk/stone*"
+	},
+	"collisionbox": {
+		"x1": 0, "y1": 0, "z1": 0,
+		"x2": 1, "y2": 1, "z2": 0.1875,
+		"rotateYByType": {
+			"*-east": 270,
+			"*-south": 180,
+			"*-west": 90,
+			"*-north": 0
+		}
+	},
+	"selectionbox": {
+		"x1": 0, "y1": 0, "z1": 0,
+		"x2": 1, "y2": 1, "z2": 0.1875,
+		"rotateYByType": {
+			"*-east": 270,
+			"*-south": 180,
+			"*-west": 90,
+			"*-north": 0
+		}
+	},
+	"materialDensity": 600,
+	"guiTransform": {
+		"scale": 1.27
+	},
+	"tpHandTransform": {
+		"translation": { "x": -1.5, "y": -1, "z": -1.2 },
+		"rotation": { "x": 5, "y": -3, "z": -96 },
+		"scale": 0.37
+	},
+	"groundTransform": {
+		"translation": { "x": 0, "y": 0.05, "z": 0 },
+		"rotation": { "x": 90, "y": -45, "z": 0 },
+		"origin": { "x": 0.5, "y": 0, "z": 0.5 },
+		"scale": 2.07
+	}
+}

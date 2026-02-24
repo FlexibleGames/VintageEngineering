@@ -30,5 +30,6 @@
 	"sounds": {
 		"place": "game:block/stone",
 		"walk": "game:walk/stone"
-	}
+	},
+	"walkspeedmultiplier": 1.5
 }
