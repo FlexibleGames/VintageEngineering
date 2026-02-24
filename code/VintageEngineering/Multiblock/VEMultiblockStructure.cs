@@ -138,9 +138,61 @@ namespace VintageEngineering.Multiblock
             }
         }
 
+        /// <summary>
+        /// Get the Allowed Variants of valid blocks for a given BlockNum in a VEMultiblock schematic.<br/>
+        /// These options are all driven by custom structure attributes and custom code.
+        /// </summary>
+        /// <param name="blockNum">Block Number, commonly offset.W</param>
+        /// <param name="facing">What direction this instance is facing.</param>
+        /// <returns>A List of strings.</returns>
+        public List<string> GetAllowedVariants(int blockNum, string facing, bool forSwap = false)
+        {
+            List<string> allowedVariants = new List<string>();            
+            if (facing == null)  return allowedVariants;
+
+            if (BlockCodes[blockNum].IsWildCard)
+            {
+                if (AttributesByNumber[blockNum].KeyExists("isfacing") ? AttributesByNumber[blockNum]["isfacing"].AsBool(false) : false)
+                {                    
+                    string orientation = AttributesByNumber[blockNum].KeyExists("orientation") ? AttributesByNumber[blockNum]["orientation"].AsString() : string.Empty;
+                    if (orientation != "any")
+                    {                        
+                        BlockFacing bfacing = BlockFacing.FromCode(facing);
+                        if (orientation == "facing")
+                        {
+                            allowedVariants.Add(facing);
+                        }
+                        if (orientation == "opposite")
+                        {
+                            allowedVariants.Add(bfacing.Opposite.Code);
+                        }
+                        else if (orientation == "cw")
+                        {
+                            allowedVariants.Add(bfacing.GetCW().Code);
+                        }
+                        else if (orientation == "ccw")
+                        {
+                            allowedVariants.Add(bfacing.GetCCW().Code);
+                        }
+                    }
+                    else
+                    {
+                        foreach (BlockFacing face in BlockFacing.HORIZONTALS)
+                        {
+                            allowedVariants.Add(face.Code);
+                        }
+                    }
+                }
+                else if (forSwap && AttributesByNumber[blockNum].KeyExists("defaultvariant"))
+                {
+                    allowedVariants.Add(AttributesByNumber[blockNum]["defaultvariant"].AsString(string.Empty));
+                }
+            }
+            return allowedVariants;
+        }
+
         public void SwapBlocks(IWorldAccessor world, BlockPos centerPos, bool isComplete, string side)
         {
-            //IBulkBlockAccessor bulk = world.GetBlockAccessorBulkUpdate(true, true, false);
             if (isComplete)
             {
                 for (int i = 0; i < TransformedOffsets.Count; i++)
@@ -162,7 +214,15 @@ namespace VintageEngineering.Multiblock
                 {
                     Vec4i offset = TransformedOffsets[i];
                     if (offset.X == 0 && offset.Y == 0 && offset.Z == 0) continue;
-                    Block swapback = world.GetBlock(new AssetLocation(BlockCodes[offset.W]));
+                    string swapvariant = string.Empty;
+                    Block swapback = null;
+                    if (BlockCodes[offset.W].IsWildCard)
+                    {
+                        List<string> variants = GetAllowedVariants(offset.W, side, true);
+                        swapvariant = BlockCodes[offset.W].ToString().Replace("*", variants[0]);
+                        swapback = world.GetBlock(new AssetLocation(swapvariant));
+                    }
+                    else swapback = world.GetBlock(new AssetLocation(BlockCodes[offset.W]));
                     if (swapback != null)
                     {
                         BlockPos swappos = new BlockPos(centerPos.X + offset.X, centerPos.InternalY + offset.Y, centerPos.Z + offset.Z);
@@ -222,8 +282,23 @@ namespace VintageEngineering.Multiblock
                 if (offset.X == 0 && offset.Y == 0 && offset.Z == 0) continue;
 
                 Block block = world.BlockAccessor.GetBlockRaw(centerPos.X + offset.X, centerPos.InternalY + offset.Y, centerPos.Z + offset.Z);
+       
+                List<string> allowedVariants = new List<string>();                
 
-                if (!WildcardUtil.Match(BlockCodes[offset.W], block.Code))
+                if (BlockCodes[offset.W].IsWildCard)
+                {
+                    allowedVariants = GetAllowedVariants(offset.W, world.BlockAccessor.GetBlock(centerPos).Variant["side"]);
+                }
+
+                if (allowedVariants.Count > 0)
+                {
+                    if (!WildcardUtil.MatchesVariants(BlockCodes[offset.W], block.Code, allowedVariants.ToArray()))
+                    {
+                        onMismatch?.Invoke(block, BlockCodes[offset.W]);
+                        qinc++;
+                    }
+                }
+                else if (!WildcardUtil.Match(BlockCodes[offset.W], block.Code))
                 {
                     onMismatch?.Invoke(block, BlockCodes[offset.W]);
                     qinc++;
@@ -261,28 +336,26 @@ namespace VintageEngineering.Multiblock
                 Vec4i offset = TransformedOffsets[i];
                 if (offset.X == 0 && offset.Y == 0 && offset.Z == 0) continue;
                 Block block = world.BlockAccessor.GetBlockRaw(centerPos.X + offset.X, centerPos.InternalY + offset.Y, centerPos.Z + offset.Z);
-                AssetLocation desireBlockLoc = BlockCodes[offset.W];
 
-                if (!WildcardUtil.Match(BlockCodes[offset.W], block.Code))
+                List<string> allowedVariants = new List<string>();
+
+                if (BlockCodes[offset.W].IsWildCard)
+                {
+                    allowedVariants = GetAllowedVariants(offset.W, world.BlockAccessor.GetBlock(centerPos).Variant["side"]);
+                }
+
+                if (allowedVariants.Count > 0)
+                {
+                    if (!WildcardUtil.MatchesVariants(BlockCodes[offset.W], block.Code, allowedVariants.ToArray()))
+                    {
+                        blocks.Add(new BlockPos(offset.X, offset.Y, offset.Z).Add(centerPos));
+                        colors.Add(BlockHighlightColors[offset.W]);
+                    }
+                }
+                else if (!WildcardUtil.Match(BlockCodes[offset.W], block.Code))
                 {
                     blocks.Add(new BlockPos(offset.X, offset.Y, offset.Z).Add(centerPos));
-
-                    if (block.Id != 0)
-                    {
-                        // Highlight colors are set via JSON indexed by BlockNumber (w value)
-                        // Must call InitHighlightColors() first!!
-                        colors.Add(BlockHighlightColors[offset.W]);
-
-                        //colors.Add(ColorUtil.ColorFromRgba(215, 94, 94, 64));
-                    }
-                    else
-                    {
-                        // Air Blocks... 
-                        //int col = world.SearchBlocks(desireBlockLoc)[0].GetColor(world.Api as ICoreClientAPI, centerPos);
-                        //col &= ~(255 << 24);
-                        //col |= 96 << 24;
-                        colors.Add(BlockHighlightColors[offset.W]);
-                    }
+                    colors.Add(BlockHighlightColors[offset.W]);                    
                 }
             }
             world.HighlightBlocks(player, HighlightSlotID, blocks, colors);
