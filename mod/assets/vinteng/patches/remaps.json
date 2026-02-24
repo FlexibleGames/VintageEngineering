@@ -1,0 +1,15 @@
+[
+    {
+    "op": "add",
+    "path": "/game:v1.21.6vinteng-0.5.0",
+    "value": [
+		"/iir remap vinteng:metalbar-copper vinteng:metalrod-copper force",
+        "/iir remap vinteng:metalbar-brass vinteng:metalrod-brass force",
+        "/iir remap vinteng:metalbar-tinbronze vinteng:metalrod-tinbronze force",
+        "/iir remap vinteng:metalbar-iron vinteng:metalrod-iron force",
+        "/iir remap vinteng:metalbar-steel vinteng:metalrod-steel force",
+        "/bir remap vinteng:metalplatform-down vinteng:metalplatform force"
+	       ],
+    "file": "game:config/remaps.json"
+    }
+]

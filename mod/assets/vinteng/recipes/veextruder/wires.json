@@ -1,6 +1,6 @@
 [
     {
-		"code": "lv-wire-from-rod",
+		"code": "lv-wire-from-bar",
 		"enabled": true,
 		"attributes": {
 			"requires": "vinteng:vediecast-lv-*",
@@ -9,14 +9,14 @@
 		},
 		"powerpercraft": 250,
 		"ingredients": [
-			{ "type": "item", "code": "vinteng:metalrod-*", "quantity": 1, "allowedVariants": ["copper"] }
+			{ "type": "item", "code": "vinteng:metalbar-*", "quantity": 1, "allowedVariants": ["copper"] }
 		],
 		"outputs": [
 			{ "type": "block", "code": "game:catenary-lvpower", "stacksize": 12 }
 		]
 	},
     {
-		"code": "mv-wire-from-rod",
+		"code": "mv-wire-from-bar",
 		"enabled": true,
 		"attributes": {
 			"requires": "vinteng:vediecast-mv-*",
@@ -25,14 +25,14 @@
 		},
 		"powerpercraft": 500,
 		"ingredients": [
-			{ "type": "item", "code": "vinteng:metalrod-*", "quantity": 1, "allowedVariants": ["copper"] }
+			{ "type": "item", "code": "vinteng:metalbar-*", "quantity": 1, "allowedVariants": ["copper"] }
 		],
 		"outputs": [
 			{ "type": "block", "code": "game:catenary-mvpower", "stacksize": 6 }
 		]
 	},
     {
-		"code": "hv-wire-from-rod",
+		"code": "hv-wire-from-bar",
 		"enabled": true,
 		"attributes": {
 			"requires": "vinteng:vediecast-hv-*",
@@ -41,7 +41,7 @@
 		},
 		"powerpercraft": 1000,
 		"ingredients": [
-			{ "type": "item", "code": "vinteng:metalrod-*", "quantity": 1, "allowedVariants": ["steel"] }
+			{ "type": "item", "code": "vinteng:metalbar-*", "quantity": 1, "allowedVariants": ["steel"] }
 		],
 		"outputs": [
 			{ "type": "block", "code": "game:catenary-hvpower", "stacksize": 4 }

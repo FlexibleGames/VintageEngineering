@@ -5,7 +5,7 @@
 		"B": { "type": "block", "code": "vinteng:machineryblock-tinbronze", "quantity": 1 },
 		"M": { "type": "item", "code": "vinteng:motor-lv", "quantity": 1 },
 		"S": { "type": "item", "code": "vinteng:screw-*", "quantity": 1 },
-		"R": { "type": "item", "code": "vinteng:metalrod-brass", "quantity": 1 },
+		"R": { "type": "item", "code": "vinteng:metalbar-brass", "quantity": 1 },
 		"L": { "type": "item", "code": "game:axehead-*", "allowedVariants": ["tinbronze", "iron", "meteoriciron", "steel"], "quantity": 1 }
 	},
 	"width": 3,

@@ -11,7 +11,7 @@
 {
 	"ingredientPattern": "CBC,BCB,CBC",
 	"ingredients": {
-		"C": { "type": "item", "code": "vinteng:metalrod-iron", "quantity": 1 },
+		"C": { "type": "item", "code": "vinteng:metalbar-iron", "quantity": 1 },
 		"B": { "type": "item", "code": "vinteng:screw-iron", "quantity": 1 }
 	},
 	"width": 3,

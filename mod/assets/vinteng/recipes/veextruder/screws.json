@@ -1,6 +1,6 @@
 [
     {
-		"code": "screw-from-rod",
+		"code": "screw-from-bar",
 		"enabled": true,
 		"attributes": {
 			"requires": "vinteng:vediecast-screw-*",
@@ -9,7 +9,7 @@
 		},
 		"powerpercraft": 1000,
 		"ingredients": [
-			{ "type": "item", "code": "vinteng:metalrod-*", "quantity": 1, "name":"metal", "allowedVariants": ["brass", "steel", "iron"] }
+			{ "type": "item", "code": "vinteng:metalbar-*", "quantity": 1, "name":"metal", "allowedVariants": ["brass", "steel", "iron"] }
 		],
 		"outputs": [
 			{ "type": "item", "code": "vinteng:screw-{metal}", "stacksize": 32 }

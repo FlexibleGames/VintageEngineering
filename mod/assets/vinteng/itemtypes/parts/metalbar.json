@@ -1,10 +1,10 @@
 {
-	"code": "metalrod",
+	"code": "metalbar",
 	"creativeinventory": {
 		"vinteng": [ "*" ]
 	},
 	"drawtype": "json",
-	"shape": { "base": "vinteng:item/parts/rod" },
+	"shape": { "base": "vinteng:item/parts/bar" },
 	"maxstacksize": 64,
 	"storageFlags": 5,
 	"variantgroups": [
@@ -28,31 +28,31 @@
     }
   },
   "combustiblePropsByType": {
-	"metalrod-copper": {
+	"metalbar-copper": {
 		"meltingPoint": 1084,
 		"meltingDuration": 30,
 		"smeltedRatio": 4,
 		"smeltedStack": { "type": "item", "code": "game:ingot-copper" }
 	},
-	"metalrod-brass": {
+	"metalbar-brass": {
 		"meltingPoint": 920,
 		"meltingDuration": 30,
 		"smeltedRatio": 4,
 		"smeltedStack": { "type": "item", "code": "game:ingot-brass" }
 	},
-	"metalrod-tinbronze": {
+	"metalbar-tinbronze": {
 		"meltingPoint": 950,
 		"meltingDuration": 30,
 		"smeltedRatio": 4,
 		"smeltedStack": { "type": "item", "code": "game:ingot-tinbronze" }
 	},
-	"metalrod-iron": {
+	"metalbar-iron": {
 		"meltingPoint": 1538,
 		"meltingDuration": 30,
 		"smeltedRatio": 4,
 		"smeltedStack": { "type": "item", "code": "game:ingot-iron" }
 	},
-	"metalrod-steel": {
+	"metalbar-steel": {
 		"meltingPoint": 1502,
 		"meltingDuration": 30,
 		"smeltedRatio": 4,
