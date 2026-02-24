@@ -22,6 +22,18 @@ namespace VintageEngineering
     /// </summary>
     public class BEMBDerrick : VEMBEntityCore, IVELiquidInterface
     {
+        // 1 fence - black
+        // 2 platform - mid gray
+        // 3 ladder - light gray
+        // 4 heavyeng - dark purple
+        // 5 concrete - cyan
+        // 6 lighteng - pink
+        // 8 fluid - yellow
+        // 9 wood slab - orange
+        // 10 power - lime
+        // 11 interaction - red
+        // 12 item io - green
+
         private ICoreServerAPI sapi;
         private ICoreClientAPI capi;
         /// <summary>
@@ -107,19 +119,11 @@ namespace VintageEngineering
                 sapi = api as ICoreServerAPI;
                 RegisterGameTickListener(new Action<float>(OnSimTick), 500, 0);
                 _sourceBlocksPerSecond = base.Block.Attributes["sourceBlocksPerSecond"].AsInt(1);
-                //if (_wellPosition == null && _wellCompleted == false) // first time initializing (aka just built)
-                //{
-                //    // there are, of course, many edge cases why position is null here
-                //    // but the tick will revalidate every 120 seconds
-                //    // maybe I should trigger it on the interaction block instead?
-                //    if (!InputSlot.Empty && InputSlot.Itemstack.Collectible.Code == _wellCasingCode)
-                //    {
-                //        ValidateWell(); 
-                //    }
-                //}
-                if (_wellPosition != null)
+                _sourceBlocksPerSecond = Math.Clamp(_sourceBlocksPerSecond, 1, 10);
+
+                if (_wellPosition != null && _currentLayer.Count == 0)
                 {
-                    // TODO: Rebuild Fluid Layer Pump list
+                    BuildPumpableFluidLayer(_wellPosition);                    
                 }
                 _wellValidationDelay = 0f;
             }
