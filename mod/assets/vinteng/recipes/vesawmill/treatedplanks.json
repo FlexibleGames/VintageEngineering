@@ -1,0 +1,157 @@
+[
+	{
+		"code": "treatedplanks-from-hblock",
+		"enabled": true,
+		"attributes": {
+			"requires": "vinteng:vesawblade-*",
+			"requiresvariants": ["tinbronze", "iron", "meteoriciron", "steel", "titanium"],
+			"requiresdurability": true
+		},
+		"powerpercraft": 400,
+		"ingredients": [
+			{ "type": "block", "code": "vinteng:treatedwood-horizontal-north", "quantity": 1 }
+		],
+		"outputs": [
+			{ "type": "item", "code": "vinteng:plank-treated", "stacksize": 3, "variable": 1 },
+			{ "type": "item", "code": "vinteng:sawdust", "stacksize": 1, "variable": 1 }
+		]
+	},
+	{
+		"code": "treatedplanks-from-bblock",
+		"enabled": true,
+		"attributes": {
+			"requires": "vinteng:vesawblade-*",
+			"requiresvariants": ["tinbronze", "iron", "meteoriciron", "steel", "titanium"],
+			"requiresdurability": true
+		},
+		"powerpercraft": 400,
+		"ingredients": [
+			{ "type": "block", "code": "vinteng:treatedwood-bordered-north", "quantity": 1 }
+		],
+		"outputs": [
+			{ "type": "item", "code": "vinteng:plank-treated", "stacksize": 4, "variable": 1 },
+			{ "type": "item", "code": "vinteng:sawdust", "stacksize": 1, "variable": 1 }
+		]
+	},
+	{
+		"code": "treatedplanks-from-pblock",
+		"enabled": true,
+		"attributes": {
+			"requires": "vinteng:vesawblade-*",
+			"requiresvariants": ["tinbronze", "iron", "meteoriciron", "steel", "titanium"],
+			"requiresdurability": true
+		},
+		"powerpercraft": 400,
+		"ingredients": [
+			{ "type": "block", "code": "vinteng:treatedwood-path-north", "quantity": 1 }
+		],
+		"outputs": [
+			{ "type": "item", "code": "vinteng:plank-treated", "stacksize": 3, "variable": 1 },
+			{ "type": "item", "code": "vinteng:sawdust", "stacksize": 1, "variable": 1 }
+		]
+	},
+	{
+		"code": "treatedplanks-from-rblock",
+		"enabled": true,
+		"attributes": {
+			"requires": "vinteng:vesawblade-*",
+			"requiresvariants": ["tinbronze", "iron", "meteoriciron", "steel", "titanium"],
+			"requiresdurability": true
+		},
+		"powerpercraft": 400,
+		"ingredients": [
+			{ "type": "block", "code": "vinteng:treatedwood-reinforced-north", "quantity": 1 }
+		],
+		"outputs": [
+			{ "type": "item", "code": "vinteng:plank-treated", "stacksize": 5, "variable": 1 },
+			{ "type": "item", "code": "vinteng:sawdust", "stacksize": 1, "variable": 1 }
+		]
+	},
+	{
+		"code": "treatedplanks-from-vblock",
+		"enabled": true,
+		"attributes": {
+			"requires": "vinteng:vesawblade-*",
+			"requiresvariants": ["tinbronze", "iron", "meteoriciron", "steel", "titanium"],
+			"requiresdurability": true
+		},
+		"powerpercraft": 400,
+		"ingredients": [
+			{ "type": "block", "code": "vinteng:treatedwood-vertical-north", "quantity": 1 }
+		],
+		"outputs": [
+			{ "type": "item", "code": "vinteng:plank-treated", "stacksize": 5, "variable": 1 },
+			{ "type": "item", "code": "vinteng:sawdust", "stacksize": 1, "variable": 1 }
+		]
+	},
+	{
+		"code": "treatedplanks-from-bandblock",
+		"enabled": true,
+		"attributes": {
+			"requires": "vinteng:vesawblade-*",
+			"requiresvariants": ["iron", "meteoriciron", "steel", "titanium"],
+			"requiresdurability": true
+		},
+		"powerpercraft": 400,
+		"ingredients": [
+			{ "type": "block", "code": "vinteng:treatedwood-banded-north", "quantity": 1 }
+		],
+		"outputs": [
+			{ "type": "item", "code": "vinteng:plank-treated", "stacksize": 3, "variable": 1 },
+			{ "type": "item", "code": "vinteng:sawdust", "stacksize": 1, "variable": 1 },
+			{ "type": "item", "code": "game:metalbit-iron", "stacksize": 4, "variable": 1 }
+		]
+	},
+	{
+		"code": "treatedplanks-from-iblock",
+		"enabled": true,
+		"attributes": {
+			"requires": "vinteng:vesawblade-*",
+			"requiresvariants": ["iron", "meteoriciron", "steel", "titanium"],
+			"requiresdurability": true
+		},
+		"powerpercraft": 400,
+		"ingredients": [
+			{ "type": "block", "code": "vinteng:treatedwood-iron-north", "quantity": 1 }
+		],
+		"outputs": [
+			{ "type": "item", "code": "vinteng:plank-treated", "stacksize": 3, "variable": 1 },
+			{ "type": "item", "code": "vinteng:sawdust", "stacksize": 1, "variable": 1 },
+			{ "type": "item", "code": "game:metalbit-iron", "stacksize": 4, "variable": 1 }
+		]
+	},
+	{
+		"code": "treatedplanks-from-sublock",
+		"enabled": true,
+		"attributes": {
+			"requires": "vinteng:vesawblade-*",
+			"requiresvariants": ["tinbronze", "iron", "meteoriciron", "steel", "titanium"],
+			"requiresdurability": true
+		},
+		"powerpercraft": 400,
+		"ingredients": [
+			{ "type": "block", "code": "vinteng:treatedwood-slabup-north", "quantity": 1 }
+		],
+		"outputs": [
+			{ "type": "item", "code": "vinteng:plank-treated", "stacksize": 1, "variable": 1 },
+			{ "type": "item", "code": "vinteng:sawdust", "stacksize": 1, "variable": 1 }
+		]
+	},
+	{
+		"code": "treatedplanks-from-sdblock",
+		"enabled": true,
+		"attributes": {
+			"requires": "vinteng:vesawblade-*",
+			"requiresvariants": ["tinbronze", "iron", "meteoriciron", "steel", "titanium"],
+			"requiresdurability": true
+		},
+		"powerpercraft": 400,
+		"ingredients": [
+			{ "type": "block", "code": "vinteng:treatedwood-slabdown-north", "quantity": 1 }
+		],
+		"outputs": [
+			{ "type": "item", "code": "vinteng:plank-treated", "stacksize": 1, "variable": 1 },
+			{ "type": "item", "code": "vinteng:sawdust", "stacksize": 1, "variable": 1 }
+		]
+	}
+]

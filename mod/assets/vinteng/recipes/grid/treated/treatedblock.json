@@ -1,0 +1,72 @@
+[
+	{
+		"ingredientPattern": "PP,PP",
+		"ingredients": {
+			"P": { "type": "item", "code": "plank-treated", "quantity": 1 }
+		},
+		"width": 2,
+		"height": 2,
+		"output": { "type": "block", "code": "treatedwood-horizontal-north", "quantity": 1  }
+	},
+	{
+		"ingredientPattern": "_P_,PBP,_P_",
+		"ingredients": {
+			"P": { "type": "item", "code": "plank-treated", "quantity": 1 },
+			"B": { "type": "block", "code": "treatedwood-horizontal-north", "quantity": 4 }
+		},
+		"width": 3,
+		"height": 3,
+		"output": { "type": "block", "code": "treatedwood-bordered-north", "quantity": 4  }
+	},
+	{
+		"ingredientPattern": "PBP,SBS,PBP",
+		"ingredients": {
+			"P": { "type": "item", "code": "plank-treated", "quantity": 1 },
+			"B": { "type": "block", "code": "treatedwood-horizontal-north", "quantity": 1 },
+			"S": { "type": "item", "code": "screw-*", "quantity": 2 }
+		},
+		"width": 3,
+		"height": 3,
+		"output": { "type": "block", "code": "treatedwood-path-north", "quantity": 4  }
+	},
+	{
+		"ingredientPattern": "PPP,PBP,PPP",
+		"ingredients": {
+			"P": { "type": "item", "code": "plank-treated", "quantity": 1 },
+			"B": { "type": "block", "code": "treatedwood-horizontal-north", "quantity": 4 }
+		},
+		"width": 3,
+		"height": 3,
+		"output": { "type": "block", "code": "treatedwood-reinforced-north", "quantity": 4  }
+	},
+	{
+		"ingredientPattern": "PPP,_B_,PPP",
+		"ingredients": {
+			"P": { "type": "item", "code": "plank-treated", "quantity": 1 },
+			"B": { "type": "block", "code": "treatedwood-horizontal-north", "quantity": 4 }
+		},
+		"width": 3,
+		"height": 3,
+		"output": { "type": "block", "code": "treatedwood-vertical-north", "quantity": 4  }
+	},
+	{
+		"ingredientPattern": "P_P,_B_,P_P",
+		"ingredients": {
+			"P": { "type": "item", "code": "metalbar-iron", "quantity": 1 },
+			"B": { "type": "block", "code": "treatedwood-horizontal-north", "quantity": 4 }
+		},
+		"width": 3,
+		"height": 3,
+		"output": { "type": "block", "code": "treatedwood-banded-north", "quantity": 4  }
+	},
+	{
+		"ingredientPattern": "PPP,PBP,PPP",
+		"ingredients": {
+			"P": { "type": "item", "code": "metalbar-iron", "quantity": 1 },
+			"B": { "type": "block", "code": "treatedwood-horizontal-north", "quantity": 8 }
+		},
+		"width": 3,
+		"height": 3,
+		"output": { "type": "block", "code": "treatedwood-iron-north", "quantity": 8  }
+	}
+]

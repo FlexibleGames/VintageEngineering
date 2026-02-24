@@ -1,0 +1,36 @@
+[{
+	"ingredientPattern": "PP",
+	"ingredients": {
+		"P": { "type": "item", "code": "plank-treated" }
+	},
+	"width": 2,
+	"height": 1,
+	"output": { "type": "block", "code": "treatedwood-slabup-north", "quantity": 1 }
+},
+{
+	"ingredientPattern": "P",
+	"ingredients": {
+		"P": { "type": "block", "code": "treatedwood-slabup-north" }
+	},
+	"width": 1,
+	"height": 1,
+	"output": { "type": "block", "code": "treatedwood-slabdown-north", "quantity": 1 }
+},
+{
+	"ingredientPattern": "P",
+	"ingredients": {
+		"P": { "type": "block", "code": "treatedwood-slabdown-north" }
+	},
+	"width": 1,
+	"height": 1,
+	"output": { "type": "block", "code": "treatedwood-slabup-north", "quantity": 1 }
+},
+{
+	"ingredientPattern": "P_P",
+	"ingredients": {
+		"P": { "type": "item", "code": "plank-treated" }
+	},
+	"width": 3,
+	"height": 1,
+	"output": { "type": "block", "code": "treatedwood-slabdown-north", "quantity": 1 }
+}]

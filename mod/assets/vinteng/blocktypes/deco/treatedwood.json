@@ -1,13 +1,16 @@
 {
     "code": "treatedwood",
 	"variantgroups": [
-		{ "code": "type", "states": [ "horizontal", "bordered", "path", "reinforced", "vertical", "banded", "iron" ] },
+		{ "code": "type", "states": [ "horizontal", "bordered", "path", "reinforced", "vertical", "banded", "iron", "slabup", "slabdown" ] },
         { "code":"side", "loadFromProperties": "abstract/horizontalorientation" }
 	],
 	"behaviors": [
-		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "treatedwood-{type}-north" }}}
+		{ "name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "treatedwood-{type}-north" }}},
+		{ "name": "WrenchOrientable", "properties": { "baseCode": "treatedwood-{type}"  } }
 	],
 	"attributes": {
+		"canChisel": true,
+		"chiselShapeFromCollisionBox": true,
 		"handbook": {
 			"groupBy": ["treatedwood-*"],
 			"excludeByType": {
@@ -17,8 +20,18 @@
 		}
     },
     "creativeinventory": {
-        "vinteng-decor": ["*"]
+        "vinteng-decor": ["*-north"]
     },
+	"sideSolidOpaqueAoByType": {
+		"*-slabup-*": { "all": false, "up": true },
+		"*-slabdown-*": { "all": false, "down": true },
+		"*": { "all" : true }
+	},
+	"collisionSelectionBoxesByType": {
+		"*-slabup-*": [{"x1": 0, "y1": 0.5, "z1": 0, "x2": 1, "y2": 1, "z2": 1 }],
+		"*-slabdown-*": [{"x1": 0, "y1": 0, "z1": 0, "x2": 0.5, "y2": 0.5, "z2": 0.5 }],
+		"*": [{"x1": 0, "y1": 0, "z1": 0, "x2": 1, "y2": 1, "z2": 1 }]
+	},
     "maxStackSize": 64,
     "blockmaterial": "Wood",
 	"shapeByType": {
@@ -29,6 +42,8 @@
 		"*-vertical-north":			    { "base": "vinteng:block/multiblock/treatedwood/vertical", "rotateY":0 },
         "*-banded-north":			    { "base": "vinteng:block/multiblock/treatedwood/banded", "rotateY":0 },
 		"*-iron-north":			        { "base": "vinteng:block/multiblock/treatedwood/iron", "rotateY":0 },
+		"*-slabup-north":		        { "base": "vinteng:block/multiblock/treatedwood/slabup", "rotateY":0 },
+		"*-slabdown-north":		        { "base": "vinteng:block/multiblock/treatedwood/slabdown", "rotateY":0 },
 
 		"*-horizontal-east": 			{ "base": "vinteng:block/multiblock/treatedwood/horizontal", "rotateY":270 },
 		"*-bordered-east": 			    { "base": "vinteng:block/multiblock/treatedwood/bordered", "rotateY":270 },
@@ -37,6 +52,8 @@
 		"*-vertical-east":			    { "base": "vinteng:block/multiblock/treatedwood/vertical", "rotateY":270 },
         "*-banded-east":			    { "base": "vinteng:block/multiblock/treatedwood/banded", "rotateY":270 },
 		"*-iron-east":			        { "base": "vinteng:block/multiblock/treatedwood/iron", "rotateY":270 },
+		"*-slabup-east":		        { "base": "vinteng:block/multiblock/treatedwood/slabup", "rotateY":270 },
+		"*-slabdown-east":		        { "base": "vinteng:block/multiblock/treatedwood/slabdown", "rotateY":270 },
 
 		"*-horizontal-south": 			{ "base": "vinteng:block/multiblock/treatedwood/horizontal", "rotateY":180 },
 		"*-bordered-south": 			{ "base": "vinteng:block/multiblock/treatedwood/bordered", "rotateY":180 },
@@ -45,6 +62,8 @@
 		"*-vertical-south":			    { "base": "vinteng:block/multiblock/treatedwood/vertical", "rotateY":180 },
         "*-banded-south":			    { "base": "vinteng:block/multiblock/treatedwood/banded", "rotateY":180 },
 		"*-iron-south":			        { "base": "vinteng:block/multiblock/treatedwood/iron", "rotateY":180 },
+		"*-slabup-south":		        { "base": "vinteng:block/multiblock/treatedwood/slabup", "rotateY":180 },
+		"*-slabdown-south":		        { "base": "vinteng:block/multiblock/treatedwood/slabdown", "rotateY":180 },
 
 		"*-horizontal-west": 			{ "base": "vinteng:block/multiblock/treatedwood/horizontal", "rotateY":90 },
 		"*-bordered-west": 			    { "base": "vinteng:block/multiblock/treatedwood/bordered", "rotateY":90 },
@@ -52,7 +71,9 @@
 		"*-reinforced-west":			{ "base": "vinteng:block/multiblock/treatedwood/reinforced", "rotateY":90 },
 		"*-vertical-west":			    { "base": "vinteng:block/multiblock/treatedwood/vertical", "rotateY":90 },
         "*-banded-west":			    { "base": "vinteng:block/multiblock/treatedwood/banded", "rotateY":90 },
-		"*-iron-west":			        { "base": "vinteng:block/multiblock/treatedwood/iron", "rotateY":90 }
+		"*-iron-west":			        { "base": "vinteng:block/multiblock/treatedwood/iron", "rotateY":90 },
+		"*-slabup-west":		        { "base": "vinteng:block/multiblock/treatedwood/slabup", "rotateY":90 },
+		"*-slabdown-west":		        { "base": "vinteng:block/multiblock/treatedwood/slabdown", "rotateY":90 }
 	},
     "resistance": 1,
     "sounds": {
