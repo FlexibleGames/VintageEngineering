@@ -6,7 +6,7 @@
 	},
 	"width": 3,
 	"height": 3,
-	"output": { "type": "block", "code": "vinteng:girder", "quantity": 4  }
+	"output": { "type": "block", "code": "vinteng:scaffold-wood", "quantity": 4  }
 },
 {
 	"ingredientPattern": "CBC,BCB,CBC",
@@ -16,6 +16,6 @@
 	},
 	"width": 3,
 	"height": 3,
-	"output": { "type": "block", "code": "vinteng:scaffold", "quantity": 8  }
+	"output": { "type": "block", "code": "vinteng:scaffold-iron", "quantity": 8  }
 }
 ]

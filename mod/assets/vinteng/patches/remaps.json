@@ -8,7 +8,10 @@
         "/iir remap vinteng:metalbar-tinbronze vinteng:metalrod-tinbronze force",
         "/iir remap vinteng:metalbar-iron vinteng:metalrod-iron force",
         "/iir remap vinteng:metalbar-steel vinteng:metalrod-steel force",
-        "/bir remap vinteng:metalplatform-down vinteng:metalplatform force"
+        "/bir remap vinteng:metalplatform-down vinteng:metalplatform force",
+
+        "/bir remap vinteng:scaffold-wood vinteng:girder force",
+        "/bir remap vinteng:scaffold-iron vinteng:scaffold force"
 	       ],
     "file": "game:config/remaps.json"
     }
