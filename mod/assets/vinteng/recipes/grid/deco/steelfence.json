@@ -1,0 +1,22 @@
+[{
+	"ingredientPattern": "SRS,BRB,SRS",
+	"ingredients": {
+		"S": { "type": "item", "code": "vinteng:screw-*", "name": "metal", "allowedVariants": ["iron", "steel"], "quantity": 1 },
+		"R": { "type": "item", "code": "game:rod-steel", "quantity": 1 },
+		"B": { "type": "item", "code": "vinteng:metalbar-steel", "quantity": 1 }
+	},
+	"width": 3,
+	"height": 3,
+	"output": { "type": "block", "code": "vinteng:steelfence-steel-ew-free", "quantity": 4  }
+},
+{
+	"ingredientPattern": "SRS,BRB,SRS",
+	"ingredients": {
+		"S": { "type": "item", "code": "vinteng:screw-*", "name": "metal", "allowedVariants": ["iron", "steel"], "quantity": 1 },
+		"R": { "type": "item", "code": "game:rod-iron", "quantity": 1 },
+		"B": { "type": "item", "code": "vinteng:metalbar-iron", "quantity": 1 }
+	},
+	"width": 3,
+	"height": 3,
+	"output": { "type": "block", "code": "vinteng:steelfence-iron-ew-free", "quantity": 4  }
+}]
