@@ -1,0 +1,87 @@
+{
+	"code": "velvfridge",
+	"class": "VEElectricBlock",
+	"entityClass": "VEBELVFridge",
+	"behaviors": [
+		{ "name": "Multiblock", "properties": { "sizex": 1, "sizey": 2, "sizez": 1, "cposition": { "x": 0, "y": 0, "z": 0 } } },
+		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "velvfridge-north" }}}
+	],
+	"variantgroups": [
+		{ "code":"side", "loadFromProperties": "abstract/horizontalorientation" }
+	],
+	"entityBehaviors": [
+		{ "name": "Animatable" },
+		{
+			"name": "Electric",
+			"properties": {
+				"canExtractPower": false,
+				"canReceivePower": true,
+				"entitytype": "Consumer",
+				"maxpower": 200,
+				"maxpps": 20
+			}
+		}
+	],
+	"attributes": {
+		"handbook": {
+			"groupBy": ["velvfridge-*"],
+			"excludeByType": {
+				"*-north": false,
+				"*": true
+			}
+		},
+		"openSound": "game:sounds/block/largechestopen",
+		"closeSound": "game:sounds/block/largechestclose",
+		"priority": 4,
+		"craftinganimcode": "dooropen",
+		"inventorynumslots": 24,
+		"inventoryguicolumns": 6,
+        "wireNodes": [
+            {
+                "index": 0,
+                "wirefunction": "Power",
+				"powertier": "LV",
+				"maxconnections": 1,
+                "x1": 0.1875,
+                "y1": 0.75,
+                "z1": 0,
+                "x2": 0.375,
+                "y2": 0.9375,
+                "z2": 0.125,
+                "rotateYByType": {
+					"*-north": 0,
+					"*-east": 270,
+                    "*-south": 180,
+                    "*-west": 90
+                }
+            }
+        ],
+		"spoilrate": { "powered": 0.2, "unpowered": 2.0 }
+	},
+	"shapeinventory": { "base": "block/lv/fridge" },
+	"creativeinventory": { "general": ["velvfridge-north"], "terrain": ["*"], "mechanics": ["*"], "vinteng": ["*-north"] },
+	"shapeByType": {
+		"*-north": 	{ "base": "vinteng:block/lv/fridge", "rotateY":0 },
+		"*-east": 	{ "base": "vinteng:block/lv/fridge", "rotateY":270 },
+		"*-south": 	{ "base": "vinteng:block/lv/fridge", "rotateY":180 },
+		"*-west": 	{ "base": "vinteng:block/lv/fridge", "rotateY":90 }
+	},
+	"blockmaterial": "Metal",
+	"textures": {},
+	"sidesolid": {
+		"all": false, "down": true
+	},
+	"sideopaque": {
+		"all": false
+	},
+	"lightAbsorption": 1,
+	"maxStackSize": 8,
+	"replaceable": 600,
+	"resistance": 1.5,
+	"collisionSelectionBoxes": [
+		{ "x1": 0, "y1": 0, "z1": 0, "x2": 1, "y2": 1, "z2": 1 }
+	],
+	"guiTransform": {
+		"rotation": { "x": -22.6, "y": -149, "z": 0 }
+	}
+}
