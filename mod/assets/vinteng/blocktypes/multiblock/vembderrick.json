@@ -38,8 +38,8 @@
 			"attributes": [
 				{ "w": 1, "attributes": { "isfacing": false, "defaultvariant": "ew-free" } },
 				{ "w": 3, "attributes": { "isfacing": true, "orientation": "opposite" } },
-				{ "w": 8, "attributes": { "wirefunction": "Power", "powertier": "MV" } },
-				{ "w": 9, "attributes": { "isfacing": true, "orientation": "any" } }
+				{ "w": 9, "attributes": { "isfacing": true, "orientation": "any" } },
+				{ "w": 10, "attributes": { "wirefunction": "Power", "powertier": "MV" } }
 			],
 			"multiblockStructure": {
 				"blockNumbers": {

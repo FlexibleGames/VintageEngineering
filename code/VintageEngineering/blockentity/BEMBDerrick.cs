@@ -72,7 +72,7 @@ namespace VintageEngineering
             {
                 if (id == 0) return new ItemSlot(self);
                 return new ItemSlotLiquidOnly(self, capacity);
-            });
+            });            
             _inventory.SlotModified += this.SlotModified;
             _inventory.OnGetSuitability += this.GetSuitability;
             _inventory.OnGetAutoPushIntoSlot += this.GetAutoPushIntoSlot;
@@ -90,11 +90,13 @@ namespace VintageEngineering
             if (_wellPosition != null)
             {
                 int depth = this.Pos.Y - _wellPosition.Y;
-                dsc.AppendLine(Lang.Get("vinteng:gui-drillingat") + $" {depth:N0} " + Lang.Get("vinteng:gui-word-depth"));                
+                if (!_wellCompleted) dsc.AppendLine(Lang.Get("vinteng:gui-drillingat") + $" {depth:N0} " + Lang.Get("vinteng:gui-word-depth"));
+                else dsc.AppendLine(Lang.Get("vinteng:gui-wellfoundat") + $" {depth:N0} {Lang.Get("vinteng:gui-word-depth")}");
             }
             else
             {
-                dsc.AppendLine($"{Lang.Get("vinteng:gui-wellerror")}");
+                if (Electric.CurrentPower == 0) dsc.AppendLine(Lang.Get("vinteng:gui-machine-lowpower"));
+                else dsc.AppendLine($"{Lang.Get("vinteng:gui-wellerror")}");
             }
             if (InputSlot.Empty || InputSlot.Itemstack.Collectible.Code != _wellCasingCode)
             {
@@ -117,7 +119,7 @@ namespace VintageEngineering
             if (api.Side == EnumAppSide.Server)
             {
                 sapi = api as ICoreServerAPI;
-                RegisterGameTickListener(new Action<float>(OnSimTick), 500, 0);
+                RegisterGameTickListener(new Action<float>(OnSimTick), 500, 1000);
                 _sourceBlocksPerSecond = base.Block.Attributes["sourceBlocksPerSecond"].AsInt(1);
                 _sourceBlocksPerSecond = Math.Clamp(_sourceBlocksPerSecond, 1, 10);
 
@@ -134,7 +136,8 @@ namespace VintageEngineering
                 {
                     AnimUtil.InitializeAnimator("vembderrick", null, null, new Vec3f(0f, GetRotation(), 0f));
                 }
-            }     
+            }
+            SetState(EnumBEState.On);
         }
 
         /// <summary>
@@ -166,13 +169,15 @@ namespace VintageEngineering
             
             EnumBEState newstate = MachineState;
 
-            if (newstate == EnumBEState.Off) return;
-            if (_wellCompleted) return;
+            if (newstate == EnumBEState.Off) newstate = EnumBEState.Sleeping;
+            
             else
             {
                 // casing needed before we start/continue
-                if (InputSlot.Empty) return;
-                if (InputSlot.Itemstack.Collectible.Code != _wellCasingCode) return;
+                if (InputSlot.Empty || InputSlot.Itemstack.Collectible.Code != _wellCasingCode)
+                {
+                    newstate = EnumBEState.Sleeping;
+                }
             }
             
             _wellValidationDelay += dt;
@@ -195,7 +200,7 @@ namespace VintageEngineering
                 }
                 _wellValidationDelay = 0f;
             }
-            if (Electric.CurrentPower < Electric.RatedPower(dt, false))
+            if (Electric.CurrentPower == 0 || Electric.CurrentPower < Electric.RatedPower(dt, false))
             {
                 // if we're supposed to be on, but we don't have enough power, sleep
                 if (newstate == EnumBEState.On) newstate = EnumBEState.Sleeping;
@@ -204,7 +209,7 @@ namespace VintageEngineering
             {
                 newstate = EnumBEState.On; // power is green
             }
-
+            if (_wellCompleted) newstate = EnumBEState.Sleeping;
             if (newstate == EnumBEState.On)
             {
                 if (_wellPosition == null) // typically the first time the derrick is powered
@@ -248,7 +253,7 @@ namespace VintageEngineering
                 // by default 1 block/s * 1000 * 100 = 100,000 portions per second
                 long portionpersecond = literspersecond * portionperliter;
                 double availportion = Output.CapacityLitres * portionperliter; // 100 portions per liter is the standard... default to this, if it's empty this is the available by default.
-                if (!_inventory[0].Empty) availportion = Output.CapacityLitres * BlockLiquidContainerBase.GetContainableProps(Output.Itemstack).ItemsPerLitre - Output.Itemstack.StackSize;
+                if (!_inventory[1].Empty) availportion = Output.CapacityLitres * BlockLiquidContainerBase.GetContainableProps(Output.Itemstack).ItemsPerLitre - Output.Itemstack.StackSize;
 
                 if (availportion < portionpersecond) return; // we do not have enough space for another pump action
 
@@ -292,7 +297,26 @@ namespace VintageEngineering
         public override bool OnPlayerRightClick(IPlayer byPlayer, BlockSelection blockSel)
         {
             // force a well validation check
-            if (Api.Side == EnumAppSide.Server) _wellValidationDelay = 121f;
+            if (Api.Side == EnumAppSide.Server)
+            {
+                _wellValidationDelay = 121f;
+                if (byPlayer != null && !byPlayer.InventoryManager.ActiveHotbarSlot.Empty && this.Block.Variant["state"] == "built")
+                {
+                    if (byPlayer.InventoryManager.ActiveHotbarSlot.Itemstack.Collectible?.Tool == EnumTool.Wrench)
+                    {
+                        if (blockSel != null && !Api.World.Claims.TryAccess(byPlayer, blockSel.Position, EnumBlockAccessFlags.Use))
+                        {
+                            return false; // only block if we can't interact via permissions with this block
+                        }
+                        // player is good, Derrick is built, player is holding a wrench
+                        BlockFacing control = BlockFacing.FromCode(Block.Variant["side"]).GetCW();
+                        if (blockSel.Face == control)
+                        {
+                            _inventory.DropAll(byPlayer.Entity.Pos.AsBlockPos.ToVec3d());
+                        }
+                    }
+                }             
+            }
             return true;
         }
 
@@ -393,7 +417,8 @@ namespace VintageEngineering
             while (start.Y > 0)
             {
                 // TODO: Place Casing as search finds air or invalid (not matching filter) fluids
-                Block blockat = sapi.World.BlockAccessor.GetBlock(start.Down());
+                Block blockat = sapi.World.BlockAccessor.GetBlock(start);
+                start.Down();
                 if (blockat == casing) continue;
                 else
                 {
@@ -436,7 +461,7 @@ namespace VintageEngineering
                             _wellCompleted = false; // we ran into a solid block that isn't liquid, air, casing, or a well
                             return null; 
                         }
-                    }
+                    }                    
                 }
             }
             return null;
@@ -454,7 +479,11 @@ namespace VintageEngineering
             if (sapi == null) return false;
 
             Block startblock = sapi.World.BlockAccessor.GetBlock(start);
-            if (!startblock.IsLiquid()) return false;
+            if (!startblock.IsLiquid()) 
+            {
+                if (GetWellAt(start) != null) { _wellCompleted = true; return true; }
+                return false; 
+            }
 
             List<BlockPos> tocheck = new List<BlockPos>();
             List<BlockPos> checkcache = new List<BlockPos>();
@@ -576,11 +605,11 @@ namespace VintageEngineering
         {
             get
             {
-                if (_inventory[0].Empty) return 0;
+                if (_inventory[1].Empty) return 0;
                 else
                 {
-                    int portions = _inventory[0].Itemstack.StackSize;
-                    float capacity = (_inventory[0] as ItemSlotLiquidOnly).CapacityLitres * BlockLiquidContainerBase.GetContainableProps(_inventory[0].Itemstack).ItemsPerLitre;
+                    int portions = _inventory[1].Itemstack.StackSize;
+                    float capacity = (_inventory[1] as ItemSlotLiquidOnly).CapacityLitres * BlockLiquidContainerBase.GetContainableProps(_inventory[1].Itemstack).ItemsPerLitre;
                     float full = (float)portions / capacity;
                     return (int)(full * 100);
                 }
@@ -618,7 +647,8 @@ namespace VintageEngineering
 
         private void SlotModified(int slotid)
         {
-            if (slotid <= 1) _clientUpdateDelay += 0.025f;
+            if (slotid <= 1) _clientUpdateDelay += 0.25f;
+            if (_clientUpdateDelay >= 0.5f) MarkDirty(true);
         }
 
         public bool HasRoomInOutput(int slotid, ItemStack forStack)
