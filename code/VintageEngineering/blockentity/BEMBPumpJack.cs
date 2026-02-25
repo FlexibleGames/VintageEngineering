@@ -144,20 +144,22 @@ namespace VintageEngineering
                 }
                 _wellValidationDelay = 0f;
             }
-            if (Electric.CurrentPower < Electric.RatedPower(dt, false))
+            if (Electric.CurrentPower == 0 || Electric.CurrentPower < Electric.RatedPower(dt, false))
             {
                 // if we're supposed to be on, but we don't have enough power, sleep
                 if (newstate == EnumBEState.On) newstate = EnumBEState.Sleeping;
             }
             else newstate = EnumBEState.On; // power is green
 
+            if (_wellPosition == null) newstate = EnumBEState.Sleeping; // final check
+
             if (newstate == EnumBEState.On)
             {
                 // we have enough power and a valid well! \o/
                 int literspersecond = _sourceBlocksPerSecond * 1000;
-                int portionperliter = 100;
+                int portionperliter = 100;                
                 IFluidWell thewell = GetWellAt(_wellPosition);
-                //if (thewell == null) return;
+                if (thewell == null) { SetState(EnumBEState.Sleeping); return; }
                 Item portion = Api.World.GetItem(new AssetLocation(thewell?.FluidPortionCode));
                 if (portion != null)
                 {
@@ -250,7 +252,7 @@ namespace VintageEngineering
       
         public IFluidWell GetWellAt(BlockPos pos)
         {
-            //if (pos == null) return null;
+            if (pos == null) return null;
             return Api.World.BlockAccessor.GetBlockEntity(pos) as IFluidWell;
         }
 

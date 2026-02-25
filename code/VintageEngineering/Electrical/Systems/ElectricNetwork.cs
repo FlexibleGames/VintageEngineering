@@ -212,6 +212,10 @@ namespace VintageEngineering.Electrical.Systems
             {                
                 if (access.GetBlockEntity(entity.GetPosition()) is IMBPassThrough proxy)
                 {
+                    if (proxy.CorePosition == null)
+                    {
+                        (proxy as BEMBPowerConnector).ValidateCore();
+                    }
                     BlockPos corepos = proxy.CorePosition.Copy();
                     if (corepos != null)
                     {
@@ -429,11 +433,11 @@ namespace VintageEngineering.Electrical.Systems
             // The meat and 'tatos of the entire system.
             //ulong totalpowerwanted = 0;
             ulong totalpoweringen = 0;
-            ulong totalpoweroffered = 0;
-            ulong totalinstorage = 0;
-            ulong totalstorageavailable = 0;
+             ulong totalpoweroffered = 0;
+             ulong totalinstorage = 0;
+             ulong totalstorageavailable = 0;
             ulong totalexcesspower = 0;
-            ulong totalstorageused = 0;
+             ulong totalstorageused = 0;
 
             // TODO: Update PPS of entire network to use _networkPPS variable...
 
