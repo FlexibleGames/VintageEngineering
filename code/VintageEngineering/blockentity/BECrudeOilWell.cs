@@ -66,6 +66,14 @@ namespace VintageEngineering
                 if (!IsGenerated) _tickHandler = RegisterGameTickListener(OnGameTick, 3000, 100);
             }
         }
+
+        public void TickIt()
+        {
+            if (_tickHandler == 0 && Api.Side == EnumAppSide.Server)
+            {
+                _tickHandler = RegisterGameTickListener(OnGameTick, 2000, 1000);
+            }
+        }
         /// <summary>
         /// Only run server-side, will track and build the deposit when all neighboring chunks are loaded.
         /// </summary>

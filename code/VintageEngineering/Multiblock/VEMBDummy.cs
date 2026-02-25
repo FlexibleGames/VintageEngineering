@@ -247,6 +247,10 @@ namespace VintageEngineering.Multiblock
 
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
         {
+            if (blockSel != null && !world.Claims.TryAccess(byPlayer, blockSel.Position, EnumBlockAccessFlags.Use))
+            {
+                return false; // only block if we can't interact via permissions with this block
+            }
             if (byPlayer.Entity.Controls.Sneak)
             {
                 return base.OnBlockInteractStart(world, byPlayer, blockSel);

@@ -103,6 +103,26 @@ namespace VintageEngineering.Blocks
             }
         }
 
+        public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
+        {
+            if (byPlayer != null && byPlayer.InventoryManager != null)
+            {
+                if (byPlayer.InventoryManager.OffhandTool != null && byPlayer.InventoryManager.ActiveTool != null)
+                {
+                    if (byPlayer.InventoryManager.OffhandTool == EnumTool.Wrench && byPlayer.InventoryManager.ActiveTool == EnumTool.Chisel)
+                    {
+                        if (world.BlockAccessor.GetBlockEntity(blockSel.Position) is BECrudeOilWell well)
+                        {
+                            well.IsLarge = true;
+                            well.IsGenerated = false; // A sneaky way of creating a bubble, shhhh don't tell anyone <_<
+                            well.TickIt();
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+
         public override bool TryPlaceBlockForWorldGen(IBlockAccessor access, BlockPos pos, BlockFacing face, IRandom wrand, BlockPatchAttributes attributes = null)
         {
             if (pos.Y >= 1 && pos.Y < 12) // clamp range even more, making these even harder to find.
