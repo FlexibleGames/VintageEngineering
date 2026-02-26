@@ -1,0 +1,11 @@
+{
+	"ingredientPattern": "_G_,BCB",
+	"ingredients": {
+		"G": { "type": "item", "code": "game:ingot-gold", "quantity": 1 },
+		"C": { "type": "item", "code": "vinteng:mvconnectorbase-burned", "quantity": 4 },
+		"B": { "type": "item", "code": "vinteng:braidedwire-copper", "quantity": 1 }
+	},
+	"width": 3,
+	"height": 2,
+	"output": { "type": "block", "code": "vinteng:mbpowerconnector-mvpower-up", "quantity": 4  }
+}

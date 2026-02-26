@@ -413,6 +413,12 @@
 	"vinteng:blockdesc-vembcomponent-heavyeng": "Heavy Engineering block for use in Multiblock construction. Can also be used as an expensive deco block.",
 	"vinteng:block-vembcomponent-steel": "Multiblock Component (Reinforced Steel)",
 	"vinteng:blockdesc-vembcomponent-steel": "Reinforced Steel block for use in Multiblock construction. Can also be used as an expensive deco block.",
+	"vinteng:block-mbpowerconnector-mvpower-*": "Multiblock MV Power Connector",
+	"vinteng:blockdesc-mbpowerconnector-mvpower-*": "Place on a multiblock power input face and connect with a wire to supply power to the multiblock. Multiblocks are not directly wire-able to a network and require one of these connectors.",
+	"vinteng:item-mvconnectorbase-raw": "Unfired MV Connector Base",
+	"vinteng:itemdesc-mvconnectorbase-raw": "Fire this in a pitkiln or Electric Kiln to make the component of the <a href=\"handbook://block-vinteng:mbpowerconnector-mvpower-up\">MV Connector</a> for powering multiblocks",
+	"vinteng:item-mvconnectorbase-burned": "Fired MV Connector Base",
+	"vinteng:itemdesc-mvconnectorbase-burned": "Use to craft the <a href=\"handbook://block-vinteng:mbpowerconnector-mvpower-up\">MV Multiblock Connector</a> for powering multiblock structures.",
 
 	"vinteng:block-vembcreosoteoven-incomplete-*": "Creosote Oven Core",
 	"vinteng:block-vembcreosoteoven-built-*": "Creosote Oven",
