@@ -331,7 +331,7 @@ namespace VintageEngineering.Electrical.Systems
         /// <param name="entity">IElectricBlockEntity Leaving.</param>
         public void Leave(WireNode node, IElectricalBlockEntity entity)
         {
-            if (!allNodes.Contains(node)) return; // can't leave a network we're not apart of.
+            if (!allNodes.Contains(node) || entity == null) return; // can't leave a network we're not apart of.
 
             //allNodes.Remove(node); do not remove the node simply because it's unloaded
             if (entity.ElectricalEntityType == EnumElectricalEntityType.PassThrough)
