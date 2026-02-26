@@ -7,12 +7,16 @@
 	],
 	"handbook": { "exclude": true },
 	"variantgroups": [
-		{ "code": "io", "states": ["none", "item", "fluid", "power", "signal", "gas", "mechanical", "interaction", "casting" ] },
+		{ "code": "io", "states": ["none", "item", "fluid", "power", "signal", "gas", "mechanical", "interaction", "casting", "ladder" ] },
 		{ "code": "side", "loadFromProperties": "abstract/horizontalorientation" }
 	],
+	"climbableByType": {
+		"*-ladder-*": true,
+		"*": false
+	},
 	"shape": { "base": "game:block/basic/nothing" },
 	"drawtype": "json",
-	"sidesolid": { "all": false },
+	"sidesolid": { "all": true },
 	"sideopaque": { "all": false },
 	"blockmaterial": "Metal",
 	"replaceable": 160,

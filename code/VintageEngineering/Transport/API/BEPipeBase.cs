@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using VintageEngineering.API;
 using VintageEngineering.Transport.Network;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -478,7 +479,7 @@ namespace VintageEngineering.Transport.API
             // the order is N, E, S, W, U, D
             for (int f = 0; f < BlockFacing.ALLFACES.Length; f++)
             {
-                bool isLoaded = IsChunkLoaded(Api.World, Pos.AddCopy(BlockFacing.ALLFACES[f]));
+                bool isLoaded = VEHelpers.IsChunkLoaded(Api.World, Pos.AddCopy(BlockFacing.ALLFACES[f]));
                 Block dblock = world.BlockAccessor.GetBlock((Pos.AddCopy(BlockFacing.ALLFACES[f])), BlockLayersAccess.Default);
                 BlockEntity dbe = world.BlockAccessor.GetBlockEntity(Pos.AddCopy(BlockFacing.ALLFACES[f]));
                 BlockFacing fromface = BlockFacing.ALLFACES[f];                
@@ -1077,22 +1078,5 @@ namespace VintageEngineering.Transport.API
             }
         }
 
-        /// <summary>
-        /// A quick check to determine if a chunk at a given position is loaded.<br/>
-        /// Unlike the base-game call, this one ignores neighboring chunks.
-        /// </summary>
-        /// <param name="world">World Accessor</param>
-        /// <param name="atpos">BlockPos to check.</param>
-        /// <returns>True if chuck is loaded.</returns>
-        public static bool IsChunkLoaded(IWorldAccessor world, BlockPos atpos)
-        {            
-            if (world.BlockAccessor.GetChunk(atpos.X / GlobalConstants.ChunkSize,
-                atpos.InternalY / GlobalConstants.ChunkSize,
-                atpos.Z /  GlobalConstants.ChunkSize) == null)
-            {
-                return false;
-            }
-            return true;
-        }
     }
 }

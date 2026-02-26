@@ -1,0 +1,11 @@
+{
+	"ingredientPattern": "SBS,RBR,SBS",
+	"ingredients": {
+		"S": { "type": "item", "code": "vinteng:screw-*", "name": "metal", "allowedVariants": ["iron", "steel"], "quantity": 2 },
+		"R": { "type": "item", "code": "game:rod-steel", "quantity": 1 },
+		"B": { "type": "item", "code": "vinteng:metalbar-steel", "quantity": 1 }
+	},
+	"width": 3,
+	"height": 3,
+	"output": { "type": "block", "code": "vinteng:metalladder-steel-north", "quantity": 3  }
+}

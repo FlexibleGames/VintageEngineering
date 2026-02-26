@@ -1,13 +1,16 @@
-﻿using System;
+﻿using ProtoBuf;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
-using ProtoBuf;
+using VintageEngineering.API;
 using VintageEngineering.Electrical.Systems.Catenary;
+using VintageEngineering.Multiblock;
 using VintageEngineering.Transport.API;
 using Vintagestory;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
@@ -171,6 +174,11 @@ namespace VintageEngineering.Electrical.Systems
                     // entity should never be null here
                     if (entity == null) throw new NullReferenceException("VintEng: An Electrical Entity is null when trying to initalize network.");
                     
+                    if (entity.ElectricalEntityType == EnumElectricalEntityType.PassThrough)
+                    {
+                        entity = PassThroughEntity(api.World.BlockAccessor, entity);
+                    }
+
                     switch (entity.ElectricalEntityType)
                     {
                         case EnumElectricalEntityType.Consumer:
@@ -183,7 +191,7 @@ namespace VintageEngineering.Electrical.Systems
                             break;
                         case EnumElectricalEntityType.Toggle:
                         case EnumElectricalEntityType.Storage:
-                        case EnumElectricalEntityType.Transformer:
+                        case EnumElectricalEntityType.Transformer:                        
                             storageNodes.Add(entity);
                             if (storageNodes.Count > 1) storageNodes.Sort((x, y) => x.Priority.CompareTo(y.Priority));
                             break;
@@ -195,6 +203,27 @@ namespace VintageEngineering.Electrical.Systems
                     }
                 }
             }
+        }
+
+        public IElectricalBlockEntity PassThroughEntity(IBlockAccessor access, IElectricalBlockEntity entity)
+        {
+            IElectricalBlockEntity passthrough = null;
+            if (entity.ElectricalEntityType == EnumElectricalEntityType.PassThrough)
+            {                
+                if (access.GetBlockEntity(entity.GetPosition()) is IMBPassThrough proxy)
+                {
+                    if (proxy.CorePosition == null)
+                    {
+                        (proxy as BEMBPowerConnector).ValidateCore();
+                    }
+                    BlockPos corepos = proxy.CorePosition.Copy();
+                    if (corepos != null)
+                    {
+                        passthrough = proxy.CoreEntity.GetBehavior<IElectricalBlockEntity>();
+                    }
+                }
+            }
+            return passthrough;
         }
 
         public void AddNode(WireNode node, IBlockAccessor blockAccessor, bool updateEntity = true)
@@ -209,6 +238,7 @@ namespace VintageEngineering.Electrical.Systems
 
             IElectricalBlockEntity electricalBlockEntity = IElectricalBlockEntity.GetAtPos(blockAccessor, node.blockPos);
 
+
             if (electricalBlockEntity == null) { throw new Exception("Attempting to add Electrical Node that is NOT an ElectricalBlockEntity!"); }
 
             IWireNetwork wirenet = IWireNetwork.GetAtPos(blockAccessor, node.blockPos);
@@ -218,6 +248,11 @@ namespace VintageEngineering.Electrical.Systems
             }
 
             allNodes.Add(node);
+
+            if (electricalBlockEntity.ElectricalEntityType == EnumElectricalEntityType.PassThrough)
+            {                
+                electricalBlockEntity = PassThroughEntity(blockAccessor, electricalBlockEntity);
+            }
 
             // a Transformer is a special type of storage, it has more than one power tier connection.
             // Toggles will be another unique type of storage, one that can have > 1 connection to a single network tier
@@ -233,7 +268,7 @@ namespace VintageEngineering.Electrical.Systems
                     break;
                 case EnumElectricalEntityType.Toggle:
                 case EnumElectricalEntityType.Storage:
-                case EnumElectricalEntityType.Transformer:
+                case EnumElectricalEntityType.Transformer:                
                     storageNodes.Add(electricalBlockEntity);
                     if (storageNodes.Count > 1) storageNodes.Sort((x, y) => x.Priority.CompareTo(y.Priority));
                     break;
@@ -260,6 +295,11 @@ namespace VintageEngineering.Electrical.Systems
                 allNodes.Add(node);
             }
 
+            if (entity.ElectricalEntityType == EnumElectricalEntityType.PassThrough)
+            {
+                entity = PassThroughEntity(api.World.BlockAccessor, entity);
+            }
+
             switch (entity.ElectricalEntityType)
             {
                 case EnumElectricalEntityType.Consumer:
@@ -272,7 +312,7 @@ namespace VintageEngineering.Electrical.Systems
                     break;
                 case EnumElectricalEntityType.Toggle:
                 case EnumElectricalEntityType.Storage:
-                case EnumElectricalEntityType.Transformer:
+                case EnumElectricalEntityType.Transformer:                
                     storageNodes.Add(entity);
                     if (storageNodes.Count > 1) storageNodes.Sort((x, y) => x.Priority.CompareTo(y.Priority));
                     break;
@@ -291,9 +331,13 @@ namespace VintageEngineering.Electrical.Systems
         /// <param name="entity">IElectricBlockEntity Leaving.</param>
         public void Leave(WireNode node, IElectricalBlockEntity entity)
         {
-            if (!allNodes.Contains(node)) return; // can't leave a network we're not apart of.
-            
+            if (!allNodes.Contains(node) || entity == null) return; // can't leave a network we're not apart of.
+
             //allNodes.Remove(node); do not remove the node simply because it's unloaded
+            if (entity.ElectricalEntityType == EnumElectricalEntityType.PassThrough)
+            {
+                entity = PassThroughEntity(api.World.BlockAccessor, entity);
+            }
 
             switch (entity.ElectricalEntityType)
             {
@@ -307,7 +351,7 @@ namespace VintageEngineering.Electrical.Systems
                     break;
                 case EnumElectricalEntityType.Toggle:
                 case EnumElectricalEntityType.Storage:
-                case EnumElectricalEntityType.Transformer:
+                case EnumElectricalEntityType.Transformer:                
                     if (storageNodes.Contains(entity)) { storageNodes.Remove(entity); }
                     if (storageNodes.Count > 1) storageNodes.Sort((x, y) => x.Priority.CompareTo(y.Priority));
                     break;
@@ -337,6 +381,11 @@ namespace VintageEngineering.Electrical.Systems
                     // if the last node is removed, NetworkID entry is automatically removed.
                 }
 
+                if (electricalBlockEntity.ElectricalEntityType == EnumElectricalEntityType.PassThrough)
+                {
+                    electricalBlockEntity = PassThroughEntity(api.World.BlockAccessor, electricalBlockEntity);
+                }
+
                 switch (electricalBlockEntity.ElectricalEntityType)
                 {
                     case EnumElectricalEntityType.Consumer:
@@ -354,8 +403,7 @@ namespace VintageEngineering.Electrical.Systems
                         relayNodes.Remove(electricalBlockEntity);
                         break;
                     default: break;
-                }
-                //blockAccessor.GetBlockEntity(node.blockPos).MarkDirty();
+                }                
             }
         }
 
@@ -385,11 +433,11 @@ namespace VintageEngineering.Electrical.Systems
             // The meat and 'tatos of the entire system.
             //ulong totalpowerwanted = 0;
             ulong totalpoweringen = 0;
-            ulong totalpoweroffered = 0;
-            ulong totalinstorage = 0;
-            ulong totalstorageavailable = 0;
+             ulong totalpoweroffered = 0;
+             ulong totalinstorage = 0;
+             ulong totalstorageavailable = 0;
             ulong totalexcesspower = 0;
-            ulong totalstorageused = 0;
+             ulong totalstorageused = 0;
 
             // TODO: Update PPS of entire network to use _networkPPS variable...
 
@@ -404,7 +452,11 @@ namespace VintageEngineering.Electrical.Systems
                 consumerNodes.Count == 0)
             {
                 // a network of all relays would have 0 of the above types, but allNodes would be > 0
-                if (allNodes.Count == 0) return false; // there are zero nodes in this network, delete it.
+                if (allNodes.Count == 0) 
+                {
+                    api.Logger.Warning($"All nodes removed from ElectricNetwork ID {this.NetworkID}. Deleting Network.");
+                    return false; // there are zero nodes in this network, delete it.
+                }
 
                 // if all the nodes are relays then lets skip validation
                 // until such a time as I have to keep it due to edge-case bugs
@@ -420,7 +472,7 @@ namespace VintageEngineering.Electrical.Systems
                     // if the block position is invalid the block could be unloaded OR invalid
                     // if unloaded, then we need to skip.
                     // using a custom call that ignores neighboring chunk status.
-                    if (!BEPipeBase.IsChunkLoaded(api.World, node.blockPos))
+                    if (!VEHelpers.IsChunkLoaded(api.World, node.blockPos))
                     {
                         continue;
                     }
@@ -466,12 +518,6 @@ namespace VintageEngineering.Electrical.Systems
                 }
                 return true;
             }
-            /* Not needed
-            foreach (IElectricalBlockEntity entity in consumerNodes)
-            {
-                totalpowerwanted += (entity.MaxPower - entity.CurrentPower);
-            }
-            */
             if (producerNodes.Count > 0)
             {
                 foreach (IElectricalBlockEntity entity in producerNodes)

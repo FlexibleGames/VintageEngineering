@@ -1,5 +1,5 @@
-{
-	"ingredientPattern": "BCB,_T_,BCB",
+[{
+	"ingredientPattern": "BCB,__T,BCB",
 	"ingredients": {
 		"C": { "type": "item", "code": "vinteng:machineplate-iron", "quantity": 1 },
 		"B": { "type": "item", "code": "vinteng:screw-iron", "quantity": 1 },
@@ -7,5 +7,34 @@
 	},
 	"width": 3,
 	"height": 3,
-	"output": { "type": "block", "code": "vinteng:metalplatform", "quantity": 4  }
-}
+	"output": { "type": "block", "code": "vinteng:metalplatform-down", "quantity": 4  }
+},
+{
+	"ingredientPattern": "BCB,T__,BCB",
+	"ingredients": {
+		"C": { "type": "item", "code": "vinteng:machineplate-iron", "quantity": 1 },
+		"B": { "type": "item", "code": "vinteng:screw-iron", "quantity": 1 },
+		"T": { "type": "item", "code": "game:hammer-*", "isTool": true }
+	},
+	"width": 3,
+	"height": 3,
+	"output": { "type": "block", "code": "vinteng:metalplatform-up", "quantity": 4  }
+},
+{
+	"ingredientPattern": "M",
+	"ingredients": {
+		"M": { "type": "block", "code": "vinteng:metalplatform-down", "quantity": 1 }
+	},
+	"width": 1,
+	"height": 1,
+	"output": { "type": "block", "code": "vinteng:metalplatform-up", "quantity": 1  }
+},
+{
+	"ingredientPattern": "M",
+	"ingredients": {
+		"M": { "type": "block", "code": "vinteng:metalplatform-up", "quantity": 1 }
+	},
+	"width": 1,
+	"height": 1,
+	"output": { "type": "block", "code": "vinteng:metalplatform-down", "quantity": 1  }
+}]

@@ -1,0 +1,35 @@
+[
+    {
+		"code": "metalbar-from-ingot",
+		"enabled": true,
+		"attributes": {
+			"requires": "vinteng:vediecast-bar-*",
+			"requiresdurability": true,
+			"requirestemp": -1
+		},
+		"powerpercraft": 600,
+		"ingredients": [
+			{ "type": "item", "code": "game:ingot-*", "quantity": 1, "name":"metal", "allowedVariants": ["copper", "brass", "tinbronze", "iron"] }
+		],
+		"outputs": [
+			{ "type": "item", "code": "vinteng:metalbar-{metal}", "stacksize": 4 }
+		]
+	},
+    {
+		"code": "steel-bar-from-ingot",
+		"enabled": true,
+		"attributes": {
+			"requires": "vinteng:vediecast-bar-*",
+			"requiresvariants": ["meteoriciron", "steel", "titanium"],
+			"requiresdurability": true,
+			"requirestemp": -1
+		},
+		"powerpercraft": 600,
+		"ingredients": [
+			{ "type": "item", "code": "game:ingot-*", "quantity": 1, "name":"metal", "allowedVariants": ["steel"] }
+		],
+		"outputs": [
+			{ "type": "item", "code": "vinteng:metalbar-{metal}", "stacksize": 4 }
+		]
+	}
+]

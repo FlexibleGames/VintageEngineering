@@ -46,7 +46,7 @@ namespace VintageEngineering.Multiblock
                 foreach (BlockPos pos in blocksToCheck)
                 {
                     BlockPos start = pos.AddCopy(-1, -1, -1);
-                    BlockPos end = pos.AddCopy(1, 0, 1);
+                    BlockPos end = pos.AddCopy(1, 1, 1);
                     world.BlockAccessor.WalkBlocks(start, end, delegate (Block dblock, int x, int y, int z)
                     {
                         string blockcode = dblock.Code.Path;
@@ -87,7 +87,7 @@ namespace VintageEngineering.Multiblock
                     if (found) break;
                 }
                 blocksToCheck.Clear();
-                if (blockstoadd.Count > 0 && blocksChecked.Count < limit) { blocksToCheck.AddRange(blockstoadd); }
+                 if (blockstoadd.Count > 0 && blocksChecked.Count < limit) { blocksToCheck.AddRange(blockstoadd); }
                 blockstoadd.Clear();
             }
             blocksChecked.Clear();

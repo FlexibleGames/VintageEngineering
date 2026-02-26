@@ -57,11 +57,6 @@ namespace VintageEngineering.inventory
             return true;
         }
 
-        public override bool HasOpened(IPlayer player)
-        {
-            return (machineuser != null && machineuser.PlayerUID == player.PlayerUID);
-        }
-
         public override bool RemoveOnClose { get { return true; } }
 
         public ItemSlot[] Slots

@@ -1,3 +1,19 @@
+v0.5.2
+- Added Derrick Multiblock
+- Added Well Casing for the Derrick
+- Added PumpJack Multiblock
+- Added Steel & Iron Fence
+- Added Steel Ladders
+- Added Metal Platform Top variant
+- Added Treated Wood slabs, recipes, and crafting chains
+- Renamed Metal Rod to Metal Bar, all your VintEng Rods should now be bars. Vanilla added Rods so I adapted.
+- Added new Rod Die Cast for extruder to make vanilla Rods. These are 1:1 with ingots.
+- LV Pump now only pumps fluid at or above the level the basket is in.
+- Added a Fridge
+- Combined Scaffold types into one code with variants. Freed up "Girder" for something better. <_<
+- Various Shenanigans...
+- Fixed #49, #59, #60, #64
+
 v0.5.0
 - Fix Tank-Bucket interaction when holding stacks of buckets.
 - Reduce by a further 50% the spawn chance of Oil Geysers.

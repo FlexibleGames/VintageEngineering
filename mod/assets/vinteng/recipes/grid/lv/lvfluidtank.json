@@ -2,7 +2,7 @@
 	"ingredientPattern": "STS,PBP,STS",
 	"ingredients": {
 		"T": { "type": "item", "code": "vinteng:machineplate-tinbronze", "quantity": 1 },
-		"P": { "type": "item", "code": "vinteng:metalrod-tinbronze", "quantity": 2 },
+		"P": { "type": "item", "code": "vinteng:metalbar-tinbronze", "quantity": 2 },
 		"B": { "type": "block", "code": "game:glass-quartz", "quantity": 1 },
 		"S": { "type": "item", "code": "vinteng:screw-*", "quantity": 1 }
 	},
@@ -14,7 +14,7 @@
 	"ingredientPattern": "STS,PBP,STS",
 	"ingredients": {
 		"T": { "type": "item", "code": "vinteng:machineplate-iron", "quantity": 1 },
-		"P": { "type": "item", "code": "vinteng:metalrod-iron", "quantity": 2 },
+		"P": { "type": "item", "code": "vinteng:metalbar-iron", "quantity": 2 },
 		"B": { "type": "block", "code": "game:glass-quartz", "quantity": 1 },
 		"S": { "type": "item", "code": "vinteng:screw-*", "quantity": 1, "allowedVariants": ["iron", "steel"] }
 	},
@@ -26,7 +26,7 @@
 	"ingredientPattern": "STS,PBP,STS",
 	"ingredients": {
 		"T": { "type": "item", "code": "vinteng:machineplate-steel", "quantity": 1 },
-		"P": { "type": "item", "code": "vinteng:metalrod-steel", "quantity": 2 },
+		"P": { "type": "item", "code": "vinteng:metalbar-steel", "quantity": 2 },
 		"B": { "type": "block", "code": "game:glass-quartz", "quantity": 1 },
 		"S": { "type": "item", "code": "vinteng:screw-steel", "quantity": 1 }
 	},

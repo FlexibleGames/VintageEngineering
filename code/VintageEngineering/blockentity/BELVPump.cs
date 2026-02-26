@@ -143,14 +143,14 @@ namespace VintageEngineering.blockentity
 
             FluidPosition last = _isinfinite ? new FluidPosition(Pos.DownCopy(1), 0) : _fluidpositions.Last<FluidPosition>();
 
-            if (!BEPipeBase.IsChunkLoaded(Api.World, last.Position))
+            if (!VEHelpers.IsChunkLoaded(Api.World, last.Position))
             {
                 if (_isinfinite) return; // the one block we look at is right below the pump and it isn't loaded... this shouldn't be possible
                 _fluidpositions.Remove(last);
                 while (true)
                 {
                     last = _fluidpositions.Last<FluidPosition>();
-                    if (BEPipeBase.IsChunkLoaded(Api.World, last.Position)) break;
+                    if (VEHelpers.IsChunkLoaded(Api.World, last.Position)) break;
                     else 
                     { 
                         _fluidpositions.Remove(last);
@@ -325,7 +325,7 @@ namespace VintageEngineering.blockentity
             else _fluidpositions = new List<FluidPosition>();
 
             BlockPos below = this.Pos.DownCopy(1);
-            Block blockbelow = Api.World.BlockAccessor.GetBlock(below);
+            Block blockbelow = Api.World.BlockAccessor.GetBlock(below);            
             if (blockbelow.IsLiquid())
             {
                 _ischeckingfluid = true;
@@ -353,7 +353,7 @@ namespace VintageEngineering.blockentity
 
                             foreach (BlockPos bpos in _tocheck)
                             {
-                                BlockPos start = bpos.AddCopy(-1, -1, -1);
+                                BlockPos start = bpos.AddCopy(-1, 0, -1);
                                 BlockPos end = bpos.AddCopy(1, 1, 1);
                                 Api.World.BlockAccessor.WalkBlocks(start, end, delegate (Block dblock, int x, int y, int z)
                                 {

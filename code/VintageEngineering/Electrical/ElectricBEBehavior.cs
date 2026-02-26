@@ -160,7 +160,9 @@ namespace VintageEngineering.Electrical
             else
             {
                 // extracting
-                return CurrentPower < rate ? CurrentPower : rate;
+                if (CurrentPower == 0) return 0;
+                if (CurrentPower < rate) return CurrentPower;
+                return rate; // CurrentPower > rate ? rate : CurrentPower;
             }
         }
 

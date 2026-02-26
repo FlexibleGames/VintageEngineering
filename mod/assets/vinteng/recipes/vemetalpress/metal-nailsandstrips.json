@@ -9,7 +9,7 @@
 		},
 		"powerpercraft": 250,
 		"ingredients": [
-			{ "type": "item", "code": "game:metalplate-*", "quantity": 1, "name": "metal", "allowedVariants": ["copper", "tinbronze", "bismuthbronze", "blackbronze", "silver", "gold"] }
+			{ "type": "item", "code": "game:metalplate-*", "quantity": 1, "name": "metal", "allowedVariants": ["copper", "cupronickel", "tinbronze", "bismuthbronze", "blackbronze", "silver", "gold"] }
 		],
 		"outputs": [
 			{ "type": "item", "code": "game:metalnailsandstrips-{metal}", "stacksize": 3, "variable": 1 }

@@ -2,7 +2,7 @@
     {
         "ingredientPattern": "SSS,SSS",
         "ingredients": {
-            "S": { "type": "item", "code": "vinteng:metalrod-iron", "quantity": 1 }
+            "S": { "type": "item", "code": "vinteng:metalbar-iron", "quantity": 1 }
         },
         "width": 3,
         "height": 2,
@@ -11,7 +11,7 @@
     {
         "ingredientPattern": "S_S,SSS",
         "ingredients": {
-            "S": { "type": "item", "code": "vinteng:metalrod-iron", "quantity": 1 }
+            "S": { "type": "item", "code": "vinteng:metalbar-iron", "quantity": 1 }
         },
         "width": 3,
         "height": 2,

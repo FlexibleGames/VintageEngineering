@@ -1,0 +1,27 @@
+{
+	"editor": {
+		"allAngles": false,
+		"entityTextureMode": false
+	},
+	"textureWidth": 16,
+	"textureHeight": 16,
+	"textureSizes": {
+	},
+	"textures": {
+		"treated1-bad": "block/wood/planks/treated1-bad"
+	},
+	"elements": [
+		{
+			"name": "Base",
+			"from": [ 0.0, 0.0, 0.0 ],
+			"to": [ 16.0, 8.0, 16.0 ],
+			"faces": {
+				"north": { "texture": "#treated1-bad", "uv": [ 0.0, 8.0, 16.0, 16.0 ] },
+				"east": { "texture": "#treated1-bad", "uv": [ 0.0, 8.0, 16.0, 16.0 ] },
+				"south": { "texture": "#treated1-bad", "uv": [ 0.0, 8.0, 16.0, 16.0 ] },
+				"west": { "texture": "#treated1-bad", "uv": [ 0.0, 8.0, 16.0, 16.0 ] },
+				"up": { "texture": "#treated1-bad", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
+				"down": { "texture": "#treated1-bad", "uv": [ 0.0, 0.0, 16.0, 16.0 ] }
+			}
+		}
+	]}

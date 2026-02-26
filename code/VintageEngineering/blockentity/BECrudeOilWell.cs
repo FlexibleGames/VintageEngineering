@@ -49,6 +49,8 @@ namespace VintageEngineering
         /// </summary>
         private long _tickHandler = 0;
 
+        private float _clientUpdateTick = 0f;
+
         public override void Initialize(ICoreAPI api)
         {
             base.Initialize(api);
@@ -62,6 +64,14 @@ namespace VintageEngineering
                     IsGenerated = true;
                 }
                 if (!IsGenerated) _tickHandler = RegisterGameTickListener(OnGameTick, 3000, 100);
+            }
+        }
+
+        public void TickIt()
+        {
+            if (_tickHandler == 0 && Api.Side == EnumAppSide.Server)
+            {
+                _tickHandler = RegisterGameTickListener(OnGameTick, 2000, 1000);
             }
         }
         /// <summary>
@@ -81,16 +91,16 @@ namespace VintageEngineering
             }
             else
             {
-                bool ready = sapi.World.IsFullyLoadedChunk(Pos);
+                bool ready = VEHelpers.IsChunkLoadedRadius(Api.World, Pos, 1); // sapi.World.IsFullyLoadedChunk(Pos);
                 if (ready)
                 {
                     IBulkBlockAccessor bbaccessor = sapi.World.GetBlockAccessorBulkUpdate(true, true, false);
-                    bbaccessor.UpdateSnowAccumMap = false;                    
+                    bbaccessor.UpdateSnowAccumMap = false;
                     (this.Block as BlockCrudeOilWell).BuildOilSpout(bbaccessor, Pos.Copy(), null, sapi.World.Rand as NormalRandom, IsLarge);
                     foreach (KeyValuePair<BlockPos, BlockUpdate> pair in bbaccessor.StagedBlocks)
                     {
                         pair.Value.NewSolidBlockId = 0;// pair.Value.NewFluidBlockId;
-                    }                    
+                    }
                     bbaccessor.Commit();
                     bbaccessor.PostCommitCleanup(bbaccessor.StagedBlocks.Values.ToList<BlockUpdate>());                    
                     IsGenerated = true;
@@ -102,6 +112,7 @@ namespace VintageEngineering
         {
             // this is called on the client, while the values are on the server, need to push values to client
             Item portion = Api.World.GetItem(new AssetLocation(FluidPortionCode));
+            Block fblock = Api.World.GetBlock(new AssetLocation(FluidBlockCode));
             int perliter = 100;
             if (portion != null) 
             {
@@ -112,7 +123,7 @@ namespace VintageEngineering
                     perliter = (int)props.ItemsPerLitre;
                 }
             }
-            if (RemainingPortions > 0) dsc.AppendLine($"{RemainingPortions / perliter}L {Lang.Get("vinteng:gui-word-remaining")}");
+            if (RemainingPortions > 0) dsc.AppendLine($"{(RemainingPortions / perliter)/1000} {Lang.Get("vinteng:gui-word-blocks")} {fblock.GetHeldItemName(new ItemStack(fblock))} {Lang.Get("vinteng:gui-word-remaining")}");
             else 
             {
                 if (CanBeInfinite) dsc.AppendLine($"{Lang.Get("vinteng:gui-depleted")}, {Lang.Get("vinteng:gui-isinfinite")}");
@@ -151,22 +162,27 @@ namespace VintageEngineering
             }
         }
 
-        public long PumpTick(float dt)
+        public long PumpTick(float dt, long ppscap = long.MaxValue)
         {
             if (Api.Side == EnumAppSide.Client) return -1;
+            _clientUpdateTick += dt;
             long amount = 0;
             if (_fluidportions > 0)
             {
                 amount = (long)(MaxPPS * dt);
+                amount = (long)Math.Min(amount, ppscap * dt);
                 if (amount > _fluidportions) amount = _fluidportions;
                 _fluidportions -= amount;
             }
             else
             {
                 amount = (long)(TricklePortions * dt);
+                amount = (long)Math.Min(amount, ppscap * dt);
                 if (!CanBeInfinite) amount = 0;
             }
-            return amount;
+            if (_clientUpdateTick > 0.5) MarkDirty(true);
+
+            return ppscap == 1 ? 1 : amount;            
         }
 
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldAccessForResolve)

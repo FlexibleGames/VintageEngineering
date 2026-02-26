@@ -87,8 +87,12 @@ namespace VintageEngineering.Blocks
             // this is for debugging, far easier to plop one of these down
             if (this.EntityClass != null && blockPos.Y < 20)
             {
-                world.BlockAccessor.SpawnBlockEntity(this.EntityClass, blockPos.Copy(), null);
+                //world.BlockAccessor.SpawnBlockEntity(this.EntityClass, blockPos.Copy(), null);
                 IFluidWell bewell = world.BlockAccessor.GetBlockEntity(blockPos) as IFluidWell; // grab the BE of the well
+                if (world.BlockAccessor.GetBlockEntity(blockPos) is BECrudeOilWell well)
+                {
+                    well.IsGenerated = true; // debug flag to prevent well from spawning bubble
+                }
                 if (bewell != null)
                 {
                     // initalize the well object
@@ -99,9 +103,29 @@ namespace VintageEngineering.Blocks
             }
         }
 
+        public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
+        {
+            if (byPlayer != null && byPlayer.InventoryManager != null)
+            {
+                if (byPlayer.InventoryManager.OffhandTool != null && byPlayer.InventoryManager.ActiveTool != null)
+                {
+                    if (byPlayer.InventoryManager.OffhandTool == EnumTool.Wrench && byPlayer.InventoryManager.ActiveTool == EnumTool.Hammer)
+                    {
+                        if (world.BlockAccessor.GetBlockEntity(blockSel.Position) is BECrudeOilWell well)
+                        {
+                            well.IsLarge = true;
+                            well.IsGenerated = false; // A sneaky way of creating a bubble, shhhh don't tell anyone <_<
+                            well.TickIt();
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+
         public override bool TryPlaceBlockForWorldGen(IBlockAccessor access, BlockPos pos, BlockFacing face, IRandom wrand, BlockPatchAttributes attributes = null)
         {
-            if (pos.Y >= 1 && pos.Y < 10) // clamp range even more, making these even harder to find.
+            if (pos.Y >= 1 && pos.Y < 12) // clamp range even more, making these even harder to find.
             {
                 if (wrand.NextFloat() > 0.5f)
                 {
@@ -121,6 +145,8 @@ namespace VintageEngineering.Blocks
             foreach (BlockFacing bface in BlockFacing.HORIZONTALS)
             {
                 BlockPos tocheck = pos.AddCopy(bface, 1);
+                if (!VEHelpers.IsChunkLoaded(api.World, tocheck)) continue;
+
                 tocheck.Y = access.GetTerrainMapheightAt(tocheck) + 1;
                 if (Math.Abs(tocheck.Y - surfacey) > 4) return false;
                 Block bcheck = access.GetBlock(tocheck);

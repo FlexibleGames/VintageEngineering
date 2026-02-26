@@ -1,0 +1,11 @@
+[
+	{
+		"code": "treated-planks",
+		"sealHours": 36,
+		"ingredients": [
+			{ "type": "item", "code": "vinteng:creosoteportion-coal", "litres": 5, "consumeLitres": 5 },
+			{ "type": "item", "code": "game:plank-*", "name": "wood", "quantity": 8 }
+		],
+		"output": { "type": "item", "code": "vinteng:plank-treated", "stackSize": 8 }
+	}
+]

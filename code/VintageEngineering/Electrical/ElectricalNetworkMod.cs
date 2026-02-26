@@ -97,7 +97,8 @@ namespace VintageEngineering.Electrical
 
         private void RegisterBlockEntities(ICoreAPI api)
         {
-            api.RegisterBlockEntityClass("VEBEPowerConnector", typeof(BEPowerConnector));
+            api.RegisterBlockEntityClass("VEBERelay", typeof(ElectricBERelay));
+            api.RegisterBlockEntityClass("VEBEMBPowerConnector", typeof(BEMBPowerConnector));
         }
 
         //public override void StartClientSide(ICoreClientAPI api)

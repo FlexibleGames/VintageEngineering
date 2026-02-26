@@ -58,7 +58,7 @@
 		"ingredients": [
 			{ "type": "item", "code": "game:waterportion",  "litres": 1 },
 			{ "type": "item", "code": "game:quicklime", "quantity": 1 },
-			{ "type": "item", "code": "vinteng:metalrod-iron", "quantity": 4 },
+			{ "type": "item", "code": "vinteng:metalbar-iron", "quantity": 4 },
 			{ "type": "block", "code": "game:gravel-*", "quantity": 1, "name": "type", "allowedVariants": ["andesite", "granite", "basalt", "peridotite", "phyllite", "slate"] }
 		],
 		"outputs": [

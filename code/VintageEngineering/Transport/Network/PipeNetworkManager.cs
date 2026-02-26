@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
+using VintageEngineering.API;
 using VintageEngineering.Electrical;
 using VintageEngineering.Electrical.Systems;
 using VintageEngineering.Electrical.Systems.Catenary;
@@ -174,7 +175,7 @@ namespace VintageEngineering.Transport.Network
             {
                 BlockEntity entity = _sapi.World.BlockAccessor.GetBlockEntity(node);
                 
-                bool chunkloaded = BEPipeBase.IsChunkLoaded(_sapi.World, node);
+                bool chunkloaded = VEHelpers.IsChunkLoaded(_sapi.World, node);
 
                 // if the chunk is loaded AND the entity is null
                 if (chunkloaded && entity == null) invalidnodes++;

@@ -22,6 +22,7 @@ namespace VintageEngineering.Multiblock
         public VEMultiblockBeh Multiblock { get { return this.GetBehavior<VEMultiblockBeh>(); } } 
 
         private EnumElectricalPowerTier[] powerTiers;
+
         public override void OnLoaded(ICoreAPI api)
         {
             base.OnLoaded(api);
@@ -41,14 +42,38 @@ namespace VintageEngineering.Multiblock
 
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
         {
-            if (byPlayer != null && !byPlayer.InventoryManager.ActiveHotbarSlot.Empty)
+            if (blockSel != null && !world.Claims.TryAccess(byPlayer, blockSel.Position, EnumBlockAccessFlags.Use))
             {
-                if (byPlayer.InventoryManager.ActiveHotbarSlot.Itemstack.Collectible?.Tool == EnumTool.Wrench)
+                return false; // only block if we can't interact via permissions with this block
+            }
+            if (byPlayer != null && byPlayer.InventoryManager != null)
+            {
+                if (byPlayer.InventoryManager.ActiveHotbarSlot != null && !byPlayer.InventoryManager.ActiveHotbarSlot.Empty)
                 {
-                    Multiblock.TriggerValidation(world, byPlayer, blockSel, blockSel.Position);
+                    bool extDebug = (api as ICoreClientAPI)?.Settings.Bool["extendedDebugInfo"] == true;
+                    if (byPlayer.InventoryManager.ActiveHotbarSlot.Itemstack.Collectible.Code.Path.Contains("stick"))
+                    {                        
+                        if (extDebug)
+                        {
+                            VEMBEntityCore core = world.BlockAccessor.GetBlockEntity<VEMBEntityCore>(blockSel.Position);
+                            if (core != null) core.Electric.electricpower = 0;
+                        }
+                    }
+                    if (byPlayer.InventoryManager.ActiveHotbarSlot.Itemstack.Collectible.Tool == EnumTool.Wrench)
+                    {
+                        if (Variant["state"] == "incomplete")
+                        {
+                            Multiblock.TriggerValidation(world, byPlayer, blockSel, blockSel.Position);
+                        }
+                        else
+                        {
+                            VEMBEntityCore core = world.BlockAccessor.GetBlockEntity<VEMBEntityCore>(blockSel.Position);
+                            if (core != null) core.OnPlayerRightClick(byPlayer, blockSel);
+                        }
+                    }
                 }
             }
-            return base.OnBlockInteractStart(world, byPlayer, blockSel);
+             return base.OnBlockInteractStart(world, byPlayer, blockSel);
         }
 
         public override void OnBlockBroken(IWorldAccessor world, BlockPos pos, IPlayer byPlayer, float dropQuantityMultiplier = 1)

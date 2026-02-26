@@ -28,7 +28,7 @@
 		}
 	}],
 	"variantgroups": [
-        { "code": "type", "states": ["lv", "mv", "hv", "rod", "screw", "pipe" ] },
+        { "code": "type", "states": ["lv", "mv", "hv", "bar", "rod", "screw", "pipe" ] },
 		{ "code": "metal", "states": ["tinbronze", "iron", "meteoriciron", "steel", "titanium"] }
 	],
     "maxstacksize": 1,
@@ -37,6 +37,7 @@
 		"*-lv-*": { "base": "vinteng:item/vediecast-lv" },
         "*-mv-*": { "base": "vinteng:item/vediecast-mv" },
 		"*-hv-*": { "base": "vinteng:item/vediecast-hv" },
+		"*-bar-*": { "base": "vinteng:item/vediecast-bar" },
 		"*-rod-*": { "base": "vinteng:item/vediecast-rod" },
 		"*-screw-*": { "base": "vinteng:item/vediecast-lv" },
 		"*-pipe-*": { "base": "vinteng:item/vediecast-pipe" }

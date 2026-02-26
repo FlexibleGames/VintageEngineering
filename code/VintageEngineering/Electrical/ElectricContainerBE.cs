@@ -12,6 +12,11 @@ namespace VintageEngineering.Electrical
     {
         public ElectricBEBehavior Electric { get; private set; }
 
+        /// <summary>
+        /// Universal base variable to limit client MarkDirty events to more resonable beats. Increment by deltatime in SimTick events.<br/>
+        /// Reset in SimTick when over the threshold (example: if (_clientUpdateDelay > 0.5) MarkDirty(true); _clientUpdateDelay = 0f;)<br/>
+        /// This value is not and should not be saved to disk.
+        /// </summary>
         internal float _clientUpdateDelay = 0f;
 
         /// <summary>

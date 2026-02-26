@@ -10,6 +10,28 @@ namespace VintageEngineering.GUI
 
         }
 
+        /// <summary>
+        /// Convert an input percent value 0-100 into a string progress bar<br/>
+        /// [██████░░░░] for 60%-69%
+        /// </summary>
+        /// <param name="percent"></param>
+        /// <param name="totalBars"></param>
+        /// <returns></returns>
+        public static string PercentToBar(int percent, int totalBars = 10)
+        {
+            // Clamp the value between 0 and 100
+            percent = Math.Clamp(percent, 0, 100);
+
+            // Calculate how many filled segments (X)
+            int filled = (int)Math.Round(percent / (100.0 / totalBars));
+
+            // Build the string
+            string filledPart = new string('█', filled);
+            string emptyPart = new string('░', totalBars - filled);
+
+            return $"[{filledPart}{emptyPart}]";
+        }
+
         public static void VerticalBar(Context cr, float width, float height, double lineWidth = 3.0, bool strokeOrFill = true, bool defaultPattern = true)
 		{
 			//			Pattern pattern = null;

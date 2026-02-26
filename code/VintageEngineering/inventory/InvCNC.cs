@@ -63,11 +63,6 @@ namespace VintageEngineering.inventory
             return true;
         }
 
-        public override bool HasOpened(IPlayer player)
-        {
-            return (machineuser != null && machineuser.PlayerUID == player.PlayerUID);
-        }
-
         public override bool RemoveOnClose { get { return true; } }
 
         public ItemSlot[] Slots
@@ -135,7 +130,7 @@ namespace VintageEngineering.inventory
         public override ItemSlot GetAutoPullFromSlot(BlockFacing atBlockFace)
         {
 
-            if (!_slots[2].Empty) return _slots[3]; // empty the first output slot first, then the second, extra output
+            if (!_slots[3].Empty) return _slots[3]; // empty the first output slot first, then the second, extra output
 
             return _slots[2];
         }

@@ -164,14 +164,14 @@ namespace VintageEngineering.RecipeSystem.Recipes
             ItemStack mainoutput = Outputs[0].ResolvedItemstack.Clone();
             ItemStack secondaryoutput = null;
             WaterTightContainableProps wprops = null;
-            int outputslotidmain = 0;
-            int outputslotidsecondary = 1;
+            //int outputslotidmain = 0;
+            //int outputslotidsecondary = 1;
             if (mainoutput.Collectible.IsLiquid())
             {
                 // outputslots[1] is target if a fluid
                 wprops = BlockLiquidContainerBase.GetContainableProps(mainoutput);
-                outputslotidmain = 1;
-                outputslotidsecondary = 0; // secondary output might not exist, but if it does it has to be an item
+                //outputslotidmain = 1;
+                //outputslotidsecondary = 0; // secondary output might not exist, but if it does it has to be an item
             }
             if (Outputs.Length > 1)
             {

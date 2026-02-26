@@ -9,7 +9,8 @@ using Vintagestory.API.MathTools;
 namespace VintageEngineering.API
 {
     /// <summary>
-    /// Defines values used by the CrudeOilWell Block Entity, but used for the MV tier pumpjack interaction
+    /// Defines values used by the CrudeOilWell Block Entity, but used for the MV tier pumpjack interaction<br/>
+    /// To define new pumpable wells, simply implement this interface in the block entity of your well block.
     /// </summary>
     public interface IFluidWell
     {
@@ -59,10 +60,12 @@ namespace VintageEngineering.API
         /// <param name="wellblock">Well Block Calling this</param>
         void InitDeposit(bool isLarge, IBlockAccessor access, IRandom wgenrand, Block wellblock, ICoreAPI api);
         /// <summary>
-        /// A pump tick, returns a non-negative value of amount of portions returned
+        /// A pump tick, returns a non-negative value of amount of portions returned.<br/>
+        /// Can be capped to a max amount if the well can supply more than whatever is pumping can intake. Ensures no waste.
         /// </summary>
         /// <param name="dt">DeltaTime (a fractional second) time since last update tick.</param>
+        /// <param name="ppscap">What Portion Per Second MAX can be handled by whatever is pumping out of this?</param>
         /// <returns>Amount pumped.</returns>
-        long PumpTick(float dt);
+        long PumpTick(float dt, long ppscap = long.MaxValue);
     }
 }

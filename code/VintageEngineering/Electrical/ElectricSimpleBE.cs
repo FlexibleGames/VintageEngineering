@@ -11,7 +11,7 @@ namespace VintageEngineering.Electrical
     public abstract class ElectricSimpleBE : BlockEntity
     {
 
-        public ElectricBEBehavior Electric { get; private set; }
+        public ElectricBEBehavior Electric { get; internal set; }
 
         internal long ListenerID { get; set; }
 

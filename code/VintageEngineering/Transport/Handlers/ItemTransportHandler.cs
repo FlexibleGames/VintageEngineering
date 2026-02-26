@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
+using VintageEngineering.API;
 using VintageEngineering.Transport.API;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -20,13 +21,13 @@ namespace VintageEngineering.Transport.Handlers
 
         public void TransportTick(float deltatime, BlockPos pos, IWorldAccessor world, PipeExtractionNode node)
         {
-            if (!BEPipeBase.IsChunkLoaded(world, pos)) return;
+            if (!VEHelpers.IsChunkLoaded(world, pos)) return;
 
             BEPipeBase us = world.BlockAccessor.GetBlockEntity(pos) as BEPipeBase;
             if (us == null) return; // sanity check
 
             BlockPos connectedto = pos.AddCopy(BlockFacing.FromCode(node.FaceCode));
-            if (!BEPipeBase.IsChunkLoaded(world, connectedto)) return;
+            if (!VEHelpers.IsChunkLoaded(world, connectedto)) return;
             if (world.BlockAccessor.GetBlock(connectedto) is BlockMultiblock target)
             {
                 // if we're pointed at a multiblock, try to access the core instead.                
@@ -34,7 +35,7 @@ namespace VintageEngineering.Transport.Handlers
                 {
                     connectedto.Add(target.OffsetInv);
                 }
-                if (!BEPipeBase.IsChunkLoaded(world, connectedto)) return;
+                if (!VEHelpers.IsChunkLoaded(world, connectedto)) return;
             }
             InventoryBase inv = (InventoryBase)((world.BlockAccessor.GetBlock(connectedto).GetInterface<IBlockEntityContainer>(world, connectedto))?.Inventory);
             if (inv == null) return; // sanity check 2
@@ -49,9 +50,9 @@ namespace VintageEngineering.Transport.Handlers
                 pull = GetPullSlot(inv, node, false); 
             }
             if (pull == null) return;
-            if (stacksize == -1)
+            if (stacksize == -1) // stacksize -1 means the steel upgrade, 10 stacks per tick
             {
-                stacksize = pull.Itemstack?.Collectible.MaxStackSize ?? 1;
+                stacksize = pull.Itemstack?.Collectible.MaxStackSize*10 ?? 1;
             }
             ItemStackMoveOperation ismo = new ItemStackMoveOperation(world, EnumMouseButton.Left, (EnumModifierKey)0, EnumMergePriority.DirectMerge, stacksize);            
 
@@ -165,7 +166,7 @@ namespace VintageEngineering.Transport.Handlers
 
                 for (int x = 0; x < conarray.Length; x++)
                 {
-                    if (!BEPipeBase.IsChunkLoaded(world, conarray[x].Position)) continue;
+                    if (!VEHelpers.IsChunkLoaded(world, conarray[x].Position)) continue;
                     
                     BlockPos target = conarray[x].Position.Copy();
                     Block targetblock = world.BlockAccessor.GetBlock(target);
@@ -176,7 +177,7 @@ namespace VintageEngineering.Transport.Handlers
                         {
                             target.Add(mbtarget.OffsetInv);
                         }
-                        if (!BEPipeBase.IsChunkLoaded(world, target)) return null;
+                        if (!VEHelpers.IsChunkLoaded(world, target)) return null;
                     }                    
                     IBlockEntityContainer contain = world.BlockAccessor.GetBlock(target).GetInterface<IBlockEntityContainer>(world, target);
                     if (contain != null && contain.Inventory is InventoryBase inv)
@@ -197,7 +198,7 @@ namespace VintageEngineering.Transport.Handlers
                 Array.Sort(conarray, (x, y) => y.Distance.CompareTo(x.Distance));
                 for (int x = 0; x < conarray.Length; x++)
                 {
-                    if (!BEPipeBase.IsChunkLoaded(world, conarray[x].Position)) continue;
+                    if (!VEHelpers.IsChunkLoaded(world, conarray[x].Position)) continue;
                     BlockPos target = conarray[x].Position.Copy();
                     Block targetblock = world.BlockAccessor.GetBlock(target);
                     if (targetblock is BlockMultiblock mbtarget)
@@ -207,7 +208,7 @@ namespace VintageEngineering.Transport.Handlers
                         {
                             target.Add(mbtarget.OffsetInv);
                         }
-                        if (!BEPipeBase.IsChunkLoaded(world, target)) return null;
+                        if (!VEHelpers.IsChunkLoaded(world, target)) return null;
                     }                    
                     IBlockEntityContainer contain = world.BlockAccessor.GetBlock(target).GetInterface<IBlockEntityContainer>(world, target);
                     if (contain.Inventory is InventoryBase inv)
@@ -247,7 +248,7 @@ namespace VintageEngineering.Transport.Handlers
                 }
 
                 PipeConnection current = node.PushEnumerator.Current;
-                if (!BEPipeBase.IsChunkLoaded(world, current.Position)) return null;
+                if (!VEHelpers.IsChunkLoaded(world, current.Position)) return null;
                 BlockPos target = current.Position.Copy();
                 Block targetblock = world.BlockAccessor.GetBlock(target);
                 if (targetblock is BlockMultiblock mbtarget)
@@ -257,7 +258,7 @@ namespace VintageEngineering.Transport.Handlers
                     {
                         target.Add(mbtarget.OffsetInv);
                     }
-                    if (!BEPipeBase.IsChunkLoaded(world, target)) return null;
+                    if (!VEHelpers.IsChunkLoaded(world, target)) return null;
                 }                
                 IBlockEntityContainer contain = world.BlockAccessor.GetBlock(target).GetInterface<IBlockEntityContainer>(world, target);
                 if (contain.Inventory is InventoryBase inv)
@@ -271,7 +272,7 @@ namespace VintageEngineering.Transport.Handlers
                 // this is Random                
                 int randomcon = world.Rand.Next(pushcons.Count);                
                 PipeConnection current = pushcons[randomcon];
-                if (!BEPipeBase.IsChunkLoaded(world, current.Position)) return null;
+                if (!VEHelpers.IsChunkLoaded(world, current.Position)) return null;
                 BlockPos target = current.Position.Copy();
                 Block targetblock = world.BlockAccessor.GetBlock(target);
                 if (targetblock is BlockMultiblock mbtarget)
@@ -281,7 +282,7 @@ namespace VintageEngineering.Transport.Handlers
                     {
                         target.Add(mbtarget.OffsetInv);
                     }
-                    if (!BEPipeBase.IsChunkLoaded(world, target)) return null;
+                    if (!VEHelpers.IsChunkLoaded(world, target)) return null;
                 }                
                 IBlockEntityContainer contain = world.BlockAccessor.GetBlock(target).GetInterface<IBlockEntityContainer>(world, target);
                 if (contain.Inventory is InventoryBase inv)

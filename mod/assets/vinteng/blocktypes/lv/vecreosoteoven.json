@@ -37,13 +37,13 @@
             "*-north": [ "creosoteoven" ]
         }
 	},
-	"shapeinventory": { "base": "block/lv/creosoteoven-inventory" },
+	"shapeinventory": { "base": "block/multiblock/machine/creosoteoven-core" },
 	"creativeinventory": { "general": ["vecreosoteoven-north"], "terrain": ["*"], "mechanics": ["*"], "vinteng": ["*-north"] },
 	"shapeByType": {
-		"*-north": 	{ "base": "vinteng:block/lv/creosoteoven", "rotateY":0 },
-		"*-east": 	{ "base": "vinteng:block/lv/creosoteoven", "rotateY":270 },
-		"*-south": 	{ "base": "vinteng:block/lv/creosoteoven", "rotateY":180 },
-		"*-west": 	{ "base": "vinteng:block/lv/creosoteoven", "rotateY":90 }
+		"*-north": 	{ "base": "vinteng:block/multiblock/machine/creosoteoven", "rotateY":0 },
+		"*-east": 	{ "base": "vinteng:block/multiblock/machine/creosoteoven", "rotateY":270 },
+		"*-south": 	{ "base": "vinteng:block/multiblock/machine/creosoteoven", "rotateY":180 },
+		"*-west": 	{ "base": "vinteng:block/multiblock/machine/creosoteoven", "rotateY":90 }
 	},
 	"blockmaterial": "Metal",
 	"textures": {},

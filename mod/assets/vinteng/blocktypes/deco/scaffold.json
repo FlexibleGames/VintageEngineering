@@ -3,9 +3,18 @@
 	"creativeinventory": {
 		"vinteng-decor": [ "*" ]
 	},
-	"blockmaterial": "Metal",
+	"variantgroups": [
+		{ "code": "type", "states": ["wood", "iron"] }
+	],
+	"blockmaterialByType": {
+		"*-wood": "Wood",
+		"*-iron": "Metal"
+	},
 	"drawtype": "json",
-	"shape": { "base": "block/deco/metalgirder" },
+	"shapebytype": {
+		"*-wood": { "base": "block/deco/scaffold" },
+		"*-iron": { "base": "block/deco/metalscaffold" }
+	},
 	"resistance": 4,
 	"sideopaque": {
 		"all": false
@@ -13,6 +22,7 @@
 	"climbable":  true,
 	"sounds": {
 		"place": "game:block/chute",
+		"break": "game:block/chute",
 		"walk": "game:walk/stone"
 	}
 }
