@@ -31,11 +31,6 @@ namespace VintageEngineering
             return sourceSlot.Itemstack.Collectible.CombustibleProps != null;
         }
 
-        public override bool HasOpened(IPlayer player)
-        {
-            return (genuser != null && genuser.PlayerUID == player.PlayerUID);
-        }
-
         public override bool RemoveOnClose { get { return true; } }
 
         public ItemSlot[] Slots
