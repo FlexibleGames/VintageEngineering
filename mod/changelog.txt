@@ -12,6 +12,7 @@ v0.5.2
 - Added a Fridge
 - Combined Scaffold types into one code with variants. Freed up "Girder" for something better. <_<
 - Various Shenanigans...
+- Fixed #49, #59, #60, #64
 
 v0.5.0
 - Fix Tank-Bucket interaction when holding stacks of buckets.

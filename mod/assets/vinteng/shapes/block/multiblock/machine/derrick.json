@@ -1,6 +1,6 @@
 {
 	"editor": {
-		"collapsedPaths": ",Root/BasePlateS,Root/Catwalk1/CatwalkSkirt/CatwalkSkirt17,Root/BasePlateW,Root/Catwalk1/Catwalk21,Root/Center,Root/BasePlateN,Root/Ladder1,Root/BasePlateE,Root/Catwalk1/CatwalkSkirt/CatwalkSkirt10,Root/PowerN,Root/ItemInput,Root/Catwalk1/Catwalk16",
+		"collapsedPaths": ",Root/BasePlateS,Root/Catwalk1/CatwalkSkirt/CatwalkSkirt17,Root/BasePlateW,Root/Catwalk1/Catwalk21,Root/Center,Root/BasePlateN,Root/Ladder1,Root/BasePlateE,Root/Catwalk1/CatwalkSkirt/CatwalkSkirt10,Root/ItemInput,Root/Catwalk1/Catwalk16",
 		"allAngles": false,
 		"entityTextureMode": false
 	},
@@ -849,9 +849,9 @@
 		},
 		{
 			"name": "PowerN",
-			"from": [ 32.0, 8.0, 0.0 ],
-			"to": [ 44.0, 16.0, 16.0 ],
-			"rotationOrigin": [ 32.0, 8.0, 0.0 ],
+			"from": [ 34.0, 8.0, 0.0 ],
+			"to": [ 46.0, 16.0, 16.0 ],
+			"rotationOrigin": [ 34.0, 8.0, 0.0 ],
 			"faces": {
 				"north": { "texture": "#null", "uv": [ 0.0, 0.0, 12.0, 8.0 ] },
 				"east": { "texture": "#reinforced-steel", "uv": [ 3.0, 8.0, 13.0, 16.0 ], "autoUv": false },

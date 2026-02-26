@@ -362,6 +362,7 @@ namespace VintageEngineering
                         else
                         {
                             _wellPosition = null;
+                            return false;
                         }
                     }
                     else

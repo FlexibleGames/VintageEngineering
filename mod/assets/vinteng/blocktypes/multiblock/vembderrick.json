@@ -27,7 +27,7 @@
 				{ "w": 5, "tocode": "vinteng:vembdummy-none" },
 				{ "w": 6, "tocode": "vinteng:vembdummy-none" },
 				{ "w": 8, "tocode": "vinteng:vembdummy-fluid" },
-				{ "w": 9, "tocode": "vinteng:vembdummy-fluid" },
+				{ "w": 9, "tocode": "vinteng:vembdummy-none" },
 				{ "w": 10, "tocode": "vinteng:vembdummy-power" },
 				{ "w": 11, "tocode": "vinteng:vembdummy-interaction" },
 				{ "w": 12, "tocode": "vinteng:vembdummy-item" }

@@ -205,7 +205,7 @@ namespace VintageEngineering.blockentity
 
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldForResolving)
         {
-            base.FromTreeAttributes(tree, worldForResolving);            
+            base.FromTreeAttributes(tree, worldForResolving);
             _inventory.FromTreeAttributes(tree.GetTreeAttribute("inventory"));
             if (_inventory._fridgeBE == null) _inventory._fridgeBE = this;
             if (Api != null && Api.Side == EnumAppSide.Client) 

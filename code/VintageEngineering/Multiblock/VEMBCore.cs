@@ -48,7 +48,7 @@ namespace VintageEngineering.Multiblock
             }
             if (byPlayer != null && byPlayer.InventoryManager != null)
             {
-                if (byPlayer.InventoryManager.ActiveHotbarSlot != null)
+                if (byPlayer.InventoryManager.ActiveHotbarSlot != null && !byPlayer.InventoryManager.ActiveHotbarSlot.Empty)
                 {
                     bool extDebug = (api as ICoreClientAPI)?.Settings.Bool["extendedDebugInfo"] == true;
                     if (byPlayer.InventoryManager.ActiveHotbarSlot.Itemstack.Collectible.Code.Path.Contains("stick"))

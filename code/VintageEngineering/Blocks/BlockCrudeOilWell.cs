@@ -109,7 +109,7 @@ namespace VintageEngineering.Blocks
             {
                 if (byPlayer.InventoryManager.OffhandTool != null && byPlayer.InventoryManager.ActiveTool != null)
                 {
-                    if (byPlayer.InventoryManager.OffhandTool == EnumTool.Wrench && byPlayer.InventoryManager.ActiveTool == EnumTool.Chisel)
+                    if (byPlayer.InventoryManager.OffhandTool == EnumTool.Wrench && byPlayer.InventoryManager.ActiveTool == EnumTool.Hammer)
                     {
                         if (world.BlockAccessor.GetBlockEntity(blockSel.Position) is BECrudeOilWell well)
                         {
