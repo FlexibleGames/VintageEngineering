@@ -30,6 +30,17 @@ namespace VintageEngineering.Transport.Pipes
 
         public override bool CanConnectTo(IWorldAccessor world, BlockPos pos, BlockFacing toFace = null)
         {
+            // VEMultiblock Checks
+            Block target = world.BlockAccessor.GetBlock(pos);
+            if (target is VEMBDummy targetdummy)
+            {
+                string variant = targetdummy.Variant["io"];
+                if (variant == "fluid")
+                {
+                    return true;
+                }
+                else return false;
+            }
             IVELiquidInterface liq = world.BlockAccessor.GetBlock(pos).GetInterface<IVELiquidInterface>(world, pos);
             if (liq != null)
             {
@@ -46,16 +57,6 @@ namespace VintageEngineering.Transport.Pipes
                 foreach (ItemSlot slot in bec.Inventory)
                 {
                     if (slot is ItemSlotLiquidOnly) return true;
-                }
-            }
-            // VEMultiblock Checks
-            Block target = world.BlockAccessor.GetBlock(pos);
-            if (target is VEMBDummy targetdummy)
-            {
-                string variant = targetdummy.Variant["io"];
-                if (variant == "fluid")
-                {
-                    return true;
                 }
             }
 

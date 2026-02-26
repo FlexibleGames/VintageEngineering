@@ -26,6 +26,16 @@ namespace VintageEngineering.Transport.Pipes
         public override bool CanConnectTo(IWorldAccessor world, BlockPos pos, BlockFacing toFace = null)
         {            
             Block target = world.BlockAccessor.GetBlock(pos);
+            // VEMultiblock Checks
+            if (target is VEMBDummy targetdummy)
+            {
+                string variant = targetdummy.Variant["io"];
+                if (variant == "item")
+                {
+                    return true;
+                }
+                else return false;
+            }
             IBlockEntityContainer bec;
             BlockPos targetpos = pos.Copy();
 
@@ -39,15 +49,7 @@ namespace VintageEngineering.Transport.Pipes
             {
                 bec = world.BlockAccessor.GetBlock(targetpos).GetInterface<IBlockEntityContainer>(world, targetpos);
             }
-            // VEMultiblock Checks
-            if (target is VEMBDummy targetdummy)
-            {
-                string variant = targetdummy.Variant["io"];
-                if (variant == "item")
-                {
-                    return true;
-                }
-            }
+
             if (bec != null)
             {
                 // TODO check and load config blacklist of assemblies and types to ignore
