@@ -3,7 +3,7 @@
 	"ingredients": {
 		"R": {
 			"type": "item",
-			"code": "vinteng:metalrod-*",
+			"code": "vinteng:metalbar-*",
 			"allowedVariants": ["iron", "steel"],
 			"quantity": 2
 		},

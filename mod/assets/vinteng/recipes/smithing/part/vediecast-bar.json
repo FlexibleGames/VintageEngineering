@@ -4,13 +4,13 @@
 	"pattern": [
 		[
 			"#######",
-			"#     #",
-			"#     #",
-			"#     #",
-			"#     #",
-			"#     #",
+			"#######",
+			"##   ##",
+			"##   ##",
+			"##   ##",
+			"#######",
 			"#######"
 		]
 	],
-	"output": { "type": "item", "code": "vinteng:vediecast-rod-{metal}"  }
+	"output": { "type": "item", "code": "vinteng:vediecast-bar-{metal}"  }
 }
