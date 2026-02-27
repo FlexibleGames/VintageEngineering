@@ -12,12 +12,22 @@ namespace VintageEngineering.inventory
 
         public InvLVFridge() : base(null)
         {
+            this.baseWeight = 3f;
             // Empty, MUST initialize!
         }
         public InvLVFridge(string inventoryID, int numSlots, ICoreAPI api, BELVFridge fridge) : base(numSlots, inventoryID, api)
         {
             slots = GenEmptySlots(numSlots);
             _fridgeBE = fridge;
+        }
+
+        public override float GetSuitability(ItemSlot sourceSlot, ItemSlot targetSlot, bool isMerge)
+        {
+            if (sourceSlot != null && !sourceSlot.Empty && (sourceSlot.Itemstack.Attributes.HasAttribute("transitionstate") || sourceSlot.Itemstack.Collectible.CanSpoil(sourceSlot.Itemstack)))
+            {
+                return this.baseWeight + 4f;
+            }
+            else return this.baseWeight - 2f;
         }
 
         public void Initialize(int numSlots, BELVFridge fridge)
