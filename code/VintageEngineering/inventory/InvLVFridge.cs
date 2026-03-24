@@ -18,7 +18,13 @@ namespace VintageEngineering.inventory
         public InvLVFridge(string inventoryID, int numSlots, ICoreAPI api, BELVFridge fridge) : base(numSlots, inventoryID, api)
         {
             slots = GenEmptySlots(numSlots);
-            _fridgeBE = fridge;
+            _fridgeBE = fridge;            
+        }
+
+        private float InvLVFridge_OnAcquireTransitionSpeed(EnumTransitionType transType, ItemStack stack, float mulByConfig)
+        {
+            // why are there 5 places these values can appear/be set/be retrieved? 
+            return GetTransitionSpeedMul(transType, stack) * mulByConfig;
         }
 
         public override float GetSuitability(ItemSlot sourceSlot, ItemSlot targetSlot, bool isMerge)
@@ -34,6 +40,7 @@ namespace VintageEngineering.inventory
         {
             slots = GenEmptySlots(numSlots);
             _fridgeBE = fridge;
+            this.OnAcquireTransitionSpeed += InvLVFridge_OnAcquireTransitionSpeed;
         }
 
         public void UpdateSpoilRates(EnumBEState tostate)
