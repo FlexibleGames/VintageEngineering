@@ -76,6 +76,7 @@ namespace VintageEngineering.Electrical
                     // we are sitting on a Multiblock
                     if (dummy.Variant["io"] == "power")
                     {
+                        if (dummy.GetOffset(underpos) == Vec3i.Zero) return false;
                         // we are on a power dummy block
                         VEMBEntityCore mbcore = Api.World.BlockAccessor.GetBlockEntity<VEMBEntityCore>(underpos.AddCopy(-dummy.GetOffset(underpos)));
                         if (mbcore != null)

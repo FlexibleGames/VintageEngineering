@@ -72,7 +72,7 @@ namespace VintageEngineering.Multiblock
         public Vec3i GetOffset(BlockPos pos)
         {
             VEMBEntityDummy dummy = api.World.BlockAccessor.GetBlockEntity<VEMBEntityDummy>(pos);
-            return dummy == null ? new Vec3i(0, 0, 0) : dummy.Offset;
+            return dummy == null ? Vec3i.Zero : dummy.Offset;
         }
 
         public bool IsValid(BlockPos pos)
