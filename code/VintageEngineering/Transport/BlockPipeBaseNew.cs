@@ -11,7 +11,7 @@ using Vintagestory.GameContent;
 
 namespace VintageEngineering.Transport
 {
-    public class BlockPipeBase : Block, IWrenchOrientable
+    public class BlockPipeBaseNew : Block, IWrenchOrientable
     {
         protected ICoreClientAPI capi;
         protected ICoreServerAPI sapi;
@@ -30,7 +30,7 @@ namespace VintageEngineering.Transport
             base.OnLoaded(api);
             if (api.Side == EnumAppSide.Server)
             {
-                sapi = api as ICoreServerAPI;                
+                sapi = api as ICoreServerAPI;
             }
             else
             {
@@ -42,7 +42,7 @@ namespace VintageEngineering.Transport
 
         public override string GetPlacedBlockInfo(IWorldAccessor world, BlockPos pos, IPlayer forPlayer)
         {
-            BEPipeBase bep = world.BlockAccessor.GetBlockEntity(pos) as BEPipeBase;
+            BEPipeBaseNew bep = world.BlockAccessor.GetBlockEntity(pos) as BEPipeBaseNew;
             if (bep != null)
             {
                 StringBuilder sb = new StringBuilder();
@@ -58,32 +58,26 @@ namespace VintageEngineering.Transport
         }
 
         public override void OnNeighbourBlockChange(IWorldAccessor world, BlockPos pos, BlockPos neibpos)
-        {            
+        {
             // Redetect any potential connections as something changed.
-            BEPipeBase pipebe = api.World.BlockAccessor.GetBlockEntity(pos) as BEPipeBase;
+            BEPipeBaseNew pipebe = api.World.BlockAccessor.GetBlockEntity(pos) as BEPipeBaseNew;
             if (pipebe != null)
             {
-                //pipebe.MarkPipeDirty(world, true);
+                pipebe.PipeNeighborChanged(world, pos, neibpos);
             }
             base.OnNeighbourBlockChange(world, pos, neibpos);
         }
 
         public override void OnBlockPlaced(IWorldAccessor world, BlockPos blockPos, ItemStack byItemStack = null)
         {
-            base.OnBlockPlaced(world, blockPos, byItemStack); // this actually spawns the BE            
+            base.OnBlockPlaced(world, blockPos, byItemStack); // this actually spawns the BE
 
             // Detect Connections and adjust shape accordingly. This is done in the BE.
-            //BEPipeBase pipebe = api.World.BlockAccessor.GetBlockEntity(blockPos) as BEPipeBase;
-            //if (pipebe != null)
-            //{
-            //    pipebe.MarkPipeDirty(world); // this builds connection information
-            //    PipeNetworkManager pnm = api.ModLoader.GetModSystem<PipeNetworkManager>(true);
-            //    if (pnm != null)
-            //    {
-            //        pnm.OnPipeBlockPlaced(world, blockPos);
-            //    }
-            //}
-            
+            BEPipeBaseNew pipebe = api.World.BlockAccessor.GetBlockEntity(blockPos) as BEPipeBaseNew;
+            if (pipebe != null)
+            {
+                pipebe.NewPipePlaced(world, true); // this builds connection information                
+            }
         }
 
         public override Cuboidf[] GetSelectionBoxes(IBlockAccessor blockAccessor, BlockPos pos)
@@ -92,8 +86,8 @@ namespace VintageEngineering.Transport
             // Build the array based on number of connections this block has, always in the order
             // N, E, S, W, U, D, Base; where Base is the core pipe object.
             return base.GetSelectionBoxes(blockAccessor, pos);
-        }        
-        
+        }
+
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
         {
             if (byPlayer == null) return true;
@@ -102,13 +96,13 @@ namespace VintageEngineering.Transport
                 return false;
             }
             if (!byPlayer.InventoryManager.ActiveHotbarSlot.Empty &&
-                byPlayer.InventoryManager.ActiveHotbarSlot.Itemstack.Collectible is BlockPipeBase)
+                byPlayer.InventoryManager.ActiveHotbarSlot.Itemstack.Collectible is BlockPipeBaseNew)
             {
                 // pipe in hand, build on top of targeted block
-                return base.OnBlockInteractStart(world, byPlayer, blockSel); 
+                return base.OnBlockInteractStart(world, byPlayer, blockSel);
             }
 
-            BEPipeBase pipe = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEPipeBase;
+            BEPipeBaseNew pipe = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEPipeBaseNew;
             if (pipe != null && _firstEvent)
             {
                 // Pass event to BE pipe base
@@ -141,23 +135,16 @@ namespace VintageEngineering.Transport
 
         public override void OnBlockBroken(IWorldAccessor world, BlockPos pos, IPlayer byPlayer, float dropQuantityMultiplier = 1)
         {
-            BEPipeBase pipebe = api.World.BlockAccessor.GetBlockEntity(pos) as BEPipeBase;
+            BEPipeBaseNew pipebe = api.World.BlockAccessor.GetBlockEntity(pos) as BEPipeBaseNew;
             if (pipebe != null)
             {
                 pipebe.OnBlockBroken(byPlayer);
-                //pipebe.MarkPipeDirty(world); // this builds connection information
-                //PipeNetworkManager pnm = api.ModLoader.GetModSystem<PipeNetworkManager>(true);
-                //if (pnm != null)
-                //{
-                //    pnm.OnPipeBlockBroken(world, pos);
-                //}
             }
             base.OnBlockBroken(world, pos, byPlayer, dropQuantityMultiplier);
         }
 
         public override ItemStack[] GetDrops(IWorldAccessor world, BlockPos pos, IPlayer byPlayer, float dropQuantityMultiplier = 1)
-        {            
-            // Don't forget the base pipe block.
+        {                        
             return base.GetDrops(world, pos, byPlayer, dropQuantityMultiplier);
         }
 
@@ -173,18 +160,9 @@ namespace VintageEngineering.Transport
         {
             // BlockSelection includes the SelectionIndex which is the index of the selection box interacted
             // with as returned by GetSelectionBoxes(..) above. Need to convert that index into the actual direction
-            // player interacted with as any index could be any direction.            
-            switch (blockSelection.SelectionBoxIndex)
-            {
-                case 0: return BlockFacing.NORTH; 
-                case 1: return BlockFacing.EAST;
-                case 2: return BlockFacing.SOUTH;
-                case 3: return BlockFacing.WEST;
-                case 4: return BlockFacing.UP;
-                case 5: return BlockFacing.DOWN;
-                case 6: return null;
-                default: return null;
-            }
+            // player interacted with as any index could be any direction.
+            if (blockSelection.SelectionBoxIndex < 6) return BlockFacing.ALLFACES[blockSelection.SelectionBoxIndex];
+            else return null;
         }
         /// <summary>
         /// Defined in the IWrenchOrientatable interface, called by the wrench item.
@@ -194,8 +172,8 @@ namespace VintageEngineering.Transport
         /// <param name="dir"></param>
         public void Rotate(EntityAgent byEntity, BlockSelection blockSel, int dir)
         {
-            if (byEntity.Controls.Sneak) 
-            { 
+            if (byEntity.Controls.Sneak)
+            {
                 OnBlockInteractStart(api.World, (byEntity as EntityPlayer).Player, blockSel);
                 _firstEvent = true;
             }

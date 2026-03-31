@@ -1,0 +1,18 @@
+[{
+	"ingredientPattern": "C",
+	"ingredients": {
+		"C": { "type": "block", "code": "vinteng:pipe-item" }
+	},
+	"width": 1,
+	"height": 1,
+	"output": { "type": "block", "code": "vinteng:pipenew-item", "quantity": 1  }
+},
+{
+	"ingredientPattern": "C",
+	"ingredients": {
+		"C": { "type": "block", "code": "vinteng:pipe-fluid" }
+	},
+	"width": 1,
+	"height": 1,
+	"output": { "type": "block", "code": "vinteng:pipenew-fluid", "quantity": 1  }
+}]

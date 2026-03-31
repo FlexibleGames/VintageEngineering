@@ -6,34 +6,63 @@ using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
+using Vintagestory.GameContent;
 
 
 namespace VintageEngineering.Transport
 {
-    public class GUIPipeExtraction: GuiDialogBlockEntity
+    public class GUIPipeExtractionNew : GuiDialogBlockEntity
     {
-        private BEPipeBase bepipe;
+        private BEPipeBaseNew bepipe;
 
         private PipeExtractionNode _node;
         private int _faceIndex;
+        private string _subnet; // THIS IS NOT AN ITEM FILTER
+        //private bool _isCustom; // allows the player to edit the subnet
+        private BlockPos _pos;
+        //public DummyInventory _subnetItem;
 
-        public GUIPipeExtraction(string dialogTitle, InventoryBase inventory, BlockPos blockEntityPos, ICoreClientAPI capi, BEPipeBase bentity, PipeExtractionNode node, int faceindex) : base(dialogTitle, inventory, blockEntityPos, capi)
+        public GUIPipeExtractionNew(string dialogTitle, InventoryBase inventory, BlockPos blockEntityPos, ICoreClientAPI capi, BEPipeBaseNew bentity, PipeExtractionNode node, int faceindex) : base(dialogTitle, inventory, blockEntityPos, capi)
         {
             if (base.IsDuplicate) return;
-
-            capi.World.Player.InventoryManager.OpenInventory(inventory);
+            //_subnetItem = new DummyInventory(capi, 1);
+            //_subnetItem[0].MaxSlotStackSize = 1;
+            
+            //capi.World.Player.InventoryManager.OpenInventory(inventory);
             _node = node;
             bepipe = bentity;
             _faceIndex = faceindex;
+            _subnet = node.SubNet;
+            _pos = blockEntityPos;
+            //_isCustom = _subnet.Contains(":custom1");
+            //if (_isCustom) _subnet = _subnet.Replace(":custom1", "");
 
+            //if (!_isCustom && _subnet != string.Empty)
+            //{
+            //    ItemStack subnetstack;
+            //    if (capi.World.Collectibles.Exists(x => x.Code.Path == _subnet)) // how expensive is this?
+            //    {
+            //        CollectibleObject match = capi.World.Collectibles.Find(x => x.Code.Path == _subnet); // and this?
+            //        subnetstack = new ItemStack(match);
+            //        _subnetItem[0].Itemstack = subnetstack;
+            //    }
+            //}
             SetupDialog();
         }
 
         private void OnSlotModified(int slotid)
         {
-            if (slotid == 0 || slotid == 1) 
-            { 
-                capi.Event.EnqueueMainThreadTask(new Action(SetupDialog), "setuppipedlg"); 
+            if (slotid == 0 || slotid == 1)
+            {
+                capi.Event.EnqueueMainThreadTask(new Action(SetupDialog), "setuppipedlg");
+            }
+        }
+
+        private void OnSubnetSlotModified(int slotid)
+        {
+            if (slotid == 0)
+            {
+                capi.Event.EnqueueMainThreadTask(new Action(SetupDialog), "setuppipedlg");
             }
         }
 
@@ -49,7 +78,7 @@ namespace VintageEngineering.Transport
             int titlebarheight = 31;
             double slotpadding = GuiElementItemSlotGridBase.unscaledSlotPadding;
 
-            ElementBounds dialogBounds = ElementBounds.Fixed(315, 164 + titlebarheight);
+            ElementBounds dialogBounds = ElementBounds.Fixed(315, 230 + titlebarheight);
             ElementBounds dialog = ElementBounds.Fill.WithFixedPadding(0);
             dialog.BothSizing = ElementSizing.FitToChildren;
 
@@ -67,8 +96,20 @@ namespace VintageEngineering.Transport
             ElementBounds outputtxtinset = ElementBounds.Fixed(6, 86 + titlebarheight, 298, 72);
             ElementBounds outputtextbnds = ElementBounds.Fixed(8, 88 + titlebarheight, 294, 68);
 
-            dialog.WithChildren(new ElementBounds[]
-            {
+            // Subnet Bounds
+            int subnetstarty = 155;
+            //ElementBounds subnetInset = ElementBounds.Fixed(6, 6 + titlebarheight + subnetstarty, 74, 74);
+            //ElementBounds subnetText = ElementBounds.Fixed(8, 8 + titlebarheight + subnetstarty, 70, 18);
+            //ElementBounds subnetGrid = ElementStdBounds.SlotGrid(EnumDialogArea.None, 18, 28 + titlebarheight + subnetstarty, 1, 1);
+
+            //ElementBounds switchCustom = ElementBounds.Fixed(86, 8 + titlebarheight + subnetstarty, 18, 18);
+            //ElementBounds switchText = ElementBounds.Fixed(109, 8 + titlebarheight + subnetstarty, 195, 18);
+
+            ElementBounds customTextLbl = ElementBounds.Fixed(6, 6 + titlebarheight + subnetstarty, 298, 18);
+            ElementBounds customTextBox = ElementBounds.Fixed(6, 26 + titlebarheight + subnetstarty, 298, 21);
+
+            dialog.WithChildren(
+            [
                 dialogBounds,
                 upgradeInset,
                 upgradeText,
@@ -79,8 +120,15 @@ namespace VintageEngineering.Transport
                 distroText,
                 dropdownbounds,
                 outputtxtinset,
-                outputtextbnds
-            });
+                outputtextbnds,
+                //subnetInset,
+                //subnetText,
+                //subnetGrid,
+                //switchCustom,
+                //switchText,
+                customTextLbl,
+                customTextBox
+            ]);
             ElementBounds window = ElementStdBounds.AutosizedMainDialog.WithAlignment(EnumDialogArea.CenterMiddle)
                 .WithFixedAlignmentOffset(-GuiStyle.DialogToScreenPadding, 0);
 
@@ -97,6 +145,7 @@ namespace VintageEngineering.Transport
             double[] yellow = new double[3] { 1, 1, 0 };
             CairoFont leftyellow = CairoFont.WhiteDetailText().WithWeight(FontWeight.Normal).WithOrientation(EnumTextOrientation.Left).WithColor(yellow);
             CairoFont rightwhite = CairoFont.WhiteDetailText().WithWeight(FontWeight.Normal).WithOrientation(EnumTextOrientation.Right);
+            CairoFont leftwhite = CairoFont.WhiteDetailText().WithWeight(FontWeight.Normal).WithOrientation(EnumTextOrientation.Left);
 
             this.SingleComposer = capi.Gui.CreateCompo("vepipedlg" + blockPos?.ToString() + ":" + _node.FaceCode, window)
                 .AddShadedDialogBG(dialog, true, 5)
@@ -127,10 +176,27 @@ namespace VintageEngineering.Transport
                 .AddInset(outputtxtinset, 2, 0f)
                 .AddDynamicText(GetHelpText(), leftyellow, outputtextbnds, "outputText")
 
+                // New Subnet System!! \o/ Hopefully people like this feature, added about 20 hours onto this process.
+                //.AddIf(!_isCustom)
+                //.AddInset(subnetInset, 2, 0f)
+                //.AddStaticText(Lang.Get("vinteng:gui-word-subnet"), centerwhite, subnetText, "subnettext")
+                //.AddItemSlotGrid(_subnetItem, new Action<object>(SendSubnetInvPacket), 1, [0], subnetGrid, "subnetslot")
+                //.EndIf()
+
+                //.AddSwitch(new Action<bool>(OnCustomToggle), switchCustom, "switchcustom", 18, 0)
+                //.AddStaticText(Lang.Get("vinteng:gui-editsubnet"), leftwhite, switchText, "switchtext")
+
+                //.AddIf(_isCustom)
+                .AddStaticText(Lang.Get("vinteng:gui-word-subnet"), leftwhite, customTextLbl, "customtextlabel")
+                .AddTextInput(customTextBox, new Action<string>(OnCustomChanged), leftwhite, "customtext")
+                //.EndIf()
+
                 .EndChildElements()
                 .Compose(true);
+            //SingleComposer.GetSwitch("switchcustom").SetValue(_isCustom);
+            SingleComposer.GetTextInput("customtext").SetValue(_subnet, true);
         }
-
+        
         private void OnSelectionChanged(string code, bool selected)
         {
             TreeAttribute tree = new TreeAttribute();
@@ -141,11 +207,33 @@ namespace VintageEngineering.Transport
             byte[] testbytes = tree.ToBytes();
             capi.Network.SendBlockEntityPacket(base.BlockEntityPosition, 1003, testbytes);
         }
+        private void OnCustomToggle(bool toggle)
+        {
+            //_isCustom = toggle;
+            //if (!toggle) _subnet = _subnetItem[0].Empty ? string.Empty : _subnetItem[0].Itemstack.Collectible.Code.Path;
+
+            //if (toggle)
+            //{
+            //    _subnet = _subnetItem[0].Empty ? Lang.Get("vinteng:gui-editsubnet") : _subnetItem[0].Itemstack.Collectible.Code.Path;
+            //    _subnet += ":custom1"; // encode a custom flag into the code
+            //    _subnetItem.Clear();
+            //}
+            //SingleComposer.GetSwitch("switchcustom").SetValue(_isCustom);
+            //OnCustomChanged(_subnet);
+            //capi.Event.EnqueueMainThreadTask(new Action(SetupDialog), "setuppipeinsdlg");
+        }
+        private void OnCustomChanged(string change)
+        {
+            TreeAttribute custompacket = new TreeAttribute();
+            custompacket.SetInt("faceindex", _faceIndex);
+            custompacket.SetString("customsubnet", change);
+            custompacket.SetString("nodetype", "extract");
+            capi.Network.SendBlockEntityPacket(_pos, 5005, custompacket.ToBytes());
+            Update();
+        }
 
         public void Update()
         {
-            // TODO THINGS IN HERE?
-
             if (!IsOpened()) return;
 
             if (base.SingleComposer != null)
@@ -186,7 +274,11 @@ namespace VintageEngineering.Transport
                 string rate = (upgrade.Rate == -1) ? Lang.Get("vinteng:gui-word-stack") : upgrade.Rate.ToString("N0");
                 outputhelptext += Environment.NewLine + $"{Lang.Get("vinteng:gui-word-rate")} : {rate} / {Lang.Get("vinteng:gui-word-delay")} : {upgrade.Delay}ms";
             }
-
+            if (SingleComposer != null && SingleComposer.GetTextInput("customtext").HasFocus)
+            {
+                // Subnet Override
+                outputhelptext = Lang.Get("vinteng:gui-help-customuse");
+            }
             return outputhelptext;
         }
 
@@ -200,7 +292,15 @@ namespace VintageEngineering.Transport
 
             this.capi.Network.SendBlockEntityPacket(BlockEntityPosition, 1005, custompacket.ToBytes());
         }
-
+        private void SendSubnetInvPacket(object obj)
+        {
+            //TreeAttribute custompacket = new TreeAttribute();
+            //custompacket.SetInt("faceindex", _faceIndex);
+            //string addon = _isCustom ? ":custom1" : "";
+            //custompacket.SetString("code", _subnetItem[0].Empty ? "empty" : _subnetItem[0].Itemstack.Collectible.Code.Path);
+            //custompacket.SetString("nodetype", "extract");
+            //this.capi.Network.SendBlockEntityPacket(BlockEntityPosition, 1006, custompacket.ToBytes());
+        }
         private void OnTitleBarClosed()
         {
             this.TryClose();
@@ -208,13 +308,16 @@ namespace VintageEngineering.Transport
 
         public override void OnGuiOpened()
         {
+            //this.OpenSound ??= new AssetLocation("game:sounds/block/chestopen");
             base.OnGuiOpened();
             Inventory.SlotModified += OnSlotModified;
+            //_subnetItem.SlotModified += OnSubnetSlotModified;
         }
 
         public override void OnGuiClosed()
         {
             Inventory.SlotModified -= OnSlotModified;
+            //_subnetItem.SlotModified -= OnSubnetSlotModified;
             SingleComposer.GetSlotGrid("upgradeslot").OnGuiClosed(capi);
             SingleComposer.GetSlotGrid("filterslot")?.OnGuiClosed(capi);
             SingleComposer.GetDropDown("distromode")?.Dispose();

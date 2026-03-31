@@ -16,7 +16,7 @@ namespace VintageEngineering.Transport
     /// A node that extracts from whatever it's connected to.
     /// </summary>
     public class PipeExtractionNode : IBlockEntityContainer 
-    {
+    {        
         protected ICoreAPI _api;
         protected BlockPos _pos;
         protected string faceCode;
@@ -27,20 +27,111 @@ namespace VintageEngineering.Transport
         protected bool canChangeDistro = false;
         protected bool _isSleeping = false;
 
+        protected string _subNet = string.Empty;
+        protected List<PipeInsertNode> _insertNodes;
+
+        /// <summary>
+        /// Set to true to update Insert Node list on the next tick.
+        /// </summary>
+        public bool _isDirty = false;
+        /// <summary>
+        /// So Dirty<br/>Delays the trigger of the insert node rebuild to allow more chunks to load in
+        /// </summary>
+        private float _dirtyTimer = 0.0f;
+
+        public bool _graphDirty = false;
+        private float _graphRebuildTimer = 0.0f;
+
+        public List<PipeInsertNode> _unsortedNodes;
+
         public bool IsSleeping
         {
             get => _isSleeping; 
             set => _isSleeping = value;
         }
+        /// <summary>
+        /// List of PipeInsertNode objects for this Extraction Node
+        /// </summary>
+        public List<PipeInsertNode> InsertNodes => _insertNodes;
 
-        private ITransportHandler Handler { get { return _api?.World?.BlockAccessor?.GetBlockEntity<BEPipeBase>(_pos)?.GetHandler(); } }
+        /// <summary>
+        /// A special tag for this Extraction Node that only pushes to Insert Nodes of the same SubNet
+        /// </summary>
+        public string SubNet
+        {
+            get => _subNet;
+            set => _subNet = value;
+        }
+        /// <summary>
+        /// Simple Mark Dirty call with optional flag to rebuild the InsertNode list immediately.
+        /// </summary>
+        /// <param name="rebuildNodeList">True to rebuild insert node list.</param>
+        public void MarkNodeDirty(bool rebuildNodeList)
+        {
+            _isDirty = true;
+            if (rebuildNodeList)
+            {
+                if (_unsortedNodes != null && _unsortedNodes.Count > 0) _unsortedNodes.Clear();
+                _unsortedNodes = BEPipeBaseNew.BuildInsertNodeList(_api.World, _pos);
+            }
+            else _unsortedNodes?.Clear();
+        }
+
+        public void MarkGraphDirty(float timeDelay)
+        {
+            _graphDirty = true;
+            _graphRebuildTimer = timeDelay;
+            _isDirty = false;
+        }
+
+        /// <summary>
+        /// A way to mark the node dirty while providing a node list that can replace the current one or just append to it.<br/>
+        /// Nodes are reprocessed into a new list with all distance values set properly.<br/>
+        /// Does not actually process the IsDirty trigger later as all the data is already provided in this version.
+        /// </summary>
+        /// <param name="nodelist">Node List</param>
+        /// <param name="appendList">Is the list append or replace?</param>
+        public void MarkNodeDirty(List<PipeInsertNode> nodelist, bool appendList = false)
+        {            
+            List<PipeInsertNode> t_nodes = new List<PipeInsertNode>();
+            foreach (PipeInsertNode node in nodelist)
+            {
+                t_nodes.Add(new PipeInsertNode(node.Position.Copy(), node.Facing, node.SubNet, _pos.ManhattenDistance(node.Position)));
+            }
+            if (appendList)
+            {
+                PushEnumerator.Dispose();
+                _insertNodes ??= new();
+                _insertNodes.AddRange(t_nodes);
+                if (PipeDistribution == EnumPipeDistribution.Farthest)
+                {
+                    _insertNodes = _insertNodes.OrderByDescending(x => x.Distance).ToList();
+                }
+                else _insertNodes = _insertNodes.OrderBy(x => x.Distance).ToList();                
+            }
+            else 
+            {
+                PushEnumerator.Dispose();
+                _insertNodes ??= new();
+                _insertNodes.Clear();
+                _insertNodes.AddRange(t_nodes);
+                if (PipeDistribution == EnumPipeDistribution.Farthest)
+                {
+                    _insertNodes = _insertNodes.OrderByDescending(x => x.Distance).ToList();
+                }
+                else _insertNodes = _insertNodes.OrderBy(x => x.Distance).ToList();
+            }
+            _api.World.BlockAccessor.GetBlockEntity<BEPipeBaseNew>(_pos)?.MarkDirty(true);
+        }
+
+        private ITransportHandler Handler { get { return _api?.World?.BlockAccessor?.GetBlockEntity<BEPipeBaseNew>(_pos)?.GetHandler(); } }
 
         private bool _doNetworkTick = true;
         
         /// <summary>
         /// The Enumerator set when Node is in RoundRobin mode.
         /// </summary>
-        public List<PipeConnection>.Enumerator PushEnumerator;
+        public List<PipeInsertNode>.Enumerator PushEnumerator;
 
         /// <summary>
         /// Block Position of this extraction node.
@@ -80,11 +171,33 @@ namespace VintageEngineering.Transport
         /// <summary>
         /// Does the installed upgrade in this node allow filters to be installed?
         /// </summary>
-        public bool CanFilter { get { return canFilter; } }
+        public bool CanFilter 
+        { 
+            get 
+            { 
+                if (inventory != null && !inventory[0].Empty)
+                {
+                    ItemPipeUpgrade upg = inventory[0].Itemstack.Collectible as ItemPipeUpgrade;
+                    if (upg != null) return upg.CanFilter;
+                }
+                return false;
+            } 
+        }
         /// <summary>
         /// Does the currently installed upgrade allow the player to change distribution mode?
         /// </summary>
-        public bool CanChangeDistro {  get { return canChangeDistro; } }
+        public bool CanChangeDistro 
+        {  
+            get 
+            {
+                if (inventory != null && !inventory[0].Empty)
+                {
+                    ItemPipeUpgrade upg = inventory[0].Itemstack.Collectible as ItemPipeUpgrade;
+                    if (upg != null) return upg.CanChangeDistro;
+                }
+                return false;
+            }
+        }
         /// <summary>
         /// The ID of the Tick listener for this Extraction Node<br/>
         /// ID is provided when registering the tick listener by the game and is used to remove the listener.
@@ -95,7 +208,7 @@ namespace VintageEngineering.Transport
         public string InventoryClassName => $"PipeInventory-{faceCode}";
         public void CheckInventoryClearedMidTick()
         {
-            // new in 1.21.6
+            // new in 1.21.6 
             // going to ignore until I figure out why it exists.
         }
 
@@ -119,7 +232,10 @@ namespace VintageEngineering.Transport
 
             if (api != null)
             {
-                ApplyUpgrade();
+                if (api.World.BlockAccessor.GetBlock(pos) is BlockPipeBaseNew && api.Side == EnumAppSide.Server)
+                { 
+                    ApplyUpgrade();
+                }
             }
             if (api is ICoreServerAPI)
             {
@@ -131,21 +247,23 @@ namespace VintageEngineering.Transport
                     {
                         api.Logger.Debug("VintEng: Error when initializing PipeExtractionNode, could not find VintageEngineeringMod.");
                     }
-                    api.Logger.Debug("VintEng: Pipe Network Ticking has been disabled by config. Set config value DoPipeTick to true to enable pipe distribution.");
+                    api.Logger.Debug("VintEng: Pipe Ticking has been disabled by config. Set config value DoPipeTick to true to enable pipe distribution.");
                 }
             }
         }
         /// <summary>
-        /// Called when the chunk a pipe block that contains this node is in is unloaded.
+        /// Called when the chunk that contains this extraction node is in is unloaded.
         /// </summary>
         public virtual void OnBlockUnloaded(IWorldAccessor world)
         {
+            PushEnumerator.Dispose();
+            _insertNodes?.Clear();
         }
 
-        public virtual void ResetEnumerator(List<PipeConnection> conlist)
+        public virtual void ResetEnumerator()
         {
             PushEnumerator.Dispose();
-            PushEnumerator = conlist.GetEnumerator();
+            PushEnumerator = _insertNodes.GetEnumerator();
         }
 
         /// <summary>
@@ -182,7 +300,7 @@ namespace VintageEngineering.Transport
 
         public virtual void ApplyUpgrade()
         {
-            BEPipeBase bep = _api.World.BlockAccessor.GetBlockEntity(_pos) as BEPipeBase;
+            BEPipeBaseNew bep = _api.World.BlockAccessor.GetBlockEntity(_pos) as BEPipeBaseNew;
             if (bep == null) return; // the BE we're apart of is invalid somehow
             if (listenerID != 0)
             {
@@ -221,7 +339,7 @@ namespace VintageEngineering.Transport
                 bep.PipeExtractionGUIs[BlockFacing.FromCode(FaceCode).Index].Update();
                 bep.PipeExtractionGUIs[BlockFacing.FromCode(FaceCode).Index].Recompose();
             }
-            bep.MarkDirty(true);
+            bep.MarkDirty(true);            
         }
         /// <summary>
         /// Called when removing the node, drops any upgrade and filter.
@@ -243,6 +361,29 @@ namespace VintageEngineering.Transport
         public virtual void UpdateTick(float deltatime)
         {
             if (_isSleeping || Handler == null || _api.Side == EnumAppSide.Client || !_doNetworkTick) return;
+
+            if (_graphDirty)
+            {
+                _graphRebuildTimer -= deltatime;
+                if (_graphRebuildTimer <= 0f)
+                {
+                    _graphDirty = false;
+                    _graphRebuildTimer = 0f;
+                    BEPipeBaseNew.RebuildPipeGraph(_api.World, _pos);
+                }
+            }
+
+            if (_isDirty)
+            {
+                _dirtyTimer += deltatime;
+                if (_dirtyTimer >= 8) // 8 seconds
+                {
+                    CleanWithSoap();
+                    _dirtyTimer = 0f;
+                }                
+                return;
+            }
+
             Stopwatch ws = Stopwatch.StartNew();
             Handler.TransportTick(deltatime, _pos, _api.World, this);
             ws.Stop();
@@ -250,6 +391,91 @@ namespace VintageEngineering.Transport
             {
                 _api.World.Logger.Debug($"Transport Handler Tick Took {ws.ElapsedMilliseconds}ms");
             }
+        }
+
+        public virtual void CleanWithSoap()
+        {
+            if (_api.Side == EnumAppSide.Client) return;
+
+            if (_unsortedNodes == null || _unsortedNodes.Count == 0)
+            {
+                _unsortedNodes = BEPipeBaseNew.BuildInsertNodeList(_api.World, _pos);
+            }
+            PushEnumerator.Dispose();
+            if (_insertNodes != null && _insertNodes.Count > 0) _insertNodes.Clear();
+            if (_unsortedNodes.Count > 0)
+            {
+                if (PipeDistribution == EnumPipeDistribution.Farthest)
+                {
+                    _insertNodes = _unsortedNodes.OrderByDescending(x => x.Distance).ToList();
+                }
+                else _insertNodes = _unsortedNodes.OrderBy(x => x.Distance).ToList();
+                if (PipeDistribution == EnumPipeDistribution.RoundRobin)
+                {
+                    PushEnumerator = _insertNodes.GetEnumerator();
+                }
+            }
+            _unsortedNodes.Clear();
+            _isDirty = false;
+            _api.World.BlockAccessor.GetBlockEntity<BEPipeBaseNew>(_pos)?.MarkDirty(true);
+        }
+        /// <summary>
+        /// Forces this Extraction Node to rebuild it's Insert connections immediately.
+        /// </summary>
+        /// <returns>Number of Insert Nodes found.</returns>
+        public virtual int RebuildConnectionsNow()
+        {
+            if (_api.Side == EnumAppSide.Client) return 0;
+            if (_unsortedNodes != null && _unsortedNodes.Count > 0)
+            {
+                _unsortedNodes.Clear();
+            }
+            CleanWithSoap();
+            return _insertNodes?.Count ?? 0;
+        }
+
+        /// <summary>
+        /// Removes all nodes that match the passed in nodes TARGET position.<br/>
+        /// Used when the target of an insert node is broken or no longer exists.
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns>Number removed</returns>
+        public virtual int RemoveInsertNode(PipeInsertNode node)
+        {
+            if (_api.Side == EnumAppSide.Client) return 0;
+            PushEnumerator.Dispose();
+            _insertNodes ??= new();
+            int numremoved = _insertNodes.RemoveAll(x => x.Position == node.Position);
+            return numremoved;
+        }
+        /// <summary>
+        /// Removes all nodes that match the passed in PIPE position.<br/>
+        /// Used when breaking a pipe on the end of a pipe system.
+        /// </summary>
+        /// <param name="pos"></param>
+        /// <returns>Number removed</returns>
+        public virtual int RemoveInsertPosition(BlockPos pos)
+        {
+            if (_api.Side == EnumAppSide.Client) return 0;
+            PushEnumerator.Dispose();
+            _insertNodes ??= new();
+            int numremoved = _insertNodes.RemoveAll(x => x.NodePosition == pos);
+            return numremoved;
+        }
+        /// <summary>
+        /// Remove an Exact Insert node based on the given BlockPos of the node and the faceindex of the connection.<br/>
+        /// Used when a player disables or changes a single insert node.
+        /// </summary>
+        /// <param name="pos">Position OF THE PIPE the insert node occupies.</param>
+        /// <param name="faceindex">Faceindex of the connection</param>
+        /// <returns>Number removed (should be 1)</returns>
+        public virtual int RemoveExactInsertNode(BlockPos pos, int faceindex)
+        {
+            if (_api.Side == EnumAppSide.Client) return 0;
+            PushEnumerator.Dispose();
+            _insertNodes ??= new();
+            int numremoved = _insertNodes.RemoveAll(x => x.NodePosition == pos && x.Facing.Index == faceindex);
+            return numremoved;
         }
 
         /// <summary>
@@ -317,9 +543,9 @@ namespace VintageEngineering.Transport
             inventory.ToTreeAttributes(inventorytree);
             tree["inventory"] = inventorytree;
             tree.SetBlockPos("position", _pos);
-            tree.SetString("facecode", faceCode);
-            // ListenerID is not needed on the client nor needs to be saved to disk.
+            tree.SetString("facecode", faceCode);            
             tree.SetString("distro", pipeDistribution.ToString());
+            tree.SetString("subnet", _subNet);
         }
         /// <summary>
         /// Converts a TreeAttribute tree to object data for loading and syncing.
@@ -332,6 +558,7 @@ namespace VintageEngineering.Transport
             _pos = tree.GetBlockPos("position");
             faceCode = tree.GetString("facecode", "error");
             pipeDistribution = Enum.Parse<EnumPipeDistribution>(tree.GetString("distro", "Nearest"));
+            _subNet = tree.GetString("subnet", string.Empty);
         }
     }
 }

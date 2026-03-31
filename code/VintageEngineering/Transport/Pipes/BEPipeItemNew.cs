@@ -8,13 +8,15 @@ using Vintagestory.GameContent;
 
 namespace VintageEngineering.Transport.Pipes
 {
-    // Depreciated
-    public class BEPipeItem : BEPipeBase
+    /// <summary>
+    /// A Item Pipe Block entity, the shiney new 2026 model.
+    /// </summary>
+    public class BEPipeItemNew : BEPipeBaseNew
     {
         private static ItemTransportHandler itemHandler = new();
 
         public override void Initialize(ICoreAPI api)
-        {            
+        {
             base.Initialize(api);
         }
 
@@ -25,7 +27,7 @@ namespace VintageEngineering.Transport.Pipes
         }
 
         public override bool CanConnectTo(IWorldAccessor world, BlockPos pos, BlockFacing toFace = null)
-        {            
+        {
             Block target = world.BlockAccessor.GetBlock(pos);
             // VEMultiblock Checks
             if (target is VEMBDummy targetdummy)
@@ -44,7 +46,7 @@ namespace VintageEngineering.Transport.Pipes
             {
                 targetpos = targetpos.Add((target as BlockMultiblock).OffsetInv);
                 bec = world.BlockAccessor.GetBlock(targetpos)
-                    .GetInterface<IBlockEntityContainer>(world, targetpos);                    
+                    .GetInterface<IBlockEntityContainer>(world, targetpos);
             }
             else
             {

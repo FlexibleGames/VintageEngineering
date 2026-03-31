@@ -42,7 +42,17 @@ namespace VintageEngineering.Transport
         /// </summary>        
         public BlockPos Position { get { return _pos; } }
         /// <summary>
-        /// The pipes Block Face this connection is on (N, E, S, W, U, D)
+        /// BlockPosition of the PipeBlock that contains this node.
+        /// </summary>
+        public BlockPos NodePosition
+        {
+            get
+            {
+                return Position.AddCopy(Facing.Opposite);
+            }
+        }
+        /// <summary>
+        /// The Pipe Block Face this connection is on (N, E, S, W, U, D)
         /// </summary>
         public BlockFacing Facing { get { return _facing; } }
         /// <summary>

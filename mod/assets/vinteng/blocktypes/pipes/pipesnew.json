@@ -1,11 +1,11 @@
 {
-	"code": "pipe",
+	"code": "pipenew",
     "classByType": {
-        "*": "VEPipeBlock"
+        "*": "VEPipeBlockNew"
     },
     "entityClassByType": {
-        "*-item": "VEBEItemPipe",
-		"*-fluid": "VEBEFluidPipe"
+        "*-item": "VEBEItemPipeNew",
+		"*-fluid": "VEBEFluidPipeNew"
     },
 	"variantgroups": [
 		{ "code": "purpose", "states": [ "item", "fluid"] }
