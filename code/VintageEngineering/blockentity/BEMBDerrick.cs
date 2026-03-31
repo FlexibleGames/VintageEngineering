@@ -169,12 +169,11 @@ namespace VintageEngineering
             
             EnumBEState newstate = MachineState;
 
-            if (newstate == EnumBEState.Off) newstate = EnumBEState.Sleeping;
-            
+            if (newstate == EnumBEState.Off) newstate = EnumBEState.Sleeping; // this should never be off
             else
             {
                 // casing needed before we start/continue
-                if (InputSlot.Empty || InputSlot.Itemstack.Collectible.Code != _wellCasingCode)
+                if (WellPosition == null && (InputSlot.Empty || InputSlot.Itemstack.Collectible.Code != _wellCasingCode))
                 {
                     newstate = EnumBEState.Sleeping;
                 }
@@ -257,6 +256,8 @@ namespace VintageEngineering
 
                 if (availportion < portionpersecond) return; // we do not have enough space for another pump action
 
+                if (_currentLayer.Count == 1 && _inventory[0].Empty) return;
+
                 // if we are here, we are ready for a pump event
                 BlockPosAndDist nextone = _currentLayer.First();
 
@@ -266,16 +267,20 @@ namespace VintageEngineering
                     ItemStack fluidstack = new ItemStack(portion, (int)portionpersecond);
                     Output.Itemstack = fluidstack;
                 }
-                sapi.World.BlockAccessor.SetBlock(0, nextone.Pos);
+                sapi.World.BlockAccessor.SetBlock(0, nextone.Pos, BlockLayersAccess.Fluid);
                 _lastPumpDelta = 0f;
 
                 if (_currentLayer.Count == 1)
                 {
-                    // we are on the very last fluid block to pump
-                    _currentLayer.Clear();
-                    _wellPosition.Down(1);
-                    Block casing = sapi.World.GetBlock(new AssetLocation(_wellCasingCode));
-                    sapi.World.BlockAccessor.SetBlock(casing.Id, nextone.Pos);
+                    if (!_inventory[0].Empty && _inventory[0].StackSize > 0)
+                    {
+                        // we are on the very last fluid block to pump
+                        _currentLayer.Clear();
+                        _wellPosition.Down(1);
+                        Block casing = sapi.World.GetBlock(new AssetLocation(_wellCasingCode));
+                        sapi.World.BlockAccessor.SetBlock(casing.Id, nextone.Pos);
+                        _inventory[0].TakeOut(1);
+                    }
                 }
                 else
                 {
