@@ -79,6 +79,7 @@ namespace VintageEngineering
             {
                 _commonConfig = ReadConfig(api);
                 api.World.Config.SetBool("VintEng_GenOilDeposit", _commonConfig.OilGyser_GenOilDeposit);
+                api.World.Config.SetBool("VintEng_OilWaterInteraction", _commonConfig.OilWaterInteraction);
             }
         }
 

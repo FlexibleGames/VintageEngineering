@@ -149,7 +149,7 @@ namespace VintageEngineering.Blocks
 
                 tocheck.Y = access.GetTerrainMapheightAt(tocheck) + 1;
                 if (Math.Abs(tocheck.Y - surfacey) > 4) return false;
-                Block bcheck = access.GetBlock(tocheck);
+                Block bcheck = access.GetBlock(tocheck, BlockLayersAccess.Fluid);
                 if (bcheck.Id != 0 && bcheck.IsLiquid() && bcheck.LiquidCode.Contains("water")) return false;
             }
 
