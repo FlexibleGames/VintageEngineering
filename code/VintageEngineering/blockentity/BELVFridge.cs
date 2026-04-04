@@ -71,12 +71,8 @@ namespace VintageEngineering.blockentity
 
         //private float InvLVFridge_OnAcquireTransitionSpeed(EnumTransitionType transType, ItemStack stack, float mulByConfig)
         //{
-        //    float papr = (this.Api != null && transType == EnumTransitionType.Perish) ? container.GetPerishRate() : 1f;
-        //    if (transType == EnumTransitionType.Dry || transType == EnumTransitionType.Melt)
-        //    {
-        //        papr = 0.25f;
-        //    }
-        //    return papr;
+        //    mulByConfig *= _inventory.TransitionableSpeedMulByType[transType];
+        //    return mulByConfig;
         //}
 
         public float BridgePerishRate()
