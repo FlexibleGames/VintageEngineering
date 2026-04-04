@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VintageEngineering.Electrical;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
@@ -121,6 +122,8 @@ namespace VintageEngineering.Multiblock
             Block newcore = world.GetBlock(base.block.CodeWithVariant("state", "incomplete"));
             VEMBEntityCore coreentity = world.BlockAccessor.GetBlockEntity<VEMBEntityCore>(core);
             if (coreentity != null) coreentity.Inventory?.DropAll(byPlayer.Entity.Pos.AsBlockPos.ToVec3d(), 0);
+            IElectricalBlockEntity us = IElectricalBlockEntity.GetAtPos(world.BlockAccessor, core);
+            if (us != null) us.CheatPower(true); // someone broke us, void power :'(
             world.BlockAccessor.ExchangeBlock(newcore.Id, core);
         }
 

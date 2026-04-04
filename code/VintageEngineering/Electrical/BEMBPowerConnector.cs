@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using VintageEngineering.Electrical.Systems.Catenary;
 using VintageEngineering.Multiblock;
+using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 
@@ -110,6 +113,52 @@ namespace VintageEngineering.Electrical
                 }
             }
             return false;
+        }
+
+        public override void OnBlockPlaced(ItemStack byItemStack = null)
+        {            
+            string position = base.Block.Variant["position"];
+            BlockFacing underneath = BlockFacing.FromCode(position).Opposite;
+            BlockPos underpos = this.Pos.AddCopy(underneath);
+            Block underblock = Api.World.BlockAccessor.GetBlock(underpos);
+            if (underblock is not VEMBDummy)
+            {
+                Api.World.BlockAccessor.BreakBlock(Pos, null, 1);
+                if (Api is ICoreClientAPI capi)
+                {
+                    capi.World.Player.ShowChatNotification($"Place after the Multiblock is formed.");
+                }
+            }
+            else
+            {
+                base.OnBlockPlaced(byItemStack);
+            }
+        }
+
+        public void NeighborBlockChanged(IWorldAccessor world, BlockPos pos, BlockPos neibpos)
+        {
+            string position = base.Block.Variant["position"];
+            BlockFacing underneath = BlockFacing.FromCode(position).Opposite;
+            BlockPos underpos = this.Pos.AddCopy(underneath);
+            Block underblock = Api.World.BlockAccessor.GetBlock(underpos);
+            if (underblock is not VEMBDummy)
+            {
+                // block under us is not a dummy means the MB was deconstructed
+                world.BlockAccessor.BreakBlock(pos, null, 1); // self destruct                
+            }
+        }
+
+        public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
+        {
+            base.GetBlockInfo(forPlayer, dsc);
+            if (CorePosition != null)
+            {
+                dsc.AppendLine($"{Lang.Get("vinteng:gui-coreat")} {this.CorePosition.ToLocalPosition(Api).ToBlockPos()}");
+            }
+            else
+            {
+                dsc.AppendLine(Lang.Get("vinteng:gui-coreinvalid"));
+            }
         }
 
         public override void ToTreeAttributes(ITreeAttribute tree)

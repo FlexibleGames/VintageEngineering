@@ -388,6 +388,9 @@
 	"vinteng:block-vemvbattery": "VE MV Battery",
 	"vinteng:blockdesc-vemvbattery": "A Battery for storing power on an MV network. The MV battery stores 20000 power and is capable of moving 500 power per second (pps) by default.",
 
+	"vinteng:gui-coreat": "Found Core at:",
+	"vinteng:gui-coreinvalid": "Core not found! Do not place these before the Multiblock is formed.",
+
 	"vinteng:block-vemultiblockio-item": "Multiblock IO (Items)",
 	"vinteng:blockdesc-vemultiblockio-item": "Multiblock building component to indicate item input/output location.",
 	"vinteng:block-vemultiblockio-fluid": "Multiblock IO (Fluids)",

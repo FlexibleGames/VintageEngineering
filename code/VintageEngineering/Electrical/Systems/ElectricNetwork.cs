@@ -177,6 +177,7 @@ namespace VintageEngineering.Electrical.Systems
                     if (entity.ElectricalEntityType == EnumElectricalEntityType.PassThrough)
                     {
                         entity = PassThroughEntity(api.World.BlockAccessor, entity);
+                        if (entity == null) continue;
                     }
 
                     switch (entity.ElectricalEntityType)
@@ -209,17 +210,28 @@ namespace VintageEngineering.Electrical.Systems
         {
             IElectricalBlockEntity passthrough = null;
             if (entity.ElectricalEntityType == EnumElectricalEntityType.PassThrough)
-            {                
+            {
                 if (access.GetBlockEntity(entity.GetPosition()) is IMBPassThrough proxy)
                 {
-                    if (proxy.CorePosition == null)
+                    bool valid = false;
+                    if (VEHelpers.IsChunkLoaded(api.World, entity.GetPosition()))
                     {
-                        (proxy as BEMBPowerConnector).ValidateCore();
-                    }
-                    BlockPos corepos = proxy.CorePosition.Copy();
-                    if (corepos != null)
-                    {
-                        passthrough = proxy.CoreEntity.GetBehavior<IElectricalBlockEntity>();
+                        if (proxy.CorePosition == null)
+                        {
+                            valid = (proxy as BEMBPowerConnector).ValidateCore();
+                        }
+                        else
+                        {
+                            valid = (proxy as BEMBPowerConnector).GetCore();
+                        }
+                        if (valid && proxy.CorePosition != null)
+                        {
+                            BlockPos corepos = proxy.CorePosition.Copy();
+                            if (corepos != null)
+                            {
+                                passthrough = proxy.CoreEntity.GetBehavior<IElectricalBlockEntity>();
+                            }
+                        }                                                
                     }
                 }
             }
@@ -236,10 +248,10 @@ namespace VintageEngineering.Electrical.Systems
             // however they need to be seperate networks as a toggle that is OFF severs the connection
             // and I think it best to not merge and seperate the networks every time the toggle is switched
 
-            IElectricalBlockEntity electricalBlockEntity = IElectricalBlockEntity.GetAtPos(blockAccessor, node.blockPos);
+            IElectricalBlockEntity entity = IElectricalBlockEntity.GetAtPos(blockAccessor, node.blockPos);
 
 
-            if (electricalBlockEntity == null) { throw new Exception("Attempting to add Electrical Node that is NOT an ElectricalBlockEntity!"); }
+            if (entity == null) { throw new Exception("Attempting to add Electrical Node that is NOT an IElectricalBlockEntity!"); }
 
             IWireNetwork wirenet = IWireNetwork.GetAtPos(blockAccessor, node.blockPos);
             if (wirenet != null && updateEntity)
@@ -249,33 +261,40 @@ namespace VintageEngineering.Electrical.Systems
 
             allNodes.Add(node);
 
-            if (electricalBlockEntity.ElectricalEntityType == EnumElectricalEntityType.PassThrough)
-            {                
-                electricalBlockEntity = PassThroughEntity(blockAccessor, electricalBlockEntity);
+            if (entity.ElectricalEntityType == EnumElectricalEntityType.PassThrough)
+            {
+                entity = PassThroughEntity(blockAccessor, entity);
+            }
+            // if entity is null here that can only mean one thing
+            // it's a passthrough and the MB isn't built yet, IE there is nothing to pass through to
+            if (entity == null) 
+            {
+                api.Logger.Error($"VintEng: Error Adding pass through node to net:{NetworkID} at {node.blockPos.ToLocalPosition(api).ToBlockPos()}");
+                return; 
             }
 
             // a Transformer is a special type of storage, it has more than one power tier connection.
             // Toggles will be another unique type of storage, one that can have > 1 connection to a single network tier
-            switch (electricalBlockEntity.ElectricalEntityType)
+            switch (entity.ElectricalEntityType)
             {
                 case EnumElectricalEntityType.Consumer:
-                    consumerNodes.Add(electricalBlockEntity);
+                    consumerNodes.Add(entity);
                     if (consumerNodes.Count > 1) consumerNodes.Sort((x, y) => x.Priority.CompareTo(y.Priority));
                     break;
                 case EnumElectricalEntityType.Producer:
-                    producerNodes.Add(electricalBlockEntity);
+                    producerNodes.Add(entity);
                     if (producerNodes.Count > 1) producerNodes.Sort((x, y) => x.Priority.CompareTo(y.Priority));
                     break;
                 case EnumElectricalEntityType.Toggle:
                 case EnumElectricalEntityType.Storage:
-                case EnumElectricalEntityType.Transformer:                
-                    storageNodes.Add(electricalBlockEntity);
+                case EnumElectricalEntityType.Transformer:
+                    storageNodes.Add(entity);
                     if (storageNodes.Count > 1) storageNodes.Sort((x, y) => x.Priority.CompareTo(y.Priority));
                     break;
                 case EnumElectricalEntityType.Relay:
-                    relayNodes.Add(electricalBlockEntity);
+                    relayNodes.Add(entity);
                     break;
-                default: break;
+                default: break; // This seems to handle null entities
             }
             blockAccessor.GetBlockEntity(node.blockPos).MarkDirty(true);
         }
@@ -299,7 +318,7 @@ namespace VintageEngineering.Electrical.Systems
             {
                 entity = PassThroughEntity(api.World.BlockAccessor, entity);
             }
-
+            if (entity == null) return;
             switch (entity.ElectricalEntityType)
             {
                 case EnumElectricalEntityType.Consumer:
@@ -319,7 +338,7 @@ namespace VintageEngineering.Electrical.Systems
                 case EnumElectricalEntityType.Relay:
                     relayNodes.Add(entity);
                     break;
-                default: break;
+                default: break; // This seems to handle null entities
             }
         }
 
@@ -338,7 +357,7 @@ namespace VintageEngineering.Electrical.Systems
             {
                 entity = PassThroughEntity(api.World.BlockAccessor, entity);
             }
-
+            if (entity == null) return;
             switch (entity.ElectricalEntityType)
             {
                 case EnumElectricalEntityType.Consumer:
@@ -385,7 +404,7 @@ namespace VintageEngineering.Electrical.Systems
                 {
                     electricalBlockEntity = PassThroughEntity(api.World.BlockAccessor, electricalBlockEntity);
                 }
-
+                if (electricalBlockEntity == null) return;
                 switch (electricalBlockEntity.ElectricalEntityType)
                 {
                     case EnumElectricalEntityType.Consumer:

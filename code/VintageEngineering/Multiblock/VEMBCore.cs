@@ -81,7 +81,7 @@ namespace VintageEngineering.Multiblock
             if (Variant["state"] == "built")
             { 
                 Multiblock?.MBOnBlockBroken(world, pos, Vec3i.Zero, byPlayer, dropQuantityMultiplier); 
-            }            
+            }
             else 
             {
                 Multiblock.mbs.ClearHighlights(world, byPlayer);

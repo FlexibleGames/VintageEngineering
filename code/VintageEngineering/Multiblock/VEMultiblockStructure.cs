@@ -205,6 +205,7 @@ namespace VintageEngineering.Multiblock
                         BlockPos swappos = new BlockPos(centerPos.X + offset.X, centerPos.InternalY + offset.Y, centerPos.Z + offset.Z);
                         world.BlockAccessor.SetBlock(toswap.Id, swappos);
                         world.BlockAccessor.GetBlockEntity<VEMBEntityDummy>(swappos)?.SetOffset(offset);
+                        world.BlockAccessor.MarkBlockModified(swappos);
                     }
                 }
             }
@@ -229,6 +230,7 @@ namespace VintageEngineering.Multiblock
                         world.BlockAccessor.SetBlock(0, swappos);
                         world.BlockAccessor.SetBlock(swapback.Id, swappos);
                         world.BlockAccessor.MarkBlockModified(swappos);
+                        world.BlockAccessor.TriggerNeighbourBlockUpdate(swappos);
                     }
                 }
             }
