@@ -1,0 +1,28 @@
+{
+	"code": "vesheetmetal",
+	"class": "Block",
+	"creativeinventory": {
+		"vinteng": [ "*" ]
+	},
+	"variantgroups": [
+		{ "code": "type", "states": [ "iron", "steel", "temporalsteel" ] }
+	],
+	"blockmaterial": "Metal",
+	"sidesolid": { "all": true },
+	"sideopaque": { "all": true },
+	"maxStackSize": 64,
+	"shape": { "base": "block/basic/cube" },
+	"texturesByType": {
+		"*-iron": { "base": "vinteng:block/multiblocks/sheetmetal_iron" },
+		"*-steel": { "base": "vinteng:block/multiblocks/sheetmetal_steel" },
+		"*-temporalsteel": { "base": "vinteng:block/multiblocks/sheetmetal_tempsteel" }
+	},
+	"resistance": 3,
+	"lightAbsorption": 1,
+	"sounds": {
+		"place": "game:block/chute",
+		"break": "game:block/anvil",
+		"hit": "game:block/anvil",
+		"walk": "game:walk/stone"
+	}
+}

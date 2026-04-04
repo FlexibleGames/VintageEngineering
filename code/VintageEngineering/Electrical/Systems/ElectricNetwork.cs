@@ -182,7 +182,7 @@ namespace VintageEngineering.Electrical.Systems
 
                     switch (entity.ElectricalEntityType)
                     {
-                        case EnumElectricalEntityType.Consumer:
+                        case EnumElectricalEntityType.Consumer:                            
                             consumerNodes.Add(entity);
                             if (consumerNodes.Count > 1) consumerNodes.Sort((x, y) => x.Priority.CompareTo(y.Priority));
                             break;
