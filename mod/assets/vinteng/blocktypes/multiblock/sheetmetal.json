@@ -12,10 +12,11 @@
 	"sideopaque": { "all": true },
 	"maxStackSize": 64,
 	"shape": { "base": "block/basic/cube" },
+	"drawtype": "cube",
 	"texturesByType": {
-		"*-iron": { "base": "vinteng:block/multiblocks/sheetmetal_iron" },
-		"*-steel": { "base": "vinteng:block/multiblocks/sheetmetal_steel" },
-		"*-temporalsteel": { "base": "vinteng:block/multiblocks/sheetmetal_tempsteel" }
+		"*-iron": { "all": { "base": "vinteng:block/multiblocks/sheetmetal_iron" }},
+		"*-steel": { "all": { "base": "vinteng:block/multiblocks/sheetmetal_steel" }},
+		"*-temporalsteel": { "all": { "base": "vinteng:block/multiblocks/sheetmetal_tempsteel" }}
 	},
 	"resistance": 3,
 	"lightAbsorption": 1,

@@ -35,14 +35,14 @@ namespace VintageEngineering
             {
                 return new ItemSlotLiquidOnly(self, capacity);
             });
-            _inventory.SlotModified += this.SlotModified;
-            _inventory.OnGetSuitability += this.GetSuitability;
+            _inventory.SlotModified += SlotModified;
+            _inventory.OnGetSuitability += GetSuitability;
         }
 
         public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
         {
             float powerpercent = 0f;
-            if (Electric.MaxPower > 0) powerpercent = (float)((double)Electric.CurrentPower / (double)Electric.MaxPower);
+            if (Electric.MaxPower > 0) powerpercent = (float)(Electric.CurrentPower / (double)Electric.MaxPower);
             int percentpower = (int)(powerpercent * 100);
 
             base.GetBlockInfo(forPlayer, dsc);            
@@ -70,7 +70,7 @@ namespace VintageEngineering
             {
                 sapi = api as ICoreServerAPI;
                 RegisterGameTickListener(new Action<float>(OnSimTick), 500, 0);
-                _sourceBlocksPerSecond = base.Block.Attributes["sourceBlocksPerSecond"].AsInt(1);
+                _sourceBlocksPerSecond = Block.Attributes["sourceBlocksPerSecond"].AsInt(1);
                 _sourceBlocksPerSecond = Math.Clamp(_sourceBlocksPerSecond, 1, 10);
                 if (_wellPosition == null) // first time initializing (aka just built)
                 {
@@ -89,9 +89,9 @@ namespace VintageEngineering
                     AnimUtil.InitializeAnimator("vembpumpjack", null, null, new Vec3f(0f, GetRotation(), 0f));
                 }
             }
-            _inventory.Pos = this.Pos;
-            _inventory.LateInitialize($"{InventoryClassName}-{this.Pos.X}/{this.Pos.Y}/{this.Pos.Z}", api);
-            (_inventory[0] as ItemSlotLiquidOnly).CapacityLitres = base.Block.Attributes["fluidCapacityLiters"].AsFloat(1f);
+            _inventory.Pos = Pos;
+            _inventory.LateInitialize($"{InventoryClassName}-{Pos.X}/{Pos.Y}/{Pos.Z}", api);
+            (_inventory[0] as ItemSlotLiquidOnly).CapacityLitres = Block.Attributes["fluidCapacityLiters"].AsFloat(1f);
         }
 
         /// <summary>
@@ -101,9 +101,9 @@ namespace VintageEngineering
         {
             get
             {
-                string side = base.Block.Variant["side"] ?? "north";
+                string side = Block.Variant["side"] ?? "north";
                 BlockFacing pointingto = BlockFacing.FromCode(side);
-                return this.Pos.AddCopy(pointingto, 2);
+                return Pos.AddCopy(pointingto, 2);
             }
         }
 
@@ -111,8 +111,8 @@ namespace VintageEngineering
 
         public int GetRotation()
         {
-            string side = base.Block.Variant["side"];
-            int adjustedIndex = ((BlockFacing.FromCode(side)?.HorizontalAngleIndex ?? 1) + 3) & 3;
+            string side = Block.Variant["side"];
+            int adjustedIndex = (BlockFacing.FromCode(side)?.HorizontalAngleIndex ?? 1) + 3 & 3;
             return adjustedIndex * 90;
         }
         #endregion
@@ -121,7 +121,7 @@ namespace VintageEngineering
         {
             if (sapi == null) return; // only run this on the server
 
-            if (base.Block.Variant["state"] != "built") return;
+            if (Block.Variant["state"] != "built") return;
 
             _wellValidationDelay += dt;
             EnumBEState newstate = MachineState;
@@ -168,7 +168,7 @@ namespace VintageEngineering
                     if (props != null)
                     {
                         // this is an insane chain of things I have to do just to get the damn props
-                        portionperliter = ((int)props.ItemsPerLitre); // almost always 100, should be 1000 for milliliters. 
+                        portionperliter = (int)props.ItemsPerLitre; // almost always 100, should be 1000 for milliliters. 
                     }
                 }
                 // a truly crazy way of turning blocks/s of source fluid into portions/s
@@ -180,10 +180,10 @@ namespace VintageEngineering
                 portionpersecond = Math.Min(portionpersecond, (long)availportion);
 
                 long texastea = thewell.PumpTick(dt, portionpersecond);
-                if (!_inventory[0].Empty) _inventory[0].Itemstack.StackSize += ((int)texastea);
+                if (!_inventory[0].Empty) _inventory[0].Itemstack.StackSize += (int)texastea;
                 else
                 {
-                    _inventory[0].Itemstack = new ItemStack(portion, ((int)texastea));
+                    _inventory[0].Itemstack = new ItemStack(portion, (int)texastea);
                 }
                 if (texastea > 0) Electric.electricpower -= Electric.RatedPower(dt, false);
                 
@@ -211,8 +211,8 @@ namespace VintageEngineering
         /// <returns>True if well is valid and ready for pumpin'</returns>
         public bool ValidateWell()
         {
-            if (base.Block.Variant["state"] != "built") return false;            
-            AssetLocation casingcode = new AssetLocation(base.Block.Attributes["wellCasingCode"].AsString());
+            if (Block.Variant["state"] != "built") return false;            
+            AssetLocation casingcode = new AssetLocation(Block.Attributes["wellCasingCode"].AsString());
             Block casing = Api.World.GetBlock(casingcode);
             if (casing == null) return false; // if casing can't be found, bounce
             if (Api.World.BlockAccessor.GetBlock(HeadPosition.DownCopy()) != casing) return false; // if casing isn't under the head, bounce
@@ -232,7 +232,7 @@ namespace VintageEngineering
         /// <returns>True if casing is valid and well is found, otherwise false.</returns>
         public bool ValidateCasings(BlockPos start)
         {
-            Block casing = Api.World.GetBlock(new AssetLocation(base.Block.Attributes["wellCasingCode"].AsString()));
+            Block casing = Api.World.GetBlock(new AssetLocation(Block.Attributes["wellCasingCode"].AsString()));
             
             while (start.Y > 0)
             {
@@ -261,8 +261,8 @@ namespace VintageEngineering
         {
             get
             {
-                if (base.Block.Attributes == null) return false;
-                return base.Block.Attributes["allowPipeLiquidTransfer"].AsBool(false);
+                if (Block.Attributes == null) return false;
+                return Block.Attributes["allowPipeLiquidTransfer"].AsBool(false);
             }
         }
 
@@ -270,8 +270,8 @@ namespace VintageEngineering
         {
             get
             {
-                if (base.Block.Attributes == null) return false;
-                return base.Block.Attributes["allowHeldLiquidTransfer"].AsBool(false);
+                if (Block.Attributes == null) return false;
+                return Block.Attributes["allowHeldLiquidTransfer"].AsBool(false);
             }
         }
 
@@ -279,8 +279,8 @@ namespace VintageEngineering
         {
             get
             {
-                if (base.Block.Attributes == null) return 0f;
-                return base.Block.Attributes["transferLitresPerSecond"].AsFloat(0.01f);
+                if (Block.Attributes == null) return 0f;
+                return Block.Attributes["transferLitresPerSecond"].AsFloat(0.01f);
             }
         }
 
@@ -307,7 +307,7 @@ namespace VintageEngineering
                 {
                     int portions = _inventory[0].Itemstack.StackSize;
                     float capacity = (_inventory[0] as ItemSlotLiquidOnly).CapacityLitres * BlockLiquidContainerBase.GetContainableProps(_inventory[0].Itemstack).ItemsPerLitre;
-                    float full = (float)portions / capacity;
+                    float full = portions / capacity;
                     return (int)(full * 100);
                 }
             }
@@ -321,7 +321,7 @@ namespace VintageEngineering
 
         public ItemSlotLiquidOnly GetLiquidAutoPullFromSlot(BlockFacing blockFacing)
         {
-            string rotside = base.Block.Variant["side"];
+            string rotside = Block.Variant["side"];
             string cw = BlockFacing.FromCode(rotside).GetCW().Code;
             string ccw = BlockFacing.FromCode(rotside).GetCCW().Code;
 
@@ -350,7 +350,7 @@ namespace VintageEngineering
 
         public float GetSuitability(ItemSlot sourceslot, ItemSlot targetSlot, bool isMerge)
         {
-            return (isMerge ? (_inventory.BaseWeight + 3f) : (_inventory.BaseWeight + 1f)) + ((sourceslot.Inventory is InventoryBasePlayer) ? 1 : 0);
+            return (isMerge ? _inventory.BaseWeight + 3f : _inventory.BaseWeight + 1f) + (sourceslot.Inventory is InventoryBasePlayer ? 1 : 0);
         }
 
         #endregion
@@ -368,12 +368,12 @@ namespace VintageEngineering
             _state = newstate;
             if (_state == EnumBEState.On)
             {
-                if (AnimUtil != null && base.Block.Attributes["craftinganimcode"].Exists && capi != null)
+                if (AnimUtil != null && Block.Attributes["craftinganimcode"].Exists && capi != null)
                 {
                     AnimUtil.StartAnimation(new AnimationMetaData
                     {
-                        Animation = base.Block.Attributes["craftinganimcode"].AsString(),
-                        Code = base.Block.Attributes["craftinganimcode"].AsString(),
+                        Animation = Block.Attributes["craftinganimcode"].AsString(),
+                        Code = Block.Attributes["craftinganimcode"].AsString(),
                         AnimationSpeed = 2f,
                         EaseOutSpeed = 4f,
                         EaseInSpeed = 1f
@@ -384,7 +384,7 @@ namespace VintageEngineering
             {
                 if (AnimUtil != null && AnimUtil.activeAnimationsByAnimCode.Count > 0)
                 {
-                    AnimUtil.StopAnimation(base.Block.Attributes["craftinganimcode"].AsString());
+                    AnimUtil.StopAnimation(Block.Attributes["craftinganimcode"].AsString());
                 }
             }
             MarkDirty(true); // _clientUpdateDelay += 0.05f; 

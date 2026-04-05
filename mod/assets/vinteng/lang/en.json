@@ -456,13 +456,18 @@
 
 	"vinteng:block-vembderrick-incomplete-*": "Derrick Core",
 	"vinteng:blockdesc-vembderrick-incomplete-*": "The Derrick is a giant structure multiblock (MB) that requires Well Casing to finalize and make ready the well for the Pumpjack to access the source block. Supply Well Casing to this while extracting the fluid it finds and pumps out of the deposit. Once built, right click with a wrench the same side you used to validate it to drop its inventory just in case you loaded the wrong block for well casing. Building blocks are color-coded by type as outlined below.<br><br>Black : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"vinteng:steelfence-steel-ew-free\"/><br>Mid Gray : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"vinteng:metalplatform-up\"/><br>Light Gray : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"vinteng:metalladder-steel-north\"/><br>Dark Purple : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"vinteng:vembcomponent-heavyeng\"/><br>Cyan : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"vinteng:concrete-reinforced-uncolored\"/><br>Pink : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"vinteng:vembcomponent-lighteng\"/><br>Yellow : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"vinteng:vemultiblockio-fluid\"/><br>Orange : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"vinteng:treatedwood-slabdown-north\"/><br>Lime : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"vinteng:vemultiblockio-power\"/><br>Red : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"vinteng:vemultiblockio-interaction\"/><br>Green : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"vinteng:vemultiblockio-item\"/>",
-
 	"vinteng:block-vembderrick-built-*": "Drill Derrick",
-
 	"vinteng:gui-drillingat": "Drilling At",
 	"vinteng:gui-wellfoundat": "Well Found At",
 	"vinteng:gui-missingcasing": "Well Casings Missing",
 	"vinteng:gui-word-depth": "Depth",
+
+	"vinteng:block-vembdistillationbase-incomplete-*": "Distillation Tower (Base)",
+	"vinteng:block-vembdistillationbase-built-*": "Distillation Tower (Base)",
+	"vinteng:blockdesc-vembdistillationbase-*": "Description is good.",
+	"vinteng:block-vembdistillationext-incomplete-*": "Distillation Tower (Extension)",
+	"vinteng:block-vembdistillationext-built-*": "Distillation Tower (Extension)",
+	"vinteng:blockdesc-vembdistillationext-*": "Description is good.",
 
 	"eof": "End Of File"
 }

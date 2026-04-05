@@ -1,7 +1,7 @@
 {
 	"code": "vembdistillationbase",
 	"class": "VEMBCore",
-	"entityClass": "",
+	"entityClass": "VEBEDerrick",
 	"behaviors": [
 		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "vembdistillationbase-incomplete-north" }}},
 		{"name": "VEMultiblockBeh", "properties": {
@@ -44,35 +44,32 @@
 	],
 	"attributes": {
 		"handbook": {
-			"groupBy": ["vembderrick*"],
+			"groupBy": ["vembdistillationbase*"],
 			"excludeByType": {
 				"*-incomplete-north": false,
 				"*": true
 			}
 		},
-		"craftinganimcode": "drilling",
 		"allowHeldLiquidTransfer": true,
 		"allowPipeLiquidTransfer": true,
-		"sourceBlocksPerSecond": 1,
-		"fluidCapacityLiters": 8000,
-		"wellCasingCode": "vinteng:wellcasing"
+		"fluidCapacityLiters": 8000
 	},
-	"shapeinventory": { "base": "block/multiblock/machine/derrick-core" },
-	"creativeinventory": { "general": ["vembderrick"], "terrain": ["*"], "mechanics": ["*"], "vinteng": ["*-incomplete-north"] },
+	"shapeinventory": { "base": "block/multiblock/machine/distillationbase-core" },
+	"creativeinventory": { "general": ["vembdistillationbase"], "terrain": ["*"], "mechanics": ["*"], "vinteng": ["*-incomplete-north"] },
 	"shapeByType": {
-		"*-incomplete-north": 	{ "base": "vinteng:block/multiblock/machine/derrick-core", "rotateY":0 },
-		"*-incomplete-east": 	{ "base": "vinteng:block/multiblock/machine/derrick-core", "rotateY":270 },
-		"*-incomplete-south": 	{ "base": "vinteng:block/multiblock/machine/derrick-core", "rotateY":180 },
-		"*-incomplete-west": 	{ "base": "vinteng:block/multiblock/machine/derrick-core", "rotateY":90 },
-		"*-built-north": 	{ "base": "vinteng:block/multiblock/machine/derrick", "rotateY":0 },
-		"*-built-east": 	{ "base": "vinteng:block/multiblock/machine/derrick", "rotateY":270 },
-		"*-built-south": 	{ "base": "vinteng:block/multiblock/machine/derrick", "rotateY":180 },
-		"*-built-west": 	{ "base": "vinteng:block/multiblock/machine/derrick", "rotateY":90 }
+		"*-incomplete-north": 	{ "base": "vinteng:block/multiblock/machine/distillationbase-core", "rotateY":0 },
+		"*-incomplete-east": 	{ "base": "vinteng:block/multiblock/machine/distillationbase-core", "rotateY":270 },
+		"*-incomplete-south": 	{ "base": "vinteng:block/multiblock/machine/distillationbase-core", "rotateY":180 },
+		"*-incomplete-west": 	{ "base": "vinteng:block/multiblock/machine/distillationbase-core", "rotateY":90 },
+		"*-built-north": 	{ "base": "vinteng:block/multiblock/machine/distillationbase", "rotateY":0 },
+		"*-built-east": 	{ "base": "vinteng:block/multiblock/machine/distillationbase", "rotateY":270 },
+		"*-built-south": 	{ "base": "vinteng:block/multiblock/machine/distillationbase", "rotateY":180 },
+		"*-built-west": 	{ "base": "vinteng:block/multiblock/machine/distillationbase", "rotateY":90 }
 	},
 	"blockmaterial": "Metal",
 	"drawtype": "json",
 	"sidesolid": {
-		"all": false, "down": true
+		"all": false, "down": true, "up": true
 	},
 	"sideopaque": {
 		"all": false
