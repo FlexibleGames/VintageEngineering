@@ -1,7 +1,7 @@
 {
 	"code": "vembdistillationbase",
 	"class": "VEMBCore",
-	"entityClass": "VEBEDerrick",
+	"entityClass": "VEBEDistillationBase",
 	"behaviors": [
 		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "vembdistillationbase-incomplete-north" }}},
 		{"name": "VEMultiblockBeh", "properties": {
@@ -50,9 +50,11 @@
 				"*": true
 			}
 		},
+		"extensionCode": "vembdistillationext",
 		"allowHeldLiquidTransfer": true,
 		"allowPipeLiquidTransfer": true,
-		"fluidCapacityLiters": 8000
+		"fluidCapacityLiters": 2000,
+		"extensionPPS": 500
 	},
 	"shapeinventory": { "base": "block/multiblock/machine/distillationbase-core" },
 	"creativeinventory": { "general": ["vembdistillationbase"], "terrain": ["*"], "mechanics": ["*"], "vinteng": ["*-incomplete-north"] },

@@ -184,6 +184,7 @@
 	"vinteng:gui-word-stack": "Full Stack",
 	"vinteng:gui-word-rate": "Rate",
 	"vinteng:gui-word-delay": "Delay",
+	"vinteng:gui-word-input": "Input",
 	"vinteng:gui-word-output": "Output",
 	"vinteng:gui-word-needed": "Needed",
 	"vinteng:gui-word-paused": "Waiting",
@@ -440,6 +441,8 @@
 	"vinteng:item-mvconnectorbase-burned": "Fired MV Connector Base",
 	"vinteng:itemdesc-mvconnectorbase-burned": "Use to craft the <a href=\"handbook://block-vinteng:mbpowerconnector-mvpower-up\">MV Multiblock Connector</a> for powering multiblock structures.",
 
+	"vinteng:gui-word-multiblock": "Multiblock",
+	"vinteng:gui-word-completed": "Completed",
 	"vinteng:block-vembcreosoteoven-incomplete-*": "Creosote Oven Core",
 	"vinteng:block-vembcreosoteoven-built-*": "Creosote Oven",
 	"vinteng:blockdesc-vembcreosoteoven-*": "Creosote Oven is a Multiblock (MB) structure that can create Wood-Tar Creosote from Oak and Pine logs and charcoal from all other wood logs as well as Coal-Tar Creosote from all coal variants.<br>To build, craft and place the Creosote Oven Core then right click core with wrench to show missing blocks. These blocks are color-coded by type outlined below.<br><br>Light Blue : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"game:brickcourse-four-running-gray\"/><br>Green : <itemstack rsize=\"1\" type=\"block\" code=\"vinteng:vemultiblockio-item\"/><br>Red : <itemstack rsize=\"1\" type=\"block\" code=\"vinteng:vemultiblockio-interaction\"/><br>Yellow : <itemstack rsize=\"1\" type=\"block\" code=\"vinteng:vemultiblockio-fluid\"/><br><br>Once the Core is inaccessable, right click the Interaction block to progress layers or validate the structure.",
@@ -464,10 +467,12 @@
 
 	"vinteng:block-vembdistillationbase-incomplete-*": "Distillation Tower (Base)",
 	"vinteng:block-vembdistillationbase-built-*": "Distillation Tower (Base)",
-	"vinteng:blockdesc-vembdistillationbase-*": "Description is good.",
+	"vinteng:blockdesc-vembdistillationbase-*": "Distillation uses copious power to heat a fluid in order to purify and/or separate it. Requires a fluid input. Allows for up to 6 extensions to enhance its output capabilities. Every Extension adds 500 PPS to the base 2000 PPS.",
 	"vinteng:block-vembdistillationext-incomplete-*": "Distillation Tower (Extension)",
 	"vinteng:block-vembdistillationext-built-*": "Distillation Tower (Extension)",
-	"vinteng:blockdesc-vembdistillationext-*": "Description is good.",
+	"vinteng:blockdesc-vembdistillationext-*": "Should This jsut show the base info?",
+	"vinteng:gui-word-extensions": "Extensions",
+	"vinteng:gui-word-extension": "Extension",
 
 	"eof": "End Of File"
 }

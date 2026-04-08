@@ -241,6 +241,8 @@ namespace VintageEngineering
             api.RegisterBlockEntityClass("VEBECreosoteOven", typeof(BECreosoteOven));
             api.RegisterBlockEntityClass("VEBEPumpjack", typeof(BEMBPumpJack));
             api.RegisterBlockEntityClass("VEBEDerrick", typeof(BEMBDerrick));
+            api.RegisterBlockEntityClass("VEBEDistillationBase", typeof(BEMBDistillationBase));
+            api.RegisterBlockEntityClass("VEBEDistillationExt", typeof(BEMBDistillationExt));
         }
 
         public void RegisterBlockEntityBehaviors(ICoreAPI api)
