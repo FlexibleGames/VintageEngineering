@@ -8,6 +8,17 @@ namespace VintageEngineering.API
 {
     public static class VEHelpers
     {
+        public static class MBStandardColors
+        {
+            public static int HeavyEng => ColorUtil.ColorFromRgba(54, 6, 91, 180);
+            public static int LightEng => ColorUtil.ColorFromRgba(153, 102, 192, 180);
+            public static int FluidIO => ColorUtil.ColorFromRgba(215, 215, 0, 180);
+            public static int ItemIO => ColorUtil.ColorFromRgba(5, 215, 5, 180);
+            public static int PowerIO => ColorUtil.ColorFromRgba(37, 197, 0, 180);
+            public static int Interaction => ColorUtil.ColorFromRgba(250, 0, 0, 180);
+            public static int TreatedSlabB => ColorUtil.ColorFromRgba(81, 41, 26, 180);
+        }
+
         /// <summary>
         /// A quick check to determine if a chunk at a given position is loaded.<br/>
         /// Unlike the base-game call, this one ignores neighboring chunks.
@@ -27,7 +38,8 @@ namespace VintageEngineering.API
         }
         /// <summary>
         /// Checks if all chunks from given position around at a given radius are loaded.<br/>
-        /// If any of them are not loaded it will return false;
+        /// If any of them are not loaded it will return false<br/>
+        /// Note: Radius is in Chunks not Blocks.
         /// </summary>
         /// <param name="world"></param>
         /// <param name="atpos"></param>
