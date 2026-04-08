@@ -40,6 +40,7 @@ namespace VintageEngineering
         /// Code of the expected and required Well Casing block.
         /// </summary>
         private string _wellCasingCode = string.Empty;
+        
         /// <summary>
         /// Code of the fluid this Derrick will look for, set with whatever fluid<br/>
         /// is directly below the Derrick Core block. Ensures Water or Lava does not<br/>
@@ -72,7 +73,7 @@ namespace VintageEngineering
             {
                 if (id == 0) return new ItemSlot(self);
                 return new ItemSlotLiquidOnly(self, capacity);
-            });            
+            });
             _inventory.SlotModified += SlotModified;
             _inventory.OnGetSuitability += GetSuitability;
             _inventory.OnGetAutoPushIntoSlot += GetAutoPushIntoSlot;
@@ -115,7 +116,7 @@ namespace VintageEngineering
             _inventory.Pos = Pos;
             _inventory.LateInitialize($"{InventoryClassName}-{Pos.X}/{Pos.Y}/{Pos.Z}", api);
             (_inventory[1] as ItemSlotLiquidOnly).CapacityLitres = Block.Attributes["fluidCapacityLiters"].AsFloat(1f);
-
+            
             if (api.Side == EnumAppSide.Server)
             {
                 sapi = api as ICoreServerAPI;
@@ -741,7 +742,6 @@ namespace VintageEngineering
             if (syncwellPosition != null && _wellPosition != syncwellPosition)
             {
                 _wellPosition = syncwellPosition;
-                // TODO: Build Layer Fluid List
             }
 
             EnumBEState syncstate = Enum.Parse<EnumBEState>(tree.GetString("machinestate", "On"));

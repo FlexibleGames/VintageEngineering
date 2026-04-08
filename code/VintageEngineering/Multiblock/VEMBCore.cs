@@ -40,6 +40,15 @@ namespace VintageEngineering.Multiblock
             }
         }
 
+        public override void Activate(IWorldAccessor world, Caller caller, BlockSelection blockSel, ITreeAttribute activationArgs = null)
+        {
+            VEMBEntityCore entity = world.BlockAccessor.GetBlockEntity<VEMBEntityCore>(blockSel.Position);
+            if (entity != null)
+            {
+                entity.ActivateCore(world, caller, blockSel, activationArgs);
+            }
+        }
+
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
         {
             if (blockSel != null && !world.Claims.TryAccess(byPlayer, blockSel.Position, EnumBlockAccessFlags.Use))

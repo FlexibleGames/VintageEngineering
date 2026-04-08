@@ -1,11 +1,13 @@
-﻿using System;
+﻿using Microsoft.VisualBasic;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Vintagestory.API.Datastructures;
+using VintageEngineering.API;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 
@@ -95,7 +97,24 @@ namespace VintageEngineering.Multiblock
             BlockHighlightColors = new Dictionary<int, int>();
             foreach (JsonObject obj in array)
             {
-                int color = ColorUtil.ColorFromRgba(obj["r"].AsInt(), obj["g"].AsInt(), obj["b"].AsInt(), obj["a"].AsInt());
+                int color = 0;
+                if (obj.KeyExists("s"))
+                {
+                    string svalue = obj["s"].AsString();
+                    switch (svalue)
+                    {
+                        case "heavyeng": color = VEHelpers.MBStandardColors.HeavyEng; break;
+                        case "Lighteng": color = VEHelpers.MBStandardColors.LightEng; break;
+                        case "fluidio": color = VEHelpers.MBStandardColors.FluidIO; break;
+                        case "itemio": color = VEHelpers.MBStandardColors.ItemIO; break;
+                        case "powerio": color = VEHelpers.MBStandardColors.PowerIO; break;
+                        case "interaction": color = VEHelpers.MBStandardColors.Interaction; break;
+                        case "treatedslabb": color = VEHelpers.MBStandardColors.TreatedSlabB; break;
+                        default: break;
+                    }
+                }
+                else color = ColorUtil.ColorFromRgba(obj["r"].AsInt(), obj["g"].AsInt(), obj["b"].AsInt(), obj["a"].AsInt());
+
                 BlockHighlightColors.Add(obj["w"].AsInt(), color);
             }
         }

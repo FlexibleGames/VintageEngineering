@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using VintageEngineering.Electrical;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
@@ -72,7 +73,9 @@ namespace VintageEngineering.Multiblock
                         // holy cow, it's built! 
                         if (world.Side == EnumAppSide.Client)
                         {
-                            (world.Api as ICoreClientAPI).SendChatMessage("Multiblock Completed!");
+                            string mbname = world.BlockAccessor.GetBlock(core).GetPlacedBlockName(world, core);
+                            // why does this trigger twice?
+                            (world.Api as ICoreClientAPI).SendChatMessage($"{Lang.Get("vinteng:gui-word-multiblock")} {mbname} {Lang.Get("vinteng:gui-word-completed")}!");
                             mbs.ClearHighlights(world, byPlayer);
                         }
                         else
@@ -82,6 +85,13 @@ namespace VintageEngineering.Multiblock
                             mbs.ClearHighlights(world, byPlayer);
                             Block newcore = world.GetBlock(base.block.CodeWithVariant("state", "built"));
                             world.BlockAccessor.ExchangeBlock(newcore.Id, core);
+                            world.BlockAccessor.GetBlock(core).Activate(world, new Caller
+                            {
+                                Player = byPlayer,
+                                Entity = byPlayer.Entity,
+                                Type = EnumCallerType.Player,
+                                Pos = byPlayer.Entity.Pos.XYZ
+                            }, sel, null);
                         }
                     }
                     else
@@ -121,10 +131,18 @@ namespace VintageEngineering.Multiblock
             mbs.SwapBlocks(world, core, false, base.block.Variant["side"]);
             Block newcore = world.GetBlock(base.block.CodeWithVariant("state", "incomplete"));
             VEMBEntityCore coreentity = world.BlockAccessor.GetBlockEntity<VEMBEntityCore>(core);
-            if (coreentity != null) coreentity.Inventory?.DropAll(byPlayer.Entity.Pos.AsBlockPos.ToVec3d(), 0);
+            if (coreentity != null) coreentity.Inventory?.DropAll(byPlayer.Entity.Pos.XYZ, 0);
             IElectricalBlockEntity us = IElectricalBlockEntity.GetAtPos(world.BlockAccessor, core);
             if (us != null) us.CheatPower(true); // someone broke us, void power :'(
             world.BlockAccessor.ExchangeBlock(newcore.Id, core);
+            
+            world.BlockAccessor.GetBlock(core).Activate(world, new Caller
+            {
+                Player = byPlayer,
+                Entity = byPlayer.Entity,
+                Type = EnumCallerType.Player,
+                Pos = byPlayer.Entity.Pos.XYZ
+            }, byPlayer.CurrentBlockSelection, null);
         }
 
         public int MBGetRandomColor(ICoreClientAPI capi, BlockPos pos, BlockFacing facing, int rndIndex, Vec3i offsetInv)
