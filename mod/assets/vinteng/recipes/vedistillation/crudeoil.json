@@ -1,0 +1,29 @@
+[
+{
+	"code": "crude-no-ext",
+	"powerpercraft": 1000,
+	"attributes": {
+	},
+	"ingredients": [
+		{ "type": "item", "code": "vinteng:crudeoilportion", "litres": 10  }
+	],
+	"outputs": [
+		{ "type": "item", "code": "vinteng:bitumen", "stacksize": 5, "variable": 2, "slotid": 1 },
+		{ "type": "item", "code": "vinteng:dieselportion", "litres": 0.5, "slotid": 2 }
+	]
+},
+{
+	"code": "crude-one-ext",
+	"powerpercraft": 1200,
+	"attributes": {
+	},
+	"ingredients": [
+		{ "type": "item", "code": "vinteng:crudeoilportion", "litres": 10  }
+	],
+	"outputs": [
+		{ "type": "item", "code": "vinteng:bitumen", "stacksize": 4, "variable": 1, "slotid": 1 },
+		{ "type": "item", "code": "vinteng:dieselportion", "litres": 1, "slotid": 2 },
+		{ "type": "item", "code": "vinteng:heavyoilportion", "litres": 0.5, "slotid": 3 }
+	]
+}
+]

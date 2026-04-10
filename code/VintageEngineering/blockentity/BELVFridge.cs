@@ -66,6 +66,18 @@ namespace VintageEngineering.blockentity
             _inventory.LateInitialize($"{InventoryClassName}-{this.Pos.X}/{this.Pos.Y}/{this.Pos.Z}", api);
             _inventory.OnInventoryOpened += OnInvOpened;
             _inventory.OnInventoryClosed += OnInvClosed;
+            //_inventory.OnAcquireTransitionSpeed += InvLVFridge_OnAcquireTransitionSpeed;
+        }
+
+        //private float InvLVFridge_OnAcquireTransitionSpeed(EnumTransitionType transType, ItemStack stack, float mulByConfig)
+        //{
+        //    mulByConfig *= _inventory.TransitionableSpeedMulByType[transType];
+        //    return mulByConfig;
+        //}
+
+        public float BridgePerishRate()
+        {
+            return container.GetPerishRate();
         }
 
         protected void OnInvOpened(IPlayer player)

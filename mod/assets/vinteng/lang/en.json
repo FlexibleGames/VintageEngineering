@@ -184,6 +184,7 @@
 	"vinteng:gui-word-stack": "Full Stack",
 	"vinteng:gui-word-rate": "Rate",
 	"vinteng:gui-word-delay": "Delay",
+	"vinteng:gui-word-input": "Input",
 	"vinteng:gui-word-output": "Output",
 	"vinteng:gui-word-needed": "Needed",
 	"vinteng:gui-word-paused": "Waiting",
@@ -228,11 +229,21 @@
 	"vinteng:gui-title-blastfurnace": "Blast Furnace",
 	"vinteng:gui-title-lvfridge": "LV Refrigerator",
 
-	"vinteng:block-pipe-item": "Item Pipe",
-	"vinteng:blockdesc-pipe-item": "Move items around your factory. Upgradable. Right-click with a wrench on a connection node to put into extraction mode. Shift+right-click with a wrench to remove a connection node.",
-	"vinteng:block-pipe-fluid": "Fluid Pipe",
-	"vinteng:blockdesc-pipe-fluid": "Move fluids around your factory. Upgradable. Right-click with a wrench on a connection node to put into extraction mode. Shift+right-click with a wrench to remove a connection node.",
-	"vinteng:gui-title-pipeextract": "Pipe Extraction",
+	"vinteng:block-pipe-item": "Item Pipe (Depreciated)",
+	"vinteng:blockdesc-pipe-item": "Break down and rebuild all old pipe systems as soon as possible. Old pipes should drop the <a href=\"handbook://block-vinteng:pipenew-item\">new ones</a> when broken. Old pipe systems will not move anything and have been depreciated.",
+	"vinteng:block-pipe-fluid": "Fluid Pipe (Depreciated)",
+	"vinteng:blockdesc-pipe-fluid": "Break down and rebuild all old pipe systems as soon as possible. Old pipes should drop the <a href=\"handbook://block-vinteng:pipenew-fluid\">new ones</a> when broken. Old pipe systems will not move anything and have been depreciated.",
+	"vinteng:block-pipenew-item": "Transport Pipe (Item)",
+	"vinteng:blockdesc-pipenew-item": "Move items around your factory. Upgradable. Right-click with a wrench on a connection node to put into extraction mode. Shift+right-click with a wrench to remove a connection node.<br><br>The Subnet system can be used to subdivide a pipe network, extraction nodes with the subnet set will ONLY insert into insert nodes that match exactly.<br><br>Now includes a Subnet feature. This is not an item filter. An extraction node with a subnet set will only process insert nodes that have a matching subnet.",
+	"vinteng:block-pipenew-fluid": "Transport Pipe (Fluid)",
+	"vinteng:blockdesc-pipenew-fluid": "Move fluids around your factory. Upgradable. Right-click with a wrench on a connection node to put into extraction mode. Shift+right-click with a wrench to remove a connection node.<br><br>The Subnet system can be used to subdivide a pipe network, extraction nodes with the subnet set will ONLY insert into insert nodes that match exactly.<br><br>Now includes a Subnet feature. This is not a fluid filter. An extraction node with a subnet set will only process insert nodes that have a matching subnet.",
+
+	"vinteng:gui-title-pipeextract": "Pipe Extraction Settings",
+	"vinteng:gui-title-pipeinsert": "Pipe Insert Settings",
+	"vinteng:gui-word-subnet": "Subnet",
+	"vinteng:gui-editsubnet": "Custom Subnet",
+	"vinteng:gui-help-subnet": "Use a block or item to set a subnet that this node is locked to. Or use a custom string.",
+	"vinteng:gui-help-customuse": "This is NOT an item/block filter. Consider it a 'frequency' that only looks for a match.",
 	"vinteng:gui-word-upgrade": "Upgrade",
 	"vinteng:gui-word-filter": "Filter",
 	"vinteng:gui-distro-text": "Distribution Mode",
@@ -279,6 +290,7 @@
 	"vinteng:item-vepipefilter": "Pipe Filter",
 	"vinteng:itemdesc-vepipefilter": "The Pipe Filter can be used in upgraded extraction nodes to filter (white-list or black-list) items to pull from the connected inventory. <br>Right click with the filter in your hand to set filter settings.",
 	"vinteng:gui-filtersettings": "Pipe Filter Settings",
+	"vinteng:gui-error-notext": "No text to add",
 	"vinteng:gui-error-filterwildcard": "To add a wildcard, ensure Wildcards is enabled in the Filter Window.",
 	"vinteng:gui-error-unbalancedinput": "WARNING: Input isn't balanced! Some input items will be wasted.",
 	"vinteng:gui-error-airblocked": "Requires empty (air) block in front to operate!",
@@ -364,7 +376,13 @@
 	"vinteng:block-steelfence-steel-*": "Steel Fence",
 	"vinteng:blockdesc-steelfence-steel-*": "Steel Fence is a great, although expensive, alternative to wood fencing. Used in large constructions.",
 	"vinteng:block-metalladder-steel-*": "Steel Ladder",
-	"vinteng:blockdesc-metalladder-steel-*": "A strudy and secure climbing choice. A Steel Ladder will ensure you stay grounded.",
+	"vinteng:blockdesc-metalladder-steel-*": "A sturdy and secure climbing choice. A Steel Ladder will ensure you stay grounded.",
+	"vinteng:block-sheetmetal-iron": "Sheet Metal (Iron)",
+	"vinteng:blockdesc-sheetmetal-iron": "Iron Sheet Metal is a tough building block, used in multiblocks.",
+	"vinteng:block-sheetmetal-steel": "Sheet Metal (Steel)",
+	"vinteng:blockdesc-sheetmetal-steel": "Steel Sheet Metal is a very tough building block. Used in high-tier multiblocks.",
+	"vinteng:block-sheetmetal-tempsteel": "Sheet Metal (Temporal Steel)",
+	"vinteng:blockdesc-sheetmetal-tempsteel": "Temporal Steel Sheet Metal has mysterious properties that require further experimentation and study.",
 
 	"vinteng:gui-motor-targetspeed": "Target Speed: ",
 	"vinteng:gui-motor-targettorque": "Target Torque: ",
@@ -376,6 +394,9 @@
 	"vinteng:blockdesc-vemvtransformer-*": "A special block that bridges power between LV and MV networks.<br>LV networks are limited to 500 Power Per Second (PPS) by default while MV networks move 4000 PPS. This block ensures the connected LV network doesn't get overloaded.",
 	"vinteng:block-vemvbattery": "VE MV Battery",
 	"vinteng:blockdesc-vemvbattery": "A Battery for storing power on an MV network. The MV battery stores 20000 power and is capable of moving 500 power per second (pps) by default.",
+
+	"vinteng:gui-coreat": "Found Core at:",
+	"vinteng:gui-coreinvalid": "Core not found! Do not place these before the Multiblock is formed.",
 
 	"vinteng:block-vemultiblockio-item": "Multiblock IO (Items)",
 	"vinteng:blockdesc-vemultiblockio-item": "Multiblock building component to indicate item input/output location.",
@@ -420,6 +441,8 @@
 	"vinteng:item-mvconnectorbase-burned": "Fired MV Connector Base",
 	"vinteng:itemdesc-mvconnectorbase-burned": "Use to craft the <a href=\"handbook://block-vinteng:mbpowerconnector-mvpower-up\">MV Multiblock Connector</a> for powering multiblock structures.",
 
+	"vinteng:gui-word-multiblock": "Multiblock",
+	"vinteng:gui-word-completed": "Completed",
 	"vinteng:block-vembcreosoteoven-incomplete-*": "Creosote Oven Core",
 	"vinteng:block-vembcreosoteoven-built-*": "Creosote Oven",
 	"vinteng:blockdesc-vembcreosoteoven-*": "Creosote Oven is a Multiblock (MB) structure that can create Wood-Tar Creosote from Oak and Pine logs and charcoal from all other wood logs as well as Coal-Tar Creosote from all coal variants.<br>To build, craft and place the Creosote Oven Core then right click core with wrench to show missing blocks. These blocks are color-coded by type outlined below.<br><br>Light Blue : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"game:brickcourse-four-running-gray\"/><br>Green : <itemstack rsize=\"1\" type=\"block\" code=\"vinteng:vemultiblockio-item\"/><br>Red : <itemstack rsize=\"1\" type=\"block\" code=\"vinteng:vemultiblockio-interaction\"/><br>Yellow : <itemstack rsize=\"1\" type=\"block\" code=\"vinteng:vemultiblockio-fluid\"/><br><br>Once the Core is inaccessable, right click the Interaction block to progress layers or validate the structure.",
@@ -436,13 +459,22 @@
 
 	"vinteng:block-vembderrick-incomplete-*": "Derrick Core",
 	"vinteng:blockdesc-vembderrick-incomplete-*": "The Derrick is a giant structure multiblock (MB) that requires Well Casing to finalize and make ready the well for the Pumpjack to access the source block. Supply Well Casing to this while extracting the fluid it finds and pumps out of the deposit. Once built, right click with a wrench the same side you used to validate it to drop its inventory just in case you loaded the wrong block for well casing. Building blocks are color-coded by type as outlined below.<br><br>Black : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"vinteng:steelfence-steel-ew-free\"/><br>Mid Gray : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"vinteng:metalplatform-up\"/><br>Light Gray : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"vinteng:metalladder-steel-north\"/><br>Dark Purple : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"vinteng:vembcomponent-heavyeng\"/><br>Cyan : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"vinteng:concrete-reinforced-uncolored\"/><br>Pink : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"vinteng:vembcomponent-lighteng\"/><br>Yellow : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"vinteng:vemultiblockio-fluid\"/><br>Orange : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"vinteng:treatedwood-slabdown-north\"/><br>Lime : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"vinteng:vemultiblockio-power\"/><br>Red : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"vinteng:vemultiblockio-interaction\"/><br>Green : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"vinteng:vemultiblockio-item\"/>",
-
 	"vinteng:block-vembderrick-built-*": "Drill Derrick",
-
 	"vinteng:gui-drillingat": "Drilling At",
 	"vinteng:gui-wellfoundat": "Well Found At",
 	"vinteng:gui-missingcasing": "Well Casings Missing",
 	"vinteng:gui-word-depth": "Depth",
+
+	"vinteng:block-vembdistillationbase-incomplete-*": "Distillation Tower (Base)",
+	"vinteng:block-vembdistillationbase-built-*": "Distillation Tower (Base)",
+	"vinteng:blockdesc-vembdistillationbase-*": "Distillation uses copious power to heat a fluid in order to purify and/or separate it. Requires a fluid input. Allows for up to 6 extensions to enhance its output capabilities. Every Extension adds 500 PPS to the base 2000 PPS.",
+	"vinteng:block-vembdistillationext-incomplete-*": "Distillation Tower (Extension)",
+	"vinteng:block-vembdistillationext-built-*": "Distillation Tower (Extension)",
+	"vinteng:blockdesc-vembdistillationext-*": "Should This jsut show the base info?",
+	"vinteng:gui-word-extensions": "Extensions",
+	"vinteng:gui-word-extension": "Extension",
+	"vinteng:Distills": "Distills",
+	"vinteng:Distills into": "Distills into",
 
 	"eof": "End Of File"
 }

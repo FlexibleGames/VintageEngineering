@@ -58,31 +58,31 @@ namespace VintageEngineering.Transport
         }
 
         public override void OnNeighbourBlockChange(IWorldAccessor world, BlockPos pos, BlockPos neibpos)
-        {
+        {            
             // Redetect any potential connections as something changed.
             BEPipeBase pipebe = api.World.BlockAccessor.GetBlockEntity(pos) as BEPipeBase;
             if (pipebe != null)
-            {                
-                pipebe.MarkPipeDirty(world, true);
+            {
+                //pipebe.MarkPipeDirty(world, true);
             }
             base.OnNeighbourBlockChange(world, pos, neibpos);
         }
 
         public override void OnBlockPlaced(IWorldAccessor world, BlockPos blockPos, ItemStack byItemStack = null)
         {
-            base.OnBlockPlaced(world, blockPos, byItemStack); // this actually spawns the BE
+            base.OnBlockPlaced(world, blockPos, byItemStack); // this actually spawns the BE            
 
             // Detect Connections and adjust shape accordingly. This is done in the BE.
-            BEPipeBase pipebe = api.World.BlockAccessor.GetBlockEntity(blockPos) as BEPipeBase;
-            if (pipebe != null)
-            {
-                pipebe.MarkPipeDirty(world); // this builds connection information
-                PipeNetworkManager pnm = api.ModLoader.GetModSystem<PipeNetworkManager>(true);
-                if (pnm != null)
-                {
-                    pnm.OnPipeBlockPlaced(world, blockPos);
-                }
-            }
+            //BEPipeBase pipebe = api.World.BlockAccessor.GetBlockEntity(blockPos) as BEPipeBase;
+            //if (pipebe != null)
+            //{
+            //    pipebe.MarkPipeDirty(world); // this builds connection information
+            //    PipeNetworkManager pnm = api.ModLoader.GetModSystem<PipeNetworkManager>(true);
+            //    if (pnm != null)
+            //    {
+            //        pnm.OnPipeBlockPlaced(world, blockPos);
+            //    }
+            //}
             
         }
 
@@ -144,19 +144,19 @@ namespace VintageEngineering.Transport
             BEPipeBase pipebe = api.World.BlockAccessor.GetBlockEntity(pos) as BEPipeBase;
             if (pipebe != null)
             {
+                pipebe.OnBlockBroken(byPlayer);
                 //pipebe.MarkPipeDirty(world); // this builds connection information
-                PipeNetworkManager pnm = api.ModLoader.GetModSystem<PipeNetworkManager>(true);
-                if (pnm != null)
-                {
-                    pnm.OnPipeBlockBroken(world, pos);
-                }
+                //PipeNetworkManager pnm = api.ModLoader.GetModSystem<PipeNetworkManager>(true);
+                //if (pnm != null)
+                //{
+                //    pnm.OnPipeBlockBroken(world, pos);
+                //}
             }
             base.OnBlockBroken(world, pos, byPlayer, dropQuantityMultiplier);
         }
 
         public override ItemStack[] GetDrops(IWorldAccessor world, BlockPos pos, IPlayer byPlayer, float dropQuantityMultiplier = 1)
-        {
-            // TODO Get any extraction node inventory drops. 
+        {            
             // Don't forget the base pipe block.
             return base.GetDrops(world, pos, byPlayer, dropQuantityMultiplier);
         }

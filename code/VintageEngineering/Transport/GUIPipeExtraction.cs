@@ -13,6 +13,7 @@ namespace VintageEngineering.Transport
     public class GUIPipeExtraction: GuiDialogBlockEntity
     {
         private BEPipeBase bepipe;
+
         private PipeExtractionNode _node;
         private int _faceIndex;
 

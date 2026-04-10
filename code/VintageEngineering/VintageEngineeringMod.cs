@@ -79,6 +79,7 @@ namespace VintageEngineering
             {
                 _commonConfig = ReadConfig(api);
                 api.World.Config.SetBool("VintEng_GenOilDeposit", _commonConfig.OilGyser_GenOilDeposit);
+                api.World.Config.SetBool("VintEng_OilWaterInteraction", _commonConfig.OilWaterInteraction);
             }
         }
 
@@ -192,7 +193,10 @@ namespace VintageEngineering
 
             api.RegisterBlockClass("VELVBlower", typeof(BlockLVBlower));
 
-            api.RegisterBlockClass("VEPipeBlock", typeof(BlockPipeBase));
+
+            api.RegisterBlockClass("VEPipeBlock", typeof(BlockPipeBase)); // Depreciated
+
+            api.RegisterBlockClass("VEPipeBlockNew", typeof(BlockPipeBaseNew));
 
             api.RegisterBlockClass("VEBlockFluidTank", typeof(BlockFluidTank));
 
@@ -218,8 +222,14 @@ namespace VintageEngineering
             api.RegisterBlockEntityClass("VEBEBlower", typeof(BEBlower));
             api.RegisterBlockEntityClass("VEBELVFridge", typeof(BELVFridge));
 
+            // Depreciated
             api.RegisterBlockEntityClass("VEBEItemPipe", typeof(BEPipeItem));
             api.RegisterBlockEntityClass("VEBEFluidPipe", typeof(BEPipeFluid));
+
+            // New Hotness
+            api.RegisterBlockEntityClass("VEBEItemPipeNew", typeof(BEPipeItemNew));
+            api.RegisterBlockEntityClass("VEBEFluidPipeNew", typeof(BEPipeFluidNew));
+            
             api.RegisterBlockEntityClass("VEBEFluidTank", typeof(BEFluidTank));
             api.RegisterBlockEntityClass("VEBELVPump", typeof(BELVPump));
 
@@ -231,6 +241,8 @@ namespace VintageEngineering
             api.RegisterBlockEntityClass("VEBECreosoteOven", typeof(BECreosoteOven));
             api.RegisterBlockEntityClass("VEBEPumpjack", typeof(BEMBPumpJack));
             api.RegisterBlockEntityClass("VEBEDerrick", typeof(BEMBDerrick));
+            api.RegisterBlockEntityClass("VEBEDistillationBase", typeof(BEMBDistillationBase));
+            api.RegisterBlockEntityClass("VEBEDistillationExt", typeof(BEMBDistillationExt));
         }
 
         public void RegisterBlockEntityBehaviors(ICoreAPI api)

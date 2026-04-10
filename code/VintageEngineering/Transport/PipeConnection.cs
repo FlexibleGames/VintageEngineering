@@ -1,6 +1,7 @@
 ﻿using ProtoBuf;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,7 +19,7 @@ namespace VintageEngineering.Transport
     {
         [ProtoMember(1)]
         private BlockPos _pos;
-        private BlockFacing _facing;
+        private BlockFacing _facing;        
         [ProtoMember(2)]
         public string FaceCon
         {
@@ -28,14 +29,11 @@ namespace VintageEngineering.Transport
 
         [ProtoMember(3)]
         private int _distance;
-        //private bool isextraction;
-        //private ItemSlot filterslot;
-
 
         /// <summary>
         /// BlockPosition of the block connected to.<br/>
         /// NOT the position of the pipe.
-        /// </summary>
+        /// </summary>        
         public BlockPos Position { get { return _pos; } }
         /// <summary>
         /// The pipes Block Face this connection is on (N, E, S, W, U, D)
@@ -64,7 +62,7 @@ namespace VintageEngineering.Transport
         {
             _pos = bpos;
             _facing = bfacing;
-            _distance = dist;         
+            _distance = dist;
         }
         /// <summary>
         /// Create a copy using a new distance value.

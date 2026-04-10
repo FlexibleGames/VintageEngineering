@@ -65,13 +65,14 @@ namespace VintageEngineering.Multiblock
 
         /// <summary>
         /// Gets Multiblock offset at given pos<br/>
-        /// Returns null if given pos is not a VEMultiblockEntity
+        /// Returns 0,0,0 if given pos is not a VEMultiblockEntity
         /// </summary>
         /// <param name="pos">BlockPos to check</param>
-        /// <returns>Vec3i or Null</returns>
+        /// <returns>Vec3i or 0,0,0</returns>
         public Vec3i GetOffset(BlockPos pos)
         {
-            return api.World.BlockAccessor.GetBlockEntity<VEMBEntityDummy>(pos)?.Offset;
+            VEMBEntityDummy dummy = api.World.BlockAccessor.GetBlockEntity<VEMBEntityDummy>(pos);
+            return dummy == null ? Vec3i.Zero : dummy.Offset;
         }
 
         public bool IsValid(BlockPos pos)

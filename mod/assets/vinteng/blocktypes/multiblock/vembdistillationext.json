@@ -1,0 +1,87 @@
+{
+	"code": "vembdistillationext",
+	"class": "VEMBCore",
+	"entityClass": "VEBEDistillationExt",
+	"behaviors": [
+		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "vembdistillationext-incomplete-north" }}},
+		{"name": "VEMultiblockBeh", "properties": {
+			"highlightID": 58,
+			"blockHighlightColors": [
+			],
+			"blockMapping": [
+			],
+			"attachable": [
+			],
+			"attributes": [
+
+			],
+			"multiblockStructure": {
+				"blockNumbers": {
+					"vinteng:vembdistillationext-incomplete-north": 1
+				},
+				"offsets": [
+					{ "x": 0, "y": 0, "z": 0, "w": 1 }
+				]
+			}
+		}}
+	],
+	"variantgroups": [
+		{ "code": "state", "states": ["incomplete", "built"]},
+		{ "code":"side", "loadFromProperties": "abstract/horizontalorientation" }
+	],
+	"entityBehaviors": [
+		{
+			"name": "Electric",
+			"properties": {
+				"canExtractPower": false,
+				"canReceivePower": false,
+				"entitytype": "Consumer",
+				"maxpower": 0,
+				"maxpps": 0
+			}
+		}
+	],
+	"attributes": {
+		"handbook": {
+			"groupBy": ["vembdistillationext*"],
+			"excludeByType": {
+				"*-incomplete-north": false,
+				"*": true
+			}
+		},
+		"baseCode": "vembdistillationbase",
+		"allowHeldLiquidTransfer": true,
+		"allowPipeLiquidTransfer": true,
+		"fluidCapacityLiters": 2000
+	},
+	"shapeinventory": { "base": "block/multiblock/machine/distillationext-core" },
+	"creativeinventory": { "general": ["vembdistillationext"], "terrain": ["*"], "mechanics": ["*"], "vinteng": ["*-incomplete-north"] },
+	"shapeByType": {
+		"*-incomplete-north": 	{ "base": "vinteng:block/multiblock/machine/distillationext-core", "rotateY":0 },
+		"*-incomplete-east": 	{ "base": "vinteng:block/multiblock/machine/distillationext-core", "rotateY":270 },
+		"*-incomplete-south": 	{ "base": "vinteng:block/multiblock/machine/distillationext-core", "rotateY":180 },
+		"*-incomplete-west": 	{ "base": "vinteng:block/multiblock/machine/distillationext-core", "rotateY":90 },
+		"*-built-north": 	{ "base": "vinteng:block/multiblock/machine/distillationext", "rotateY":0 },
+		"*-built-east": 	{ "base": "vinteng:block/multiblock/machine/distillationext", "rotateY":270 },
+		"*-built-south": 	{ "base": "vinteng:block/multiblock/machine/distillationext", "rotateY":180 },
+		"*-built-west": 	{ "base": "vinteng:block/multiblock/machine/distillationext", "rotateY":90 }
+	},
+	"blockmaterial": "Metal",
+	"drawtype": "json",
+	"sidesolid": {
+		"all": false, "down": true
+	},
+	"sideopaque": {
+		"all": false
+	},
+	"lightAbsorption": 1,
+	"maxStackSize": 8,
+	"replaceable": 600,
+	"resistance": 1.5,
+	"collisionSelectionBoxes": [
+		{ "x1": 0, "y1": 0, "z1": 0, "x2": 1, "y2": 1, "z2": 1 }
+	],
+	"guiTransform": {
+		"rotation": { "x": -22.6, "y": -149, "z": 0 }
+	}
+}

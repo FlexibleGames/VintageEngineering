@@ -9,7 +9,7 @@
 		},
 		"powerpercraft": 250,
 		"ingredients": [
-			{ "type": "item", "code": "game:ingot-*", "quantity": 1, "name": "metal", "allowedVariants": ["copper", "brass", "tinbronze", "bismuthbronze", "blackbronze", "silver", "gold"] }
+			{ "type": "item", "code": "game:ingot-*", "quantity": 1, "name": "metal", "allowedVariants": ["copper", "cupronickel", "brass", "tinbronze", "bismuthbronze", "blackbronze", "silver", "gold", "lead", "tin"] }
 		],
 		"outputs": [
 			{ "type": "item", "code": "game:metalplate-{metal}", "stacksize": 1 }
@@ -26,7 +26,7 @@
 		},
 		"powerpercraft": 500,
 		"ingredients": [
-			{ "type": "item", "code": "game:ingot-*", "quantity": 1, "name": "metal", "allowedVariants": ["copper", "brass", "tinbronze", "bismuthbronze", "blackbronze", "silver", "gold", "iron", "lead", "tin", "zinc", "bismuth", "chromium", "electrum", "platinum", "titanium", "molybdochalkos", "meteoriciron", "steel"] }
+			{ "type": "item", "code": "game:ingot-*", "quantity": 1, "name": "metal", "allowedVariants": ["copper", "cupronickel", "brass", "tinbronze", "bismuthbronze", "blackbronze", "silver", "gold", "iron", "lead", "tin", "zinc", "bismuth", "chromium", "electrum", "platinum", "titanium", "molybdochalkos", "meteoriciron", "steel"] }
 		],
 		"outputs": [
 			{ "type": "item", "code": "game:metalplate-{metal}", "stacksize": 1 }

@@ -11,5 +11,5 @@
 			"######"
 		]
 	],
-	"output": { "type": "block", "code": "vinteng:pipe-fluid", "stacksize": 1  }
+	"output": { "type": "block", "code": "vinteng:pipenew-fluid", "stacksize": 1  }
 }

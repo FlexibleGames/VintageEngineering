@@ -8,7 +8,8 @@ namespace VintageEngineering.RecipeSystem.Recipes
 
     /// <summary>
     /// A class to allow for variable recipe output based on the games World Rand functions.<br/>
-    /// [Optional] Use "litres" instead of quantity to show this output should be considered a fluid.
+    /// [Optional] Use "litres" instead of quantity to show this output should be considered a fluid.<br/>
+    /// [Optional] Use "slotid" to encode an output to a set inventory slotID
     /// </summary>
     public class VERecipeVariableOutput : JsonItemStack
     {
@@ -22,6 +23,10 @@ namespace VintageEngineering.RecipeSystem.Recipes
             if (reader.ReadBoolean())
             {
                 Litres = reader.ReadInt32();
+            }
+            if (reader.ReadBoolean())
+            {
+                SlotID = reader.ReadInt32();
             }
         }
 
@@ -37,6 +42,11 @@ namespace VintageEngineering.RecipeSystem.Recipes
             if (Litres != null)
             {
                 writer.Write(Litres.Value);
+            }
+            writer.Write(SlotID != null);
+            if (SlotID != null)
+            {
+                writer.Write(SlotID.Value);
             }
         }
 
@@ -58,6 +68,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
             }
             output.Variable = this.Variable;
             output.Litres = this.Litres;
+            output.SlotID = this.SlotID;
             return output;
         }
 
@@ -118,5 +129,10 @@ namespace VintageEngineering.RecipeSystem.Recipes
         /// Optional, instead of quantity or stacksize, output should be considered a fluid.
         /// </summary>
         public float? Litres;
+
+        /// <summary>
+        /// SlotID mapping to map outputs to specific Inventory Slot IDs.
+        /// </summary>
+        public int? SlotID;
     }
 }

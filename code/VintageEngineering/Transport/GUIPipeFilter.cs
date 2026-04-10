@@ -332,7 +332,11 @@ namespace VintageEngineering.Transport
         }
         private bool AddButtonClicked()
         {
-            //capi.ShowChatMessage("Add Button Clicked");
+            if (_currentSearchText == null || _currentSearchText == string.Empty)
+            {
+                capi.TriggerIngameError(this, "vinteng:gui-error-notext", Lang.Get("vinteng:gui-error-notext"));
+                return false;
+            }
             string lowered = _currentSearchText.ToLower();
             if (_currentSearchText.Contains('*'))
             {

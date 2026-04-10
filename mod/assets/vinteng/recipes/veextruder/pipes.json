@@ -12,7 +12,7 @@
 			{ "type": "item", "code": "game:ingot-*", "quantity": 1, "name":"metal", "allowedVariants": ["tinbronze","bismuthbronze","blackbronze"] }
 		],
 		"outputs": [
-			{ "type": "block", "code": "vinteng:pipe-item", "stacksize": 2 }
+			{ "type": "block", "code": "vinteng:pipenew-item", "stacksize": 2 }
 		]
 	},
     {
@@ -29,7 +29,7 @@
 			{ "type": "item", "code": "game:ingot-*", "quantity": 1, "name":"metal", "allowedVariants": ["iron"] }
 		],
 		"outputs": [
-			{ "type": "block", "code": "vinteng:pipe-fluid", "stacksize": 2 }
+			{ "type": "block", "code": "vinteng:pipenew-fluid", "stacksize": 2 }
 		]
 	}
 ]
