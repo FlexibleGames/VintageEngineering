@@ -473,6 +473,8 @@
 	"vinteng:blockdesc-vembdistillationext-*": "Should This jsut show the base info?",
 	"vinteng:gui-word-extensions": "Extensions",
 	"vinteng:gui-word-extension": "Extension",
+	"vinteng:Distills": "Distills",
+	"vinteng:Distills into": "Distills into",
 
 	"eof": "End Of File"
 }
