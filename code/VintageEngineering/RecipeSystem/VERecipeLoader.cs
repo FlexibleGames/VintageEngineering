@@ -77,6 +77,11 @@ namespace VintageEngineering.RecipeSystem
                 verrs.RegisterBlastFurnaceRecipe(r);
             });
 
+            this.LoadRecipes<RecipeDistillationTower>("ve distillation recipe", "recipes/vedistillation", delegate (RecipeDistillationTower r)
+            {
+                verrs.RegisterDistillationRecipe(r);
+            });
+
             sapi.World.Logger.StoryEvent(Lang.Get("vinteng:storyevent-recipes", Array.Empty<object>()));
         }
 

@@ -48,13 +48,18 @@ namespace VintageEngineering.RecipeSystem
         /// </summary>
         public List<RecipeKiln>         KilnRecipes = new List<RecipeKiln>();
         /// <summary>
-        /// Turn Combustable things into other things
-        /// </summary>
-        public List<RecipeCreosoteOven>     CreosoteOvenRecipes = new List<RecipeCreosoteOven>();
-        /// <summary>
         /// Smelt things into other things
         /// </summary>
         public List<RecipeBlastFurnace>    BlastFurnaceRecipes = new List<RecipeBlastFurnace>();
+
+        /// <summary>
+        /// Turn Combustable things into other things
+        /// </summary>
+        public List<RecipeCreosoteOven> CreosoteOvenRecipes = new List<RecipeCreosoteOven>();
+        /// <summary>
+        /// Heat fluids to make more fluids.
+        /// </summary>
+        public List<RecipeDistillationTower> DistillationRecipes = new List<RecipeDistillationTower>();
 
         private readonly Dictionary<string, List<Block>> recipeMachines = new();
 
@@ -89,8 +94,10 @@ namespace VintageEngineering.RecipeSystem
             this.CreosoteOvenRecipes = api.RegisterRecipeRegistry<RecipeRegistryGeneric<RecipeCreosoteOven>>("vecreosoteoven").Recipes;
             AddRecipesToHandbook(api, this.CreosoteOvenRecipes, "creosoteoven", "vinteng:Industrially bakes into", "vinteng:Industrially baking");
             this.BlastFurnaceRecipes = api.RegisterRecipeRegistry<RecipeRegistryGeneric<RecipeBlastFurnace>>("veblastfurnace").Recipes;
-            //AddRecipesToHandbook(api, this.BlastFurnaceRecipes, "blastfurnace", "vinteng:Smelts into", "vinteng:Smelting");
+            AddRecipesToHandbook(api, this.BlastFurnaceRecipes, "blastfurnace", "vinteng:Smelts into", "vinteng:Smelting");
 
+            this.DistillationRecipes = api.RegisterRecipeRegistry<RecipeRegistryGeneric<RecipeDistillationTower>>("vedistillation").Recipes;
+            AddRecipesToHandbook(api, this.DistillationRecipes, "distillation", "vinteng:Distills into", "vinteng:Distills");
         }
 
         public override void AssetsLoaded(ICoreAPI api)
@@ -200,6 +207,16 @@ namespace VintageEngineering.RecipeSystem
             }
             recipeBlastFurnace.RecipeID = BlastFurnaceRecipes.Count + 1;
             this.BlastFurnaceRecipes.Add(recipeBlastFurnace);
+        }
+
+        public void RegisterDistillationRecipe(RecipeDistillationTower recipeDistillationTower)
+        {
+            if (!VERecipeRegistrySystem.canRegister)
+            {
+                throw new InvalidOperationException("VintEng | RecipeRegistrySystem: Can no longer register VE recipes. Register during AssetsLoaded/AssetsFinalize and with ExecuteOrder < 99999");
+            }
+            recipeDistillationTower.RecipeID = DistillationRecipes.Count + 1;
+            this.DistillationRecipes.Add(recipeDistillationTower);
         }
 
         /// <summary>

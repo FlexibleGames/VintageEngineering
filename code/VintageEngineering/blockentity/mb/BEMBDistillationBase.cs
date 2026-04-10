@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using VintageEngineering.API;
 using VintageEngineering.GUI;
 using VintageEngineering.Multiblock;
+using VintageEngineering.RecipeSystem;
+using VintageEngineering.RecipeSystem.Recipes;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -39,6 +41,10 @@ namespace VintageEngineering
         /// </summary>
         private string _extensionCode = string.Empty;
         /// <summary>
+        /// How much PPS does each extension add to the crafting power cost.
+        /// </summary>
+        private long _extensionPPS = 0;
+        /// <summary>
         /// Number of Distillation Extensions found.
         /// </summary>
         private int _numExtensions = 0;
@@ -51,6 +57,58 @@ namespace VintageEngineering
         /// Index 0, if present, is directly on top of the base.
         /// </summary>
         private Dictionary<int, BlockPos> _extensionPositions = new();
+        /// <summary>
+        /// Value used if machine is sleeping.
+        /// </summary>
+        private float _updateBouncer = 0f;
+
+        #region RecipeStuff
+        private RecipeDistillationTower _currentRecipe;
+        private long _recipePowerApplied;
+
+        public RecipeDistillationTower CurrentRecipe => _currentRecipe;
+
+        public float RecipeProgress
+        {
+            get
+            {
+                if (_inventory[0].Empty || _currentRecipe == null) return 0f;
+                else
+                {
+                    return _recipePowerApplied / _currentRecipe.PowerPerCraft;
+                }
+            }
+        }
+
+        public bool FindMatchingRecipe()
+        {
+            if (Api == null) return false;
+            if (InputSlot.Empty)
+            {
+                _currentRecipe = null;
+                SetState(EnumBEState.Sleeping);
+                _recipePowerApplied = 0;
+                return false;
+            }
+
+            List<RecipeDistillationTower> mrecipes = Api?.ModLoader?.GetModSystem<VERecipeRegistrySystem>(true)?.DistillationRecipes;
+            if (mrecipes == null || mrecipes.Count == 0) return false;
+
+            foreach (RecipeDistillationTower mrecipe in mrecipes)
+            {
+                if (mrecipe.Enabled && mrecipe.Matches(InputSlot, null, _numExtensions))
+                {                    
+                    _currentRecipe = mrecipe;
+                    SetState(EnumBEState.On);
+                    return true;
+                }
+            }
+            _recipePowerApplied = 0;
+            SetState(EnumBEState.Sleeping);
+            return false;
+        }
+
+        #endregion
 
         #region InventoryStuff
         /// <summary>
@@ -58,6 +116,8 @@ namespace VintageEngineering
         /// SlotID 3 - 8 can be used, but they pass the check to Extensions
         /// </summary>
         private InventoryGeneric _inventory;
+
+        public ItemSlot InputSlot => _inventory[0];
         /// <summary>
         /// How full (0-100) is the Input Tank
         /// </summary>
@@ -115,7 +175,11 @@ namespace VintageEngineering
             if (_numExtensions == 0) return false;
             foreach (KeyValuePair<int, BlockPos> pair in _extensionPositions)
             {
-                // TODO: Check Extension inventories
+                BEMBDistillationExt distbe = Api.World.BlockAccessor.GetBlockEntity<BEMBDistillationExt>(pair.Value);
+                if (distbe != null)
+                {
+                    if (!distbe.HasRoomInOutput(0, null)) return true;
+                }
             }
             return false;
         }
@@ -124,8 +188,14 @@ namespace VintageEngineering
         {
             if (extindex >= _numExtensions) return false;
             if (!_extensionPositions.ContainsKey(extindex)) return false;
-
-            // TODO: Extension inventory check
+            else
+            {
+                BEMBDistillationExt distbe = Api.World.BlockAccessor.GetBlockEntity<BEMBDistillationExt>(_extensionPositions[extindex]);
+                if (distbe != null)
+                {
+                    if (distbe.HasRoomInOutput(0, forStack)) return true;
+                }
+            }
             return true;
         }
 
@@ -137,7 +207,20 @@ namespace VintageEngineering
                 // checking extensions
                 return HasRoomInExtension(slotid - 2, forStack);
             }
-            return PercentOutputItem < 100 && PercentOutputTank < 100;
+            if (forStack == null)
+            { 
+                return PercentOutputItem < 100 && PercentOutputTank < 100; 
+            }
+            else
+            {
+                if (_inventory[slotid].Empty) return true;
+                if (_inventory[slotid].Itemstack.Collectible.Code == forStack.Collectible.Code)
+                {
+                    if (_inventory[slotid].Itemstack.StackSize == _inventory[slotid].Itemstack.Collectible.MaxStackSize) return false;
+                }
+                else return false;
+            }
+            return true;
         }
         
         public override string InventoryClassName => "InvDistBase";
@@ -194,11 +277,9 @@ namespace VintageEngineering
 
         private void SlotModified(int slotid)
         {
-            _clientUpdateDelay += 0.2f;
-            if (_clientUpdateDelay >= 0.5f) 
+            if (slotid == 0 && _currentRecipe == null)
             {
-                _clientUpdateDelay = 0f;
-                MarkDirty(true); 
+                FindMatchingRecipe();
             }
         }
 
@@ -223,12 +304,13 @@ namespace VintageEngineering
 
         public override void Initialize(ICoreAPI api)
         {
-            base.Initialize(api);
+            base.Initialize(api);            
             _inventory.Pos = Pos;
             _inventory.LateInitialize($"{InventoryClassName}-{Pos.X}/{Pos.Y}/{Pos.Z}", api);
             (_inventory[0] as ItemSlotLiquidOnly).CapacityLitres = Block.Attributes["fluidCapacityLiters"].AsFloat(1f);
             (_inventory[2] as ItemSlotLiquidOnly).CapacityLitres = Block.Attributes["fluidCapacityLiters"].AsFloat(1f);
             _extensionCode = Block.Attributes["extensionCode"].AsString(string.Empty);
+            _extensionPPS = ((long)Block.Attributes["extensionPPS"].AsDouble(0));
             if (api.Side == EnumAppSide.Server)
             {
                 sapi = api as ICoreServerAPI;
@@ -242,8 +324,15 @@ namespace VintageEngineering
                     AnimUtil.InitializeAnimator("vembdistbase", null, null, new Vec3f(0f, GetRotation(), 0f));
                 }
             }
-            if (IsBuilt) FindValidateExtensions();
-            SetState(EnumBEState.On);
+            if (IsBuilt)
+            { 
+                FindValidateExtensions();
+                if (!InputSlot.Empty) FindMatchingRecipe();
+            }
+            else
+            {
+                SetState(EnumBEState.Sleeping);
+            }
         }
 
         public override void ActivateCore(IWorldAccessor world, Caller caller, BlockSelection blockSel, ITreeAttribute activationArgs = null)
@@ -265,9 +354,42 @@ namespace VintageEngineering
 
         public void OnSimTick(float dt)
         {
-            if (IsBuilt)
+            if (Api.Side == EnumAppSide.Client) return;
+            if (Electric.IsSleeping)
             {
+                _updateBouncer += dt;
+                if (_updateBouncer < 2f) return;
+                _updateBouncer = 0f;
+            }
 
+            if (IsBuilt && Electric.MachineState == EnumBEState.On)
+            {
+                long ratedpow = (long)((Electric.MaxPPS + (ulong)(_numExtensions * _extensionPPS)) * dt);                
+                if (Electric.CurrentPower == 0 || Electric.CurrentPower < (ulong)ratedpow) return;
+
+                if (_currentRecipe != null)
+                {
+                    if (!HasRoomInOutput(-1, null) || AnyExtensionFull()) return;
+
+                    if (RecipeProgress < 1f)
+                    {
+                        // we are currently crafting
+                        _recipePowerApplied += ratedpow;
+                        Electric.electricpower -= (ulong)ratedpow;
+                    }
+                    else
+                    {
+                        // a craft cycle completed
+                        
+                    }
+                }
+
+                _clientUpdateDelay += dt;
+                if (_clientUpdateDelay >= 0.5f)
+                {
+                    _clientUpdateDelay = 0f;
+                    MarkDirty(true);
+                }
             }
         }
 
@@ -355,15 +477,13 @@ namespace VintageEngineering
         }
 
         #region MachineState
-        private EnumBEState _state;
-        public EnumBEState MachineState => _state;
-        public bool IsSleeping => _state == EnumBEState.Sleeping;
-        public bool IsActive => _state == EnumBEState.On;
+        
         public void SetState(EnumBEState state)
         {
-            _state = state;
-            if (_state == EnumBEState.On)
+            Electric.MachineState = state;
+            if (Electric.MachineState == EnumBEState.On)
             {
+                _updateBouncer = 0f;
                 if (AnimUtil != null && Block.Attributes["craftinganimcode"].Exists)
                 {
                     AnimUtil.StartAnimation(new AnimationMetaData
@@ -394,14 +514,16 @@ namespace VintageEngineering
             ITreeAttribute invtree = new TreeAttribute();
             _inventory.ToTreeAttributes(invtree);
             tree["inventory"] = invtree;
-            tree.SetString("machinestate", _state.ToString());
+            tree.SetString("machinestate", Electric.MachineState.ToString());
+            tree.SetLong("recipepower", _recipePowerApplied);
         }
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldForResolving)
         {
             base.FromTreeAttributes(tree, worldForResolving);
             _inventory.FromTreeAttributes(tree.GetTreeAttribute("inventory"));
+            _recipePowerApplied = tree.GetLong("recipepower");
             EnumBEState syncstate = Enum.Parse<EnumBEState>(tree.GetString("machinestate", "On"));
-            if (MachineState != syncstate) SetState(syncstate);
+            if (Electric.MachineState != syncstate) SetState(syncstate);
         }
 
         #endregion
