@@ -54,7 +54,10 @@
 		"allowHeldLiquidTransfer": true,
 		"allowPipeLiquidTransfer": true,
 		"fluidCapacityLiters": 2000,
-		"extensionPPS": 500
+		"extensionPPS": 500,
+        "recipeMachineByType": {
+            "*-north": [ "distillation" ]
+        }
 	},
 	"shapeinventory": { "base": "block/multiblock/machine/distillationbase-core" },
 	"creativeinventory": { "general": ["vembdistillationbase"], "terrain": ["*"], "mechanics": ["*"], "vinteng": ["*-incomplete-north"] },

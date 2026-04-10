@@ -62,8 +62,20 @@ namespace VintageEngineering
         public bool HasRoomInOutput(int slotid, ItemStack forStack)
         {
             if (slotid != 0) return false;
-
-            return PercentOutputTank < 100;
+            if (forStack == null)
+            {
+                return PercentOutputTank < 100;
+            }
+            else
+            {
+                if (_inventory[slotid].Empty) return true;
+                if (_inventory[slotid].Itemstack.Collectible.Code == forStack.Collectible.Code)
+                {
+                    if (_inventory[slotid].Itemstack.StackSize == _inventory[slotid].Itemstack.Collectible.MaxStackSize) return false;
+                }
+                else return false;
+            }
+            return true;
         }
 
         public override string InventoryClassName => "InvDistExt";

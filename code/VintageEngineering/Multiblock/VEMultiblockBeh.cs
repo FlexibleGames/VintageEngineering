@@ -85,13 +85,15 @@ namespace VintageEngineering.Multiblock
                             mbs.ClearHighlights(world, byPlayer);
                             Block newcore = world.GetBlock(base.block.CodeWithVariant("state", "built"));
                             world.BlockAccessor.ExchangeBlock(newcore.Id, core);
+                            BlockSelection coreselection = sel.Clone();
+                            coreselection.Position = core.Copy();
                             world.BlockAccessor.GetBlock(core).Activate(world, new Caller
                             {
                                 Player = byPlayer,
                                 Entity = byPlayer.Entity,
                                 Type = EnumCallerType.Player,
                                 Pos = byPlayer.Entity.Pos.XYZ
-                            }, sel, null);
+                            }, coreselection, null);
                         }
                     }
                     else
@@ -135,14 +137,15 @@ namespace VintageEngineering.Multiblock
             IElectricalBlockEntity us = IElectricalBlockEntity.GetAtPos(world.BlockAccessor, core);
             if (us != null) us.CheatPower(true); // someone broke us, void power :'(
             world.BlockAccessor.ExchangeBlock(newcore.Id, core);
-            
+            BlockSelection coreselection = byPlayer.CurrentBlockSelection.Clone();
+            coreselection.Position = core.Copy();
             world.BlockAccessor.GetBlock(core).Activate(world, new Caller
             {
                 Player = byPlayer,
                 Entity = byPlayer.Entity,
                 Type = EnumCallerType.Player,
                 Pos = byPlayer.Entity.Pos.XYZ
-            }, byPlayer.CurrentBlockSelection, null);
+            }, coreselection, null);
         }
 
         public int MBGetRandomColor(ICoreClientAPI capi, BlockPos pos, BlockFacing facing, int rndIndex, Vec3i offsetInv)
