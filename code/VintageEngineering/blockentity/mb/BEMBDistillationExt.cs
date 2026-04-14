@@ -37,10 +37,13 @@ namespace VintageEngineering
 
         #region InventoryStuff
         /// <summary>
-        /// Slot ID 0 is fluid input, 1 is item output, 2 is fluid output
+        /// Slot ID 0 is fluid output
         /// </summary>
         private InventoryGeneric _inventory;
-
+        /// <summary>
+        /// Slot ID 0 is fluid output
+        /// </summary>
+        public override InventoryBase Inventory => _inventory;
         /// <summary>
         /// How full (0-100) is the Output Tank
         /// </summary>
@@ -58,6 +61,8 @@ namespace VintageEngineering
                 }
             }
         }
+
+        public ItemSlotLiquidOnly OutputTank => _inventory[0] as ItemSlotLiquidOnly;
 
         public bool HasRoomInOutput(int slotid, ItemStack forStack)
         {

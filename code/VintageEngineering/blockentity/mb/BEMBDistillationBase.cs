@@ -113,10 +113,13 @@ namespace VintageEngineering
         #region InventoryStuff
         /// <summary>
         /// Slot ID 0 is fluid input, 1 is item output, 2 is fluid output<br/>
-        /// SlotID 3 - 8 can be used, but they pass the check to Extensions
+        /// SlotID 3 - 8 go to Extensions
         /// </summary>
         private InventoryGeneric _inventory;
-
+        /// <summary>
+        /// Slot ID 0 is fluid input, 1 is item output, 2 is fluid output<br/>       
+        /// </summary>
+        public override InventoryBase Inventory => _inventory;
         public ItemSlot InputSlot => _inventory[0];
         /// <summary>
         /// How full (0-100) is the Input Tank
@@ -380,7 +383,14 @@ namespace VintageEngineering
                     else
                     {
                         // a craft cycle completed
-                        
+                        ItemSlot[] outputs = new ItemSlot[_numExtensions+2];
+                        outputs[0] = _inventory[1];
+                        outputs[1] = _inventory[2];
+                        for (int i = 0; i < _numExtensions; i++)
+                        {
+                            outputs[i + 2] = Api.World.BlockAccessor.GetBlockEntity<BEMBDistillationExt>(_extensionPositions[i])?.OutputTank;
+                        }
+                        _currentRecipe.TryCraft(Api, InputSlot, outputs);
                     }
                 }
 
@@ -421,7 +431,7 @@ namespace VintageEngineering
                     }
                     else
                     {
-                        _extensionPositions.Add(numextfound, aboveus.Copy());                        
+                        _extensionPositions.Add(numextfound, aboveus.Copy());
                     }
                     Api.World.BlockAccessor.GetBlockEntity<BEMBDistillationExt>(aboveus)?.FindValidateBase();
                     numextfound++;

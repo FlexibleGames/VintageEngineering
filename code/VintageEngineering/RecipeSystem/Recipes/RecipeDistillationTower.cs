@@ -90,13 +90,13 @@ namespace VintageEngineering.RecipeSystem.Recipes
             if (outputslots.Length == 0 || outputslots.Length < Outputs.Length) return false;
             if (input.Empty || input.Itemstack.Collectible.Code != Ingredients[0]?.ResolvedItemstack?.Collectible.Code) return false;
             int slotscale = Ingredients.Length; // if SlotID exists in the Output, reduce by this number for index into outputslots
-
+            // SlotID references inventory (which includes inputs) while outputs is a 0 based array
             for (int o = 0; o < Outputs.Length; o++)
             {
                 if (Outputs[o].ResolvedItemstack == null) Outputs[o].Resolve(api.World, "Distillation TryCraft");
                 if (Outputs[o].ResolvedItemstack == null) return false;
                 ItemStack madestack = Outputs[o].ResolvedItemstack.Clone();
-                madestack.StackSize = Outputs[o].VariableResolve(api.World, "Distillation TryCraft");
+                madestack.StackSize = Outputs[o].VariableResolve(api.World, "Distillation Variable TryCraft");
                 if (madestack.StackSize == -1) return false;
                 int slotindex = Outputs[o].SlotID != null ? Outputs[o].SlotID.Value - slotscale : o;
                 if (outputslots[slotindex].Empty) outputslots[slotindex].Itemstack = madestack.Clone();
@@ -107,6 +107,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
                 outputslots[slotindex].MarkDirty();
             }
             input.TakeOut(Ingredients[0].Quantity);
+            input.MarkDirty();
             return true;
         }
 

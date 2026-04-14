@@ -7,20 +7,80 @@
 		{"name": "VEMultiblockBeh", "properties": {
 			"highlightID": 58,
 			"blockHighlightColors": [
+				{ "w": 1, "r": 30, "g": 30, "b": 30, "a": 180 },
+				{ "w": 2, "r": 128, "g": 128, "b": 128, "a": 180 },
+				{ "w": 4, "r": 250, "g": 0, "b": 0, "a": 180 },
+				{ "w": 5, "r": 153, "g": 102, "b": 192, "a": 180 },
+				{ "w": 6, "r": 250, "g": 250, "b": 250, "a": 180 },
+				{ "w": 7, "r": 215, "g": 215, "b": 0, "a": 180 }
 			],
 			"blockMapping": [
+				{ "w": 1, "tocode": "vinteng:vembdummy-none" },
+				{ "w": 2, "tocode": "vinteng:vembdummy-none" },
+				{ "w": 4, "tocode": "vinteng:vembdummy-interaction" },
+				{ "w": 5, "tocode": "vinteng:vembdummy-none" },
+				{ "w": 6, "tocode": "vinteng:vembdummy-ladder" },
+				{ "w": 7, "tocode": "vinteng:vembdummy-fluid" }
 			],
 			"attachable": [
 			],
 			"attributes": [
-
 			],
 			"multiblockStructure": {
 				"blockNumbers": {
-					"vinteng:vembdistillationext-incomplete-north": 1
+					"vinteng:vesheetmetal-iron": 1,
+					"vinteng:metalplatform-up": 2,
+					"vinteng:vembdistillationext-incomplete-north": 3,
+					"vinteng:vemultiblockio-interaction": 4,
+					"vinteng:vembcomponent-lighteng": 5,
+					"vinteng:metalladder-steel-south": 6,
+					"vinteng:vemultiblockio-fluid": 7
 				},
 				"offsets": [
-					{ "x": 0, "y": 0, "z": 0, "w": 1 }
+					{ "x": 0, "y": 1, "z": 1, "w": 1 },
+					{ "x": 0, "y": 1, "z": -1, "w": 1 },
+					{ "x": 0, "y": 2, "z": 0, "w": 1 },
+					{ "x": 0, "y": 2, "z": 1, "w": 1 },
+					{ "x": 0, "y": 2, "z": -1, "w": 1 },
+					{ "x": 0, "y": 2, "z": 2, "w": 2 },
+					{ "x": 0, "y": 2, "z": -2, "w": 2 },
+					{ "x": 0, "y": 0, "z": 0, "w": 3 },
+					{ "x": 0, "y": 0, "z": 1, "w": 1 },
+					{ "x": 0, "y": 0, "z": -1, "w": 1 },
+					{ "x": 1, "y": 1, "z": 0, "w": 4 },
+					{ "x": 1, "y": 1, "z": 1, "w": 1 },
+					{ "x": 1, "y": 1, "z": -1, "w": 1 },
+					{ "x": 1, "y": 2, "z": 0, "w": 5 },
+					{ "x": 1, "y": 2, "z": 1, "w": 1 },
+					{ "x": 1, "y": 2, "z": -1, "w": 1 },
+					{ "x": 1, "y": 2, "z": 2, "w": 2 },
+					{ "x": 1, "y": 2, "z": -2, "w": 2 },
+					{ "x": 1, "y": 0, "z": 0, "w": 5 },
+					{ "x": 1, "y": 0, "z": 1, "w": 1 },
+					{ "x": 1, "y": 0, "z": -1, "w": 1 },
+					{ "x": -1, "y": 1, "z": 0, "w": 1 },
+					{ "x": -1, "y": 1, "z": 1, "w": 1 },
+					{ "x": -1, "y": 1, "z": -1, "w": 1 },
+					{ "x": -1, "y": 2, "z": 0, "w": 1 },
+					{ "x": -1, "y": 2, "z": 1, "w": 1 },
+					{ "x": -1, "y": 2, "z": -1, "w": 1 },
+					{ "x": -1, "y": 2, "z": 2, "w": 2 },
+					{ "x": -1, "y": 2, "z": -2, "w": 2 },
+					{ "x": -1, "y": 0, "z": 0, "w": 1 },
+					{ "x": -1, "y": 0, "z": 1, "w": 1 },
+					{ "x": -1, "y": 0, "z": -1, "w": 1 },
+					{ "x": 2, "y": 1, "z": 1, "w": 6 },
+					{ "x": 2, "y": 2, "z": 0, "w": 2 },
+					{ "x": 2, "y": 2, "z": 1, "w": 6 },
+					{ "x": 2, "y": 2, "z": -1, "w": 2 },
+					{ "x": 2, "y": 2, "z": -2, "w": 2 },
+					{ "x": 2, "y": 0, "z": 0, "w": 7 },
+					{ "x": 2, "y": 0, "z": 1, "w": 6 },
+					{ "x": -2, "y": 2, "z": 0, "w": 2 },
+					{ "x": -2, "y": 2, "z": 1, "w": 2 },
+					{ "x": -2, "y": 2, "z": -1, "w": 2 },
+					{ "x": -2, "y": 2, "z": 2, "w": 2 },
+					{ "x": -2, "y": 2, "z": -2, "w": 2 }
 				]
 			}
 		}}
@@ -52,7 +112,7 @@
 		"baseCode": "vembdistillationbase",
 		"allowHeldLiquidTransfer": true,
 		"allowPipeLiquidTransfer": true,
-		"fluidCapacityLiters": 2000
+		"fluidCapacityLiters": 3000
 	},
 	"shapeinventory": { "base": "block/multiblock/machine/distillationext-core" },
 	"creativeinventory": { "general": ["vembdistillationext"], "terrain": ["*"], "mechanics": ["*"], "vinteng": ["*-incomplete-north"] },
