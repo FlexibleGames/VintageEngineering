@@ -60,7 +60,7 @@
         }
 	},
 	"shapeinventory": { "base": "block/multiblock/machine/distillationbase-core" },
-	"creativeinventory": { "general": ["vembdistillationbase"], "terrain": ["*"], "mechanics": ["*"], "vinteng": ["*-incomplete-north"] },
+	"creativeinventory": { "general": ["*-incomplete-north"], "terrain": ["*-incomplete-north"], "mechanics": ["*-incomplete-north"], "vinteng": ["*-incomplete-north"] },
 	"shapeByType": {
 		"*-incomplete-north": 	{ "base": "vinteng:block/multiblock/machine/distillationbase-core", "rotateY":0 },
 		"*-incomplete-east": 	{ "base": "vinteng:block/multiblock/machine/distillationbase-core", "rotateY":270 },

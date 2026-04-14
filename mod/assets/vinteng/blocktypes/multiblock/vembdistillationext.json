@@ -55,7 +55,7 @@
 		"fluidCapacityLiters": 2000
 	},
 	"shapeinventory": { "base": "block/multiblock/machine/distillationext-core" },
-	"creativeinventory": { "general": ["vembdistillationext"], "terrain": ["*"], "mechanics": ["*"], "vinteng": ["*-incomplete-north"] },
+	"creativeinventory": { "general": ["*-incomplete-north"], "terrain": ["*-incomplete-north"], "mechanics": ["*-incomplete-north"], "vinteng": ["*-incomplete-north"] },
 	"shapeByType": {
 		"*-incomplete-north": 	{ "base": "vinteng:block/multiblock/machine/distillationext-core", "rotateY":0 },
 		"*-incomplete-east": 	{ "base": "vinteng:block/multiblock/machine/distillationext-core", "rotateY":270 },
