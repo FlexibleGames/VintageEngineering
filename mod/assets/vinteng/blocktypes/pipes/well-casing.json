@@ -1,13 +1,14 @@
 {
 	"code": "wellcasing",
 	"creativeinventory": {
-		"vinteng-decor": [ "*" ]
+		"vinteng": [ "*" ]
 	},
 	"maxStackSize": 50,
 	"blockmaterial": "Stone",
 	"drawtype": "json",
 	"shape": { "base": "block/pipes/well-casing" },
 	"resistance": 1,
+
 	"sideSolid": { "all": true },
 	"sideOpaque": {"all": false },
 	"sounds": {

@@ -31,7 +31,7 @@
 			}
 		}
 	],
-	"creativeinventory": { "general": ["*"], "construction": ["*"],"vinteng": ["*-*-up"] },
+	"creativeinventory": { "general": ["wirerelay-*-up"], "construction": ["wirerelay-*-up"],"vinteng": ["wirerelay-*-up"] },
 	"shapeByType": {
         "*-north":  { "base": "game:block/relays/{type}", "rotateX": 270 },
 		"*-east":   { "base": "game:block/relays/{type}", "rotateZ": 270 },

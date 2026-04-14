@@ -251,7 +251,7 @@
 		"wellCasingCode": "vinteng:wellcasing"
 	},
 	"shapeinventory": { "base": "block/multiblock/machine/derrick-core" },
-	"creativeinventory": { "general": ["vembderrick"], "terrain": ["*"], "mechanics": ["*"], "vinteng": ["*-incomplete-north"] },
+	"creativeinventory": { "general": ["*-incomplete-north"], "terrain": ["*-incomplete-north"], "mechanics": ["*-incomplete-north"], "vinteng": ["*-incomplete-north"] },
 	"shapeByType": {
 		"*-incomplete-north": 	{ "base": "vinteng:block/multiblock/machine/derrick-core", "rotateY":0 },
 		"*-incomplete-east": 	{ "base": "vinteng:block/multiblock/machine/derrick-core", "rotateY":270 },
