@@ -31,7 +31,7 @@
 			}
 		}
 	],
-	"creativeinventory": { "general": ["*"], "construction": ["*"],"vinteng": ["*-*-up"] },
+	"creativeinventory": { "general": ["*-up"], "construction": ["*-up"],"vinteng": ["*-*-up"] },
 	"shapeByType": {
         "*-north":  { "base": "vinteng:block/connectors/{type}", "rotateX": 270 },
 		"*-east":   { "base": "vinteng:block/connectors/{type}", "rotateZ": 270 },

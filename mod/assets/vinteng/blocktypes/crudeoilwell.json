@@ -24,7 +24,7 @@
 		"portionpersecond": 50000
 	},
 	"blockmaterial": "Metal",
-	"creativeinventory": { "general": ["*"] },
+	"creativeinventory": { "general": ["*"],"vinteng": ["*"] },
 	"replaceable": 0,
 	"resistance": 10000,
 	"requiredMiningTier": 50,

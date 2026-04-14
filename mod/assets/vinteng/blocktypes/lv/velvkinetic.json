@@ -80,7 +80,7 @@
             }
         ]
 	},
-	"creativeinventory": { "general": ["velvek-*-north"], "terrain": ["*"], "mechanics": ["*"], "vinteng": ["*-north"] },
+	"creativeinventory": { "general": ["velvek-*-north"], "terrain": ["*-north"], "mechanics": ["*-north"], "vinteng": ["*-north"] },
 	"shapeByType":{"*-north": { "base": "vinteng:block/lv/motor/motor-axle" },
                     "*-west": { "base": "vinteng:block/lv/motor/motor-axle","rotateY": 90 },
                     "*-south": { "base": "vinteng:block/lv/motor/motor-axle","rotateY": 180 },

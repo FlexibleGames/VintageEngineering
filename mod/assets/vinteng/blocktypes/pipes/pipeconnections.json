@@ -15,7 +15,6 @@
 						"west": { "x1": 7, "y1": 7, "z1": 0, "x2": 8, "y2": 8, "z2": 1, "rotateY": 270 }
 					}
 					}}],
-	"creativeinventory": { "general": ["*"], "construction": ["*"] },
 	"shapeByType": {
         "*-north":  { "base": "vinteng:block/pipes/{type}", "rotateX": 90 },
 		"*-east":   { "base": "vinteng:block/pipes/{type}", "rotateZ": 90 },
