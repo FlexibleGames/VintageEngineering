@@ -47,6 +47,10 @@ namespace VintageEngineering.RecipeSystem.Recipes
         /// Number of Extensions (i.e. Outputs) this recipe requires.<br/>
         /// </summary>
         public int NumExtensions { get; set; }
+        /// <summary>
+        /// A pollution factor for this recipe. How much pollution is produced per craft.
+        /// </summary>
+        public float Soot {  get; set; }
 
         [JsonProperty]
         [JsonConverter(typeof(JsonAttributesConverter))]
@@ -231,7 +235,8 @@ namespace VintageEngineering.RecipeSystem.Recipes
                 PowerPerCraft = this.PowerPerCraft,
                 Attributes = this.Attributes?.Clone(),
                 Ingredients = inclone,
-                Outputs = outclone
+                Outputs = outclone,
+                Soot = this.Soot
             };
         }
 
@@ -310,6 +315,10 @@ namespace VintageEngineering.RecipeSystem.Recipes
                     {
                         RequiresVariants = new string[1] { Attributes["requiresvariants"].AsString() };
                     }
+                }
+                if (Attributes["soot"].Exists)
+                {
+                    Soot = Attributes["soot"].AsFloat();
                 }
             }
             return ok;
