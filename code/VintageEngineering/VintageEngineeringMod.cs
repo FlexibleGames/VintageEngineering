@@ -14,6 +14,7 @@ using VintageEngineering.blockentity;
 using VintageEngineering.Blocks;
 using VintageEngineering.blockBhv;
 using Vintagestory.API.Config;
+using VintageEngineering.API;
 
 [assembly: ModInfo("VintageEngineering",
                     Authors = new string[] { "Flexible Games" },
@@ -173,6 +174,7 @@ namespace VintageEngineering
         {
             api.RegisterItemClass("VEPipeUpgrade", typeof(ItemPipeUpgrade));
             api.RegisterItemClass("VEPipeFilter", typeof(ItemPipeFilter));
+            api.RegisterItemClass("ItemLiquidFuel", typeof(ItemLiquidFuel));
         }
 
         public void RegisterBlocks(ICoreAPI api)

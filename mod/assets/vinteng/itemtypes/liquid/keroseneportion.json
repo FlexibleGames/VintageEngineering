@@ -1,8 +1,8 @@
 {
-	"code": "dieselportion",
+	"code": "keroseneportion",
 	"class": "ItemLiquidFuel",
 	"matterState": "liquid",
-	"liquidCode": "diesel",
+	"liquidCode": "kerosene",
 	"attributes": {
 		"handbook": {
 			"ignoreCreativeInvStacks": true
@@ -10,25 +10,25 @@
 		"waterTightContainerProps": {
 			"containable": true,
 			"itemsPerLitre": 100,
-			"texture": { "base": "vinteng:block/liquid/dieselportion" },
+			"texture": { "base": "vinteng:block/liquid/keroseneportion" },
 			"tintIndex": 2,
 			"whenSpilled": {
 				"action": "DropContents",
-				"stack": { "type": "item", "code": "vinteng:dieselportion" }
+				"stack": { "type": "item", "code": "vinteng:keroseneportion" }
 			}
 		},
 		"liquidfuel": {
-			"energykjs": 10,
-			"duration": 46,
-			"burntemp": 2150,
-			"soot": 8.0
+			"energykjs": 7.2,
+			"duration": 52,
+			"burntemp": 2100,
+			"soot": 6.0
 		}
 	},
 	"shape": { "base": "game:item/liquid" },
-	"texture": { "base": "vinteng:block/liquid/dieselportion" },
-	"creativeinventoryStacks": [ { "tabs": ["general", "liquids"], "stacks": [ { "type": "block", "code": "game:woodbucket", "attributes": { "ucontents": [ { "type":"item", "code": "vinteng:dieselportion", "makefull": true } ] } } ] } ],
+	"texture": { "base": "vinteng:block/liquid/keroseneportion" },
+	"creativeinventoryStacks": [ { "tabs": ["general", "liquids"], "stacks": [ { "type": "block", "code": "game:woodbucket", "attributes": { "ucontents": [ { "type":"item", "code": "vinteng:keroseneportion", "makefull": true } ] } } ] } ],
 	"maxstacksize": 5000,
-	"materialDensity": 300,
+	"materialDensity": 1500,
 	"guiTransform": {
 		"translation": { "x": 0, "y": 1, "z": 0 },
 		"rotation": { "x": 123, "y": -33, "z": -13 },

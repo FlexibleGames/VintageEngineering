@@ -1,6 +1,6 @@
 {
 	"code": "crudeoilportion",
-	"class": "ItemLiquidPortion",
+	"class": "ItemLiquidFuel",
 	"matterState": "liquid",
 	"liquidCode": "crudeoil",
 	"attributes": {
@@ -16,6 +16,12 @@
 				"action": "DropContents",
 				"stack": { "type": "item", "code": "vinteng:crudeoilportion" }
 			}
+		},
+		"liquidfuel": {
+			"energykjs": 4,
+			"duration": 75,
+			"burntemp": 1950,
+			"soot": 18
 		}
 	},
 	"shape": { "base": "game:item/liquid" },

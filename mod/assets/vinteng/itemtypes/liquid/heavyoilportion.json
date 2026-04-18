@@ -1,6 +1,6 @@
 {
 	"code": "heavyoilportion",
-	"class": "ItemLiquidPortion",
+	"class": "ItemLiquidFuel",
 	"matterState": "liquid",
 	"liquidCode": "heavyoil",
 	"attributes": {
@@ -16,6 +16,12 @@
 				"action": "DropContents",
 				"stack": { "type": "item", "code": "vinteng:heavyoilportion" }
 			}
+		},
+		"liquidfuel": {
+			"energykjs": 3.2,
+			"duration": 85,
+			"burntemp": 1920,
+			"soot": 35
 		}
 	},
 	"shape": { "base": "game:item/liquid" },
