@@ -101,7 +101,7 @@
         }
 	},
 	"shapeinventory": { "base": "block/multiblock/machine/creosoteoven-core" },
-	"creativeinventory": { "general": ["vembcreosoteoven-incomplete-north"], "terrain": ["*"], "mechanics": ["*"], "vinteng": ["*-incomplete-north"] },
+	"creativeinventory": { "general": ["vembcreosoteoven-incomplete-north"], "terrain": ["*-incomplete-north"], "mechanics": ["*-incomplete-north"], "vinteng": ["*-incomplete-north"] },
 	"shapeByType": {
 		"*-incomplete-north": 	{ "base": "vinteng:block/multiblock/machine/creosoteoven-core", "rotateY":0 },
 		"*-incomplete-east": 	{ "base": "vinteng:block/multiblock/machine/creosoteoven-core", "rotateY":270 },

@@ -70,7 +70,7 @@
             }
         ]
 	},
-	"creativeinventory": { "general": ["vemvtransformer-north"], "terrain": ["*"], "mechanics": ["*"], "vinteng": ["vemvtransformer-north"]},
+	"creativeinventory": { "general": ["vemvtransformer-north"], "terrain": ["*-north"], "mechanics": ["*-north"], "vinteng": ["vemvtransformer-north"]},
 	"shapeByType": {
 		"*-north": 	{ "base": "vinteng:block/mvlvtransformer", "rotateY":0 },
 		"*-east": 	{ "base": "vinteng:block/mvlvtransformer", "rotateY":270 },
