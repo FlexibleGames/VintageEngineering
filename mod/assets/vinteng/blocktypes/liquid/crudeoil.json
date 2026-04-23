@@ -57,7 +57,7 @@
 	"drawtype": "liquid",
 	"renderpass": "liquid",
 	"matterstate": "liquid",
-	"blockmaterial": "liquid",
+	"blockmaterial": "water",
 	"faceCullMode": "liquid",
 	"liquidCode": "crudeoil",
 	"snowCoverage": false,

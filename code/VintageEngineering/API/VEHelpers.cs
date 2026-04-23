@@ -138,7 +138,7 @@ namespace VintageEngineering.API
                 EntityPlayer entityPlayer2 = byEntity as EntityPlayer;
                 if (entityPlayer2 == null || !entityPlayer2.Player.InventoryManager.TryGiveItemstack(containerStack, true))
                 {
-                    l_api.World.SpawnItemEntity(containerStack, byEntity.SidedPos.XYZ, null);
+                    l_api.World.SpawnItemEntity(containerStack, byEntity.Pos.XYZ, null);
                 }
                 slot.MarkDirty();
             }

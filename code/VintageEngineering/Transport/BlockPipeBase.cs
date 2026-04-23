@@ -35,7 +35,7 @@ namespace VintageEngineering.Transport
             else
             {
                 capi = api as ICoreClientAPI;
-                //capi.Input.InWorldAction += InputWorldAction;
+                //_capi.Input.InWorldAction += InputWorldAction;
             }
             _pipeUse = Enum.Parse<EnumPipeUse>(this.LastCodePart());
         }
@@ -52,7 +52,7 @@ namespace VintageEngineering.Transport
             return base.GetPlacedBlockInfo(world, pos, forPlayer);
         }
 
-        public override bool DoParticalSelection(IWorldAccessor world, BlockPos pos)
+        public override bool DoPartialSelection(IWorldAccessor world, BlockPos pos)
         {
             return true;
         }
@@ -164,7 +164,7 @@ namespace VintageEngineering.Transport
         /// <summary>
         /// Converts a BlockSelection object into a BlockFacing direction based on the pipes active connections
         /// and index of the selection.<br/>
-        /// Returns NULL if the center core BASE object was the object interacted with.
+        /// Returns NULL if the _center core BASE object was the object interacted with.
         /// </summary>
         /// <param name="world">World Accessor</param>
         /// <param name="blockSelection">BlockSelection object</param>

@@ -19,8 +19,8 @@ namespace VintageEngineering.API
             {
                 WaterTightContainableProps props = BlockLiquidContainerBase.GetContainableProps(entityItem.Itemstack);
                 float litres = (float)entityItem.Itemstack.StackSize / ((props != null) ? props.ItemsPerLitre : 1f);
-                entityItem.World.SpawnCubeParticles(entityItem.SidedPos.XYZ, entityItem.Itemstack, 0.75f, (int)(litres * 2f), 0.45f, null, null);
-                entityItem.World.PlaySoundAt(new AssetLocation("sounds/environment/smallsplash"), (double)((float)entityItem.SidedPos.X), (double)((float)entityItem.SidedPos.InternalY), (double)((float)entityItem.SidedPos.Z), null, true, 32f, 1f);
+                entityItem.World.SpawnCubeParticles(entityItem.Pos.XYZ, entityItem.Itemstack, 0.75f, (int)(litres * 2f), 0.45f, null, null);
+                entityItem.World.PlaySoundAt(new AssetLocation("sounds/environment/smallsplash"), (double)((float)entityItem.Pos.X), (double)((float)entityItem.Pos.InternalY), (double)((float)entityItem.Pos.Z), null, true, 32f, 1f);
             }
             base.OnGroundIdle(entityItem);
         }

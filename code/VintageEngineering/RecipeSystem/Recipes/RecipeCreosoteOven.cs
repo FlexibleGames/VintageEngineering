@@ -94,7 +94,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
         }
 
         public ItemStack GetResolvedInput(int index) {
-            return Ingredients[index].ResolvedItemstack;
+            return Ingredients[index].ResolvedItemStack;
         }
 
         public ItemStack GetResolvedOutput(int index) {

@@ -28,7 +28,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
         public int index;
 
         /// <summary>
-        /// Vec3f coords of where the wire connects. It is the center of the selection box.
+        /// Vec3f coords of where the wire connects. It is the _center of the selection box.
         /// <br>Calculated when loaded.</br>
         /// </summary>        
         public Vec3f anchorPos;

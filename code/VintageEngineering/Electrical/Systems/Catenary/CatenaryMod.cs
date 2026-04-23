@@ -709,7 +709,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
         /// <returns></returns>
         public Vec3f GetEndOffset(IPlayer player, WirePlacerWorkSpace ws)
         {
-            Vec3d vec = player.Entity.SidedPos.AheadCopy(2.0).XYZ.Add(player.Entity.LocalEyePos).Sub(ws.startPos);
+            Vec3d vec = player.Entity.Pos.AheadCopy(2.0).XYZ.Add(player.Entity.LocalEyePos).Sub(ws.startPos);
             if (player.CurrentBlockSelection != null)
             {                
                 BlockSelection blockSel = player.CurrentBlockSelection;                

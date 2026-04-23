@@ -25,7 +25,7 @@ namespace VintageEngineering.Transport
 
         public GUIPipeInsertNode(string dialogTitle, BlockPos blockEntityPos, ICoreClientAPI capi, BEPipeBaseNew bentity, PipeInsertNode node, int faceindex) : base(dialogTitle, capi)
         {
-            //_subnetItem = new DummyInventory(capi, 1);
+            //_subnetItem = new DummyInventory(_capi, 1);
             //_subnetItem[0].MaxSlotStackSize = 1;
             _pipeBE = bentity;
             _node = node;
@@ -39,9 +39,9 @@ namespace VintageEngineering.Transport
             //if (!_isCustom && _subnet != string.Empty)
             //{
             //    ItemStack subnetstack;
-            //    if (capi.World.Collectibles.Exists(x => x.Code.Path == _subnet)) // how expensive is this?
+            //    if (_capi.World.Collectibles.Exists(x => x.Code.Path == _subnet)) // how expensive is this?
             //    {
-            //        CollectibleObject match = capi.World.Collectibles.Find(x => x.Code.Path == _subnet); // and this?
+            //        CollectibleObject match = _capi.World.Collectibles.Find(x => x.Code.Path == _subnet); // and this?
             //        subnetstack = new ItemStack(match);
             //        _subnetItem[0].Itemstack = subnetstack;
             //    }
@@ -190,7 +190,7 @@ namespace VintageEngineering.Transport
             ////string addon = _isCustom ? ":custom1" : "";
             //custompacket.SetString("code", _subnetItem[0].Empty ? "empty" : _subnetItem[0].Itemstack.Collectible.Code.Path);
             //custompacket.SetString("nodetype", "insert");
-            //this.capi.Network.SendBlockEntityPacket(BlockEntityPosition, 1006, custompacket.ToBytes());
+            //this._capi.Network.SendBlockEntityPacket(BlockEntityPosition, 1006, custompacket.ToBytes());
         }
         private void OnCustomToggle(bool toggle)
         {
@@ -205,7 +205,7 @@ namespace VintageEngineering.Transport
             //}
             //SingleComposer.GetSwitch("switchcustom").SetValue(_isCustom);
             //OnCustomChanged(_subnet);
-            //capi.Event.EnqueueMainThreadTask(new Action(SetupDialog), "setuppipeinsdlg");
+            //_capi.Event.EnqueueMainThreadTask(new Action(SetupDialog), "setuppipeinsdlg");
         }
 
         private void OnCustomChanged(string change)

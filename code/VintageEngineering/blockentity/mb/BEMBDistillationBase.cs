@@ -364,6 +364,13 @@ namespace VintageEngineering
                 if (_updateBouncer < 2f) return;
                 _updateBouncer = 0f;
             }
+            _extensionValidationDelay += dt;
+            if (_extensionValidationDelay > 120f)
+            {
+                _extensionValidationDelay = 0f;
+                FindValidateExtensions();
+            }
+
 
             if (IsBuilt && Electric.MachineState == EnumBEState.On)
             {

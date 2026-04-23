@@ -223,10 +223,10 @@ namespace VintageEngineering.Multiblock
         #endregion
 
         #region IMultiBlockInteract
-        public bool MBDoParticalSelection(IWorldAccessor world, BlockPos pos, Vec3i offset)
+        public bool MBDoPartialSelection(IWorldAccessor world, BlockPos pos, Vec3i offset)
         {
             BlockPos bs = pos.AddCopy(offset);
-            return base.block.DoParticalSelection(world, bs);
+            return base.block.DoPartialSelection(world, bs);
         }
 
         public bool MBOnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel, Vec3i offset)

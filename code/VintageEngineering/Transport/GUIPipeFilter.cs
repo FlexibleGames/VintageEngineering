@@ -63,7 +63,7 @@ namespace VintageEngineering.Transport
         //}
         public override void OnKeyDown(KeyEvent args)
         {
-            // Debug capi.ShowChatMessage($"KeyCode Pressed...{args.KeyCode}");
+            // Debug _capi.ShowChatMessage($"KeyCode Pressed...{args.KeyCode}");
 
             if (args.KeyCode == ((int)GlKeys.Delete))
             {
@@ -277,7 +277,7 @@ namespace VintageEngineering.Transport
         private void OnBlackListSwitch(bool isenabled)
         {
             _filterItem.Attributes.SetBool("isblacklist", isenabled);
-            //capi.Event.EnqueueMainThreadTask(new Action(SetupDialog), "setuppipefilterdlg");
+            //_capi.Event.EnqueueMainThreadTask(new Action(SetupDialog), "setuppipefilterdlg");
         }
 
         private void OnSearchBlockSwitch(bool isenabled)
@@ -291,7 +291,7 @@ namespace VintageEngineering.Transport
         private void OnSearchWildcardSwitch(bool isenabled)
         {
             _canSearchWildCards = isenabled;
-            //capi.Event.EnqueueMainThreadTask(new Action(SetupDialog), "setuppipefilterdlg");
+            //_capi.Event.EnqueueMainThreadTask(new Action(SetupDialog), "setuppipefilterdlg");
         }
 
         private void OnLeftClickFilterEntry(int selection)
@@ -327,7 +327,7 @@ namespace VintageEngineering.Transport
             { 
                 _currentSearchText = text;                
                 FilterItems();
-                //capi.Event.EnqueueMainThreadTask(new Action(SetupDialog), "setuppipefilterdlg");
+                //_capi.Event.EnqueueMainThreadTask(new Action(SetupDialog), "setuppipefilterdlg");
             }
         }
         private bool AddButtonClicked()
@@ -377,7 +377,7 @@ namespace VintageEngineering.Transport
 
         private bool SaveButtonClicked()
         {
-            //capi.ShowChatMessage("Save Button Clicked");
+            //_capi.ShowChatMessage("Save Button Clicked");
             if (_filterItem.Attributes != null && _filterItem.Attributes.HasAttribute("filters"))
             {
                 if (_filterItems == null || _filterItems.Count == 0)

@@ -25,5 +25,17 @@ namespace VintageEngineering
             }
             base.OnNeighbourBlockChange(world, pos, neibpos);
         }
+
+        public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
+        {
+            BEForge bea = world.BlockAccessor.GetBlockEntity<BEForge>(blockSel.Position);
+            if (bea != null && !byPlayer.InventoryManager.ActiveHotbarSlot.Empty &&
+                !byPlayer.InventoryManager.ActiveHotbarSlot.Itemstack.Collectible.Code.Path.Contains("catenary"))
+            {
+                return bea.OnPlayerRightClick(byPlayer, blockSel);
+            }
+
+            return base.OnBlockInteractStart(world, byPlayer, blockSel);
+        }
     }
 }

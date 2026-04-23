@@ -172,15 +172,15 @@ namespace VintageEngineering.Multiblock
                (block) => block.GetCollisionBoxes(ba, pos.AddCopy(offsetinv))
            );
         }
-        public override bool DoParticalSelection(IWorldAccessor world, BlockPos pos)
+        public override bool DoPartialSelection(IWorldAccessor world, BlockPos pos)
         {
             Vec3i offsetinv = -GetOffset(pos);
             return Handle<bool, IMultiBlockInteract>(
                 world.BlockAccessor,
                 pos.X + offsetinv.X, pos.InternalY + offsetinv.Y, pos.Z + offsetinv.Z,
-                (inf) => inf.MBDoParticalSelection(world, pos, offsetinv),
-                (block) => base.DoParticalSelection(world, pos.AddCopy(offsetinv)),
-                (block) => block.DoParticalSelection(world, pos.AddCopy(offsetinv))
+                (inf) => inf.MBDoPartialSelection(world, pos, offsetinv),
+                (block) => base.DoPartialSelection(world, pos.AddCopy(offsetinv)),
+                (block) => block.DoPartialSelection(world, pos.AddCopy(offsetinv))
             );
         }
 

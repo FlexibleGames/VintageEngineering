@@ -22,6 +22,8 @@ namespace VintageEngineering.Blocks
 
         public override bool ForFluidsLayer => true;
 
+        public bool HasNormalWaves => false;
+
         public override void OnLoaded(ICoreAPI api)
         {
             base.OnLoaded(api);

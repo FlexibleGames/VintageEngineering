@@ -20,7 +20,7 @@ namespace VintageEngineering.Electrical
     {
         public ICoreAPI api;
         public ICoreServerAPI sapi;
-        //public ICoreClientAPI capi;       
+        //public ICoreClientAPI _capi;       
 
         /// <summary>
         /// Manager for all Electrical Networks in the current game world.
@@ -104,7 +104,7 @@ namespace VintageEngineering.Electrical
         //public override void StartClientSide(ICoreClientAPI api)
         //{
         //    base.StartClientSide(api);
-        //    capi = api as ICoreClientAPI;
+        //    _capi = api as ICoreClientAPI;
         //}
 
         public override void StartServerSide(ICoreServerAPI api)

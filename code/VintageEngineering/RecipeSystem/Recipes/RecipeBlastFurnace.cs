@@ -38,7 +38,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
                 {
                     if (Ingredients[i] != null)
                     {
-                        CombustibleProperties cprops = Ingredients[i].ResolvedItemstack.Collectible.CombustibleProps;
+                        CombustibleProperties cprops = Ingredients[i].ResolvedItemStack.Collectible.CombustibleProps;
                         if (cprops != null)
                         {
                             if (cprops.MeltingPoint > 0 && cprops.MeltingPoint > temp)
@@ -130,7 +130,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
         }
 
         public ItemStack GetResolvedInput(int index) {
-            return Ingredients[index].ResolvedItemstack;
+            return Ingredients[index].ResolvedItemStack;
         }
 
         public ItemStack GetResolvedOutput(int index) {

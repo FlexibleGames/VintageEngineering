@@ -153,11 +153,11 @@ namespace VintageEngineering
                 {
                     return $"Ingredient Error. Ingredient is null.";
                 }
-                if (currentRecipe.Ingredient.ResolvedItemstack == null)
+                if (currentRecipe.Ingredient.ResolvedItemStack == null)
                 {
                     return $"Ingredient not resolved. Likely a mod issue.";
                 }
-                else if (!betestmach.ValidateInput()) outputhelptext = betestmach.recipeClayNeeded + " " + currentRecipe.Ingredient.ResolvedItemstack.GetName() + " " + Lang.Get("vinteng:gui-word-needed");
+                else if (!betestmach.ValidateInput()) outputhelptext = betestmach.recipeClayNeeded + " " + currentRecipe.Ingredient.ResolvedItemStack.GetName() + " " + Lang.Get("vinteng:gui-word-needed");
             }
             else
             {

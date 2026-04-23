@@ -54,7 +54,7 @@ namespace VintageEngineering
 
         /// <summary>
         /// Represents the current Y position the Derrick is at, not the position of the well block.<br/>
-        /// For this machine, this value should be at the center of the Derrick, but at a deeper Y level<br/>
+        /// For this machine, this value should be at the _center of the Derrick, but at a deeper Y level<br/>
         /// Y should always be less than machines Y level.
         /// </summary>
         private BlockPos _wellPosition = null;

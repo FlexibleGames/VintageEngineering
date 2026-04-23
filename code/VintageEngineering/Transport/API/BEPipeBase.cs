@@ -223,7 +223,7 @@ namespace VintageEngineering.Transport.API
             int faceindex = selection.SelectionBoxIndex;
             if (faceindex == 6)
             {
-                // right clicked the center main pipe object.
+                // right clicked the _center main pipe object.
                 return true;
             }
             //if (Api.Side != EnumAppSide.Server) return true;
@@ -626,7 +626,7 @@ namespace VintageEngineering.Transport.API
                         if (bep.insertionSides[f])
                         {
                             BlockFacing facing = ConvertIndexToFace(f);
-                            int dist = Pos.ManhattenDistance(p.AddCopy(facing));
+                            int dist = Pos.ManhattanDistance(p.AddCopy(facing));
                             _pushConnections.Add(new PipeConnection(
                                 p.AddCopy(facing), facing, dist));
                         }
@@ -659,7 +659,7 @@ namespace VintageEngineering.Transport.API
                     PipeConnection con = new PipeConnection(
                         altered.AddCopy(ConvertIndexToFace(f)),
                         ConvertIndexToFace(f),
-                        Pos.ManhattenDistance(altered.AddCopy(BlockFacing.ALLFACES[f])));
+                        Pos.ManhattanDistance(altered.AddCopy(BlockFacing.ALLFACES[f])));
                     if (isRemove)
                     {
                         if (_pushConnections != null && _pushConnections.Count > 0)
@@ -709,7 +709,7 @@ namespace VintageEngineering.Transport.API
             }
             for (int x = 0; x < cons.Length; x++)
             {
-                PipeConnection newcon = cons[x].Copy(Pos.ManhattenDistance(cons[x].Position));
+                PipeConnection newcon = cons[x].Copy(Pos.ManhattanDistance(cons[x].Position));
                 if (isRemove)
                 {
                     _pushConnections.Remove(newcon);
@@ -776,8 +776,8 @@ namespace VintageEngineering.Transport.API
             }
             else 
             {
-                //_meshData = new MeshData(true); 
-                //_meshData = (Api as ICoreClientAPI).TesselatorManager.GetDefaultBlockMesh(this.Block);
+                //_heatableMesh = new MeshData(true); 
+                //_heatableMesh = (Api as ICoreClientAPI).TesselatorManager.GetDefaultBlockMesh(this.Block);
                 (Api as ICoreClientAPI).Tesselator.TesselateBlock(this.Block, out _meshData);
             }
 

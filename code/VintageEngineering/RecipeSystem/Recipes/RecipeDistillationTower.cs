@@ -81,7 +81,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
 
         public ItemStack GetResolvedInput(int index)
         {
-            return Ingredients[index].ResolvedItemstack;
+            return Ingredients[index].ResolvedItemStack;
         }
 
         public ItemStack GetResolvedOutput(int index)
@@ -92,7 +92,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
         public bool TryCraft(ICoreAPI api, ItemSlot input, ItemSlot[] outputslots)
         {
             if (outputslots.Length == 0 || outputslots.Length < Outputs.Length) return false;
-            if (input.Empty || input.Itemstack.Collectible.Code != Ingredients[0]?.ResolvedItemstack?.Collectible.Code) return false;
+            if (input.Empty || input.Itemstack.Collectible.Code != Ingredients[0]?.ResolvedItemStack?.Collectible.Code) return false;
             int slotscale = Ingredients.Length; // if SlotID exists in the Output, reduce by this number for index into outputslots
             // SlotID references inventory (which includes inputs) while outputs is a 0 based array
             for (int o = 0; o < Outputs.Length; o++)

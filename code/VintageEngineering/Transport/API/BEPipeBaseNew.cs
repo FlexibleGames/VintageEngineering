@@ -282,7 +282,7 @@ namespace VintageEngineering.Transport.API
             int faceindex = selection.SelectionBoxIndex;
             if (faceindex == 6)
             {
-                // right clicked the center main pipe object.
+                // right clicked the _center main pipe object.
                 return true;
             }
 
@@ -1108,7 +1108,7 @@ namespace VintageEngineering.Transport.API
                         }
                         if (bepipe.insertionSides[f])
                         {
-                            output.Add(new PipeInsertNode(pos.AddCopy(BlockFacing.ALLFACES[f]), BlockFacing.ALLFACES[f], string.Empty, fromPos.ManhattenDistance(pos.AddCopy(BlockFacing.ALLFACES[f]))));
+                            output.Add(new PipeInsertNode(pos.AddCopy(BlockFacing.ALLFACES[f]), BlockFacing.ALLFACES[f], string.Empty, fromPos.ManhattanDistance(pos.AddCopy(BlockFacing.ALLFACES[f]))));
                         }
                     }
                     poked.Add(pos.Copy());
@@ -1167,8 +1167,8 @@ namespace VintageEngineering.Transport.API
             }
             else
             {
-                //_meshData = new MeshData(true); 
-                //_meshData = (Api as ICoreClientAPI).TesselatorManager.GetDefaultBlockMesh(this.Block);
+                //_heatableMesh = new MeshData(true); 
+                //_heatableMesh = (Api as ICoreClientAPI).TesselatorManager.GetDefaultBlockMesh(this.Block);
                 (Api as ICoreClientAPI).Tesselator.TesselateBlock(this.Block, out _meshData);
             }
 
@@ -1306,10 +1306,10 @@ namespace VintageEngineering.Transport.API
                     _insertGUIs[faceindex].Dispose();
                     _insertGUIs[faceindex] = null;
                     capi.Network.SendBlockEntityPacket(Pos.Copy(), 1001, sendbytes);
-                    //capi.Network.SendPacketClient(_insertGUIs[faceindex]._subnetItem.Close(player));
+                    //_capi.Network.SendPacketClient(_insertGUIs[faceindex]._subnetItem.Close(player));
                 };
                 bool opened = _insertGUIs[faceindex].TryOpen();
-                //capi.Network.SendPacketClient(_insertGUIs[faceindex]._subnetItem.Open(player));
+                //_capi.Network.SendPacketClient(_insertGUIs[faceindex]._subnetItem.Open(player));
                 capi.Network.SendBlockEntityPacket(Pos.Copy(), 1000, sendbytes);
                 return;
             }

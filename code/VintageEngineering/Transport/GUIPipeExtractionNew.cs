@@ -25,10 +25,10 @@ namespace VintageEngineering.Transport
         public GUIPipeExtractionNew(string dialogTitle, InventoryBase inventory, BlockPos blockEntityPos, ICoreClientAPI capi, BEPipeBaseNew bentity, PipeExtractionNode node, int faceindex) : base(dialogTitle, inventory, blockEntityPos, capi)
         {
             if (base.IsDuplicate) return;
-            //_subnetItem = new DummyInventory(capi, 1);
+            //_subnetItem = new DummyInventory(_capi, 1);
             //_subnetItem[0].MaxSlotStackSize = 1;
             
-            //capi.World.Player.InventoryManager.OpenInventory(inventory);
+            //_capi.World.Player.InventoryManager.OpenInventory(inventory);
             _node = node;
             bepipe = bentity;
             _faceIndex = faceindex;
@@ -40,9 +40,9 @@ namespace VintageEngineering.Transport
             //if (!_isCustom && _subnet != string.Empty)
             //{
             //    ItemStack subnetstack;
-            //    if (capi.World.Collectibles.Exists(x => x.Code.Path == _subnet)) // how expensive is this?
+            //    if (_capi.World.Collectibles.Exists(x => x.Code.Path == _subnet)) // how expensive is this?
             //    {
-            //        CollectibleObject match = capi.World.Collectibles.Find(x => x.Code.Path == _subnet); // and this?
+            //        CollectibleObject match = _capi.World.Collectibles.Find(x => x.Code.Path == _subnet); // and this?
             //        subnetstack = new ItemStack(match);
             //        _subnetItem[0].Itemstack = subnetstack;
             //    }
@@ -68,10 +68,10 @@ namespace VintageEngineering.Transport
 
         public void SetupDialog()
         {
-            //ItemSlot hoveredSlot = capi.World.Player.InventoryManager.CurrentHoveredSlot;
+            //ItemSlot hoveredSlot = _capi.World.Player.InventoryManager.CurrentHoveredSlot;
             //if (hoveredSlot != null && hoveredSlot.Inventory == base.Inventory)
             //{
-            //   // capi.Input.TriggerOnMouseLeaveSlot(hoveredSlot);
+            //   // _capi.Input.TriggerOnMouseLeaveSlot(hoveredSlot);
             //}
             //else hoveredSlot = null;
 
@@ -220,7 +220,7 @@ namespace VintageEngineering.Transport
             //}
             //SingleComposer.GetSwitch("switchcustom").SetValue(_isCustom);
             //OnCustomChanged(_subnet);
-            //capi.Event.EnqueueMainThreadTask(new Action(SetupDialog), "setuppipeinsdlg");
+            //_capi.Event.EnqueueMainThreadTask(new Action(SetupDialog), "setuppipeinsdlg");
         }
         private void OnCustomChanged(string change)
         {
@@ -299,7 +299,7 @@ namespace VintageEngineering.Transport
             //string addon = _isCustom ? ":custom1" : "";
             //custompacket.SetString("code", _subnetItem[0].Empty ? "empty" : _subnetItem[0].Itemstack.Collectible.Code.Path);
             //custompacket.SetString("nodetype", "extract");
-            //this.capi.Network.SendBlockEntityPacket(BlockEntityPosition, 1006, custompacket.ToBytes());
+            //this._capi.Network.SendBlockEntityPacket(BlockEntityPosition, 1006, custompacket.ToBytes());
         }
         private void OnTitleBarClosed()
         {

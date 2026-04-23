@@ -96,7 +96,7 @@ namespace VintageEngineering.Transport
             List<PipeInsertNode> t_nodes = new List<PipeInsertNode>();
             foreach (PipeInsertNode node in nodelist)
             {
-                t_nodes.Add(new PipeInsertNode(node.Position.Copy(), node.Facing, node.SubNet, _pos.ManhattenDistance(node.Position)));
+                t_nodes.Add(new PipeInsertNode(node.Position.Copy(), node.Facing, node.SubNet, _pos.ManhattanDistance(node.Position)));
             }
             if (appendList)
             {
