@@ -13,6 +13,7 @@ namespace VintageEngineering.Transport
     public class GUIPipeExtraction: GuiDialogBlockEntity
     {
         private BEPipeBase bepipe;
+
         private PipeExtractionNode _node;
         private int _faceIndex;
 
@@ -38,10 +39,10 @@ namespace VintageEngineering.Transport
 
         public void SetupDialog()
         {
-            //ItemSlot hoveredSlot = capi.World.Player.InventoryManager.CurrentHoveredSlot;
+            //ItemSlot hoveredSlot = _capi.World.Player.InventoryManager.CurrentHoveredSlot;
             //if (hoveredSlot != null && hoveredSlot.Inventory == base.Inventory)
             //{
-            //   // capi.Input.TriggerOnMouseLeaveSlot(hoveredSlot);
+            //   // _capi.Input.TriggerOnMouseLeaveSlot(hoveredSlot);
             //}
             //else hoveredSlot = null;
 

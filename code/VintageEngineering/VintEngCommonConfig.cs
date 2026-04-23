@@ -32,6 +32,10 @@ namespace VintageEngineering
         /// Enable/Disable Pipe Distribution tick
         /// </summary>
         public bool DoPipeTick { get; set; } = true;
+        /// <summary>
+        /// Enable/Disable Crude Oil Mixing with Water making Sludgy Gravel
+        /// </summary>
+        public bool OilWaterInteraction { get; set; } = true;
 
         public VintEngCommonConfig()
         {
@@ -45,6 +49,7 @@ namespace VintageEngineering
             OilGyser_GenOilDeposit = oldConfig.OilGyser_GenOilDeposit;
             DoPowerTick = oldConfig.DoPowerTick;
             DoPipeTick = oldConfig.DoPipeTick;
+            OilWaterInteraction = oldConfig.OilWaterInteraction;
         }
     }
 }

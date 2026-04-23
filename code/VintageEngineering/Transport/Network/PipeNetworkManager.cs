@@ -17,6 +17,9 @@ using Vintagestory.API.Util;
 
 namespace VintageEngineering.Transport.Network
 {
+    /// <summary>
+    /// This object is DEPRECIATED and will be completely removed from the mod in a future update.
+    /// </summary>
     public class PipeNetworkManager : ModSystem
     {
         private ICoreAPI _api;
@@ -48,14 +51,15 @@ namespace VintageEngineering.Transport.Network
 
         private void OnGameSave()
         {
-            _sapi.WorldManager.SaveGame.StoreData("vepipenetworks", NetworkBytes());
-            _sapi.WorldManager.SaveGame.StoreData("vepipenetworknextid", SerializerUtil.Serialize(_nextNetworkID));
+
+            _sapi.WorldManager.SaveGame.StoreData("vepipenetworknextid", SerializerUtil.Serialize(-69420L));
+            _sapi.WorldManager.SaveGame.StoreData("vepipenetworks", new byte[1]);
         }
 
         private void OnSaveGameLoaded()
         {
-            byte[] networkbytes = _sapi.WorldManager.SaveGame.GetData("vepipenetworks");
-            byte[] nextidbytes = _sapi.WorldManager.SaveGame.GetData("vepipenetworknextid");                        
+            byte[] nextidbytes = _sapi.WorldManager.SaveGame.GetData("vepipenetworknextid");            
+            byte[] networkbytes = _sapi.WorldManager.SaveGame.GetData("vepipenetworks");                                    
             InitializeNetworkManager(networkbytes, nextidbytes);
         }
 
@@ -214,17 +218,18 @@ namespace VintageEngineering.Transport.Network
 
         public void InitializeNetworkManager(byte[] networks, byte[] nextid)
         {
-            if (networks != null && networks.Length > 1)
+            if (nextid != null)
+            {
+                _nextNetworkID = SerializerUtil.Deserialize<long>(nextid);
+            }
+            if (_nextNetworkID != -69420 && networks != null && networks.Length > 1)
             { 
                 _pipeNetworks = SerializerUtil.Deserialize<Dictionary<long, PipeNetwork>>(networks); 
             }
             else
             {
-                _pipeNetworks = new Dictionary<long, PipeNetwork>();
-            }
-            if (nextid != null)
-            { 
-                _nextNetworkID = SerializerUtil.Deserialize<long>(nextid); 
+                _nextNetworkID = -69420L;
+                //_pipeNetworks = new Dictionary<long, PipeNetwork>();
             }
         }
         /// <summary>

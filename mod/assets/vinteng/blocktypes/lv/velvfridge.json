@@ -59,7 +59,7 @@
 		"spoilrate": { "powered": 0.2, "unpowered": 2.0 }
 	},
 	"shapeinventory": { "base": "block/lv/fridge" },
-	"creativeinventory": { "general": ["velvfridge-north"], "terrain": ["*"], "mechanics": ["*"], "vinteng": ["*-north"] },
+	"creativeinventory": { "general": ["velvfridge-north"], "terrain": ["*-north"], "mechanics": ["*-north"], "vinteng": ["*-north"] },
 	"shapeByType": {
 		"*-north": 	{ "base": "vinteng:block/lv/fridge", "rotateY":0 },
 		"*-east": 	{ "base": "vinteng:block/lv/fridge", "rotateY":270 },

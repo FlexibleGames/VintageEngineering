@@ -73,7 +73,7 @@
 		"scale": 2.75
 	},
 	"dropsByType": {
-        "*-item": [{ "type": "block", "code": "pipe-item", "quantity": { "avg": 1 } }],
-		"*-fluid": [{ "type": "block", "code": "pipe-fluid", "quantity": { "avg": 1 } }]
+        "*-item": [{ "type": "block", "code": "pipenew-item", "quantity": { "avg": 1 } }],
+		"*-fluid": [{ "type": "block", "code": "pipenew-fluid", "quantity": { "avg": 1 } }]
     }
 }

@@ -121,5 +121,14 @@ namespace VintageEngineering.Electrical
             }
             return true;
         }
+
+        public override void OnNeighbourBlockChange(IWorldAccessor world, BlockPos pos, BlockPos neibpos)
+        {
+            if (world.BlockAccessor.GetBlockEntity(pos) is BEMBPowerConnector vembpc)
+            {
+                vembpc.NeighborBlockChanged(world, pos, neibpos); // detect a possible multiblock break or formation
+            }
+            base.OnNeighbourBlockChange(world, pos, neibpos);
+        }
     }
 }

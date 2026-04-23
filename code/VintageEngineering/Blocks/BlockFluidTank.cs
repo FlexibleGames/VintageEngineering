@@ -20,7 +20,7 @@ namespace VintageEngineering.Blocks
 
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
         {
-            ItemSlot hotbarSlot = byPlayer.InventoryManager.ActiveHotbarSlot;
+            ItemSlot hotbarSlot = byPlayer?.InventoryManager?.ActiveHotbarSlot;
 
             if (blockSel != null && !world.Claims.TryAccess(byPlayer, blockSel.Position, EnumBlockAccessFlags.Use))
             {

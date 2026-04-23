@@ -22,7 +22,7 @@ namespace VintageEngineering.Blocks
         {
         }
 
-        public bool HasMechPowerConnectorAt(IWorldAccessor world, BlockPos pos, BlockFacing face)
+        public bool HasMechPowerConnectorAt(IWorldAccessor world, BlockPos pos, BlockFacing face, BlockMPBase forBlock)
         {
             return face == axleFace;
         }
@@ -48,10 +48,8 @@ namespace VintageEngineering.Blocks
             if (base.DoPlaceBlock(world, byPlayer, blockSel, byItemStack))
             {
 
-                if (
-                    world.BlockAccessor.GetBlock(blockSel.Position) is IMechanicalPowerBlock block &&
-                    block.HasMechPowerConnectorAt(world, blockSel.Position, facing.Opposite)
-                )
+                if (world.BlockAccessor.GetBlock(blockSel.Position) is IMechanicalPowerBlock block &&
+                    block.HasMechPowerConnectorAt(world, blockSel.Position, facing.Opposite, null))
                 {
                     block.DidConnectAt(world,blockSel.Position, facing.Opposite);
 

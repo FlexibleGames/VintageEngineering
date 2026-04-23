@@ -65,13 +65,14 @@ namespace VintageEngineering.Multiblock
 
         /// <summary>
         /// Gets Multiblock offset at given pos<br/>
-        /// Returns null if given pos is not a VEMultiblockEntity
+        /// Returns 0,0,0 if given pos is not a VEMultiblockEntity
         /// </summary>
         /// <param name="pos">BlockPos to check</param>
-        /// <returns>Vec3i or Null</returns>
+        /// <returns>Vec3i or 0,0,0</returns>
         public Vec3i GetOffset(BlockPos pos)
         {
-            return api.World.BlockAccessor.GetBlockEntity<VEMBEntityDummy>(pos)?.Offset;
+            VEMBEntityDummy dummy = api.World.BlockAccessor.GetBlockEntity<VEMBEntityDummy>(pos);
+            return dummy == null ? Vec3i.Zero : dummy.Offset;
         }
 
         public bool IsValid(BlockPos pos)
@@ -171,15 +172,15 @@ namespace VintageEngineering.Multiblock
                (block) => block.GetCollisionBoxes(ba, pos.AddCopy(offsetinv))
            );
         }
-        public override bool DoParticalSelection(IWorldAccessor world, BlockPos pos)
+        public override bool DoPartialSelection(IWorldAccessor world, BlockPos pos)
         {
             Vec3i offsetinv = -GetOffset(pos);
             return Handle<bool, IMultiBlockInteract>(
                 world.BlockAccessor,
                 pos.X + offsetinv.X, pos.InternalY + offsetinv.Y, pos.Z + offsetinv.Z,
-                (inf) => inf.MBDoParticalSelection(world, pos, offsetinv),
-                (block) => base.DoParticalSelection(world, pos.AddCopy(offsetinv)),
-                (block) => block.DoParticalSelection(world, pos.AddCopy(offsetinv))
+                (inf) => inf.MBDoPartialSelection(world, pos, offsetinv),
+                (block) => base.DoPartialSelection(world, pos.AddCopy(offsetinv)),
+                (block) => block.DoPartialSelection(world, pos.AddCopy(offsetinv))
             );
         }
 

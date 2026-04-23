@@ -122,33 +122,33 @@ namespace VintageEngineering.Transport.API
                 }
             }
 
-            MarkPipeDirty(api.World, true); // mark the pipe dirty to rebuild shape if needed
+            //MarkPipeDirty(api.World, true); // mark the pipe dirty to rebuild shape if needed
 
-            PipeNetworkManager pnm = api.ModLoader.GetModSystem<PipeNetworkManager>(true); // this only exists on the server
-            if (pnm == null) return;
+            //PipeNetworkManager pnm = api.ModLoader.GetModSystem<PipeNetworkManager>(true); // this only exists on the server
+            //if (pnm == null) return;
 
-            if (numExtractionConnections > 0) 
-            { 
-                RebuildPushConnections(api.World, pnm.GetNetwork(NetworkID).PipeBlockPositions.ToArray());
-                api.World.BlockAccessor.MarkBlockEntityDirty(Pos);
-            }
-            if (numInsertionConnections > 0 && NetworkID != 0)
-            {
-                List<PipeConnection> inserts = new List<PipeConnection>(numInsertionConnections);
-                for (int f = 0; f < 6; f++)
-                {
-                    if (insertionSides[f])
-                    {
-                        PipeConnection newcon = new PipeConnection(this.Pos.AddCopy(BlockFacing.ALLFACES[f]), BlockFacing.ALLFACES[f], 0);
-                        inserts.Add(newcon);
-                    }
-                }
-                if (inserts.Count != numInsertionConnections)
-                {
-                    Api.Logger.Error("VE Pipe Insert count not equal to numInsertionConnections");
-                }
-                pnm.GetNetwork(NetworkID).QuickUpdateNetwork(api.World, inserts.ToArray(), false);
-            }
+            //if (numExtractionConnections > 0) 
+            //{ 
+            //    RebuildPushConnections(api.World, pnm.GetNetwork(NetworkID).PipeBlockPositions.ToArray());
+            //    api.World.BlockAccessor.MarkBlockEntityDirty(Pos);
+            //}
+            //if (numInsertionConnections > 0 && NetworkID != 0)
+            //{
+            //    List<PipeConnection> inserts = new List<PipeConnection>(numInsertionConnections);
+            //    for (int f = 0; f < 6; f++)
+            //    {
+            //        if (insertionSides[f])
+            //        {
+            //            PipeConnection newcon = new PipeConnection(this.Pos.AddCopy(BlockFacing.ALLFACES[f]), BlockFacing.ALLFACES[f], 0);
+            //            inserts.Add(newcon);
+            //        }
+            //    }
+            //    if (inserts.Count != numInsertionConnections)
+            //    {
+            //        Api.Logger.Error("VE Pipe Insert count not equal to numInsertionConnections");
+            //    }
+            //    pnm.GetNetwork(NetworkID).QuickUpdateNetwork(api.World, inserts.ToArray(), false);
+            //}
             //if (api.Side == EnumAppSide.Server) MarkDirty(true);
         }        
 
@@ -156,33 +156,36 @@ namespace VintageEngineering.Transport.API
         {
             //base.GetBlockInfo(forPlayer, dsc);
             string output = string.Empty;
-            output += $"NetID: {NetworkID}" + System.Environment.NewLine;
-            //if (!Api.World.EntityDebugMode)
-            //{
-            //    // TODO Uncomment when this feature is 'done'
-            //    dsc.Append(output);
-            //    return;
-            //}
-            string inserts = string.Empty;
-            string extracts = string.Empty;
-            string overrides = string.Empty;
-            string pipecons = string.Empty;
+            output += "This Has Been DEPRECIATED" + Environment.NewLine + "Break and upgrade to the new version.";
+            dsc.AppendLine(output);
+            return;
+            //output += $"NetID: {NetworkID}" + System.Environment.NewLine;
+            ////if (!Api.World.EntityDebugMode)
+            ////{
+            ////    // TODO Uncomment when this feature is 'done'
+            ////    dsc.Append(output);
+            ////    return;
+            ////}
+            //string inserts = string.Empty;
+            //string extracts = string.Empty;
+            //string overrides = string.Empty;
+            //string pipecons = string.Empty;
 
-            for (int f = 0; f < 6; f++)
-            {
-                if (insertionSides[f]) inserts += Faceletter[f] + (f != 5 ? ", " : "");
-                if (extractionSides[f]) extracts += Faceletter[f] + (f != 5 ? ", " : "");
-                if (disconnectedSides[f]) overrides += Faceletter[f] + (f != 5 ? ", " : "");
-                if (connectionSides[f]) pipecons += Faceletter[f] + (f != 5 ? ", " : "");
-            }
-            output += $"Insert Sides: {inserts}" + System.Environment.NewLine;
-            output += $"Extract Sides: {extracts}" + System.Environment.NewLine;
-            output += $"Overrides: {overrides}" + System.Environment.NewLine;
-            output += $"Pipe Cons: {pipecons}" + System.Environment.NewLine;
-            output += $"# Ins/Extr: {numInsertionConnections}/{numExtractionConnections}";            
-            if (numPushConsDebug != 0) output += Environment.NewLine + $"#Pushes: {numPushConsDebug}";
-            if (numTickHandlerDebug != 0) output += Environment.NewLine + $"#Tickers: {numTickHandlerDebug}";
-            dsc.Append(output);
+            //for (int f = 0; f < 6; f++)
+            //{
+            //    if (insertionSides[f]) inserts += Faceletter[f] + (f != 5 ? ", " : "");
+            //    if (extractionSides[f]) extracts += Faceletter[f] + (f != 5 ? ", " : "");
+            //    if (disconnectedSides[f]) overrides += Faceletter[f] + (f != 5 ? ", " : "");
+            //    if (connectionSides[f]) pipecons += Faceletter[f] + (f != 5 ? ", " : "");
+            //}
+            //output += $"Insert Sides: {inserts}" + System.Environment.NewLine;
+            //output += $"Extract Sides: {extracts}" + System.Environment.NewLine;
+            //output += $"Overrides: {overrides}" + System.Environment.NewLine;
+            //output += $"Pipe Cons: {pipecons}" + System.Environment.NewLine;
+            //output += $"# Ins/Extr: {numInsertionConnections}/{numExtractionConnections}";            
+            //if (numPushConsDebug != 0) output += Environment.NewLine + $"#Pushes: {numPushConsDebug}";
+            //if (numTickHandlerDebug != 0) output += Environment.NewLine + $"#Tickers: {numTickHandlerDebug}";
+            //dsc.Append(output);
         }
         /// <summary>
         /// Returns a BlockPos array of all Pipe positions that connect to this one.      
@@ -220,13 +223,13 @@ namespace VintageEngineering.Transport.API
             int faceindex = selection.SelectionBoxIndex;
             if (faceindex == 6)
             {
-                // right clicked the center main pipe object.
+                // right clicked the _center main pipe object.
                 return true;
             }
             //if (Api.Side != EnumAppSide.Server) return true;
 
             // grab the network manager
-            PipeNetworkManager pnm = Api.ModLoader.GetModSystem<PipeNetworkManager>(true);
+            //PipeNetworkManager pnm = Api.ModLoader.GetModSystem<PipeNetworkManager>(true);
 
             if (player.InventoryManager.ActiveHotbarSlot?.Itemstack?.Item?.Tool == EnumTool.Wrench)
             {
@@ -249,11 +252,11 @@ namespace VintageEngineering.Transport.API
                             ConvertIndexToFace(faceindex),
                             0);
                         // Update Network
-                        if (pnm != null && NetworkID != 0)
-                        {
-                            // update network and remove the insert node from the lists on the network.
-                            pnm.GetNetwork(NetworkID).QuickUpdateNetwork(world, contoremove, true);
-                        }
+                        //if (pnm != null && NetworkID != 0)
+                        //{
+                        //    // update network and remove the insert node from the lists on the network.
+                        //    pnm.GetNetwork(NetworkID).QuickUpdateNetwork(world, contoremove, true);
+                        //}
                     }
                     if (extractionSides[faceindex] && extractionNodes[faceindex] != null)
                     {
@@ -282,43 +285,43 @@ namespace VintageEngineering.Transport.API
                         if (bepb != null)
                         {
                             bepb.OverridePipeConnectionFace(oppface, true);
-                            if (pnm != null)
-                            {
-                                pnm.OnPipeConnectionOverride(world, Pos, selection, true);
-                            }
+                            //if (pnm != null)
+                            //{
+                            //    pnm.OnPipeConnectionOverride(world, Pos, selection, true);
+                            //}
                         }
                     }
                     if (disconnectedSides[faceindex])
                     {
                         // the side was manually overriden, we need to restore it gracefully
                         disconnectedSides[faceindex] = false;                        
-                        if (pnm != null)
-                        {
-                            int oppface = ConvertIndexToFace(faceindex).Opposite.Index;
-                            BEPipeBase bepb = world.BlockAccessor.GetBlockEntity(Pos.AddCopy(ConvertIndexToFace(faceindex))) as BEPipeBase;
+                        //if (pnm != null)
+                        //{
+                        //    int oppface = ConvertIndexToFace(faceindex).Opposite.Index;
+                        //    BEPipeBase bepb = world.BlockAccessor.GetBlockEntity(Pos.AddCopy(ConvertIndexToFace(faceindex))) as BEPipeBase;
 
-                            if (bepb != null)
-                            {                            
-                                if (pnm.GetNetwork(NetworkID).NetworkPipeType == pnm.GetNetwork(bepb.NetworkID).NetworkPipeType)
-                                {
-                                    bepb.OverridePipeConnectionFace(oppface, false);
-                                    pnm.OnPipeConnectionOverride(world, Pos, selection, false);
-                                    bepb.MarkPipeDirty(world, true);
-                                }
-                            }
-                            else
-                            {
-                                if (CanConnectTo(world, Pos.AddCopy(ConvertIndexToFace(faceindex)), ConvertIndexToFace(faceindex).Opposite))
-                                {
-                                    insertionSides[faceindex] = true;
-                                    numInsertionConnections++;
-                                    PipeConnection restored = new PipeConnection(
-                                        Pos.AddCopy(ConvertIndexToFace(faceindex)),
-                                        ConvertIndexToFace(faceindex), 0);
-                                    pnm.GetNetwork(NetworkID).QuickUpdateNetwork(world, restored, false);
-                                }
-                            }                            
-                        }                        
+                        //    if (bepb != null)
+                        //    {                            
+                        //        if (pnm.GetNetwork(NetworkID).NetworkPipeType == pnm.GetNetwork(bepb.NetworkID).NetworkPipeType)
+                        //        {
+                        //            bepb.OverridePipeConnectionFace(oppface, false);
+                        //            pnm.OnPipeConnectionOverride(world, Pos, selection, false);
+                        //            bepb.MarkPipeDirty(world, true);
+                        //        }
+                        //    }
+                        //    else
+                        //    {
+                        //        if (CanConnectTo(world, Pos.AddCopy(ConvertIndexToFace(faceindex)), ConvertIndexToFace(faceindex).Opposite))
+                        //        {
+                        //            insertionSides[faceindex] = true;
+                        //            numInsertionConnections++;
+                        //            PipeConnection restored = new PipeConnection(
+                        //                Pos.AddCopy(ConvertIndexToFace(faceindex)),
+                        //                ConvertIndexToFace(faceindex), 0);
+                        //            pnm.GetNetwork(NetworkID).QuickUpdateNetwork(world, restored, false);
+                        //        }
+                        //    }                            
+                        //}                        
                     }
                     else
                     {
@@ -352,18 +355,18 @@ namespace VintageEngineering.Transport.API
                             Pos.AddCopy(ConvertIndexToFace(faceindex)),
                             ConvertIndexToFace(faceindex),
                             0);
-                        if (pnm != null && NetworkID != 0)
-                        {
-                            pnm.GetNetwork(NetworkID).QuickUpdateNetwork(world, contoremove, true);
-                        }
+                        //if (pnm != null && NetworkID != 0)
+                        //{
+                        //    pnm.GetNetwork(NetworkID).QuickUpdateNetwork(world, contoremove, true);
+                        //}
 
                         if (_pushConnections == null) // if this is null we're freshly loaded or a new extract node
                         {
-                            if (pnm != null)
-                            {
-                                // a fresh node with a new list, need to build it
-                                RebuildPushConnections(world, pnm.GetNetwork(_networkID)?.PipeBlockPositions.ToArray());
-                            }
+                            //if (pnm != null)
+                            //{
+                            //    // a fresh node with a new list, need to build it
+                            //    RebuildPushConnections(world, pnm.GetNetwork(_networkID)?.PipeBlockPositions.ToArray());
+                            //}
                         }
                     }
                     else // can't do an elseif here as it would ALWAYS be true after the first if above. 
@@ -393,11 +396,11 @@ namespace VintageEngineering.Transport.API
                                 ConvertIndexToFace(faceindex),
                                 0);
                             // Update Network
-                            if (pnm != null && NetworkID != 0)
-                            {
-                                // update network and add the insert node to the lists on the network.
-                                pnm.GetNetwork(NetworkID).QuickUpdateNetwork(world, contoadd, false);
-                            }
+                            //if (pnm != null && NetworkID != 0)
+                            //{
+                            //    // update network and add the insert node to the lists on the network.
+                            //    pnm.GetNetwork(NetworkID).QuickUpdateNetwork(world, contoadd, false);
+                            //}
                         }
                     }
                 }
@@ -411,7 +414,7 @@ namespace VintageEngineering.Transport.API
                 // AutoSwap hand item into extraction node
                 if (extractionSides[faceindex])
                 {
-                    extractionNodes[faceindex].OnRightClick(world, player);
+                    //extractionNodes[faceindex].OnRightClick(world, player);
                 }
             }
             else if (player.InventoryManager.ActiveHotbarSlot.Empty)
@@ -424,14 +427,14 @@ namespace VintageEngineering.Transport.API
                     {
                         if (extractionGUIs == null) extractionGUIs = new GUIPipeExtraction[6];
 
-                        ToggleExtractionNodeDialog(player, faceindex, delegate
-                        {
-                            extractionGUIs[faceindex] = new GUIPipeExtraction($"{ExtractDialogTitle} {ConvertIndexToFace(faceindex).Code}", 
-                                (PipeInventory)extractionNodes[faceindex].Inventory,
-                                Pos, Api as ICoreClientAPI, this, extractionNodes[faceindex], faceindex);
-                            extractionGUIs[faceindex].Update();
-                            return extractionGUIs[faceindex];
-                        });
+                        //ToggleExtractionNodeDialog(player, faceindex, delegate
+                        //{
+                        //    extractionGUIs[faceindex] = new GUIPipeExtraction($"{ExtractDialogTitle} {ConvertIndexToFace(faceindex).Code}", 
+                        //        (PipeInventory)extractionNodes[faceindex].Inventory,
+                        //        Pos, Api as ICoreClientAPI, this, extractionNodes[faceindex], faceindex);
+                        //    extractionGUIs[faceindex].Update();
+                        //    return extractionGUIs[faceindex];
+                        //});
                     }
                 }
             }
@@ -457,7 +460,7 @@ namespace VintageEngineering.Transport.API
                     if (extractionNodes[f] != null)
                     {
                         RemoveExtractionListener(f);
-                        extractionNodes[f].OnNodeRemoved();                        
+                        extractionNodes[f].OnNodeRemoved();
                     }
                 }
             }
@@ -472,6 +475,7 @@ namespace VintageEngineering.Transport.API
         public virtual void MarkPipeDirty(IWorldAccessor world, bool dirtyshape = false)
         {
             _shapeDirty = dirtyshape;
+            /*
             BlockPipeBase us = world.BlockAccessor.GetBlock(Pos) as BlockPipeBase;
             PipeNetworkManager pnm = Api.ModLoader.GetModSystem<PipeNetworkManager>(true);
             
@@ -570,16 +574,16 @@ namespace VintageEngineering.Transport.API
                         }
                     }
                 }
-            }
+            } */
             if (_shapeDirty) 
             { 
-                if (NetworkID != 0 && pnm != null)
-                {                    
-                    pnm.GetNetwork(NetworkID).MarkNetworkDirty(world);
-                }
+                //if (NetworkID != 0 && pnm != null)
+                //{                    
+                //    pnm.GetNetwork(NetworkID).MarkNetworkDirty(world);
+                //}
                 // keeping this one as the shape changed, clients need to be informed, a less-frequent update
                 MarkDirty(true);
-            }
+            } 
         }
 
         /// <summary>
@@ -622,7 +626,7 @@ namespace VintageEngineering.Transport.API
                         if (bep.insertionSides[f])
                         {
                             BlockFacing facing = ConvertIndexToFace(f);
-                            int dist = Pos.ManhattenDistance(p.AddCopy(facing));
+                            int dist = Pos.ManhattanDistance(p.AddCopy(facing));
                             _pushConnections.Add(new PipeConnection(
                                 p.AddCopy(facing), facing, dist));
                         }
@@ -655,7 +659,7 @@ namespace VintageEngineering.Transport.API
                     PipeConnection con = new PipeConnection(
                         altered.AddCopy(ConvertIndexToFace(f)),
                         ConvertIndexToFace(f),
-                        Pos.ManhattenDistance(altered.AddCopy(BlockFacing.ALLFACES[f])));
+                        Pos.ManhattanDistance(altered.AddCopy(BlockFacing.ALLFACES[f])));
                     if (isRemove)
                     {
                         if (_pushConnections != null && _pushConnections.Count > 0)
@@ -678,7 +682,7 @@ namespace VintageEngineering.Transport.API
                 if (extractionNodes[f] != null)
                 {
                     // in the case of RoundRobin extraction, altering the list FUBARs the enumerator
-                    extractionNodes[f].ResetEnumerator(_pushConnections);
+                    extractionNodes[f].ResetEnumerator();
                     extractionNodes[f].IsSleeping = false;
                 }
             }
@@ -705,7 +709,7 @@ namespace VintageEngineering.Transport.API
             }
             for (int x = 0; x < cons.Length; x++)
             {
-                PipeConnection newcon = cons[x].Copy(Pos.ManhattenDistance(cons[x].Position));
+                PipeConnection newcon = cons[x].Copy(Pos.ManhattanDistance(cons[x].Position));
                 if (isRemove)
                 {
                     _pushConnections.Remove(newcon);
@@ -723,7 +727,7 @@ namespace VintageEngineering.Transport.API
                 if (extractionNodes[f] != null)
                 {
                     // in the case of RoundRobin extraction, altering the list FUBARs the enumerator
-                    extractionNodes[f].ResetEnumerator(_pushConnections);
+                    extractionNodes[f].ResetEnumerator();
                     extractionNodes[f].IsSleeping = false;                    
                 }
             }
@@ -732,7 +736,7 @@ namespace VintageEngineering.Transport.API
             
         /// <summary>
         /// Called when a player overrides a pipe connection on a neighboring pipe.<br/>
-        /// Bool value sets the disconnectedSides value for the given faceindex.
+        /// Bool value sets the overriddenSides value for the given faceindex.
         /// </summary>
         /// <param name="faceindex">Face index to change.</param>
         public virtual void OverridePipeConnectionFace(int faceindex, bool newvalue)
@@ -772,8 +776,8 @@ namespace VintageEngineering.Transport.API
             }
             else 
             {
-                //_meshData = new MeshData(true); 
-                //_meshData = (Api as ICoreClientAPI).TesselatorManager.GetDefaultBlockMesh(this.Block);
+                //_heatableMesh = new MeshData(true); 
+                //_heatableMesh = (Api as ICoreClientAPI).TesselatorManager.GetDefaultBlockMesh(this.Block);
                 (Api as ICoreClientAPI).Tesselator.TesselateBlock(this.Block, out _meshData);
             }
 
@@ -850,7 +854,9 @@ namespace VintageEngineering.Transport.API
         public long AddExtractionTickEvent(int delayms, Action<float> tickEvent)
         {
             if (Api.Side == EnumAppSide.Server)
-            { return RegisterGameTickListener(tickEvent, delayms); }
+            { 
+            //    return RegisterGameTickListener(tickEvent, delayms); 
+            }
             return 0;
         }
         /// <summary>
@@ -973,8 +979,8 @@ namespace VintageEngineering.Transport.API
                     if (extractionNodes[faceindex] == null) return;
                     extractionNodes[faceindex].SetDistroMode(distro);
                     if (distro == "robin")
-                    { 
-                        extractionNodes[faceindex].PushEnumerator = _pushConnections.GetEnumerator(); 
+                    {
+                        //extractionNodes[faceindex].PushEnumerator = _pushConnections.GetEnumerator(); 
                     }
                 }
             }

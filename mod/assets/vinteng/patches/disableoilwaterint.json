@@ -1,0 +1,9 @@
+[
+    {
+        "file": "vinteng:blocktypes/liquid/crudeoil.json",
+        "op": "remove",
+        "path": "/behaviors/1",
+        "condition": { "when": "VintEng_OilWaterInteraction", "isValue": "false" },
+        "side": "server"
+    }
+]

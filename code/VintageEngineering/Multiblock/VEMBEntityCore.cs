@@ -23,11 +23,32 @@ namespace VintageEngineering.Multiblock
         {
             base.Initialize(api);
         }
-
+        /// <summary>
+        /// Universal Multiblock check on the Variant of the block, "built" means its a fully formed machine ready for action.
+        /// </summary>
+        public bool IsBuilt => base.Block.Variant["state"] == "built";
         public override InventoryBase Inventory => throw new NotImplementedException();
 
         public override string InventoryClassName => throw new NotImplementedException();
 
+        /// <summary>
+        /// Called when a MB is formed or broken. Override to add validation.
+        /// </summary>
+        /// <param name="world"></param>
+        /// <param name="caller"></param>
+        /// <param name="blockSel"></param>
+        /// <param name="activationArgs"></param>
+        public virtual void ActivateCore(IWorldAccessor world, Caller caller, BlockSelection blockSel, ITreeAttribute activationArgs = null)
+        {
+
+        }
+
+        /// <summary>
+        /// Passed from the event in the Block, useful for triggering GUI's, validation, or inventory management.
+        /// </summary>
+        /// <param name="byPlayer"></param>
+        /// <param name="blockSel"></param>
+        /// <returns>Return true to process event on server and sync.</returns>
         public override bool OnPlayerRightClick(IPlayer byPlayer, BlockSelection blockSel)
         {
             return true;

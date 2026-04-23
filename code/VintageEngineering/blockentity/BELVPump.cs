@@ -364,7 +364,7 @@ namespace VintageEngineering.blockentity
                                     {
                                         BlockPos bcheck = new BlockPos(x, y, z, 0);
                                         // TODO make pump range a config value check
-                                        if (below.ManhattenDistance(bcheck) > 32)  { return; }
+                                        if (below.ManhattanDistance(bcheck) > 32)  { return; }
 
                                         FluidPosition bfpos = new FluidPosition(bcheck, below.DistanceTo(bcheck));
                                         if (!_fluidpositions.Contains(bfpos))

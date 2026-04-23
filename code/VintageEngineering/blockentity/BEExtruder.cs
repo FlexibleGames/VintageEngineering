@@ -441,7 +441,8 @@ namespace VintageEngineering
 
             if (meshSource != null)
             {
-                meshData = meshSource.GenMesh(stack, capi.BlockTextureAtlas, Pos);
+                DummySlot dslot = new() { Itemstack = stack };
+                meshData = meshSource.GenMesh(dslot, capi.BlockTextureAtlas, Pos);
                 meshData.Rotate(new Vec3f(0.5f, 0.5f, 0.5f), 0f, base.Block.Shape.rotateY * 0.0174532924f, 0f);
             }
             else
@@ -523,7 +524,7 @@ namespace VintageEngineering
                 {
                     BitmapRef bmp = asset.ToBitmap(this.capi);
                     int num;
-                    //this.capi.BlockTextureAtlas.InsertTextureCached(texturePath, bmp, out num, out textureAtlasPosition, 0.005f);
+                    //this._capi.BlockTextureAtlas.InsertTextureCached(texturePath, bmp, out num, out textureAtlasPosition, 0.005f);
                     this.capi.BlockTextureAtlas.GetOrInsertTexture(texturePath, out num, out textureAtlasPosition, null, 0.005f);
                 }
                 else

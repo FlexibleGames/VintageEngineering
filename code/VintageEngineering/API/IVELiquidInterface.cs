@@ -31,7 +31,7 @@ namespace VintageEngineering.API
         /// </summary>
         bool AllowHeldLiquidTransfer { get; }
         /// <summary>
-        /// Transfer liquid amount per second when automated with pipes.
+        /// Transfer liquid amount per second when automated with pipes. (Currently Ignored)
         /// </summary>
         float TransferSizeLitresPerSecond { get; }
 

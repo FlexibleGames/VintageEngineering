@@ -23,7 +23,7 @@ namespace VintageEngineering.Transport.Handlers
         {
             if (!VEHelpers.IsChunkLoaded(world, pos)) return;
 
-            BEPipeBase us = world.BlockAccessor.GetBlockEntity(pos) as BEPipeBase;
+            BEPipeBaseNew us = world.BlockAccessor.GetBlockEntity(pos) as BEPipeBaseNew;
             if (us == null) return; // sanity check
 
             BlockPos connectedto = pos.AddCopy(BlockFacing.FromCode(node.FaceCode));
@@ -50,13 +50,14 @@ namespace VintageEngineering.Transport.Handlers
                 pull = GetPullSlot(inv, node, false); 
             }
             if (pull == null) return;
+            string pullSubnet = node.SubNet;
             if (stacksize == -1) // stacksize -1 means the steel upgrade, 10 stacks per tick
             {
                 stacksize = pull.Itemstack?.Collectible.MaxStackSize*10 ?? 1;
             }
             ItemStackMoveOperation ismo = new ItemStackMoveOperation(world, EnumMouseButton.Left, (EnumModifierKey)0, EnumMergePriority.DirectMerge, stacksize);            
 
-            ItemSlot push = GetPushSlot(world, node, us.PushConnections, pull);
+            ItemSlot push = GetPushSlot(world, node, node.InsertNodes, pull, pullSubnet);
 
             if (push == null) return; // sanity check 3
 
@@ -152,22 +153,27 @@ namespace VintageEngineering.Transport.Handlers
         /// </summary>
         /// <param name="world">World Accessor</param>
         /// <param name="node">PipeExtractionNode being ticked</param>
-        /// <param name="pushcons">PipeConnection list to check for valid push slots.</param>
+        /// <param name="pushcons">PipeInsertNode list to check for valid push slots.</param>
         /// <param name="pullfrom">ItemSlot that is providing the ItemStack to move.</param>
         /// <returns>Valid ItemSlot to push into, or null if no slot is found.</returns>
-        public ItemSlot GetPushSlot(IWorldAccessor world, PipeExtractionNode node, List<PipeConnection> pushcons, ItemSlot pullfrom)
+        public ItemSlot GetPushSlot(IWorldAccessor world, PipeExtractionNode node, List<PipeInsertNode> pushcons, ItemSlot pullfrom, string subnet)
         {
             if (pushcons == null || pushcons.Count == 0) { return null; }
             if (node.PipeDistribution == EnumPipeDistribution.Nearest)
             {
                 // what is the cost of this call?
-                PipeConnection[] conarray = pushcons.ToArray();
-                Array.Sort(conarray, (x, y) => x.Distance.CompareTo(y.Distance));
+                PipeInsertNode[] conarray = pushcons.ToArray();
+                //Array.Sort(conarray, (x, y) => x.Distance.CompareTo(y.Distance));
 
                 for (int x = 0; x < conarray.Length; x++)
                 {
                     if (!VEHelpers.IsChunkLoaded(world, conarray[x].Position)) continue;
-                    
+                    if (!VEHelpers.IsChunkLoaded(world, conarray[x].NodePosition)) continue;
+                    if (subnet != null && subnet != string.Empty && subnet.Length > 0)
+                    {
+                        string uptodate = world.BlockAccessor.GetBlockEntity<BEPipeBaseNew>(conarray[x].NodePosition).InsertNodes[conarray[x].Facing.Index].SubNet;
+                        if (!uptodate.Contains(subnet)) continue;
+                    }
                     BlockPos target = conarray[x].Position.Copy();
                     Block targetblock = world.BlockAccessor.GetBlock(target);
                     if (targetblock is BlockMultiblock mbtarget)
@@ -194,8 +200,8 @@ namespace VintageEngineering.Transport.Handlers
             }
             else if (node.PipeDistribution == EnumPipeDistribution.Farthest)
             {
-                PipeConnection[] conarray = pushcons.ToArray();
-                Array.Sort(conarray, (x, y) => y.Distance.CompareTo(x.Distance));
+                PipeInsertNode[] conarray = pushcons.ToArray();
+                //Array.Sort(conarray, (x, y) => y.Distance.CompareTo(x.Distance));
                 for (int x = 0; x < conarray.Length; x++)
                 {
                     if (!VEHelpers.IsChunkLoaded(world, conarray[x].Position)) continue;
@@ -247,7 +253,7 @@ namespace VintageEngineering.Transport.Handlers
                     }
                 }
 
-                PipeConnection current = node.PushEnumerator.Current;
+                PipeInsertNode current = node.PushEnumerator.Current;
                 if (!VEHelpers.IsChunkLoaded(world, current.Position)) return null;
                 BlockPos target = current.Position.Copy();
                 Block targetblock = world.BlockAccessor.GetBlock(target);
@@ -271,7 +277,7 @@ namespace VintageEngineering.Transport.Handlers
             {
                 // this is Random                
                 int randomcon = world.Rand.Next(pushcons.Count);                
-                PipeConnection current = pushcons[randomcon];
+                PipeInsertNode current = pushcons[randomcon];
                 if (!VEHelpers.IsChunkLoaded(world, current.Position)) return null;
                 BlockPos target = current.Position.Copy();
                 Block targetblock = world.BlockAccessor.GetBlock(target);

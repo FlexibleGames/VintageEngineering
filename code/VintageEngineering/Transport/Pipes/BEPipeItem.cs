@@ -8,6 +8,7 @@ using Vintagestory.GameContent;
 
 namespace VintageEngineering.Transport.Pipes
 {
+    // Depreciated
     public class BEPipeItem : BEPipeBase
     {
         private static ItemTransportHandler itemHandler = new();

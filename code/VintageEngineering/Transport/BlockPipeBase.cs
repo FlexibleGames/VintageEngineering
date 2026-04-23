@@ -35,7 +35,7 @@ namespace VintageEngineering.Transport
             else
             {
                 capi = api as ICoreClientAPI;
-                //capi.Input.InWorldAction += InputWorldAction;
+                //_capi.Input.InWorldAction += InputWorldAction;
             }
             _pipeUse = Enum.Parse<EnumPipeUse>(this.LastCodePart());
         }
@@ -52,37 +52,37 @@ namespace VintageEngineering.Transport
             return base.GetPlacedBlockInfo(world, pos, forPlayer);
         }
 
-        public override bool DoParticalSelection(IWorldAccessor world, BlockPos pos)
+        public override bool DoPartialSelection(IWorldAccessor world, BlockPos pos)
         {
             return true;
         }
 
         public override void OnNeighbourBlockChange(IWorldAccessor world, BlockPos pos, BlockPos neibpos)
-        {
+        {            
             // Redetect any potential connections as something changed.
             BEPipeBase pipebe = api.World.BlockAccessor.GetBlockEntity(pos) as BEPipeBase;
             if (pipebe != null)
-            {                
-                pipebe.MarkPipeDirty(world, true);
+            {
+                //pipebe.MarkPipeDirty(world, true);
             }
             base.OnNeighbourBlockChange(world, pos, neibpos);
         }
 
         public override void OnBlockPlaced(IWorldAccessor world, BlockPos blockPos, ItemStack byItemStack = null)
         {
-            base.OnBlockPlaced(world, blockPos, byItemStack); // this actually spawns the BE
+            base.OnBlockPlaced(world, blockPos, byItemStack); // this actually spawns the BE            
 
             // Detect Connections and adjust shape accordingly. This is done in the BE.
-            BEPipeBase pipebe = api.World.BlockAccessor.GetBlockEntity(blockPos) as BEPipeBase;
-            if (pipebe != null)
-            {
-                pipebe.MarkPipeDirty(world); // this builds connection information
-                PipeNetworkManager pnm = api.ModLoader.GetModSystem<PipeNetworkManager>(true);
-                if (pnm != null)
-                {
-                    pnm.OnPipeBlockPlaced(world, blockPos);
-                }
-            }
+            //BEPipeBase pipebe = api.World.BlockAccessor.GetBlockEntity(blockPos) as BEPipeBase;
+            //if (pipebe != null)
+            //{
+            //    pipebe.MarkPipeDirty(world); // this builds connection information
+            //    PipeNetworkManager pnm = api.ModLoader.GetModSystem<PipeNetworkManager>(true);
+            //    if (pnm != null)
+            //    {
+            //        pnm.OnPipeBlockPlaced(world, blockPos);
+            //    }
+            //}
             
         }
 
@@ -144,19 +144,19 @@ namespace VintageEngineering.Transport
             BEPipeBase pipebe = api.World.BlockAccessor.GetBlockEntity(pos) as BEPipeBase;
             if (pipebe != null)
             {
+                pipebe.OnBlockBroken(byPlayer);
                 //pipebe.MarkPipeDirty(world); // this builds connection information
-                PipeNetworkManager pnm = api.ModLoader.GetModSystem<PipeNetworkManager>(true);
-                if (pnm != null)
-                {
-                    pnm.OnPipeBlockBroken(world, pos);
-                }
+                //PipeNetworkManager pnm = api.ModLoader.GetModSystem<PipeNetworkManager>(true);
+                //if (pnm != null)
+                //{
+                //    pnm.OnPipeBlockBroken(world, pos);
+                //}
             }
             base.OnBlockBroken(world, pos, byPlayer, dropQuantityMultiplier);
         }
 
         public override ItemStack[] GetDrops(IWorldAccessor world, BlockPos pos, IPlayer byPlayer, float dropQuantityMultiplier = 1)
-        {
-            // TODO Get any extraction node inventory drops. 
+        {            
             // Don't forget the base pipe block.
             return base.GetDrops(world, pos, byPlayer, dropQuantityMultiplier);
         }
@@ -164,7 +164,7 @@ namespace VintageEngineering.Transport
         /// <summary>
         /// Converts a BlockSelection object into a BlockFacing direction based on the pipes active connections
         /// and index of the selection.<br/>
-        /// Returns NULL if the center core BASE object was the object interacted with.
+        /// Returns NULL if the _center core BASE object was the object interacted with.
         /// </summary>
         /// <param name="world">World Accessor</param>
         /// <param name="blockSelection">BlockSelection object</param>

@@ -86,7 +86,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
         }
 
         public ItemStack GetResolvedInput(int index) {
-            return Ingredients[index].ResolvedItemstack;
+            return Ingredients[index].ResolvedItemStack;
         }
 
         public ItemStack GetResolvedOutput(int index) {
@@ -312,7 +312,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
                 ok = (ok && iOk);
                 if (iOk)
                 {
-                    WaterTightContainableProps lprops = BlockLiquidContainerBase.GetContainableProps(ingred.ResolvedItemstack);
+                    WaterTightContainableProps lprops = BlockLiquidContainerBase.GetContainableProps(ingred.ResolvedItemStack);
                     if (lprops != null)
                     {
                         if (ingred.Litres < 0f)

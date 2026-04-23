@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <Version>0.5.3</Version>
+    <Version>0.5.4</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -90,5 +90,13 @@
     </ItemGroup>
     <Copy SourceFiles="@(TargetFiles)" DestinationFolder="$(MSBuildProjectDirectory)\..\..\mod" SkipUnchangedFiles="true" />
   </Target>
+
+  <ItemGroup>
+    <EditorConfigFiles Remove="C:\_Programming\Vintage\VintageEngineering\code\VintageEngineering\.editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="C:\_Programming\Vintage\VintageEngineering\code\VintageEngineering\.editorconfig" />
+  </ItemGroup>
 
 </Project>

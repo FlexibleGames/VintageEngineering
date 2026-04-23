@@ -57,12 +57,16 @@
 	"drawtype": "liquid",
 	"renderpass": "liquid",
 	"matterstate": "liquid",
-	"blockmaterial": "liquid",
+	"blockmaterial": "water",
 	"faceCullMode": "liquid",
 	"liquidCode": "crudeoil",
 	"snowCoverage": false,
 	"materialdensity": 3000,
-	"creativeinventory": { "general": ["vinteng:crudeoil-still-7"], "terrain": ["vinteng:crudeoil-still-7"] },
+	"creativeinventory": {
+		"general": ["*-still-7"],
+		"terrain": ["*-still-7"],
+		"vinteng": ["*-still-7"]
+	},
 	"replaceable": 9500,
 	"lightAbsorption": 99,
 	"vertexFlags": {
