@@ -15,5 +15,6 @@
 
 		]
 	],
+	"code": "sawblade-{metal}",
 	"output": { "type": "item", "code": "vinteng:vesawblade-{metal}"  }
 }

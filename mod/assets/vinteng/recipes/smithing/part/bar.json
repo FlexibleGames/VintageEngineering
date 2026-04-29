@@ -6,5 +6,6 @@
 		"_________",
 		"####_####"
 	]],
+	"code": "metalbar-{metal}",
 	"output": { "type": "item", "code": "vinteng:metalbar-{metal}", "quantity":4  }
 }

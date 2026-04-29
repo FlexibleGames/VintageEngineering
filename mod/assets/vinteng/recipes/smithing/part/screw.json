@@ -12,5 +12,6 @@
 		"________",
 		"##_##_##"
 	]],
+	"code": "screw-{metal}",
 	"output": { "type": "item", "code": "vinteng:screw-{metal}", "quantity":16  }
 }

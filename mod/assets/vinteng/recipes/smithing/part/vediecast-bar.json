@@ -12,5 +12,6 @@
 			"#######"
 		]
 	],
+	"code": "diecast-bar-{metal}",
 	"output": { "type": "item", "code": "vinteng:vediecast-bar-{metal}"  }
 }

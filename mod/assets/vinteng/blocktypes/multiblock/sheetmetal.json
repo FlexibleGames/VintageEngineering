@@ -11,7 +11,7 @@
 	"sidesolid": { "all": true },
 	"sideopaque": { "all": true },
 	"maxStackSize": 64,
-	"shape": { "base": "block/basic/cube" },
+	"shape": { "base": "game:block/basic/cube" },
 	"drawtype": "cube",
 	"texturesByType": {
 		"*-iron": { "all": { "base": "vinteng:block/multiblocks/sheetmetal_iron" }},
