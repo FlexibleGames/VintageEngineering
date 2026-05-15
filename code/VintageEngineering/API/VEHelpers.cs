@@ -1,4 +1,5 @@
-﻿using Vintagestory.API.Common;
+﻿using Vintagestory.API.Client;
+using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
@@ -143,6 +144,23 @@ namespace VintageEngineering.API
                 slot.MarkDirty();
             }
             return num2;
+        }
+
+        public static void DoLiquidMovedEffects(ICoreAPI l_api, IPlayer player, ItemStack contentStack, int moved, BlockLiquidContainerBase.EnumLiquidDirection dir)
+        {
+            if (player == null)
+            {
+                return;
+            }
+            WaterTightContainableProps props = BlockLiquidContainerBase.GetContainableProps(contentStack);
+            float litresMoved = (float)moved / ((props != null) ? props.ItemsPerLitre : 1f);
+            IClientPlayer clientPlayer = player as IClientPlayer;
+            if (clientPlayer != null)
+            {
+                clientPlayer.TriggerFpAnimation(EnumHandInteract.HeldItemInteract);
+            }
+            l_api.World.PlaySoundAt((dir == BlockLiquidContainerBase.EnumLiquidDirection.Fill) ? (((props != null) ? props.FillSound : null) ?? "sounds/effect/water-fill.ogg") : (((props != null) ? props.PourSound : null) ?? "sounds/effect/water-pour.ogg"), player.Entity, player, true, 16f, GameMath.Clamp(litresMoved / 5f, 0.35f, 1f));
+            l_api.World.SpawnCubeParticles(player.Entity.Pos.AheadCopy(0.25).XYZ.Add(0.0, (double)(player.Entity.SelectionBox.Y2 / 2f), 0.0), contentStack, 0.75f, (int)litresMoved * 2, 0.45f, null, null);
         }
     }
 }
