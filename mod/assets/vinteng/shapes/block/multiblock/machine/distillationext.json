@@ -1,6 +1,6 @@
 {
 	"editor": {
-		"collapsedPaths": "Root/PowerTop/Frame3,Root/PowerTop/Frame1,Root/Platform6,Root/Platform2,Root/Ladder2,Root/Platform18,Root/Ladder3,Root/Platform14,Root/PowerTop",
+		"collapsedPaths": "Root/Ladder2,Root/Ladder3,Root/PowerTop/Frame3,Root/PowerTop/Frame1,Root/PowerTop",
 		"allAngles": false,
 		"entityTextureMode": false
 	},
@@ -286,6 +286,7 @@
 			"name": "Platform1",
 			"from": [ 32.0, 46.9, 16.0 ],
 			"to": [ 48.0, 47.9, 29.0 ],
+			"renderPass": 3,
 			"rotationOrigin": [ 32.0, 47.0, 16.0 ],
 			"faces": {
 				"north": { "texture": "#null", "uv": [ 0.0, 0.0, 16.0, 1.0 ], "enabled": false },
@@ -300,6 +301,7 @@
 			"name": "Platform2",
 			"from": [ 16.0, 46.9, 16.0 ],
 			"to": [ 32.0, 47.9, 32.0 ],
+			"renderPass": 3,
 			"rotationOrigin": [ 16.0, 46.9, 16.0 ],
 			"faces": {
 				"north": { "texture": "#gunmetal-lightgray", "uv": [ 0.0, 0.0, 16.0, 1.0 ], "windMode": [-1,-1,-1,-1], "windData": [3,3,3,3] },
@@ -314,6 +316,7 @@
 					"name": "Platform3",
 					"from": [ -16.0, 0.0, 0.0 ],
 					"to": [ 0.0, 1.0, 16.0 ],
+					"renderPass": 3,
 					"rotationOrigin": [ -16.0, 0.0, 0.0 ],
 					"faces": {
 						"north": { "texture": "#null", "uv": [ 0.0, 0.0, 16.0, 1.0 ], "enabled": false },
@@ -328,6 +331,7 @@
 					"name": "Platform4",
 					"from": [ -32.0, 0.0, 0.0 ],
 					"to": [ -16.0, 1.0, 16.0 ],
+					"renderPass": 3,
 					"rotationOrigin": [ -32.0, 0.0, 0.0 ],
 					"faces": {
 						"north": { "texture": "#null", "uv": [ 0.0, 0.0, 16.0, 1.0 ], "enabled": false },
@@ -342,6 +346,7 @@
 					"name": "Platform5",
 					"from": [ -48.0, 0.0, 0.0 ],
 					"to": [ -32.0, 1.0, 16.0 ],
+					"renderPass": 3,
 					"rotationOrigin": [ -48.0, 0.0, 0.0 ],
 					"faces": {
 						"north": { "texture": "#null", "uv": [ 0.0, 0.0, 16.0, 1.0 ], "enabled": false },
@@ -574,6 +579,7 @@
 			"name": "Platform6",
 			"from": [ 16.0, 46.9, 32.0 ],
 			"to": [ 32.0, 47.9, 48.0 ],
+			"renderPass": 3,
 			"rotationOrigin": [ 16.0, 46.9, 32.0 ],
 			"faces": {
 				"north": { "texture": "#null", "uv": [ 0.0, 0.0, 16.0, 1.0 ], "enabled": false },
@@ -588,6 +594,7 @@
 					"name": "Platform7",
 					"from": [ -16.0, 0.0, 0.0 ],
 					"to": [ 0.0, 1.0, 16.0 ],
+					"renderPass": 3,
 					"rotationOrigin": [ -16.0, 0.0, 0.0 ],
 					"faces": {
 						"north": { "texture": "#null", "uv": [ 0.0, 0.0, 16.0, 1.0 ], "enabled": false },
@@ -602,6 +609,7 @@
 					"name": "Platform8",
 					"from": [ -32.0, 0.0, 0.0 ],
 					"to": [ -16.0, 1.0, 16.0 ],
+					"renderPass": 3,
 					"rotationOrigin": [ -32.0, 0.0, 0.0 ],
 					"faces": {
 						"north": { "texture": "#null", "uv": [ 0.0, 0.0, 16.0, 1.0 ], "enabled": false },
@@ -616,6 +624,7 @@
 					"name": "Platform9",
 					"from": [ -48.0, 0.0, 0.0 ],
 					"to": [ -32.0, 1.0, 16.0 ],
+					"renderPass": 3,
 					"rotationOrigin": [ -48.0, 0.0, 0.0 ],
 					"faces": {
 						"north": { "texture": "#null", "uv": [ 0.0, 0.0, 16.0, 1.0 ], "enabled": false },
@@ -630,6 +639,7 @@
 					"name": "Platform11",
 					"from": [ 16.0, 0.0, -32.0 ],
 					"to": [ 32.0, 1.0, -16.0 ],
+					"renderPass": 3,
 					"rotationOrigin": [ 16.0, 0.0, -32.0 ],
 					"faces": {
 						"north": { "texture": "#null", "uv": [ 0.0, 0.0, 16.0, 1.0 ], "enabled": false },
@@ -644,6 +654,7 @@
 					"name": "Platform12",
 					"from": [ -32.0, 0.0, -32.0 ],
 					"to": [ -16.0, 1.0, -16.0 ],
+					"renderPass": 3,
 					"rotationOrigin": [ -32.0, 0.0, -32.0 ],
 					"faces": {
 						"north": { "texture": "#null", "uv": [ 0.0, 0.0, 16.0, 1.0 ], "enabled": false },
@@ -658,6 +669,7 @@
 					"name": "Platform13",
 					"from": [ -48.0, 0.0, -32.0 ],
 					"to": [ -32.0, 1.0, -16.0 ],
+					"renderPass": 3,
 					"rotationOrigin": [ -48.0, 0.0, -32.0 ],
 					"faces": {
 						"north": { "texture": "#null", "uv": [ 0.0, 0.0, 16.0, 1.0 ], "enabled": false },
@@ -672,6 +684,7 @@
 					"name": "Platform22",
 					"from": [ 16.0, 0.0, -48.0 ],
 					"to": [ 32.0, 1.0, -32.0 ],
+					"renderPass": 3,
 					"rotationOrigin": [ 16.0, 0.0, -48.0 ],
 					"faces": {
 						"north": { "texture": "#null", "uv": [ 0.0, 0.0, 16.0, 1.0 ], "enabled": false },
@@ -686,6 +699,7 @@
 					"name": "Platform23",
 					"from": [ 16.0, 0.0, -64.0 ],
 					"to": [ 32.0, 1.0, -48.0 ],
+					"renderPass": 3,
 					"rotationOrigin": [ 16.0, 0.0, -64.0 ],
 					"faces": {
 						"north": { "texture": "#gunmetal-lightgray", "uv": [ 0.0, 0.0, 16.0, 1.0 ] },
@@ -702,6 +716,7 @@
 			"name": "Platform14",
 			"from": [ 16.0, 46.9, -16.0 ],
 			"to": [ 32.0, 47.9, 0.0 ],
+			"renderPass": 3,
 			"rotationOrigin": [ 16.0, 46.9, -16.0 ],
 			"faces": {
 				"north": { "texture": "#null", "uv": [ 0.0, 0.0, 16.0, 1.0 ], "enabled": false },
@@ -716,6 +731,7 @@
 					"name": "Platform15",
 					"from": [ -16.0, 0.0, 0.0 ],
 					"to": [ 0.0, 1.0, 16.0 ],
+					"renderPass": 3,
 					"rotationOrigin": [ -16.0, 0.0, 0.0 ],
 					"faces": {
 						"north": { "texture": "#null", "uv": [ 0.0, 0.0, 16.0, 1.0 ], "enabled": false },
@@ -730,6 +746,7 @@
 					"name": "Platform16",
 					"from": [ -32.0, 0.0, 0.0 ],
 					"to": [ -16.0, 1.0, 16.0 ],
+					"renderPass": 3,
 					"rotationOrigin": [ -32.0, 0.0, 0.0 ],
 					"faces": {
 						"north": { "texture": "#null", "uv": [ 0.0, 0.0, 16.0, 1.0 ], "enabled": false },
@@ -744,6 +761,7 @@
 					"name": "Platform17",
 					"from": [ -48.0, 0.0, 0.0 ],
 					"to": [ -32.0, 1.0, 16.0 ],
+					"renderPass": 3,
 					"rotationOrigin": [ -48.0, 0.0, 0.0 ],
 					"faces": {
 						"north": { "texture": "#null", "uv": [ 0.0, 0.0, 16.0, 1.0 ], "enabled": false },
@@ -760,6 +778,7 @@
 			"name": "Platform18",
 			"from": [ 16.0, 46.9, -32.0 ],
 			"to": [ 32.0, 47.9, -16.0 ],
+			"renderPass": 3,
 			"rotationOrigin": [ 16.0, 46.9, -32.0 ],
 			"faces": {
 				"north": { "texture": "#gunmetal-lightgray", "uv": [ 0.0, 0.0, 16.0, 1.0 ] },
@@ -774,6 +793,7 @@
 					"name": "Platform19",
 					"from": [ -16.0, 0.0, 0.0 ],
 					"to": [ 0.0, 1.0, 16.0 ],
+					"renderPass": 3,
 					"rotationOrigin": [ -16.0, 0.0, 0.0 ],
 					"faces": {
 						"north": { "texture": "#gunmetal-lightgray", "uv": [ 0.0, 0.0, 16.0, 1.0 ] },
@@ -788,6 +808,7 @@
 					"name": "Platform20",
 					"from": [ -32.0, 0.0, 0.0 ],
 					"to": [ -16.0, 1.0, 16.0 ],
+					"renderPass": 3,
 					"rotationOrigin": [ -32.0, 0.0, 0.0 ],
 					"faces": {
 						"north": { "texture": "#gunmetal-lightgray", "uv": [ 0.0, 0.0, 16.0, 1.0 ] },
@@ -802,6 +823,7 @@
 					"name": "Platform21",
 					"from": [ -48.0, 0.0, 0.0 ],
 					"to": [ -32.0, 1.0, 16.0 ],
+					"renderPass": 3,
 					"rotationOrigin": [ -48.0, 0.0, 0.0 ],
 					"faces": {
 						"north": { "texture": "#gunmetal-lightgray", "uv": [ 0.0, 0.0, 16.0, 1.0 ] },
