@@ -129,6 +129,7 @@ namespace VintageEngineering.Blocks
             {
                 return null;
             }
+            if (fillHeight < 0.005) fillHeight += 0.01f;
             
            
             Shape shape = Vintagestory.API.Common.Shape.TryGet(capi, "vinteng:shapes/block/fluidtankliquid.json");
