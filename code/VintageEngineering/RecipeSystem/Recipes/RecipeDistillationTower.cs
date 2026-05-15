@@ -139,6 +139,11 @@ namespace VintageEngineering.RecipeSystem.Recipes
 
             if (!Ingredients[0].SatisfiesAsIngredient(ingredient.Itemstack, true)) return false;
 
+            if (NumExtensions == 0 && Outputs.Length > 2)
+            {
+                NumExtensions = Outputs.Length - 2;
+            }
+
             if (NumExtensions != l_numExtensions) return false;
 
             if (Requires != null) // unused, but left in... if this recipe requires something, we need to check for it in the requires slot
@@ -295,7 +300,7 @@ namespace VintageEngineering.RecipeSystem.Recipes
                 ok &= this.Outputs[i].Resolve(world, sourceForErrorLogging, true);
                 if (this.Outputs[i].ResolvedItemstack != null) 
                 {
-                    if (this.Outputs[i].ResolvedItemstack.Collectible.IsLiquid()) numFluidOutputs++;
+                    if (this.Outputs[i].ResolvedItemstack.Collectible.MatterState == EnumMatterState.Liquid) numFluidOutputs++;
                 }
             }
             NumExtensions = numFluidOutputs-1;
