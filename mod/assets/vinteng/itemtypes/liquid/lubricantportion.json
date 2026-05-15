@@ -16,6 +16,12 @@
 				"action": "DropContents",
 				"stack": { "type": "item", "code": "vinteng:lubricantportion" }
 			}
+		},
+		"liquidfuel": {
+			"pps": 800,
+			"duration": 5,
+			"burntemp": 1920,
+			"soot": 25
 		}
 	},
 	"shape": { "base": "game:item/liquid" },
