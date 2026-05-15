@@ -14,6 +14,7 @@ using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
+using Vintagestory.API.Util;
 using Vintagestory.GameContent;
 
 namespace VintageEngineering 
@@ -34,7 +35,7 @@ namespace VintageEngineering
         private ICoreServerAPI sapi;
         private ICoreClientAPI capi;        
 
-        // Min power draw is 2k pps, max power draw is currently 6000 pps. This can be tuned.
+        // Min power draw is 2k pps, max power draw is currently 5000 pps. This can be tuned.
 
         /// <summary>
         /// What the FirstCodePart is for the Stackable Extension to this machine
@@ -75,7 +76,7 @@ namespace VintageEngineering
                 if (_inventory[0].Empty || _currentRecipe == null) return 0f;
                 else
                 {
-                    return _recipePowerApplied / _currentRecipe.PowerPerCraft;
+                    return (_recipePowerApplied / (float)_currentRecipe.PowerPerCraft);
                 }
             }
         }
@@ -285,6 +286,13 @@ namespace VintageEngineering
                 FindMatchingRecipe();
             }
         }
+        private ItemSlot GetAutoPullFromSlot(BlockFacing atBlockFace)
+        {
+            BlockFacing us = BlockFacing.FromCode(Block.Variant["side"]);
+            if (us.Opposite == atBlockFace) return _inventory[1];
+            if (us.GetCW() == atBlockFace) return _inventory[2];
+            return null;
+        }
 
         public ItemSlot GetAutoPushIntoSlot(BlockFacing face, ItemSlot fromSlot)
         {
@@ -303,6 +311,7 @@ namespace VintageEngineering
             });
             _inventory.SlotModified += SlotModified;
             _inventory.OnGetAutoPushIntoSlot = GetAutoPushIntoSlot;
+            _inventory.OnGetAutoPullFromSlot = GetAutoPullFromSlot;
         }
 
         public override void Initialize(ICoreAPI api)
@@ -317,7 +326,7 @@ namespace VintageEngineering
             if (api.Side == EnumAppSide.Server)
             {
                 sapi = api as ICoreServerAPI;
-                RegisterGameTickListener(new Action<float>(OnSimTick), 100, 1000); // 10 TPS standard machine
+                RegisterGameTickListener(new Action<float>(OnSimTick), 100, 4000); // 10 TPS standard machine
             }
             else
             {
@@ -358,13 +367,14 @@ namespace VintageEngineering
         public void OnSimTick(float dt)
         {
             if (Api.Side == EnumAppSide.Client) return;
+            _extensionValidationDelay += dt;
             if (Electric.IsSleeping)
             {
                 _updateBouncer += dt;
                 if (_updateBouncer < 2f) return;
                 _updateBouncer = 0f;
             }
-            _extensionValidationDelay += dt;
+            
             if (_extensionValidationDelay > 120f)
             {
                 _extensionValidationDelay = 0f;
@@ -374,11 +384,15 @@ namespace VintageEngineering
 
             if (IsBuilt && Electric.MachineState == EnumBEState.On)
             {
-                long ratedpow = (long)((Electric.MaxPPS + (ulong)(_numExtensions * _extensionPPS)) * dt);                
+                long ratedpow = (long)(Electric.MaxPPS * dt);                
                 if (Electric.CurrentPower == 0 || Electric.CurrentPower < (ulong)ratedpow) return;
 
                 if (_currentRecipe != null)
                 {
+                    if (_currentRecipe.NumExtensions != _numExtensions)
+                    {
+                        FindMatchingRecipe();
+                    }
                     if (!HasRoomInOutput(-1, null) || AnyExtensionFull()) return;
 
                     if (RecipeProgress < 1f)
@@ -398,15 +412,17 @@ namespace VintageEngineering
                             outputs[i + 2] = Api.World.BlockAccessor.GetBlockEntity<BEMBDistillationExt>(_extensionPositions[i])?.OutputTank;
                         }
                         _currentRecipe.TryCraft(Api, InputSlot, outputs);
+                        Electric.electricpower -= (ulong)ratedpow;
+                        //_recipePowerApplied = 0;
+                        FindMatchingRecipe();
                     }
                 }
-
-                _clientUpdateDelay += dt;
-                if (_clientUpdateDelay >= 0.5f)
-                {
-                    _clientUpdateDelay = 0f;
-                    MarkDirty(true);
-                }
+            }
+            _clientUpdateDelay += dt;
+            if (_clientUpdateDelay >= 0.5f)
+            {
+                _clientUpdateDelay = 0f;
+                MarkDirty(true);
             }
         }
 
@@ -417,12 +433,19 @@ namespace VintageEngineering
             BlockPos aboveus = Pos.Copy();
             aboveus.Up(4);
             int numextfound = 0;
+            int air_continuous = 0;
 
             while (aboveus.Y < 256)
             {
                 Block blockabove = Api.World.BlockAccessor.GetBlock(aboveus);
                 string abovecode = blockabove.Code.Path;
-                if (blockabove.Id == 0) break; // exit on first air block detected (should also include rock and soil, etc)...
+                if (blockabove.Id == 0)
+                {
+                    air_continuous++;
+                    if (air_continuous > 3) break;
+                    aboveus.Up(1);
+                    continue;
+                }
                 // would it be better to do a whitelist rather than a blacklist? Doubtful as any block could be a building block.
                 if (abovecode.Contains("rock") || abovecode.Contains("soil") || abovecode.Contains("glass") || abovecode.Contains("forestfloor") || abovecode.Contains("clay")) break;
 
@@ -443,9 +466,15 @@ namespace VintageEngineering
                     Api.World.BlockAccessor.GetBlockEntity<BEMBDistillationExt>(aboveus)?.FindValidateBase();
                     numextfound++;
                 }
+                air_continuous = 0;
                 aboveus.Up(1);
             }
             _numExtensions = numextfound;
+            if (_numExtensions > 0)
+            {
+                ulong addedpower = (ulong)(_numExtensions * _extensionPPS);
+                Electric.SetMaxPPS(addedpower, true);
+            }
             return true;
         }
         // A call for an extension that is built above the base to tell the the base to revalidate
@@ -467,6 +496,7 @@ namespace VintageEngineering
             dsc.AppendLine($"{Lang.Get("vinteng:gui-word-output")}: {IconHelper.PercentToBar(PercentOutputTank, 10)} {PercentOutputTank:N0}% {outputfluid}");
             dsc.AppendLine($"{Lang.Get("vinteng:gui-word-power")}: {IconHelper.PercentToBar(percentpower, 10)} {percentpower:N0}%");
             dsc.AppendLine($"#{Lang.Get("vinteng:gui-word-extensions")}: {_numExtensions}");
+            dsc.AppendLine($"Craft {IconHelper.PercentToBar((int)(RecipeProgress*100), 10)} {(RecipeProgress*100):N1}%");
         }
 
         public override bool OnPlayerRightClick(IPlayer byPlayer, BlockSelection blockSel)
@@ -533,14 +563,17 @@ namespace VintageEngineering
             tree["inventory"] = invtree;
             tree.SetString("machinestate", Electric.MachineState.ToString());
             tree.SetLong("recipepower", _recipePowerApplied);
+            tree.SetInt("numext", _numExtensions);
         }
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldForResolving)
         {
             base.FromTreeAttributes(tree, worldForResolving);
-            _inventory.FromTreeAttributes(tree.GetTreeAttribute("inventory"));
-            _recipePowerApplied = tree.GetLong("recipepower");
+            _inventory.FromTreeAttributes(tree.GetTreeAttribute("inventory"));            
+            _numExtensions = tree.GetInt("numext", 0);
             EnumBEState syncstate = Enum.Parse<EnumBEState>(tree.GetString("machinestate", "On"));
             if (Electric.MachineState != syncstate) SetState(syncstate);
+            FindMatchingRecipe();
+            _recipePowerApplied = tree.GetLong("recipepower");
         }
 
         #endregion

@@ -133,12 +133,7 @@ namespace VintageEngineering
 
         private void SlotModified(int slotid)
         {
-            _clientUpdateDelay += 0.2f;
-            if (_clientUpdateDelay >= 0.5f)
-            {
-                _clientUpdateDelay = 0f;
-                MarkDirty(true);
-            }
+            MarkDirty(true);
         }
 
         public ItemSlot GetAutoPushIntoSlot(BlockFacing face, ItemSlot fromSlot)
@@ -187,6 +182,7 @@ namespace VintageEngineering
 
         public bool FindValidateBase()
         {
+            if (Api == null) return false;
             if (_distillationBase == null)
             {
                 BlockPos us = this.Pos.Copy();
@@ -195,6 +191,10 @@ namespace VintageEngineering
                 {
                     // this needs to ignore any odd blocks as we can't be sure the order these are loaded into the world
                     Block below = Api.World.BlockAccessor.GetBlock(us);
+                    string belowcode = below.Code.Path;
+                    
+                    if (belowcode.Contains("rock") || belowcode.Contains("soil") || belowcode.Contains("glass") || belowcode.Contains("forestfloor") || belowcode.Contains("clay")) break;
+
                     if (below.Code.Path.Contains(_baseCode)) 
                     { 
                         _distillationBase = us.Copy();
