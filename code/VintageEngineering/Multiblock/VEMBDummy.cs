@@ -490,8 +490,8 @@ namespace VintageEngineering.Multiblock
 
         public override T GetInterface<T>(IWorldAccessor world, BlockPos pos)
         {
-            Vec3i offsetinv = -GetOffset(pos);
             if (pos == null) return base.GetInterface<T>(world, pos);
+            Vec3i offsetinv = -GetOffset(pos);
 
             T blockt = this as T;
             if (blockt != null)
