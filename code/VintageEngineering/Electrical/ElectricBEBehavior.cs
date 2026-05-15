@@ -96,15 +96,12 @@ namespace VintageEngineering.Electrical
 
         public ulong CurrentPower => electricpower;
 
+        private ulong _maxPPS = 0;
         public virtual ulong MaxPPS
         {
             get
             {
-                if (properties != null)
-                {
-                    return (ulong)properties["maxpps"].AsDouble(0);
-                }
-                return 0;
+                return _maxPPS;
             }
         }
 
@@ -131,6 +128,15 @@ namespace VintageEngineering.Electrical
         public bool IsSleeping => machineState == EnumBEState.Sleeping;
 
         public bool IsEnabled => machineState != EnumBEState.Off;
+
+        public virtual void SetMaxPPS(ulong _maxpps, bool _addtobase)
+        {
+            if (_addtobase)
+            {
+                _maxPPS = (ulong)properties["maxpps"].AsDouble(0) + _maxpps;
+            }
+            else _maxPPS = _maxpps;
+        }
 
         public virtual void CheatPower(bool drain = false)
         {
@@ -206,7 +212,7 @@ namespace VintageEngineering.Electrical
             if (CurrentPower >= MaxPower) return powerOffered; // we're full, bounce fast
 
             // what is the max power transfer of this machine for this DeltaTime update tick?
-            ulong pps = (ulong)Math.Round(MaxPPS * dt); // rounding issues abound
+            ulong pps = (ulong)Math.Round((MaxPPS*1.05) * dt); // rounding issues abound
 
             if (pps == 0) pps = ulong.MaxValue; // PPS of 0 means NO LIMIT ***This would break recipes, aka InstaCraft ***
             else pps += 2;
@@ -300,6 +306,9 @@ namespace VintageEngineering.Electrical
 
             CanExtractPower = properties["canExtractPower"].AsBool();
             CanReceivePower = properties["canReceivePower"].AsBool();
+
+            if (CanExtractPower || CanReceivePower) _maxPPS = (ulong)properties["maxpps"].AsDouble(0);
+            else _maxPPS = 0;
 
             // if we're initializing this, it can be assumed it's loaded
             IsLoaded = true;
