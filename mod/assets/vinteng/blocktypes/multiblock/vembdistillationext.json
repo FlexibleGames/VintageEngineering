@@ -25,6 +25,7 @@
 			"attachable": [
 			],
 			"attributes": [
+				{ "w": 6, "attributes": { "isfacing": true, "orientation": "opposite" } }
 			],
 			"multiblockStructure": {
 				"blockNumbers": {
@@ -33,7 +34,7 @@
 					"vinteng:vembdistillationext-incomplete-north": 3,
 					"vinteng:vemultiblockio-interaction": 4,
 					"vinteng:vembcomponent-lighteng": 5,
-					"vinteng:metalladder-steel-south": 6,
+					"vinteng:metalladder-steel-*": 6,
 					"vinteng:vemultiblockio-fluid": 7
 				},
 				"offsets": [

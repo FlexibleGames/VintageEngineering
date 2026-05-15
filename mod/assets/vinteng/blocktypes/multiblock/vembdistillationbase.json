@@ -51,7 +51,7 @@
 					"vinteng:vembcomponent-heavyeng": 7,
 					"vinteng:vembcomponent-lighteng": 8,
 					"vinteng:vemultiblockio-power": 9,
-					"vinteng:metalladder-steel-south": 10,
+					"vinteng:metalladder-steel-*": 10,
 					"vinteng:vemultiblockio-item": 11,
 					"vinteng:vemultiblockio-fluid": 12
 				},
