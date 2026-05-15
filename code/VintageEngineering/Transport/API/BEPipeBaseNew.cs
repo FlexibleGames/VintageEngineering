@@ -641,7 +641,10 @@ namespace VintageEngineering.Transport.API
                 // someone placed something that has insert/extract potential
                 _insertNodes ??= new();
                 PipeInsertNode newinsert = new PipeInsertNode(neighbor, face.Opposite, string.Empty, 0);
-                _insertNodes.Add(face.Opposite.Index, newinsert);
+                if (!_insertNodes.ContainsKey(face.Opposite.Index))
+                {
+                    _insertNodes.Add(face.Opposite.Index, newinsert);
+                }
                 insertionSides[face.Opposite.Index] = true;
                 numInsertionConnections++;
                 List<PipeInsertNode> newnodelist = [newinsert];
