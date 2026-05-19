@@ -99,6 +99,16 @@ namespace VintageEngineering.Electrical
         ulong ExtractPower(ulong powerWanted, float dt, bool simulate = false);
 
         /// <summary>
+        /// Special Call for Batteries/Transformers/Toggles that the directionality of the power can be controlled.
+        /// </summary>
+        /// <param name="power">Power Offered/Required</param>
+        /// <param name="dt">Deltatime</param>
+        /// <param name="simulate">True to not change power values</param>
+        /// <param name="isInsert">True to insert power, false to extract it.</param>
+        /// <returns>Power left over or Unfulfilled.</returns>
+        ulong StoragePower(ulong power, float dt, bool simulate, bool isInsert);
+
+        /// <summary>
         /// Completely fill (or drain) power buffer.<br/>
         /// A fast way for Electrical Networks to process power for this entity.<br/>        
         /// </summary>

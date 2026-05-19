@@ -160,15 +160,33 @@ namespace VintageEngineering.Electrical
             ulong rate = ((ulong)Math.Round(MaxPPS * dt));
             if (isInsert)
             {
+                if (!CanReceivePower) return 0;
                 ulong emptycap = MaxPower - CurrentPower;
                 return emptycap < rate ? emptycap : rate;
             }
             else
             {
                 // extracting
+                if (!CanExtractPower) return 0;
                 if (CurrentPower == 0) return 0;
                 if (CurrentPower < rate) return CurrentPower;
                 return rate; // CurrentPower > rate ? rate : CurrentPower;
+            }
+        }
+
+        public virtual ulong StoragePower(ulong power, float dt, bool simulate, bool isInsert)
+        {
+            if (simulate)
+            {
+                return RatedPower(dt, isInsert);
+            }
+            if (isInsert)
+            {
+                return ReceivePower(power, dt, simulate);
+            }
+            else
+            {
+                return ExtractPower(power, dt, simulate);
             }
         }
 
@@ -177,8 +195,10 @@ namespace VintageEngineering.Electrical
             if (MachineState == EnumBEState.Off || !CanExtractPower) return powerWanted; // machine is off, bounce.
             if (electricpower == 0) return powerWanted; // we have no power to give
 
+            if (simulate) return RatedPower(dt, false);
+
             // what is the max power transfer of this machine for this DeltaTime update tick?
-            ulong pps = (ulong)Math.Round(MaxPPS * dt); // rounding issues abound
+            ulong pps = (ulong)Math.Round((MaxPPS * 1.05) * dt); // rounding issues abound
             // pps at this point is the PPS from JSON multiplied by DeltaTime (fractional second timing).
             // NOT going to deal with fractinal amounts of power. So Rounding errors are expected.
 
@@ -191,15 +211,13 @@ namespace VintageEngineering.Electrical
             if (pps >= powerWanted) // this will probably rarely fire.
             {
                 // PPS meets or exceeds power wanted, this machine can cover all power needs.
-                if (!simulate) electricpower -= powerWanted;
-                //Blockentity.MarkDirty(true);
+                if (!simulate) electricpower -= powerWanted;                
                 return 0; // all power wanted was supplied
             }
             else
             {
                 // powerWanted exceeds how much we can supply
-                if (!simulate) electricpower -= pps; // simulation mode doesn't change machines power total.
-                //Blockentity.MarkDirty(true);
+                if (!simulate) electricpower -= pps; // simulation mode doesn't change machines power total.                
                 return powerWanted - pps; // return powerWanted reduced by our PPS.
             }
         }
@@ -210,6 +228,8 @@ namespace VintageEngineering.Electrical
 
             // The == was changed to >= to ensure rebalancing machine power values don't break the system.
             if (CurrentPower >= MaxPower) return powerOffered; // we're full, bounce fast
+
+            if (simulate) return RatedPower(dt, true);
 
             // what is the max power transfer of this machine for this DeltaTime update tick?
             ulong pps = (ulong)Math.Round((MaxPPS*1.05) * dt); // rounding issues abound
@@ -226,15 +246,13 @@ namespace VintageEngineering.Electrical
             if (pps >= powerOffered)  // if amount we can take exceeds amount offered
             {
                 // meaning we can take it all.
-                if (!simulate) electricpower += powerOffered;
-                //Blockentity.MarkDirty(true);
+                if (!simulate) electricpower += powerOffered;                
                 return 0;
             }
             else
             {
                 // far more common, powerOffered exceeds PPS
-                if (!simulate) electricpower += pps;
-                //Blockentity.MarkDirty(true);
+                if (!simulate) electricpower += pps;                
                 return powerOffered - pps;
             }
         }
@@ -414,15 +432,7 @@ namespace VintageEngineering.Electrical
                         stringBuilder.AppendLine($"Node {node.index} : No Network.");
                     }
                 }
-            }
-            //if (electricConnections.Count == 0)
-            //{
-            //    return "No Network";
-            //}
-            //foreach (KeyValuePair<int, List<WireNode>> pair in electricConnections)
-            //{
-            //    stringBuilder.AppendLine($"Node {pair.Key} has {((pair.Value == null) ? "null!" : pair.Value.Count)} cons on id {(NetworkIDs.ContainsKey(pair.Key) ? NetworkIDs[pair.Key] : "NULL!")}");
-            //}            
+            }       
             return stringBuilder.ToString().TrimEnd();
         }
 

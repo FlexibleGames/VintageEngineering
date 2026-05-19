@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using VintageEngineering.Electrical;
+using VintageEngineering.GUI;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 
@@ -29,25 +30,7 @@ namespace VintageEngineering
             dsc.AppendLine();
             double percentfull = ((double)Electric.CurrentPower / Electric.MaxPower);
             int wholepercent = (int)(percentfull * 100);
-            int numexes = wholepercent / 10;
-            string exes = "";
-            switch (numexes)
-            {
-                case 0: exes = "----------"; break;
-                case 1: exes = "X---------"; break;
-                case 2: exes = "XX--------"; break;
-                case 3: exes = "XXX-------"; break;
-                case 4: exes = "XXXX------"; break;
-                case 5: exes = "XXXXX-----"; break;
-                case 6: exes = "XXXXXX----"; break;
-                case 7: exes = "XXXXXXX---"; break;
-                case 8: exes = "XXXXXXXX--"; break;
-                case 9: exes = "XXXXXXXXX-"; break;
-                case 10: exes = "XXXXXXXXXX"; break;
-                default: break;
-            }
-
-            dsc.AppendLine($"{Lang.Get("vinteng:gui-word-power")}: {exes} {wholepercent:N0}%");
+            dsc.AppendLine($"{Lang.Get("vinteng:gui-word-power")}: {IconHelper.PercentToBar(wholepercent, 10)} {wholepercent:N0}%");
         }
     }
 }
