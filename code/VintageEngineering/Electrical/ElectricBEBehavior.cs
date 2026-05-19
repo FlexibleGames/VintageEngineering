@@ -160,15 +160,33 @@ namespace VintageEngineering.Electrical
             ulong rate = ((ulong)Math.Round(MaxPPS * dt));
             if (isInsert)
             {
+                if (!CanReceivePower) return 0;
                 ulong emptycap = MaxPower - CurrentPower;
                 return emptycap < rate ? emptycap : rate;
             }
             else
             {
                 // extracting
+                if (!CanExtractPower) return 0;
                 if (CurrentPower == 0) return 0;
                 if (CurrentPower < rate) return CurrentPower;
                 return rate; // CurrentPower > rate ? rate : CurrentPower;
+            }
+        }
+
+        public virtual ulong StoragePower(ulong power, float dt, bool simulate, bool isInsert)
+        {
+            if (simulate)
+            {
+                return RatedPower(dt, isInsert);
+            }
+            if (isInsert)
+            {
+                return ReceivePower(power, dt, simulate);
+            }
+            else
+            {
+                return ExtractPower(power, dt, simulate);
             }
         }
 
@@ -178,7 +196,7 @@ namespace VintageEngineering.Electrical
             if (electricpower == 0) return powerWanted; // we have no power to give
 
             // what is the max power transfer of this machine for this DeltaTime update tick?
-            ulong pps = (ulong)Math.Round(MaxPPS * dt); // rounding issues abound
+            ulong pps = (ulong)Math.Round((MaxPPS * 1.05) * dt); // rounding issues abound
             // pps at this point is the PPS from JSON multiplied by DeltaTime (fractional second timing).
             // NOT going to deal with fractinal amounts of power. So Rounding errors are expected.
 
