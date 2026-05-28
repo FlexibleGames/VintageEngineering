@@ -56,17 +56,17 @@ namespace VintageEngineering.API
             Pos = pos;
             Distance = Pos.DistanceTo(fromOrigin);
         }
-        
+
         public static bool operator ==(BlockPosAndDist lhs, BlockPosAndDist rhs)
         {
-            if (lhs == null) return rhs == null;
-
-            return lhs.Equals(rhs); 
+            if (ReferenceEquals(lhs, null)) return ReferenceEquals(rhs, null);
+            if (ReferenceEquals(rhs, null)) return false;
+            return lhs.Pos == rhs.Pos;
         }
 
         public static bool operator !=(BlockPosAndDist lhs, BlockPosAndDist rhs)
-        { 
-            return !(lhs == rhs); 
+        {
+            return !(lhs == rhs);
         }
         public static bool operator <(BlockPosAndDist lhs, BlockPosAndDist rhs)
         {            
@@ -79,11 +79,11 @@ namespace VintageEngineering.API
 
         public bool Equals(BlockPosAndDist other)
         {
-            if (other == null) return false;
-            return (this.Distance == other.Distance);
+            if (ReferenceEquals(other, null)) return false;
+            return this.Pos == other.Pos;
         }
         public override bool Equals(object obj)
-        {
+        {            
             return Equals(obj as BlockPosAndDist);
         }
         public override int GetHashCode()
