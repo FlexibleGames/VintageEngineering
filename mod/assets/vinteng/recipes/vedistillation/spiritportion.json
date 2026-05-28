@@ -1,0 +1,15 @@
+[
+{
+	"code": "spirit-no-ext",
+	"powerpercraft": 2000,
+	"attributes": {
+		"soot": 1
+	},
+	"ingredients": [
+		{ "type": "item", "code": "game:spiritportion-*", "litres": 1  }
+	],
+	"outputs": [
+		{ "type": "item", "code": "game:alcoholportion", "litres": 0.5, "slotid": 2 }
+	]
+}
+]

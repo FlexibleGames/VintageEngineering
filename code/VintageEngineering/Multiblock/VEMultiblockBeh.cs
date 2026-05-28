@@ -130,6 +130,16 @@ namespace VintageEngineering.Multiblock
         {
             mbs.ClearHighlights(world, byPlayer);
             BlockPos core = pos.AddCopy(offset);
+
+            ElectricContainerBE corebaseentity = world.BlockAccessor.GetBlockEntity<ElectricContainerBE>(core);
+            if (corebaseentity != null)
+            {
+                if (corebaseentity.AnimUtil != null && corebaseentity.AnimUtil.activeAnimationsByAnimCode.Count > 0)
+                {
+                    corebaseentity.AnimUtil.StopAnimation(corebaseentity.Block.Attributes["craftinganimcode"].AsString());
+                }
+            }
+
             mbs.SwapBlocks(world, core, false, base.block.Variant["side"]);
             Block newcore = world.GetBlock(base.block.CodeWithVariant("state", "incomplete"));
             VEMBEntityCore coreentity = world.BlockAccessor.GetBlockEntity<VEMBEntityCore>(core);

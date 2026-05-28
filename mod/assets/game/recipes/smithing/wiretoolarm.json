@@ -9,5 +9,6 @@
 		"_______________"
 	]],
 	"name": "2 Metal Tool arms",
+	"code": "wiretoolarm-{metal}",
 	"output": { "type": "item", "code": "game:wiretoolarm-{metal}", "stacksize": 2  }
 }

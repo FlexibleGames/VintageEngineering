@@ -200,7 +200,7 @@ namespace VintageEngineering
                 }
                 _wellValidationDelay = 0f;
             }
-            if (Electric.CurrentPower == 0 || Electric.CurrentPower < Electric.RatedPower(dt, false))
+            if (Electric.CurrentPower == 0 || Electric.CurrentPower < ((Electric.MaxPPS * dt) + 1)) // Electric.RatedPower(dt, false))
             {
                 // if we're supposed to be on, but we don't have enough power, sleep
                 if (newstate == EnumBEState.On) newstate = EnumBEState.Sleeping;
@@ -223,7 +223,13 @@ namespace VintageEngineering
                     // grab all valid source blocks at or above current pos
                     BuildPumpableFluidLayer(_wellPosition);
                 }
-                if (_currentLayer.Count == 0) return; // still nothing to pump...
+                if (_currentLayer.Count == 0) 
+                {
+                    // if we still have nothing to pump, we might have to progress the well down
+                    _wellPosition = GetFirstPumpablePosition(_wellPosition);
+                    if (_wellPosition == null) return;
+                    if (!BuildPumpableFluidLayer(_wellPosition)) return;                    
+                }
 
                 Block fluidblock = sapi.World.GetBlock(new AssetLocation(_wellFluidBlockCode));
                 ItemStack portionstack = new ItemStack(fluidblock);
@@ -269,6 +275,7 @@ namespace VintageEngineering
                     Output.Itemstack = fluidstack;
                 }
                 sapi.World.BlockAccessor.SetBlock(0, nextone.Pos, BlockLayersAccess.Fluid);
+                sapi.World.BlockAccessor.TriggerNeighbourBlockUpdate(nextone.Pos);
                 _lastPumpDelta = 0f;
 
                 if (_currentLayer.Count == 1)
@@ -280,6 +287,7 @@ namespace VintageEngineering
                         _wellPosition.Down(1);
                         Block casing = sapi.World.GetBlock(new AssetLocation(_wellCasingCode));
                         sapi.World.BlockAccessor.SetBlock(casing.Id, nextone.Pos);
+                        sapi.World.BlockAccessor.TriggerNeighbourBlockUpdate(nextone.Pos);
                         _inventory[0].TakeOut(1);
                     }
                 }
@@ -287,7 +295,7 @@ namespace VintageEngineering
                 {
                     _currentLayer.Remove(nextone);
                 }
-                Electric.electricpower -= Electric.RatedPower(dt, false);
+                Electric.electricpower -= ((ulong)(Electric.MaxPPS * dt));
 
             }
             if (MachineState != newstate) SetState(newstate);
@@ -421,22 +429,47 @@ namespace VintageEngineering
         {
             if (Api == null || sapi == null) return null;
             Block casing = Api.World.GetBlock(new AssetLocation(Block.Attributes["wellCasingCode"].AsString()));
+            if (casing == null) return null;
+            // we are out of casing or we have invalid casing, bounce
+            if (InputSlot.Empty || InputSlot.Itemstack.Collectible.Code != _wellCasingCode) return null;
+
             while (start.Y > 0)
             {
-                // TODO: Place Casing as search finds air or invalid (not matching filter) fluids
+                // we ran out of casing or we have invalid casing, bounce
+                if (InputSlot.Empty || InputSlot.Itemstack.Collectible.Code != _wellCasingCode) return null;
+
                 Block blockat = sapi.World.BlockAccessor.GetBlock(start);
                 start.Down();
                 if (blockat == casing) continue;
                 else
                 {
-                    if (blockat.Id == 0) 
+                    if (blockat.Id == 0 || (blockat.IsLiquid() && blockat.LiquidLevel < 7))
                     {
-                        // we ran out of casing or we have invalid casing, bounce
-                        if (InputSlot.Empty || InputSlot.Itemstack.Collectible.Code != _wellCasingCode) return null;
-
+                        BlockPos startlook = start.AddCopy(10, 1, 10);
+                        BlockPos endlook = start.AddCopy(-10, 1, -10); // the bounding box of blocks to search.
+                        bool foundfluid = false;
+                        sapi.World.BlockAccessor.WalkBlocks(startlook, endlook, delegate (Block dblock, int x, int y, int z)
+                        {
+                            if (foundfluid == false && dblock.Id != 0 && dblock.IsLiquid())
+                            {
+                                if (_wellFluidBlockCode == string.Empty)
+                                {
+                                    _wellFluidBlockCode = dblock.Code;
+                                    _wellFluidCode = dblock.LiquidCode;
+                                }
+                                if (_wellFluidCode == dblock.LiquidCode && dblock.LiquidLevel == 7)
+                                {
+                                    blockat = dblock;
+                                    foundfluid = true;
+                                }
+                            }
+                        }, true);
+                    }
+                    if (blockat.Id == 0)
+                    { 
                         // set the casing and move on
-                        sapi.World.BlockAccessor.SetBlock(casing.Id, start);
-                        _inventory[1].TakeOut(1);
+                        sapi.World.BlockAccessor.SetBlock(casing.Id, start.UpCopy());
+                        _inventory[0].TakeOut(1);
                         continue; 
                     }
                     if (blockat.IsLiquid())
@@ -445,20 +478,20 @@ namespace VintageEngineering
                         {
                             _wellFluidBlockCode = blockat.Code;
                             _wellFluidCode = blockat.LiquidCode;
-                            return start; 
+                            return start.UpCopy();
                         }
-                        if (blockat.Code == _wellFluidBlockCode || blockat.LiquidCode == _wellFluidCode) return start;
+                        if (blockat.LiquidCode == _wellFluidCode && blockat.LiquidLevel == 7) return start.UpCopy();
                         else 
                         {
                             // set the casing and move on
-                            sapi.World.BlockAccessor.SetBlock(casing.Id, start);
-                            _inventory[1].TakeOut(1);
+                            sapi.World.BlockAccessor.SetBlock(casing.Id, start.UpCopy());
+                            _inventory[0].TakeOut(1);
                             continue; // its a fluid, but not the one we want, skip
                         }
                     }
                     else
                     {
-                        if (sapi.World.BlockAccessor.GetBlockEntity(start) is IFluidWell)
+                        if (sapi.World.BlockAccessor.GetBlockEntity(start.UpCopy()) is IFluidWell)
                         {
                             _wellCompleted = true;
                             return null;
@@ -469,7 +502,7 @@ namespace VintageEngineering
                             return null; 
                         }
                     }                    
-                }
+                }                
             }
             return null;
         }
@@ -701,9 +734,9 @@ namespace VintageEngineering
                     {
                         Animation = Block.Attributes["craftinganimcode"].AsString(),
                         Code = Block.Attributes["craftinganimcode"].AsString(),
-                        AnimationSpeed = 2f,
+                        AnimationSpeed = 1f,
                         EaseOutSpeed = 4f,
-                        EaseInSpeed = 1f
+                        EaseInSpeed = 4f
                     });
                 }
             }

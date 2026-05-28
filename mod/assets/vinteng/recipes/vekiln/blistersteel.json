@@ -4,8 +4,7 @@
 		"enabled": true,
 		"attributes": {
 			"requirestemp": 1600,
-			"requirestime": 30,
-			"_comment": "requirestime overrides powerpercraft and is a duration in seconds after the kiln reaches requirestemp temperature."
+			"requirestime": 30
 		},
 		"powerpercraft": 256,
 		"ingredients": [

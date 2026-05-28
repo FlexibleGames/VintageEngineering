@@ -1,0 +1,12 @@
+{
+	"ingredientPattern": "SPS,PBP,SHS",
+	"ingredients": {
+		"P": { "type": "block", "code": "vinteng:pipenew-fluid" },
+		"H": { "type": "block", "code": "vinteng:vesheetmetal-iron" },
+		"B": { "type": "block", "code": "vinteng:machineryblock-steel", "quantity": 1},
+		"S": { "type": "item", "code": "vinteng:screw-steel", "quantity": 1 }
+	},
+	"width": 3,
+	"height": 3,
+	"output": { "type": "block", "code": "vinteng:vembdistillationext-incomplete-north", "quantity": 1 }
+}

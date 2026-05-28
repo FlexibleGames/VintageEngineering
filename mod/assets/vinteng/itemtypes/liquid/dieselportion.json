@@ -18,8 +18,8 @@
 			}
 		},
 		"liquidfuel": {
-			"energykjs": 10,
-			"duration": 46,
+			"pps": 1000,
+			"duration": 5,
 			"burntemp": 2150,
 			"soot": 8.0
 		}

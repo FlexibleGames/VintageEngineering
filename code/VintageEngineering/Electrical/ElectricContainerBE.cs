@@ -22,7 +22,7 @@ namespace VintageEngineering.Electrical
         /// <summary>
         /// Utility for setting, starting, and stopping animations.
         /// </summary>
-        protected BlockEntityAnimationUtil AnimUtil
+        public BlockEntityAnimationUtil AnimUtil
         {
             get
             {

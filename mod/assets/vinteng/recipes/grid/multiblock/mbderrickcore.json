@@ -1,0 +1,13 @@
+{
+	"ingredientPattern": "SPS,FBF,STS",
+	"ingredients": {
+		"P": { "type": "block", "code": "vinteng:pipenew-fluid" },
+		"F": { "type": "block", "code": "vinteng:steelfence-steel-ew-free", "quantity": 2 },
+		"B": { "type": "block", "code": "vinteng:machineryblock-steel", "quantity": 1},
+		"T": { "type": "block", "code": "vinteng:treatedwood-horizontal-north", "quantity": 1},
+		"S": { "type": "item", "code": "vinteng:screw-steel", "quantity": 1 }
+	},
+	"width": 3,
+	"height": 3,
+	"output": { "type": "block", "code": "vinteng:vembderrick-incomplete-north", "quantity": 1 }
+}

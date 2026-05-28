@@ -30,11 +30,11 @@ namespace VintageEngineering.API
             if (this.Attributes["liquidfuel"].Exists)
             {
                 LiquidFuelProperties lfp = LiquidFuelProperties.FromJSON(this.Attributes["liquidfuel"]);
-                dsc.AppendLine($"{Lang.Get("vinteng:gui-energypersec")}: {lfp.EnergykJs:N1}");
+                dsc.AppendLine($"{Lang.Get("vinteng:gui-energypersec")}: {lfp.EnergyPPS:N1}");
                 dsc.AppendLine($"{Lang.Get("vinteng:gui-burntime")}: {lfp.Duration:N1}");
                 dsc.AppendLine($"{Lang.Get("vinteng:gui-burntemp")}: {lfp.BurnTemp:N0}°C");
                 dsc.AppendLine($"{Lang.Get("vinteng:gui-soot")}: {lfp.Soot:N1}");
-                float totalpower = (lfp.EnergykJs * 100) * lfp.Duration;
+                float totalpower = (lfp.EnergyPPS * 100) * lfp.Duration;
                 dsc.AppendLine($"{Lang.Get("vinteng:gui-totalpower")}: {totalpower:N1}");
             }
             base.GetHeldItemInfo(inSlot, dsc, world, withDebugInfo);

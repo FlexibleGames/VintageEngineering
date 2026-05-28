@@ -1,0 +1,13 @@
+{
+	"ingredientPattern": "SPS,HBH,STS",
+	"ingredients": {
+		"P": { "type": "block", "code": "vinteng:pipenew-fluid" },
+		"H": { "type": "block", "code": "vinteng:vesheetmetal-iron" },
+		"B": { "type": "block", "code": "vinteng:machineryblock-steel", "quantity": 1},
+		"T": { "type": "block", "code": "vinteng:treatedwood-horizontal-north", "quantity": 1},
+		"S": { "type": "item", "code": "vinteng:screw-steel", "quantity": 1 }
+	},
+	"width": 3,
+	"height": 3,
+	"output": { "type": "block", "code": "vinteng:vembdistillationbase-incomplete-north", "quantity": 1 }
+}

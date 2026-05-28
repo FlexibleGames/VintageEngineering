@@ -14,5 +14,6 @@
 			"#######"
 		]
 	],
+	"code": "vepressmold-nails-{metal}",
 	"output": { "type": "item", "code": "vinteng:vepressmold-nails-{metal}"  }
 }

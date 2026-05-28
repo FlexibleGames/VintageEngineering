@@ -18,10 +18,10 @@
 			}
 		},
 		"liquidfuel": {
-			"energykjs": 7.2,
-			"duration": 52,
+			"pps": 1100,
+			"duration": 5,
 			"burntemp": 2100,
-			"soot": 6.0
+			"soot": 8.0
 		}
 	},
 	"shape": { "base": "game:item/liquid" },

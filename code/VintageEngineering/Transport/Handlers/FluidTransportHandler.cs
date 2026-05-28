@@ -89,6 +89,8 @@ namespace VintageEngineering.Transport.Handlers
                     numperliter = ((int)wprops.ItemsPerLitre);
                 }
             }
+            if (stacksize > pull.Itemstack?.StackSize) stacksize = pull.Itemstack.StackSize;
+
             ItemStackMoveOperation ismo = new ItemStackMoveOperation(world, EnumMouseButton.Left, (EnumModifierKey)0, EnumMergePriority.AutoMerge, stacksize);
 
             ItemSlot push = GetPushSlot(world, node, node.InsertNodes, pull, pullsubnet, numperliter);
@@ -288,7 +290,8 @@ namespace VintageEngineering.Transport.Handlers
                     if (!VEHelpers.IsChunkLoaded(world, conarray[x].Position)) continue;
                     if (subnet != null && subnet != string.Empty && subnet.Length > 0)
                     {
-                        if (!conarray[x].SubNet.Contains(subnet)) continue;
+                        string uptodate = world.BlockAccessor.GetBlockEntity<BEPipeBaseNew>(conarray[x].NodePosition).InsertNodes[conarray[x].Facing.Index].SubNet;
+                        if (!uptodate.Contains(subnet)) continue;
                     }
                     BlockPos target = conarray[x].Position.Copy();
                     Block targetblock = world.BlockAccessor.GetBlock(target);

@@ -9,6 +9,7 @@ using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.GameContent;
 using Vintagestory.API.Client;
+using VintageEngineering.API;
 
 namespace VintageEngineering.Multiblock
 {
@@ -78,6 +79,66 @@ namespace VintageEngineering.Multiblock
                         {
                             VEMBEntityCore core = world.BlockAccessor.GetBlockEntity<VEMBEntityCore>(blockSel.Position);
                             if (core != null) core.OnPlayerRightClick(byPlayer, blockSel);
+                        }
+                    }
+                    // Fluid Interaction
+                    ItemSlot hotbar = byPlayer.InventoryManager.ActiveHotbarSlot;
+                    ILiquidSource source = hotbar.Itemstack.Collectible as ILiquidSource;
+                    VEMBEntityCore mbcore = world.BlockAccessor.GetBlockEntity<VEMBEntityCore>(blockSel.Position);
+                    IVELiquidInterface ivel = mbcore as IVELiquidInterface;
+                    if (source != null && ivel != null)
+                    {
+                        if (!source.AllowHeldLiquidTransfer) return false;
+                        
+                        ItemStack tomove = source.GetContent(hotbar.Itemstack);
+                        if (tomove != null && tomove.StackSize > 0)
+                        {
+                            DummySlot topush;
+                            if (hotbar.Itemstack.StackSize > 1) // holding more than one bucket
+                            {
+                                ItemStack singlebucket = hotbar.Itemstack.Clone();
+                                singlebucket.StackSize = 1;
+                                topush = new((singlebucket.Collectible as ILiquidSource).GetContent(singlebucket));
+                            }
+                            else
+                            {
+                                topush = new(tomove);
+                            }                            
+                            ItemSlotLiquidOnly pushto = (ItemSlotLiquidOnly)ivel.GetLiquidAutoPushIntoSlot(blockSel.Face, topush);
+                            if (pushto == null) return true;
+                            WaterTightContainableProps wprops = BlockLiquidContainerBase.GetContainableProps(tomove);
+                            int capfree = (int)(pushto.CapacityLitres * wprops.ItemsPerLitre) - (int)(pushto.StackSize);
+                            int nummoved = topush.TryPutInto(world, pushto, topush.StackSize);
+                            if (nummoved > 0)
+                            {
+                                VEHelpers.SplitStackAndPerformAction(api, byPlayer.Entity, hotbar, delegate (ItemStack stack)
+                                {
+                                    source.TryTakeContent(stack, nummoved);
+                                    return nummoved;
+                                });
+                                VEHelpers.DoLiquidMovedEffects(api, byPlayer, tomove, nummoved, BlockLiquidContainerBase.EnumLiquidDirection.Pour);
+                                mbcore.MarkDirty(true);
+                                return true;
+                            }
+                        }
+                    }
+                    ILiquidSink sink = hotbar.Itemstack.Collectible as ILiquidSink;
+                    ItemSlotLiquidOnly pull = ivel?.GetLiquidAutoPullFromSlot(blockSel.Face);                    
+                    if (sink != null && pull != null)
+                    {
+                        if (!sink.AllowHeldLiquidTransfer) return false;
+                        ItemStack owncontentstack = pull.Itemstack;
+                        if (owncontentstack != null)
+                        {
+                            ItemStack liquidparticles = owncontentstack.Clone();
+                            float liters = GameMath.Max(sink.TransferSizeLitres, sink.CapacityLitres);
+                            int moved2 = VEHelpers.SplitStackAndPerformAction(api, byPlayer.Entity, hotbar, (ItemStack stack) => sink.TryPutLiquid(stack, owncontentstack, liters));
+                            if (moved2 > 0) 
+                            {
+                                pull.TakeOut(moved2);
+                                mbcore.MarkDirty(true);
+                                return true;
+                            }
                         }
                     }
                 }

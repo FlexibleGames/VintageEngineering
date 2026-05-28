@@ -71,6 +71,7 @@ namespace VintageEngineering.Multiblock
         /// <returns>Vec3i or 0,0,0</returns>
         public Vec3i GetOffset(BlockPos pos)
         {
+            if (pos == null) return Vec3i.Zero; 
             VEMBEntityDummy dummy = api.World.BlockAccessor.GetBlockEntity<VEMBEntityDummy>(pos);
             return dummy == null ? Vec3i.Zero : dummy.Offset;
         }
@@ -489,6 +490,7 @@ namespace VintageEngineering.Multiblock
 
         public override T GetInterface<T>(IWorldAccessor world, BlockPos pos)
         {
+            if (pos == null || world?.BlockAccessor == null) return base.GetInterface<T>(world, pos);
             Vec3i offsetinv = -GetOffset(pos);
 
             T blockt = this as T;

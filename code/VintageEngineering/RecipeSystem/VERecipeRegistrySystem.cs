@@ -94,7 +94,7 @@ namespace VintageEngineering.RecipeSystem
             this.CreosoteOvenRecipes = api.RegisterRecipeRegistry<RecipeRegistryGeneric<RecipeCreosoteOven>>("vecreosoteoven").Recipes;
             AddRecipesToHandbook(api, this.CreosoteOvenRecipes, "creosoteoven", "vinteng:Industrially bakes into", "vinteng:Industrially baking");
             this.BlastFurnaceRecipes = api.RegisterRecipeRegistry<RecipeRegistryGeneric<RecipeBlastFurnace>>("veblastfurnace").Recipes;
-            AddRecipesToHandbook(api, this.BlastFurnaceRecipes, "blastfurnace", "vinteng:Smelts into", "vinteng:Smelting");
+            AddRecipesToHandbook(api, this.BlastFurnaceRecipes, "veblastfurnace", "vinteng:Smelts into", "vinteng:Smelting");
 
             this.DistillationRecipes = api.RegisterRecipeRegistry<RecipeRegistryGeneric<RecipeDistillationTower>>("vedistillation").Recipes;
             AddRecipesToHandbook(api, this.DistillationRecipes, "distillation", "vinteng:Distills into", "vinteng:Distills");

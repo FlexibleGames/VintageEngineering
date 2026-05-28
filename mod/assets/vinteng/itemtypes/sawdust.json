@@ -14,7 +14,7 @@
 			"scale": 0.65
 		}
 	},
-	"shape": { "base": "game:item/resource/crushed/potash" },
+	"shape": { "base": "game:item/resource/crushed/normal" },
 	"texture": { "base": "game:item/resource/crushed/potash" },
 	"creativeinventory": { "general": ["*"], "items": ["*"], "vinteng": ["*"] },
 	"maxstacksize": 128,

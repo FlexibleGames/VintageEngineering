@@ -14,7 +14,7 @@ namespace VintageEngineering.Electrical
         /// <br>Max Value : 18,446,744,073,709,551,615</br>
         /// </summary>
         ulong MaxPower { get; }
-
+        /// <summary>
         /// What is the MAX Power per second this machine can give or accept
         /// <br>Type : Unsigned Long (ulong)</br>
         /// <br>Max Value : 18,446,744,073,709,551,615</br>
@@ -99,6 +99,16 @@ namespace VintageEngineering.Electrical
         ulong ExtractPower(ulong powerWanted, float dt, bool simulate = false);
 
         /// <summary>
+        /// Special Call for Batteries/Transformers/Toggles that the directionality of the power can be controlled.
+        /// </summary>
+        /// <param name="power">Power Offered/Required</param>
+        /// <param name="dt">Deltatime</param>
+        /// <param name="simulate">True to not change power values</param>
+        /// <param name="isInsert">True to insert power, false to extract it.</param>
+        /// <returns>Power left over or Unfulfilled.</returns>
+        ulong StoragePower(ulong power, float dt, bool simulate, bool isInsert);
+
+        /// <summary>
         /// Completely fill (or drain) power buffer.<br/>
         /// A fast way for Electrical Networks to process power for this entity.<br/>        
         /// </summary>
@@ -116,6 +126,14 @@ namespace VintageEngineering.Electrical
         /// </summary>
         /// <returns>BlockPos</returns>
         BlockPos GetPosition();
+
+        /// <summary>
+        /// Sets a new PPS rating for this instance of the entity.<br/>
+        /// Allows dynamic PPS ratings across all machines if needed. Otherwise uses value in Entity Behavior Definition.
+        /// </summary>
+        /// <param name="_maxPPS">New PPS of the machine.</param>
+        /// <param name="_addtobase">True to add first param to base MaxPPS set in properties.</param>
+        void SetMaxPPS(ulong _maxPPS, bool _addtobase);
 
         /// <summary>
         /// Returns the IElectricalBlockEntity for the BlockEntity or one of its behaviors at given position.

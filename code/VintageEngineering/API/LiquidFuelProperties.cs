@@ -17,7 +17,7 @@ namespace VintageEngineering.API
         {
             LiquidFuelProperties cloned = new LiquidFuelProperties
             {
-                EnergykJs = this.EnergykJs,
+                EnergyPPS = this.EnergyPPS,
                 Duration = this.Duration,
                 BurnTemp = this.BurnTemp,
                 Soot = this.Soot
@@ -32,7 +32,7 @@ namespace VintageEngineering.API
         public static LiquidFuelProperties FromJSON(JsonObject tree)
         {
             LiquidFuelProperties output = new LiquidFuelProperties();
-            if (tree["energykjs"].Exists) output.EnergykJs = tree["energykjs"].AsFloat();
+            if (tree["pps"].Exists) output.EnergyPPS = tree["pps"].AsFloat();
             if (tree["duration"].Exists) output.Duration = tree["duration"].AsFloat();
             if (tree["burntemp"].Exists) output.BurnTemp = tree["burntemp"].AsInt();
             if (tree["soot"].Exists) output.Soot = tree["soot"].AsFloat();
@@ -40,12 +40,12 @@ namespace VintageEngineering.API
         }
         /// <summary>
         /// Energy value of a single portion of this fuel. A portion is 10mL.<br/>
-        /// Value is in kJ/s.
+        /// Value is in PPS (Power Per Second).
         /// </summary>
-        public float EnergykJs;
+        public float EnergyPPS;
         /// <summary>
         /// Duration in seconds a single portion burns until it is fully consumed.<br/>
-        /// Total power produced per portion = EnergykJs * Duration
+        /// Total power produced per portion = EnergyPPS * Duration
         /// </summary>
         public float Duration;
         /// <summary>

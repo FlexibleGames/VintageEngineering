@@ -362,9 +362,9 @@ namespace VintageEngineering.blockentity
 
                                     if (dblock.BlockId != 0 && dblock.IsLiquid() && dblock.LiquidCode == _fluidtype)
                                     {
-                                        BlockPos bcheck = new BlockPos(x, y, z, 0);
+                                        BlockPos bcheck = new BlockPos(x, y, z, below.dimension);
                                         // TODO make pump range a config value check
-                                        if (below.ManhattanDistance(bcheck) > 32)  { return; }
+                                        if (below.ManhattanDistance(bcheck) > 110)  { return; }
 
                                         FluidPosition bfpos = new FluidPosition(bcheck, below.DistanceTo(bcheck));
                                         if (!_fluidpositions.Contains(bfpos))

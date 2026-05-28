@@ -12,5 +12,6 @@
 			"#######"
 		]
 	],
+	"code": "vepressmold-screws-{metal}",
 	"output": { "type": "item", "code": "vinteng:vediecast-screw-{metal}"  }
 }

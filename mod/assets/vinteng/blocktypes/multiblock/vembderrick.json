@@ -45,7 +45,7 @@
 				"blockNumbers": {
 					"vinteng:steelfence-steel-*": 1,
 					"vinteng:metalplatform-up": 2,
-					"vinteng:metalladder-steel-north": 3,
+					"vinteng:metalladder-steel-*": 3,
 					"vinteng:vembcomponent-heavyeng": 4,
 					"vinteng:concrete-reinforced-uncolored": 5,
 					"vinteng:vembcomponent-lighteng": 6,
@@ -236,6 +236,7 @@
 		}
 	],
 	"attributes": {
+		"mapColorCode": "settlement",
 		"handbook": {
 			"groupBy": ["vembderrick*"],
 			"excludeByType": {

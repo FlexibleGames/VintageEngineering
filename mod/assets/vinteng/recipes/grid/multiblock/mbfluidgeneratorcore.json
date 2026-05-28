@@ -1,0 +1,12 @@
+{
+	"ingredientPattern": "SMS,PBP,SBS",
+	"ingredients": {
+		"P": { "type": "block", "code": "vinteng:pipenew-fluid" },
+		"M": { "type": "item", "code": "vinteng:motor-mv" },
+		"B": { "type": "block", "code": "vinteng:machineryblock-steel", "quantity": 1 },
+		"S": { "type": "item", "code": "vinteng:screw-steel", "quantity": 1 }
+	},
+	"width": 3,
+	"height": 3,
+	"output": { "type": "block", "code": "vinteng:vembfluidgenerator-incomplete-north", "quantity": 1 }
+}

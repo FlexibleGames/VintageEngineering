@@ -120,12 +120,8 @@ namespace VintageEngineering.Electrical
 
         private void Event_GameWorldSave()
         {
-            // This is only run server-side.
-//            if (manager.networks.Count > 0)
-//            {
             this.sapi.WorldManager.SaveGame.StoreData("electricalnetworks", manager.NetworkBytes());
             this.sapi.WorldManager.SaveGame.StoreData("electricalnetworknextid", SerializerUtil.Serialize<long>(manager.nextNetworkID));
-//            }
         }
 
         private void Event_SaveGameLoaded()

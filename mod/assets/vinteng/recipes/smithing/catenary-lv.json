@@ -14,5 +14,6 @@
 			"# # # #"
 		]
 	],
+	"code": "catenary-lvpower",
 	"output": { "type": "block", "code": "game:catenary-lvpower", "stacksize": 8  }
 }

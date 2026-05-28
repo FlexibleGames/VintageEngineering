@@ -14,5 +14,6 @@
 			"#########"
 		]
 	],
+	"code": "vepressmold-{metal}",
 	"output": { "type": "item", "code": "vinteng:vepressmold-gear-{metal}"  }
 }

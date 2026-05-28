@@ -61,10 +61,7 @@ namespace VintageEngineering.Transport
         {
             // Redetect any potential connections as something changed.
             BEPipeBaseNew pipebe = api.World.BlockAccessor.GetBlockEntity(pos) as BEPipeBaseNew;
-            if (pipebe != null)
-            {
-                pipebe.PipeNeighborChanged(world, pos, neibpos);
-            }
+            pipebe?.PipeNeighborChanged(world, pos, neibpos);
             base.OnNeighbourBlockChange(world, pos, neibpos);
         }
 

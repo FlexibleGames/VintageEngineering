@@ -11,5 +11,6 @@
 			"######"
 		]
 	],
+	"code": "diecast-mv-{metal}",
 	"output": { "type": "item", "code": "vinteng:vediecast-mv-{metal}"  }
 }

@@ -1,0 +1,28 @@
+[
+{
+	"code": "fruitcider-no-ext",
+	"powerpercraft": 2000,
+	"attributes": {
+		"soot": 1
+	},
+	"ingredients": [
+		{ "type": "item", "code": "game:ciderportion-*", "name": "fruit", "allowedVariants": ["apple", "blueberry", "cranberry", "redcurrant", "whitecurrant", "blackcurrant", "saguaro", "pineapple", "cherry", "peach", "pear", "orange", "mango", "breadfruit", "lychee", "pomegranate", "beautyberry", "blackberry", "cloudberry", "raspberry", "strawberry"], "litres": 1  }
+	],
+	"outputs": [
+		{ "type": "item", "code": "game:spiritportion-{fruit}", "litres": 0.1, "slotid": 2 }
+	]
+},
+{
+	"code": "graincider-no-ext",
+	"powerpercraft": 2000,
+	"attributes": {
+		"soot": 1
+	},
+	"ingredients": [
+		{ "type": "item", "code": "game:ciderportion-*", "name": "fruit", "allowedVariants": ["mead", "spelt", "rice", "rye", "amaranth", "cassava"], "litres": 1  }
+	],
+	"outputs": [
+		{ "type": "item", "code": "game:spiritportion-{fruit}", "litres": 0.05, "slotid": 2 }
+	]
+}
+]
