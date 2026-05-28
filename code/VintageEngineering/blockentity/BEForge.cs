@@ -315,6 +315,7 @@ namespace VintageEngineering
         {
             if (Api.Side == EnumAppSide.Client) return; // only tick on the server
             environmentTempDelay += dt;
+            _clientUpdateDelay += dt;
             if (environmentTempDelay > 300) // a weather pull every 5 minutes seems reasonable
             {
                 environmentTemp = Api.World.BlockAccessor.GetClimateAt(this.Pos, EnumGetClimateMode.NowValues).Temperature;
@@ -358,9 +359,18 @@ namespace VintageEngineering
                         }
                         else
                         {
-                            if (basintemp > 20) heatable.SetTemperature(ChangeTemperature(basintemp, 20, dt));
-                            else heatable.SetTemperature(20);
-                            return;
+                            if (basintemp != 20) heatable.SetTemperature(ChangeTemperature(basintemp, 20, dt));                            
+                                                        
+                            if (_clientUpdateDelay < 1) 
+                            {                                     
+                                return; 
+                            }
+                            else
+                            {
+                                MarkDirty(true);
+                                return;
+                            }
+                            
                         }
                     }
                     else if (!InputSlot.Empty)
@@ -388,11 +398,9 @@ namespace VintageEngineering
                         {
                             return;
                         }                                                
-                    }
-                    else return; // this shouldn't ever fire... but just in case
+                    }                    
                 }
-            }
-            _clientUpdateDelay += dt;
+            }            
             if (_clientUpdateDelay > 0.5f)
             {
                 _clientUpdateDelay = 0f;
