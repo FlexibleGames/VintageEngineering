@@ -55,6 +55,7 @@ namespace VintageEngineering.Transport.Handlers
             {
                 stacksize = pull.Itemstack?.Collectible.MaxStackSize*10 ?? 1;
             }
+            if (stacksize > pull.Itemstack?.StackSize) stacksize = pull.Itemstack.StackSize;
             ItemStackMoveOperation ismo = new ItemStackMoveOperation(world, EnumMouseButton.Left, (EnumModifierKey)0, EnumMergePriority.DirectMerge, stacksize);            
 
             ItemSlot push = GetPushSlot(world, node, node.InsertNodes, pull, pullSubnet);

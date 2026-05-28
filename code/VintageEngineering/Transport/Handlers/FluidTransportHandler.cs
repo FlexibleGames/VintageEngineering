@@ -89,6 +89,8 @@ namespace VintageEngineering.Transport.Handlers
                     numperliter = ((int)wprops.ItemsPerLitre);
                 }
             }
+            if (stacksize > pull.Itemstack?.StackSize) stacksize = pull.Itemstack.StackSize;
+
             ItemStackMoveOperation ismo = new ItemStackMoveOperation(world, EnumMouseButton.Left, (EnumModifierKey)0, EnumMergePriority.AutoMerge, stacksize);
 
             ItemSlot push = GetPushSlot(world, node, node.InsertNodes, pull, pullsubnet, numperliter);
