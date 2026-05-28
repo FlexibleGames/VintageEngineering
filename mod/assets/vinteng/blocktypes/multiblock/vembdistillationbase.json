@@ -157,6 +157,7 @@
 		}
 	],
 	"attributes": {
+		"mapColorCode": "settlement",
 		"handbook": {
 			"groupBy": ["vembdistillationbase*"],
 			"excludeByType": {

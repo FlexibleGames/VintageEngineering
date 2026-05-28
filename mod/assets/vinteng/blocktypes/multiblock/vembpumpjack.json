@@ -90,6 +90,7 @@
 		}
 	],
 	"attributes": {
+		"mapColorCode": "settlement",
 		"handbook": {
 			"groupBy": ["vembpumpjack-*"],
 			"excludeByType": {

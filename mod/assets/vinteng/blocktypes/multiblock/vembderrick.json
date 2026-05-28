@@ -236,6 +236,7 @@
 		}
 	],
 	"attributes": {
+		"mapColorCode": "settlement",
 		"handbook": {
 			"groupBy": ["vembderrick*"],
 			"excludeByType": {

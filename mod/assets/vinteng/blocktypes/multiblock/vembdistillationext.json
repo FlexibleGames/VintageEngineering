@@ -103,6 +103,7 @@
 		}
 	],
 	"attributes": {
+		"mapColorCode": "settlement",
 		"handbook": {
 			"groupBy": ["vembdistillationext*"],
 			"excludeByType": {

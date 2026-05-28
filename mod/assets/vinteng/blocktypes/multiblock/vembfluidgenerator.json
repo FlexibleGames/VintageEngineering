@@ -93,6 +93,7 @@
 		}
 	],
 	"attributes": {
+		"mapColorCode": "settlement",
 		"handbook": {
 			"groupBy": ["vembfluidgenerator-*"],
 			"excludeByType": {
