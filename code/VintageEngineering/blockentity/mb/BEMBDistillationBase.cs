@@ -307,7 +307,7 @@ namespace VintageEngineering
             _inventory = new InventoryGeneric(3, null, null, delegate (int id, InventoryGeneric self)
             {
                 if (id == 1) return new ItemSlot(self); // item output
-                return new ItemSlotLiquidOnly(self, 50); // we don't need super large capacities here.
+                return new ItemSlotLargeLiquid(self, 2000); // ItemSlotLiquidOnly(self, 50); // we don't need super large capacities here.
             });
             _inventory.SlotModified += SlotModified;
             _inventory.OnGetAutoPushIntoSlot = GetAutoPushIntoSlot;
@@ -319,8 +319,8 @@ namespace VintageEngineering
             base.Initialize(api);            
             _inventory.Pos = Pos;
             _inventory.LateInitialize($"{InventoryClassName}-{Pos.X}/{Pos.Y}/{Pos.Z}", api);
-            (_inventory[0] as ItemSlotLiquidOnly).CapacityLitres = Block.Attributes["fluidCapacityLiters"].AsFloat(1f);
-            (_inventory[2] as ItemSlotLiquidOnly).CapacityLitres = Block.Attributes["fluidCapacityLiters"].AsFloat(1f);
+            (_inventory[0] as ItemSlotLargeLiquid).SetCapacity(Block.Attributes["fluidCapacityLiters"].AsInt(1));
+            (_inventory[2] as ItemSlotLargeLiquid).SetCapacity(Block.Attributes["fluidCapacityLiters"].AsInt(1));
             _extensionCode = Block.Attributes["extensionCode"].AsString(string.Empty);
             _extensionPPS = ((long)Block.Attributes["extensionPPS"].AsDouble(0));
             if (api.Side == EnumAppSide.Server)
@@ -381,10 +381,9 @@ namespace VintageEngineering
                 FindValidateExtensions();
             }
 
-
             if (IsBuilt && Electric.MachineState == EnumBEState.On)
             {
-                long ratedpow = (long)(Electric.MaxPPS * dt);                
+                long ratedpow = (long)(Electric.MaxPPS * dt);
                 if (Electric.CurrentPower == 0 || Electric.CurrentPower < (ulong)ratedpow) return;
 
                 if (_currentRecipe != null)
@@ -413,7 +412,7 @@ namespace VintageEngineering
                         }
                         _currentRecipe.TryCraft(Api, InputSlot, outputs);
                         Electric.electricpower -= (ulong)ratedpow;
-                        //_recipePowerApplied = 0;
+                        _recipePowerApplied = 0;
                         FindMatchingRecipe();
                     }
                 }
