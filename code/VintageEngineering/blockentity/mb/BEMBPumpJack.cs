@@ -125,14 +125,13 @@ namespace VintageEngineering
 
             _wellValidationDelay += dt;
             EnumBEState newstate = MachineState;
-
             if (_wellValidationDelay >= 120f)
             {
                 // revalidate every 2 minutes
                 if (!ValidateWell())
                 {
                     // if the well is invalid, shut it down
-                    newstate = EnumBEState.Sleeping;
+                    SetState(EnumBEState.Sleeping);                    
                 }
                 else 
                 {
@@ -144,12 +143,16 @@ namespace VintageEngineering
                 }
                 _wellValidationDelay = 0f;
             }
-            if (Electric.CurrentPower == 0 || Electric.CurrentPower < Electric.RatedPower(dt, false))
+            ulong powertick = ((ulong)(Electric.MaxPPS * dt));
+            if (Electric.CurrentPower == 0 || Electric.CurrentPower < powertick)
             {
                 // if we're supposed to be on, but we don't have enough power, sleep
                 if (newstate == EnumBEState.On) newstate = EnumBEState.Sleeping;
             }
-            else newstate = EnumBEState.On; // power is green
+            else 
+            {
+                if (_wellPosition != null) newstate = EnumBEState.On; // power is green
+            }
 
             if (_wellPosition == null) newstate = EnumBEState.Sleeping; // final check
 
@@ -185,8 +188,7 @@ namespace VintageEngineering
                 {
                     _inventory[0].Itemstack = new ItemStack(portion, (int)texastea);
                 }
-                if (texastea > 0) Electric.electricpower -= Electric.RatedPower(dt, false);
-                
+                if (texastea > 0) Electric.electricpower -= powertick; // Electric.RatedPower(dt, false);                
             }
             if (MachineState != newstate) SetState(newstate);
 
@@ -245,8 +247,11 @@ namespace VintageEngineering
                         _wellPosition = start.Copy();
                         return true;
                     }
+                    _wellPosition = null;
+                    return false;
                 }
             }
+            _wellPosition = null;
             return false;
         }
       

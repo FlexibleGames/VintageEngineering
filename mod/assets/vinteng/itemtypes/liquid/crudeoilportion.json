@@ -21,7 +21,7 @@
 			"pps": 700,
 			"duration": 5,
 			"burntemp": 1950,
-			"soot": 18
+			"soot": 40
 		}
 	},
 	"shape": { "base": "game:item/liquid" },
