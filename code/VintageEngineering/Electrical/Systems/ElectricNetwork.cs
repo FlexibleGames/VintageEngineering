@@ -2,15 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Metadata.Ecma335;
 using VintageEngineering.API;
 using VintageEngineering.Electrical.Systems.Catenary;
 using VintageEngineering.Multiblock;
-using VintageEngineering.Transport.API;
-using Vintagestory;
-using Vintagestory.API.Client;
 using Vintagestory.API.Common;
-using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
@@ -109,6 +104,7 @@ namespace VintageEngineering.Electrical.Systems
         private float sleepTimer;
         private long _networkID;
         private ulong _networkPPS = 0;
+        private float _rebalanceBouncer = 0f;
 
         [ProtoMember(2)]
         public long NetworkID { get => _networkID; set => _networkID = value; }
@@ -446,6 +442,8 @@ namespace VintageEngineering.Electrical.Systems
             // By Default: LV is 500 PPS, MV is 4000 PPS, and HV is 200k PPS
             ulong networkppt = (ulong)((_networkPPS * deltaTime) + 1);
 
+            _rebalanceBouncer += deltaTime;
+
             if (OnExtractPower == null &&
                 OnReceivePower == null &&
                 OnStoragePower == null)
@@ -523,11 +521,17 @@ namespace VintageEngineering.Electrical.Systems
                 foreach (Delegate del in OnExtractPower.GetInvocationList()) //IElectricalBlockEntity entity in producerNodes)
                 {
                     //if (entity == null || !entity.IsLoaded || !entity.CanExtractPower) continue;
-                    totalpoweringen += ((ExtractPowerHandler)del).Invoke(ulong.MaxValue, deltaTime, true);  //entity.RatedPower(deltaTime, false);
+                    totalpoweringen += ((ExtractPowerHandler)del).Invoke(0, deltaTime, true);  //entity.RatedPower(deltaTime, false);
                 }
             }
             if (OnStoragePower != null)
             {
+                if (_rebalanceBouncer > 2f)
+                {
+                    RebalanceStorages(_rebalanceBouncer);
+                    _rebalanceBouncer = 0f;
+                }
+
                 foreach (Delegate del in OnStoragePower.GetInvocationList()) //IElectricalBlockEntity entity in storageNodes)
                 {
                     // ulong power, float dt, bool simulate, bool isInsert
@@ -553,91 +557,12 @@ namespace VintageEngineering.Electrical.Systems
             ulong totalpowerused = (totalpoweringen + totalinstorage) - totalpoweroffered;
 
             if (OnReceivePower == null && OnExtractPower == null) // consumerNodes.Count == 0 && producerNodes.Count == 0)
-            {
+            {                
                 // edge case of a network ONLY having storage and/or transformer nodes
                 // tries to balance all storage within 2% of one-another
                 if (OnStoragePower != null) // storageNodes.Count > 1)
                 {
-                    Delegate[] storagehandlers = OnStoragePower.GetInvocationList();
-                    int totalstorageblocks = storagehandlers.Length;
-                    if (totalstorageblocks <= 1) return true;
-
-                    if (allNodes.Count <= 1) return true;
-
-                    ulong totalcapacity = 0;
-                    ulong totalcapacityavailable = 0;
-                    ulong totalusedcapacity = 0;
-
-                    List<IElectricalBlockEntity> storageNodes = new();
-
-                    foreach (WireNode node in allNodes) // find the unrated total power values of these nodes
-                    {
-                        IElectricalBlockEntity entity = IElectricalBlockEntity.GetAtPos(api.World.BlockAccessor, node.blockPos);
-                        if (entity != null)
-                        {
-                            if (entity.ElectricalEntityType == EnumElectricalEntityType.Storage ||
-                                entity.ElectricalEntityType == EnumElectricalEntityType.Toggle ||
-                                entity.ElectricalEntityType == EnumElectricalEntityType.Transformer)
-                            {
-                                storageNodes.Add(entity);
-                                totalcapacity += entity.MaxPower;
-                                totalcapacityavailable += entity.MaxPower - entity.CurrentPower;
-                                totalusedcapacity += entity.CurrentPower;
-                            }
-                        }
-                    }                    
-
-                    // what is the overall pressure of the entire system, used as the base-line for individual blocks
-                    int targetpressure = (int)((totalusedcapacity / (double)totalcapacity)*100);
-
-                    List<IElectricalBlockEntity> surplusNodes = new(); // nodes to take power from
-                    List<IElectricalBlockEntity> deficitNodes = new(); // nodes to push power into
-
-                    ulong surplusPower = 0; // this IS dt rated power
-
-                    foreach (IElectricalBlockEntity node in storageNodes)
-                    {
-                        if (node.MaxPower == 0) continue;
-                        int nodepressure = (int)((node.CurrentPower / (double)node.MaxPower) * 100);
-                        if (nodepressure > (targetpressure + 2))  // two percent 
-                        { 
-                            surplusNodes.Add(node);
-                            surplusPower += node.RatedPower(deltaTime, false);
-                            continue;
-                        }
-                        if (nodepressure < (targetpressure))
-                        {
-                            deficitNodes.Add(node);
-                            continue;
-                        }
-                    }
-
-                    if (deficitNodes.Count == 0 || surplusNodes.Count == 0) return true;
-
-                    if (deficitNodes.Count > 0)
-                    {
-                        // this is how much power to give to each deficit node
-                        ulong powerpernode = surplusPower / ((ulong)deficitNodes.Count);
-                        // this is how much power to take from each surplus node
-                        
-                        ulong powerleftover = 0;
-                        foreach (IElectricalBlockEntity dnode in deficitNodes)
-                        {                            
-                            powerleftover += dnode.ReceivePower(powerpernode, deltaTime, false);
-                        }
-
-                        surplusPower -= powerleftover;
-                        ulong powertakepernode = surplusPower / ((ulong)surplusNodes.Count);
-                        ulong unfullfilledpower = 0;
-                        foreach (IElectricalBlockEntity snode in surplusNodes)
-                        {
-                            unfullfilledpower += snode.ExtractPower(powertakepernode, deltaTime, false);
-                        }
-                        if (unfullfilledpower != 0) // due to rounding issues... could this be < allNodes.Count maybe?
-                        {
-                            api.Logger.Error($"VintEng: Storage Only Electric Network Rebalance tick has power mismatch of {unfullfilledpower} power.");
-                        }
-                    }
+                    RebalanceStorages(deltaTime);
                     return true;
                 }
                 else
@@ -648,7 +573,7 @@ namespace VintageEngineering.Electrical.Systems
                 }
             }
 
-            if (totalpowerused >= totalpoweringen)
+            if (totalpowerused > totalpoweringen)
             {
                 // we used more power than generators were able to provide, storage was used
                 totalstorageused = totalpowerused - totalpoweringen;
@@ -660,11 +585,14 @@ namespace VintageEngineering.Electrical.Systems
                         totalpowerused = ((ExtractPowerHandler)del).Invoke(totalpowerused, deltaTime, false); //entity.ExtractPower(totalpowerused, deltaTime);
                     }
                 }
-                foreach (Delegate del in OnStoragePower.GetInvocationList()) //IElectricalBlockEntity entity in storageNodes)
+                if (OnStoragePower != null)
                 {
-                    if (totalpowerused == 0) break;
-                    //if (entity == null || !entity.IsLoaded) continue;
-                    totalpowerused = ((StoragePowerHandler)del).Invoke(totalpowerused, deltaTime, false, false); //entity.ExtractPower(totalpowerused, deltaTime);
+                    foreach (Delegate del in OnStoragePower.GetInvocationList()) //IElectricalBlockEntity entity in storageNodes)
+                    {
+                        if (totalpowerused == 0) break;
+                        //if (entity == null || !entity.IsLoaded) continue;
+                        totalpowerused = ((StoragePowerHandler)del).Invoke(totalpowerused, deltaTime, false, false); //entity.ExtractPower(totalpowerused, deltaTime);
+                    }
                 }
                 if (totalpowerused > (ulong)this.allNodes.Count) // 0 just didn't cut it due to rounding issues.
                 {
@@ -688,11 +616,14 @@ namespace VintageEngineering.Electrical.Systems
                             if (totalpoweringen == 0) break;                            
                         }
                     }
-                    foreach (Delegate del in OnStoragePower.GetInvocationList()) //IElectricalBlockEntity entity in storageNodes)
+                    if (OnStoragePower != null)
                     {
-                        // push excess power into storage nodes
-                        //if (entity == null || !entity.IsLoaded) continue;                        
-                        totalexcesspower = ((StoragePowerHandler)del).Invoke(totalexcesspower, deltaTime, false, true); //entity.ReceivePower(totalexcesspower, deltaTime);
+                        foreach (Delegate del in OnStoragePower.GetInvocationList()) //IElectricalBlockEntity entity in storageNodes)
+                        {
+                            // push excess power into storage nodes
+                            //if (entity == null || !entity.IsLoaded) continue;                        
+                            totalexcesspower = ((StoragePowerHandler)del).Invoke(totalexcesspower, deltaTime, false, true); //entity.ReceivePower(totalexcesspower, deltaTime);
+                        }
                     }
                 }
                 else
@@ -710,19 +641,109 @@ namespace VintageEngineering.Electrical.Systems
                             if (totalpowerconsumed == 0) break;
                         }
                     }
-                    foreach (Delegate del in OnStoragePower.GetInvocationList())  //IElectricalBlockEntity entity in storageNodes)
+                    if (OnStoragePower != null)
                     {
-                        //if (entity == null || !entity.IsLoaded) continue;
-                        // add excess available power to storage
-                        totalstorageavailable = ((StoragePowerHandler)del).Invoke(totalstorageavailable, deltaTime, false, true); //entity.ReceivePower(totalstorageavailable, deltaTime, false);
-                        if (totalstorageavailable == 0) break;
-                        //entity.CheatPower(); // fills power buffer in storage
+                        foreach (Delegate del in OnStoragePower.GetInvocationList())  //IElectricalBlockEntity entity in storageNodes)
+                        {
+                            //if (entity == null || !entity.IsLoaded) continue;
+                            // add excess available power to storage
+                            totalstorageavailable = ((StoragePowerHandler)del).Invoke(totalstorageavailable, deltaTime, false, true); //entity.ReceivePower(totalstorageavailable, deltaTime, false);
+                            if (totalstorageavailable == 0) break;
+                            //entity.CheatPower(); // fills power buffer in storage
+                        }
                     }
                     if (totalpowerconsumed != 0 && totalstorageavailable != 0)
                     {
                         api.World.Logger.Warning($"Error in Electric Network UpdateTick id : {NetworkID}");
                     }
                     // at this point, totalpowerconsumed should = 0 AND totalstorageavailable should = 0
+                }
+            }
+            return true;
+        }
+
+        public bool RebalanceStorages(float dt)
+        {
+            Delegate[] storagehandlers = OnStoragePower.GetInvocationList();
+            int totalstorageblocks = storagehandlers.Length;
+            if (totalstorageblocks <= 1) return true;
+
+            if (allNodes.Count <= 1) return true;
+
+            ulong totalcapacity = 0;
+            ulong totalcapacityavailable = 0;
+            ulong totalusedcapacity = 0;
+
+            List<IElectricalBlockEntity> storageNodes = new();
+
+            foreach (WireNode node in allNodes) // find the unrated total power values of these nodes
+            {
+                if (!VEHelpers.IsChunkLoaded(api.World, node.blockPos)) continue;
+
+                IElectricalBlockEntity entity = IElectricalBlockEntity.GetAtPos(api.World.BlockAccessor, node.blockPos);
+                if (entity != null)
+                {
+                    if (entity.ElectricalEntityType == EnumElectricalEntityType.Storage ||
+                        entity.ElectricalEntityType == EnumElectricalEntityType.Toggle ||
+                        entity.ElectricalEntityType == EnumElectricalEntityType.Transformer)
+                    {
+                        storageNodes.Add(entity);
+                        totalcapacity += entity.MaxPower;
+                        totalcapacityavailable += entity.MaxPower - entity.CurrentPower;
+                        totalusedcapacity += entity.CurrentPower;
+                    }
+                }
+            }
+            if (storageNodes.Count == 1) return true;
+            // what is the overall pressure of the entire system, used as the base-line for individual blocks
+            int targetpressure = (int)((totalusedcapacity / (double)totalcapacity) * 100);
+
+            List<IElectricalBlockEntity> surplusNodes = new(); // nodes to take power from
+            List<IElectricalBlockEntity> deficitNodes = new(); // nodes to push power into
+
+            ulong surplusPower = 0; // this IS dt rated power
+
+            foreach (IElectricalBlockEntity node in storageNodes)
+            {
+                if (node.MaxPower == 0) continue;
+                int nodepressure = (int)((node.CurrentPower / (double)node.MaxPower) * 100);
+                if (nodepressure > (targetpressure + 2))  // two percent 
+                {
+                    surplusNodes.Add(node);
+                    surplusPower += node.RatedPower(dt, false);
+                    continue;
+                }
+                if (nodepressure < (targetpressure))
+                {
+                    deficitNodes.Add(node);
+                    continue;
+                }
+            }
+
+            if (deficitNodes.Count == 0 || surplusNodes.Count == 0) return true;
+
+            if (deficitNodes.Count > 0)
+            {
+                // this is how much power to give to each deficit node
+                ulong powerpernode = surplusPower / ((ulong)deficitNodes.Count);
+                // this is how much power to take from each surplus node
+
+                ulong powerleftover = 0;
+                foreach (IElectricalBlockEntity dnode in deficitNodes)
+                {
+                    powerleftover += dnode.ReceivePower(powerpernode, dt, false);
+                }
+
+                surplusPower -= powerleftover;
+                ulong powertakepernode = surplusPower / ((ulong)surplusNodes.Count);
+                ulong unfullfilledpower = 0;
+                foreach (IElectricalBlockEntity snode in surplusNodes)
+                {
+                    unfullfilledpower += snode.ExtractPower(powertakepernode, dt, false);
+                }
+                if (unfullfilledpower != 0) // due to rounding issues... could this be < allNodes.Count maybe?
+                {
+                    api.Logger.Error($"VintEng: Storage Only Electric Network Rebalance tick has power mismatch of {unfullfilledpower} power.");
                 }
             }
             return true;
