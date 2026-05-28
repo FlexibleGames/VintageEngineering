@@ -152,6 +152,7 @@ namespace VintageEngineering
             if (InputSlot.Itemstack.ItemAttributes["liquidfuel"].Exists)
             {
                 _liquidFuelProps = LiquidFuelProperties.FromJSON(InputSlot.Itemstack.ItemAttributes["liquidfuel"]);
+                Electric.SetMaxPPS(((ulong)_liquidFuelProps.EnergyPPS), false);
             }
             else
             {
