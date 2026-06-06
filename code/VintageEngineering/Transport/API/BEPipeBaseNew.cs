@@ -505,8 +505,12 @@ namespace VintageEngineering.Transport.API
                     //overriddenSides[f] = true;
                     // disconnect the other pipe to ensure this block isn't included in the graph search.
                     BEPipeBaseNew bepipe = Api.World.BlockAccessor.GetBlockEntity<BEPipeBaseNew>(Pos.AddCopy(BlockFacing.ALLFACES[f]));
-                    bepipe.connectionSides[BlockFacing.ALLFACES[f].Opposite.Index] = false;
-                    bepipe._shapeDirty = true;                    
+                    if (bepipe == null)
+                    {
+                        throw new Exception($"VintEng: When breaking pipe at {Pos.ToLocalPosition(Api)} pipe connection on face {BlockFacing.ALLFACES[f].Code} found a null Pipe BE in that direction.");
+                    }
+                    bepipe?.connectionSides[BlockFacing.ALLFACES[f].Opposite.Index] = false;
+                    bepipe?._shapeDirty = true;
                 }
                 if (insertionSides[f])
                 {
@@ -1519,7 +1523,7 @@ namespace VintageEngineering.Transport.API
             // this code is run:
             // a) by the server when a chunk/world loads one of these
             // b) by the client from data received from the server
-            base.FromTreeAttributes(tree, worldAccessForResolve);            
+            base.FromTreeAttributes(tree, worldAccessForResolve);
             extractionSides = SerializerUtil.Deserialize(tree.GetBytes("extractsides"), new bool[6]);
 
             int numExtractionBackup = NumExtractionConnections;
