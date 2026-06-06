@@ -57,6 +57,8 @@
 	"vinteng:itemdesc-vepressmold-gear-*": "Use in a Metal Press to make gears. Harder metals require harder molds. Mold will wear out over time, durability depends on material.",
 	"vinteng:item-vepressmold-nails-*": "Nails and Strips Mold",
 	"vinteng:itemdesc-vepressmold-nails-*": "Use in a Metal Press to make nails and strips. Harder metals require harder molds. Mold will wear out over time, durability depends on material.",
+	"vinteng:item-vepressmold-sheet-*": "Metal Sheet Mold",
+	"vinteng:itemdesc-vepressmold-sheet-*": "Use in a Metal Press to make metal sheets. Harder metals require harder molds. Mold will wear out over time, durability depends on material. Sheets are used to make sheet metal blocks.",
 
 	"vinteng:item-vediecast-lv-*": "Die Cast (LV Gauge)",
 	"vinteng:itemdesc-vediecast-lv-*": "Use in an Extruder to make LV gauge wire from copper bars.",

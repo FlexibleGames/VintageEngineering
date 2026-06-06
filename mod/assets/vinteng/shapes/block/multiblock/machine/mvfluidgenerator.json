@@ -418,7 +418,7 @@
 						"south": { "texture": "#gunmetal-gray", "uv": [ 0.0, 0.0, 14.0, 2.0 ] },
 						"west": { "texture": "#gunmetal-gray", "uv": [ 0.0, 0.0, 14.0, 2.0 ] },
 						"up": { "texture": "#powerio-mv", "uv": [ 0.0, 0.0, 16.0, 16.0 ], "autoUv": false },
-						"down": { "texture": "#null", "uv": [ 0.0, 0.0, 14.0, 14.0 ] }
+						"down": { "texture": "#null", "uv": [ 0.0, 0.0, 14.0, 14.0 ], "enabled": false }
 					}
 				},
 				{
@@ -574,7 +574,7 @@
 						"south": { "texture": "#null", "uv": [ 0.0, 0.0, 16.0, 16.0 ], "enabled": false },
 						"west": { "texture": "#heavy_engineering", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
 						"up": { "texture": "#heavy_engineering", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
-						"down": { "texture": "#null", "uv": [ 0.0, 0.0, 16.0, 16.0 ] }
+						"down": { "texture": "#null", "uv": [ 0.0, 0.0, 16.0, 16.0 ], "enabled": false }
 					}
 				},
 				{
@@ -862,7 +862,7 @@
 						"south": { "texture": "#radiator", "uv": [ 0.0, 0.0, 16.0, 12.0 ] },
 						"west": { "texture": "#castiron", "uv": [ 0.0, 0.0, 5.0, 12.0 ] },
 						"up": { "texture": "#castiron", "uv": [ 0.0, 0.0, 16.0, 5.0 ] },
-						"down": { "texture": "#null", "uv": [ 0.0, 0.0, 16.0, 5.0 ] }
+						"down": { "texture": "#null", "uv": [ 0.0, 0.0, 16.0, 5.0 ], "enabled": false }
 					}
 				}
 			]

@@ -27,7 +27,7 @@
 		}
 	}],
 	"variantgroups": [
-        { "code": "type", "states": ["plate", "gear", "nails"] },
+        { "code": "type", "states": ["plate", "gear", "nails", "sheet"] },
 		{ "code": "metal", "states": ["tinbronze", "iron", "meteoriciron", "steel", "titanium"] }
 	],
     "maxstacksize": 1,
@@ -35,7 +35,8 @@
 	"shapeByType": {
 		"*-plate-*": { "base": "vinteng:item/metalpress-platemold" },
         "*-gear-*": { "base": "vinteng:item/metalpress-gearmold" },
-		"*-nails-*": { "base": "vinteng:item/metalpress-nailsmold" }
+		"*-nails-*": { "base": "vinteng:item/metalpress-nailsmold" },
+		"*-sheet-*": { "base": "vinteng:item/metalpress-sheetmold" }
 	},
 	"texturesByType": {
 		"*": {
