@@ -113,8 +113,8 @@ namespace VintageEngineering.Electrical
             sapi = api as ICoreServerAPI;
             manager = new ElectricalNetworkManager(sapi, this);
             manager.InitializeManger();
-            api.Event.SaveGameLoaded += this.Event_SaveGameLoaded;
-            api.Event.GameWorldSave += this.Event_GameWorldSave;
+            sapi.Event.SaveGameLoaded += this.Event_SaveGameLoaded;
+            sapi.Event.GameWorldSave += this.Event_GameWorldSave;
             SetupDebugCommands();
         }
 
