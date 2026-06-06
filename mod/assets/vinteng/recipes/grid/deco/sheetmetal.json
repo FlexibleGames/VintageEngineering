@@ -1,0 +1,21 @@
+[{
+	"ingredientPattern": "S_S,MMM,S_S",
+	"ingredients": {
+		"S": { "type": "item", "code": "vinteng:screw-iron", "quantity": 1 },
+		"M": { "type": "block", "code": "game:metalsheet-iron-down", "quantity": 1 }
+	},
+	"width": 3,
+	"height": 3,
+	"output": { "type": "block", "code": "vinteng:vesheetmetal-iron", "quantity": 2  }
+},
+{
+	"ingredientPattern": "S_S,MMM,S_S",
+	"ingredients": {
+		"S": { "type": "item", "code": "vinteng:screw-steel", "quantity": 1 },
+		"M": { "type": "block", "code": "game:metalsheet-steel-down", "quantity": 1 }
+	},
+	"width": 3,
+	"height": 3,
+	"output": { "type": "block", "code": "vinteng:vesheetmetal-steel", "quantity": 2  }
+}
+]

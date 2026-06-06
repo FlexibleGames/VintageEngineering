@@ -153,10 +153,15 @@ namespace VintageEngineering.Electrical.Systems
         {
             if (allNodes.Count > 0)
             {
+                int unloadedNodes = 0;
                 foreach (WireNode node in allNodes)
                 {
                     // if the position isn't loaded yet, skip
-                    if (!api.World.IsFullyLoadedChunk(node.blockPos)) continue;
+                    if (!VEHelpers.IsChunkLoaded(api.World, node.blockPos)) 
+                    {
+                        unloadedNodes++;
+                        continue;
+                    }
 
                     IElectricalBlockEntity entity = IElectricalBlockEntity.GetAtPos(api.World.BlockAccessor, node.blockPos);
                     // entity should never be null here
@@ -189,6 +194,8 @@ namespace VintageEngineering.Electrical.Systems
                         default: break; // This seems to handle null entities
                     }
                 }
+                if (unloadedNodes > 0) isDirty = true;
+                else isDirty = false;
             }
         }
 
@@ -427,6 +434,8 @@ namespace VintageEngineering.Electrical.Systems
         {
             // The meat and 'tatos of the entire system.
             //ulong totalpowerwanted = 0;
+            if (isDirty) InitializeNetwork();
+
             ulong totalpoweringen = 0;
             ulong totalpoweroffered = 0;
             ulong totalinstorage = 0;

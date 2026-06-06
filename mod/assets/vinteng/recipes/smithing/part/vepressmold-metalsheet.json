@@ -1,0 +1,21 @@
+{
+	"ingredient": { "type": "item", "code": "game:ingot-*", "name": "metal", "allowedVariants": ["tinbronze", "iron","steel","meteoriciron", "titanium"] },
+	"name": "sheet",
+	"pattern": [
+		[
+			"###########",
+			"#         #",
+			"#         #",
+			"#         #",
+			"#         #",
+			"#         #",
+			"#         #",
+			"#         #",
+			"#         #",
+			"#         #",
+			"###########"
+		]
+	],
+	"code": "vepressmold-sheet-{metal}",
+	"output": { "type": "item", "code": "vinteng:vepressmold-sheet-{metal}"  }
+}

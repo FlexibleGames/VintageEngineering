@@ -550,7 +550,8 @@ namespace VintageEngineering.Electrical.Systems
                     {
                         netstodelete.Add(net.Key);
                     }
-                    else net.Value.InitializeNetwork();
+                    else net.Value.IsDirty = true;
+                    //else net.Value.InitializeNetwork(); This now needs to be called after worldgen thread starts
                 }
                 if (netstodelete.Count > 0)
                 {
@@ -560,7 +561,7 @@ namespace VintageEngineering.Electrical.Systems
                     }
                 }
             }
-        }
+        }       
 
         /// <summary>
         /// Package networks for saving to disk, converts from Dictionary to Byte[]

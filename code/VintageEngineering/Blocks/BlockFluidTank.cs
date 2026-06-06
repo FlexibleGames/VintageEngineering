@@ -10,6 +10,15 @@ namespace VintageEngineering.Blocks
 {
     public class BlockFluidTank: BlockLiquidContainerBase
     {
+
+        public override void OnLoaded(ICoreAPI api)
+        {
+            base.OnLoaded(api);
+            if (this.Attributes != null)
+            {
+                this.capacityLitresFromAttributes = (float)this.Attributes["capacity"].AsInt(1500);
+            }
+        }
   
         public override bool DoPlaceBlock(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel, ItemStack byItemStack)
         {
