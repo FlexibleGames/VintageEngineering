@@ -22,7 +22,7 @@
 		"output": { "type": "block", "code": "vinteng:vembcomponent-heavyeng", "quantity": 4  }
 	},
 	{
-		"ingredientPattern": "SPS,P_P,SPS",
+		"ingredientPattern": "PSP,S_S,PSP",
 		"ingredients": {
 			"S": { "type": "item", "code": "vinteng:screw-*", "allowedVariants":["steel"],  "quantity": 2 },
 			"P": { "type": "item", "code": "vinteng:machineplate-steel", "quantity": 1 }
