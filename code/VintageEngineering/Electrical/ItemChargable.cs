@@ -9,9 +9,7 @@ namespace VintageEngineering.Electrical
     /// Base Class to use when creating items that you want to be chargable.
     /// </summary>
     public class ItemChargable : Item, IChargeableItem
-    {
-        public ulong _electricCharge;
-
+    {        
         public ulong MaxPower
         {
             get
