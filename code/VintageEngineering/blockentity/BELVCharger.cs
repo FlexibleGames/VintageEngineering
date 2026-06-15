@@ -70,6 +70,8 @@ namespace VintageEngineering
 
         public void OnSimTick(float dt)
         {
+            _clientUpdateDelay += dt;
+
             if (InputSlot.Empty) return;
 
             if (Electric.IsSleeping || Electric.MachineState == EnumBEState.Paused)
@@ -90,10 +92,10 @@ namespace VintageEngineering
 
             if (chargeableItem == null && !chargable) return; // nothing to do with this. It shouldn't have been allowed into the inventory
             // we have something...
-            if (chargable)
+            if (chargable && chargeableItem == null)
             {
                 // use the durability!
-                int curcharge = InputSlot.Itemstack.Attributes.GetInt("durability");
+                int curcharge = InputSlot.Itemstack.Collectible.GetRemainingDurability(InputSlot.Itemstack);
                 int maxcharge = InputSlot.Itemstack.Collectible.GetMaxDurability(InputSlot.Itemstack);
                 if (curcharge < maxcharge)
                 {
@@ -104,12 +106,8 @@ namespace VintageEngineering
                     int torestore = Math.Max(1, ((int)powertouse) / _powerperdurability);
                     curcharge += torestore;
                     if (curcharge > maxcharge) curcharge = maxcharge;
-                    InputSlot.Itemstack.Attributes.SetInt("durability", curcharge);
-                    Electric.electricpower -= powertouse;                    
-                }
-                else
-                {
-                    SetState(EnumBEState.Paused);
+                    InputSlot.Itemstack.Collectible.SetDurability(InputSlot.Itemstack, curcharge);
+                    Electric.electricpower -= powertouse;
                 }
             }
             else
@@ -127,10 +125,6 @@ namespace VintageEngineering
                     if (remaining > 0) powertouse -= remaining;
                     Electric.electricpower -= powertouse;
                 }
-                else
-                {
-                    SetState(EnumBEState.Paused);
-                }
             }
             UpdateClient(dt);
         }
@@ -142,8 +136,7 @@ namespace VintageEngineering
         private void UpdateClient(float dt)
         {
             if (Api.Side == EnumAppSide.Client) return;
-
-            _clientUpdateDelay += dt;
+            
             if (_clientUpdateDelay > 0.5f)
             {
                 _clientUpdateDelay = 0f;
@@ -173,7 +166,7 @@ namespace VintageEngineering
         {
             bool changed = Electric.MachineState != newstate;
             Electric.MachineState = newstate;            
-            MarkDirty(changed);
+            if (changed) MarkDirty(true);
         }
 
         public override void OnBlockRemoved()
@@ -192,11 +185,12 @@ namespace VintageEngineering
             base.ToTreeAttributes(tree);
             ITreeAttribute invtree = new TreeAttribute();
             inventory.ToTreeAttributes(invtree);
-            tree["inventory"] = invtree;            
+            tree["inventory"] = invtree;
         }
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldForResolving)
         {
-            ItemStack prevStack = InputSlot.Itemstack.Clone();
+            ItemStack prevStack = null;
+            if (!InputSlot.Empty) prevStack = InputSlot.Itemstack.Clone();
 
             base.FromTreeAttributes(tree, worldForResolving);
             inventory.FromTreeAttributes(tree.GetTreeAttribute("inventory"));
@@ -204,8 +198,17 @@ namespace VintageEngineering
 
             if (Api != null && Api.Side == EnumAppSide.Client) SetState(Electric.MachineState);
 
-            bool remesh = prevStack.Collectible.Code.Path != InputSlot.Itemstack.Collectible.Code.Path;
-            _itemRenderer.SetContents(InputSlot.Itemstack, remesh);
+            bool remesh = false;
+            if (prevStack == null)
+            {
+                if (!InputSlot.Empty) remesh = true;
+            }
+            else
+            {
+                if (InputSlot.Empty) remesh = true;
+                else remesh = prevStack.Collectible.Code.Path != InputSlot.Itemstack.Collectible.Code.Path;
+            }
+            _itemRenderer?.SetContents(InputSlot.Itemstack, remesh);
         }
     }
 }

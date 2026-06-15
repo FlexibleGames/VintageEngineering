@@ -1,11 +1,11 @@
 {
-	"code": "vembpumpjack",
+	"code": "vembchemicalplant",
 	"class": "VEMBCore",
-	"entityClass": "VEBEPumpjack",
+	"entityClass": "VEBEChemicalPlant",
 	"behaviors": [
-		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "vembpumpjack-incomplete-north" }}},
+		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "vembchemicalplant-incomplete-north" }}},
 		{"name": "VEMultiblockBeh", "properties": {
-			"highlightID": 59,
+			"highlightID": 60,
 			"blockHighlightColors": [
 				{ "w": 1, "r": 54, "g": 6, "b": 91, "a": 180 },
 				{ "w": 2, "r": 180, "g": 180, "b": 180, "a": 180 },
@@ -84,38 +84,35 @@
 				"canExtractPower": false,
 				"canReceivePower": true,
 				"entitytype": "Consumer",
-				"maxpower": 2000,
-				"maxpps": 500
+				"maxpower": 60000,
+				"maxpps": 15000
 			}
 		}
 	],
 	"attributes": {
 		"mapColorCode": "settlement",
 		"handbook": {
-			"groupBy": ["vembpumpjack-*"],
+			"groupBy": ["vembchemicalplant-*"],
 			"excludeByType": {
 				"*-incomplete-north": false,
 				"*": true
 			}
 		},
-		"craftinganimcode": "pumping",
 		"allowHeldLiquidTransfer": true,
 		"allowPipeLiquidTransfer": true,
-		"sourceBlocksPerSecond": 1,
-		"fluidCapacityLiters": 8000,
-		"wellCasingCode": "vinteng:wellcasing"
+		"fluidCapacityLiters": 2000
 	},
-	"shapeinventory": { "base": "block/multiblock/machine/pumpjack-core" },
+	"shapeinventory": { "base": "block/multiblock/machine/chemicalplant-core" },
 	"creativeinventory": { "general": ["*-incomplete-north"], "terrain": ["*-incomplete-north"], "mechanics": ["*-incomplete-north"], "vinteng": ["*-incomplete-north"] },
 	"shapeByType": {
-		"*-incomplete-north": 	{ "base": "vinteng:block/multiblock/machine/pumpjack-core", "rotateY":0 },
-		"*-incomplete-east": 	{ "base": "vinteng:block/multiblock/machine/pumpjack-core", "rotateY":270 },
-		"*-incomplete-south": 	{ "base": "vinteng:block/multiblock/machine/pumpjack-core", "rotateY":180 },
-		"*-incomplete-west": 	{ "base": "vinteng:block/multiblock/machine/pumpjack-core", "rotateY":90 },
-		"*-built-north": 	{ "base": "vinteng:block/multiblock/machine/pumpjack", "rotateY":0 },
-		"*-built-east": 	{ "base": "vinteng:block/multiblock/machine/pumpjack", "rotateY":270 },
-		"*-built-south": 	{ "base": "vinteng:block/multiblock/machine/pumpjack", "rotateY":180 },
-		"*-built-west": 	{ "base": "vinteng:block/multiblock/machine/pumpjack", "rotateY":90 }
+		"*-incomplete-north": 	{ "base": "vinteng:block/multiblock/machine/chemicalplant-core", "rotateY":0 },
+		"*-incomplete-east": 	{ "base": "vinteng:block/multiblock/machine/chemicalplant-core", "rotateY":270 },
+		"*-incomplete-south": 	{ "base": "vinteng:block/multiblock/machine/chemicalplant-core", "rotateY":180 },
+		"*-incomplete-west": 	{ "base": "vinteng:block/multiblock/machine/chemicalplant-core", "rotateY":90 },
+		"*-built-north": 	{ "base": "vinteng:block/multiblock/machine/chemicalplant", "rotateY":0 },
+		"*-built-east": 	{ "base": "vinteng:block/multiblock/machine/chemicalplant", "rotateY":270 },
+		"*-built-south": 	{ "base": "vinteng:block/multiblock/machine/chemicalplant", "rotateY":180 },
+		"*-built-west": 	{ "base": "vinteng:block/multiblock/machine/chemicalplant", "rotateY":90 }
 	},
 	"blockmaterial": "Metal",
 	"drawtype": "json",
