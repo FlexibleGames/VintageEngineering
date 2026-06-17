@@ -20,7 +20,7 @@ namespace VintageEngineering.Electrical
 
         public ulong CurrentPower
         {
-            get { return ((ulong)this.Attributes["currentpower"].AsDouble(0)); }            
+            get { return ((ulong)this.Attributes["currentpower"].AsDouble(0)); } 
         }
 
         public void SetPower(ItemStack stack, ulong power)

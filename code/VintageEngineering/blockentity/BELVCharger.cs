@@ -89,6 +89,14 @@ namespace VintageEngineering
             // represents the 'charge' of the item...
             bool chargable = InputSlot.Itemstack.Collectible.Attributes["chargable"].AsBool(false);
             IChargeableItem chargeableItem = InputSlot.Itemstack.Collectible as IChargeableItem;
+            
+            // an example of how to USE power in your item:            
+            /*
+            ulong curpow = chargeableItem.CurrentPower;
+            ulong tickpow = chargeableItem.RatedPower(InputSlot.Itemstack, dt, false);
+            curpow -= curpow >= tickpow ? tickpow : 0;
+            chargeableItem.SetPower(InputSlot.Itemstack, curpow);
+            */
 
             if (chargeableItem == null && !chargable) return; // nothing to do with this. It shouldn't have been allowed into the inventory
             // we have something...
@@ -118,10 +126,10 @@ namespace VintageEngineering
                 if (curcharge < maxcharge)
                 {
                     if (Electric.MachineState != EnumBEState.On) { SetState(EnumBEState.On); }
-                    ulong powertopush = chargeableItem.RatedPower(dt, false);
-                    ulong powertouse = Electric.RatedPower(dt, false);                    
+                    ulong powertopush = chargeableItem.RatedPower(InputSlot.Itemstack, dt, false);
+                    ulong powertouse = Electric.RatedPower(dt, false);
                     if (powertouse > powertopush) powertouse = powertopush;
-                    ulong remaining = chargeableItem.ReceivePower(powertouse, dt, false);
+                    ulong remaining = chargeableItem.ReceivePower(InputSlot.Itemstack, powertouse, dt, false);
                     if (remaining > 0) powertouse -= remaining;
                     Electric.electricpower -= powertouse;
                 }
