@@ -50,7 +50,7 @@ namespace VintageEngineering.inventory
                 }
                 else
                 {
-                    if (chargeableItem.CurrentPower == chargeableItem.MaxPower) return _slot;
+                    if (chargeableItem.CurrentPower(_slot.Itemstack) == chargeableItem.MaxPower) return _slot;
                 }
             }
             return null;

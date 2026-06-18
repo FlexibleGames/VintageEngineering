@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VintageEngineering.API;
 using VintageEngineering.Electrical;
+using VintageEngineering.GUI;
 using VintageEngineering.inventory;
 using VintageEngineering.Renderers;
 using Vintagestory.API.Client;
@@ -67,7 +69,10 @@ namespace VintageEngineering
             inventory.LateInitialize($"{InventoryClassName}-{this.Pos.X}/{this.Pos.Y}/{this.Pos.Z}", api);
             _itemRenderer?.SetContents(InputSlot.Itemstack, true);
         }
-
+        /// <summary>
+        /// Primary tick function, called 10 times a second.
+        /// </summary>
+        /// <param name="dt">Delta Time, given by base API tick engine.</param>
         public void OnSimTick(float dt)
         {
             _clientUpdateDelay += dt;
@@ -121,13 +126,14 @@ namespace VintageEngineering
             else
             {
                 // use the interface!
-                int curcharge = ((int)chargeableItem.CurrentPower);
+                int curcharge = ((int)chargeableItem.CurrentPower(InputSlot.Itemstack));
                 int maxcharge = ((int)chargeableItem.MaxPower);
                 if (curcharge < maxcharge)
                 {
                     if (Electric.MachineState != EnumBEState.On) { SetState(EnumBEState.On); }
-                    ulong powertopush = chargeableItem.RatedPower(InputSlot.Itemstack, dt, false);
-                    ulong powertouse = Electric.RatedPower(dt, false);
+                    ulong powertopush = chargeableItem.RatedPower(InputSlot.Itemstack, dt, true);
+                    ulong powertouse = ((ulong)(Electric.CurrentPower * dt)); //Electric.RatedPower(dt, false);
+                    if (powertouse > Electric.CurrentPower) powertouse = Electric.CurrentPower;
                     if (powertouse > powertopush) powertouse = powertopush;
                     ulong remaining = chargeableItem.ReceivePower(InputSlot.Itemstack, powertouse, dt, false);
                     if (remaining > 0) powertouse -= remaining;
@@ -149,6 +155,20 @@ namespace VintageEngineering
             {
                 _clientUpdateDelay = 0f;
                 MarkDirty(true);
+            }
+        }
+
+        public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
+        {
+            base.GetBlockInfo(forPlayer, dsc);
+            if (!InputSlot.Empty)
+            {
+                IChargeableItem chargable = InputSlot.Itemstack.Collectible as IChargeableItem;
+                if (chargable != null)
+                {
+                    int charged = ((int)((chargable.CurrentPower(InputSlot.Itemstack) / (double)chargable.MaxPower) * 100));
+                    dsc.AppendLine($"{InputSlot.Itemstack.GetName()} : {IconHelper.PercentToBar(charged, 10)}");
+                }                
             }
         }
 

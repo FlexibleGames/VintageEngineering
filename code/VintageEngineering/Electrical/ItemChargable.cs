@@ -18,9 +18,9 @@ namespace VintageEngineering.Electrical
             }
         }
 
-        public ulong CurrentPower
+        public ulong CurrentPower(ItemStack stack)
         {
-            get { return ((ulong)this.Attributes["currentpower"].AsDouble(0)); } 
+            return ((ulong)stack?.Attributes?.GetLong("currentpower", 0));
         }
 
         public void SetPower(ItemStack stack, ulong power)
@@ -66,7 +66,7 @@ namespace VintageEngineering.Electrical
 
         public ulong ExtractPower(ItemStack stack, ulong powerWanted, float dt, bool simulate = false)
         {
-            ulong currentpow = CurrentPower;
+            ulong currentpow = CurrentPower(stack);
             if (currentpow == 0) return powerWanted; // we have no power to give
 
             if (simulate) return RatedPower(stack, dt, false);
@@ -110,15 +110,15 @@ namespace VintageEngineering.Electrical
             if (isInsert)
             {
                 if (!CanReceivePower) return 0;
-                ulong emptycap = MaxPower - CurrentPower;
+                ulong emptycap = MaxPower - CurrentPower(stack);
                 return emptycap < rate ? emptycap : rate;
             }
             else
             {
                 // extracting
                 if (!CanExtractPower) return 0;
-                if (CurrentPower == 0) return 0;
-                if (CurrentPower < rate) return CurrentPower;
+                if (CurrentPower(stack) == 0) return 0;
+                if (CurrentPower(stack) < rate) return CurrentPower(stack);
                 return rate; // CurrentPower > rate ? rate : CurrentPower;
             }
         }
@@ -126,7 +126,7 @@ namespace VintageEngineering.Electrical
         public ulong ReceivePower(ItemStack stack, ulong powerOffered, float dt, bool simulate = false)
         {            
             // The == was changed to >= to ensure rebalancing machine power values don't break the system.
-            if (CurrentPower >= MaxPower) return powerOffered; // we're full, bounce fast
+            if (CurrentPower(stack) >= MaxPower) return powerOffered; // we're full, bounce fast
 
             if (simulate) return RatedPower(stack, dt, true);
 
@@ -136,7 +136,7 @@ namespace VintageEngineering.Electrical
             if (pps == 0) pps = ulong.MaxValue; // PPS of 0 means NO LIMIT ***This would break recipes, aka InstaCraft ***
             else pps += 2;
 
-            ulong capacityempty = MaxPower - CurrentPower;
+            ulong capacityempty = MaxPower - CurrentPower(stack);
 
             // simular to ExtractPower, we can't receive more power than we can store.
             pps = (pps > capacityempty) ? capacityempty : pps;
@@ -147,7 +147,7 @@ namespace VintageEngineering.Electrical
                 // meaning we can take it all.
                 if (!simulate) 
                 {
-                    ulong newpower = CurrentPower + powerOffered; 
+                    ulong newpower = CurrentPower(stack) + powerOffered; 
                     SetPower(stack, newpower);
                 }
                 return 0;
@@ -157,7 +157,7 @@ namespace VintageEngineering.Electrical
                 // far more common, powerOffered exceeds PPS
                 if (!simulate)
                 {
-                    ulong newpower = CurrentPower + pps;
+                    ulong newpower = CurrentPower(stack) + pps;
                     SetPower(stack, newpower);
                 }
                 return powerOffered - pps;

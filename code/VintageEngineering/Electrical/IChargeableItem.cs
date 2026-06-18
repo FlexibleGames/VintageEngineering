@@ -21,9 +21,9 @@ namespace VintageEngineering.Electrical
         /// </summary>
         ulong MaxPower { get; }
         /// <summary>
-        /// Current power held by this Item.
+        /// Current power held by this Item. Requires stack as value is saved to the instance of the object.
         /// </summary>
-        ulong CurrentPower { get; }
+        ulong CurrentPower(ItemStack stack);
         /// <summary>
         /// Max Power Per Second rating of this Item.
         /// </summary>
