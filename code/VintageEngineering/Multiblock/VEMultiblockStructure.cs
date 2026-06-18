@@ -103,8 +103,13 @@ namespace VintageEngineering.Multiblock
                     string svalue = obj["s"].AsString();
                     switch (svalue)
                     {
+                        case "steelfence": color = VEHelpers.MBStandardColors.SteelFence; break;
+                        case "platform": color = VEHelpers.MBStandardColors.Platform; break;
+                        case "steelladder": color = VEHelpers.MBStandardColors.SteelLadder; break;
+                        case "reinforcedconcrete": color = VEHelpers.MBStandardColors.ReinforcedConcrete; break;
+                        case "ironsheetmetal": color = VEHelpers.MBStandardColors.IronSheetMetal; break;
                         case "heavyeng": color = VEHelpers.MBStandardColors.HeavyEng; break;
-                        case "Lighteng": color = VEHelpers.MBStandardColors.LightEng; break;
+                        case "lighteng": color = VEHelpers.MBStandardColors.LightEng; break;
                         case "fluidio": color = VEHelpers.MBStandardColors.FluidIO; break;
                         case "itemio": color = VEHelpers.MBStandardColors.ItemIO; break;
                         case "powerio": color = VEHelpers.MBStandardColors.PowerIO; break;

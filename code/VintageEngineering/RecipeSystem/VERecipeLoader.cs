@@ -82,6 +82,11 @@ namespace VintageEngineering.RecipeSystem
                 verrs.RegisterDistillationRecipe(r);
             });
 
+            this.LoadRecipes<RecipeChemPlant>("ve chemical plant recipe", "recipes/vechemplant", delegate (RecipeChemPlant r)
+            {
+                verrs.RegisterChemicalPlantRecipe(r);
+            });
+
             sapi.World.Logger.StoryEvent(Lang.Get("vinteng:storyevent-recipes", Array.Empty<object>()));
         }
 

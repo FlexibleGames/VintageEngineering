@@ -289,6 +289,10 @@
 	"vinteng:Industrially baking": "Industrially baking",
 	"vinteng:Smelts into": "Smelts into",
 	"vinteng:Smelting": "Smelting",
+	"vinteng:Distills": "Distills",
+	"vinteng:Distills into": "Distills into",
+	"vinteng:Cracks into": "Cracks into",
+	"vinteng:Cracking": "Cracking",
 
 	"vinteng:item-vepipefilter": "Pipe Filter",
 	"vinteng:itemdesc-vepipefilter": "The Pipe Filter can be used in upgraded extraction nodes to filter (white-list or black-list) items to pull from the connected inventory. <br>Right click with the filter in your hand to set filter settings.",
@@ -476,8 +480,6 @@
 	"vinteng:blockdesc-vembdistillationext-*": "Distillation Extension is built stacked on top of the base or other extensions. Up to 6 extensions are currently supported for the base.<br>Building blocks are color-coded by type as outlined below.<br><br>Black : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"vinteng:vesheetmetal-iron\"/><br>Mid Gray : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"vinteng:metalplatform-up\"/><br>White : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"vinteng:metalladder-steel-north\"/><br>Pink : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"vinteng:vembcomponent-lighteng\"/><br>Yellow : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"vinteng:vemultiblockio-fluid\"/><br>Red : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"vinteng:vemultiblockio-interaction\"/>",
 	"vinteng:gui-word-extensions": "Extensions",
 	"vinteng:gui-word-extension": "Extension",
-	"vinteng:Distills": "Distills",
-	"vinteng:Distills into": "Distills into",
 
 	"vinteng:item-dieselportion": "Diesel Fuel (Portion)",
 	"vinteng:incontainer-item-dieselportion": "Diesel Fuel",
@@ -509,6 +511,10 @@
 	"vinteng:block-vembfluidgenerator-incomplete-*": "MV Fluid Generator Core",
 	"vinteng:block-vembfluidgenerator-built-*": "MV Fluid Generator",
 	"vinteng:blockdesc-vembfluidgenerator-*": "Burns liquid fuels that are the ItemLiquidFuel type and contains a liquidfuel attribute in the fluid portion json. Use dieselportion as a template if you wish to add new fuels.<br>The fuel defines the PPS and burn duration.<br>Multiblock building blocks are color-coded by type as outlined below.<br><br>Dark Purple : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"vinteng:vembcomponent-heavyeng\"/><br>Light Gray : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"vinteng:vembcomponent-steel\"/><br>Red : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"vinteng:vemultiblockio-interaction\"/><br>Black : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"vinteng:vesheetmetal-iron\"/><br>Pink : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"vinteng:vembcomponent-lighteng\"/><br>Yellow : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"vinteng:vemultiblockio-fluid\"/><br>Lime Green : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"vinteng:vemultiblockio-power\"/>",
+
+	"vinteng:block-vembchemicalplant-incomplete-*": "MV Chemical Plant Core",
+	"vinteng:block-vembchemicalplant-built-*": "MV Chemical Plant",
+	"vinteng:blockdesc-vembchemicalplant-*": "The Chemical Plant can crack/process elements into other elements. Useful for cracking heavy oil and lubricant and processing Napha into plastic. Takes up to 1 item and 2 fluid inputs, and outputs up to 1 item and 3 fluids. Inputs determine recipe.<br>Multiblock building blocks are color-coded by type as outlined below.<br><br>Dark Purple : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"vinteng:vembcomponent-heavyeng\"/><br>Light Gray : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"vinteng:vembcomponent-steel\"/><br>Red : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"vinteng:vemultiblockio-interaction\"/><br>Black : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"vinteng:vesheetmetal-iron\"/><br>Pink : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"vinteng:vembcomponent-lighteng\"/><br>Yellow : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"vinteng:vemultiblockio-fluid\"/><br>Lime Green : <itemstack rsize=\"1\" type=\"block\" offx=\"1\" offy=\"1\" code=\"vinteng:vemultiblockio-power\"/>",
 
 	"eof": "End Of File"
 }

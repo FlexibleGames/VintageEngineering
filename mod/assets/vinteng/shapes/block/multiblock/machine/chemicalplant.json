@@ -1,6 +1,6 @@
 {
 	"editor": {
-		"collapsedPaths": ",Root/Layer6,Root/PlatformDetail1,Root/Layer5L/Rivet1,Root/Layer5,Root/Layer5/Rivet19,Root/PlatformDetail6,Root/UpperCatwalk41,Root/UpperCatwalk,Root/Layer5L/Rivet7,Root/Layer5/Rivet13,Root/Base-Pipe1,Root/Base-Pipe2,Root/TopLadder1,Root/TopCatwalk1,Root/PowerCable1,Root/Layer5L/Tower1-1/Tower1-25,Root/Layer5L/Rivet19,Root/UpperCatwalk6,Root/Layer3,Root/PlatformDetail11,Root/Ladder1/Ladder6,Root/Ladder1/Ladder11,Root/Layer4/Layer4-W1,Root/Ladder1/Ladder5,Root/Ladder1/Ladder10,Root/Ladder1/Ladder4,Root/ScaffoldLow20,Root/Tower1-SmokeStack1,Root/Ladder1/Ladder3,Root/PlatformDetail20,Root/Layer5L/Rivet13,Root/Ladder1/Ladder2,Root/Tower2-SmokeStack1,Root/Layer5L/Tower1-1,Root/UpperCatwalk31,Root/Ladder1/Ladder9,Root/Ladder1/Ladder8,Root/UpperCatwalk36,Root/Ladder1/Ladder7,Root/Base6,Root/Base16,Root/Ladder1/Ladder14,Root/Ladder1/Ladder13,Root/Layer5L/Tower1-1/Tower1-17,Root/Ladder1/Ladder12,Root/Base11,Root/Tower1-Pipe1,Root/Tower1-Pipe4,Root/UpperCatwalk21,Root/UpperCatwalk26,Root/Layer5/Rivet7,Root/Layer5/Rivet1,Root/Layer4/Layer4-middle1,Root/ScaffoldLow16,Root/Layer5R,Root/ScaffoldLow13,Root/Layer5L,Root/PlatformDetail1/PlatformDetail20,Root/UpperCatwalk11,Root/Layer5L/Tower2-1,Root/UpperCatwalk16,Root/Base-VPipe15,Root/Base-VPipe1,Root/Base-VPipe14,Root/ScaffoldLow7,Root/Ladder1,Root/ScaffoldLow1,Root/Base36",
+		"collapsedPaths": ",Root/Layer6,Root/PlatformDetail1,Root/Layer5L/Rivet1,Root/Layer5,Root/Layer5/Rivet19,Root/PlatformDetail6,Root/UpperCatwalk41,Root/UpperCatwalk,Root/Layer5L/Rivet7,Root/Layer5/Rivet13,Root/Base-Pipe1,Root/Base-Pipe2,Root/TopLadder1,Root/TopCatwalk1,Root/PowerCable1,Root/Layer5L/Tower1-1/Tower1-25,Root/Layer5L/Rivet19,Root/UpperCatwalk6,Root/Layer3,Root/PlatformDetail11,Root/Ladder1/Ladder6,Root/Ladder1/Ladder11,Root/Layer4/Layer4-W1,Root/Ladder1/Ladder5,Root/Ladder1/Ladder10,Root/Ladder1/Ladder4,Root/Tower1-SmokeStack1,Root/Ladder1/Ladder3,Root/PlatformDetail20,Root/Layer5L/Rivet13,Root/Ladder1/Ladder2,Root/Tower2-SmokeStack1,Root/Layer5L/Tower1-1,Root/UpperCatwalk31,Root/Ladder1/Ladder9,Root/Ladder1/Ladder8,Root/UpperCatwalk36,Root/Ladder1/Ladder7,Root/Base6,Root/Base16,Root/Ladder1/Ladder14,Root/Ladder1/Ladder13,Root/Layer5L/Tower1-1/Tower1-17,Root/Ladder1/Ladder12,Root/Base11,Root/Tower1-Pipe1,Root/Tower1-Pipe4,Root/UpperCatwalk21,Root/UpperCatwalk26,Root/Layer5/Rivet7,Root/Layer5/Rivet1,Root/Layer4/Layer4-middle1,Root/ScaffoldLow16,Root/Layer5R,Root/ScaffoldLow13,Root/Layer5L,Root/PlatformDetail1/PlatformDetail20,Root/UpperCatwalk11,Root/Layer5L/Tower2-1,Root/UpperCatwalk16,Root/Base-VPipe15,Root/Base-VPipe1,Root/Base-VPipe14,Root/ScaffoldLow7,Root/Ladder1,Root/ScaffoldLow1,Root/Base36",
 		"allAngles": false,
 		"entityTextureMode": false
 	},
@@ -7973,9 +7973,9 @@
 				},
 				{
 					"name": "ScaffoldLow34",
-					"from": [ 99.0, 38.0, -30.0 ],
-					"to": [ 103.0, 42.0, 0.0 ],
-					"rotationOrigin": [ 99.0, 38.0, -30.0 ],
+					"from": [ 98.0, 38.0, -30.0 ],
+					"to": [ 102.0, 42.0, 0.0 ],
+					"rotationOrigin": [ 98.0, 38.0, -30.0 ],
 					"faces": {
 						"north": { "texture": "#null", "uv": [ 0.0, 0.0, 3.0, 16.0 ], "autoUv": false, "enabled": false },
 						"east": { "texture": "#gunmetal-lightgray", "uv": [ 0.0, 0.0, 3.0, 16.0 ], "autoUv": false },
