@@ -3,6 +3,7 @@ using VintageEngineering.blockentity;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
+using static System.TimeZoneInfo;
 
 namespace VintageEngineering.inventory
 {
@@ -52,60 +53,28 @@ namespace VintageEngineering.inventory
                 { EnumTransitionType.Cure, rate },
                 { EnumTransitionType.Melt, rate },
                 { EnumTransitionType.Perish, rate },
-                { EnumTransitionType.Ripen, rate }
+                { EnumTransitionType.Ripen, rate },
+                { EnumTransitionType.Convert, rate }
             };
             PerishableFactorByFoodCategory = new Dictionary<EnumFoodCategory, float>
             {
                 { EnumFoodCategory.Protein, rate },
                 { EnumFoodCategory.Vegetable, rate },
                 { EnumFoodCategory.Grain, rate },
-                { EnumFoodCategory.Fruit, rate }
+                { EnumFoodCategory.Fruit, rate },
+                { EnumFoodCategory.Dairy, rate }
             };
         }
 
         protected override float GetDefaultTransitionSpeedMul(EnumTransitionType transitionType)
         {
-            return base.GetDefaultTransitionSpeedMul(transitionType) * _fridgeBE.BridgePerishRate();
+            if (TransitionableSpeedMulByType.ContainsKey(transitionType))
+            {
+                return TransitionableSpeedMulByType[transitionType];
+            }
+            else return 1f;
         }
 
-        /// <summary>
-        /// The entire purpose of this inventory is to override this function...<br/>
-        /// When powered, slows down Perish, Ripen, Cure, and Melt transition types. Values loaded from JSON Attributes.
-        /// </summary>
-        /// <param name="transType">Transition Type</param>
-        /// <param name="stack">The Stack</param>
-        /// <returns>Float 0 <=> 1</returns>
-        //public override float GetTransitionSpeedMul(EnumTransitionType transType, ItemStack stack)
-        //{
-        //    float basespeed = base.GetTransitionSpeedMul(transType, stack);
-        //    if (!_fridgeBE.Block.Attributes.KeyExists("spoilrate"))
-        //    {
-        //        return GlobalConstants.PerishSpeedModifier;
-        //    }
-        //    float _poweredrate = _fridgeBE.Block.Attributes["spoilrate"]["powered"].AsFloat(0.25f);
-        //    float _unpoweredrate = _fridgeBE.Block.Attributes["spoilrate"]["unpowered"].AsFloat(2.0f);
-
-        //    if (transType == EnumTransitionType.Perish || 
-        //        transType == EnumTransitionType.Ripen || 
-        //        transType == EnumTransitionType.Cure ||
-        //        transType == EnumTransitionType.Melt)
-        //    {
-        //        // "spoilrate": { "powered": 0.2, "unpowered": 0.9 }
-
-        //        if (_fridgeBE.Electric.MachineState == EnumBEState.On)
-        //        {
-        //            return basespeed;
-        //        }
-        //        else
-        //        {
-        //            return basespeed;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        return GlobalConstants.PerishSpeedModifier;
-        //    }
-        //}
         public override void FromTreeAttributes(ITreeAttribute tree)
         {
             this.slots = this.SlotsFromTreeAttributes(tree, this.slots, null);
