@@ -88,29 +88,40 @@ namespace VintageEngineering.RecipeSystem.Recipes
             return Outputs[index].ResolvedItemstack;
         }
 
-        public bool TryCraft(ICoreAPI api, ItemSlot input, ItemSlot[] outputslots)
+        public bool TryCraft(ICoreAPI api, ItemSlot[] inputs, ItemSlot[] outputslots)
         {
-            if (outputslots.Length == 0 || outputslots.Length < Outputs.Length) return false;
-            if (input.Empty || input.Itemstack.Collectible.Code != Ingredients[0]?.ResolvedItemStack?.Collectible.Code) return false;
-            int slotscale = Ingredients.Length; // if SlotID exists in the Output, reduce by this number for index into outputslots
-            // SlotID references inventory (which includes inputs) while outputs is a 0 based array
-            for (int o = 0; o < Outputs.Length; o++)
+            List<KeyValuePair<ItemSlot, BarrelRecipeIngredient>> pairin = PairInput(inputs);
+            if (pairin == null) return false;
+
+            if (this.Outputs.Length > outputslots.Length) return false;            
+            List<KeyValuePair<ItemSlot, VERecipeVariableOutput>> pairedout = PairOutputs(outputslots);
+            if (pairedout == null) return false;
+
+            foreach (KeyValuePair<ItemSlot, BarrelRecipeIngredient> kvpairin in pairin)
             {
-                if (Outputs[o].ResolvedItemstack == null) Outputs[o].Resolve(api.World, "Chemical Plant TryCraft");
-                if (Outputs[o].ResolvedItemstack == null) return false;
-                ItemStack madestack = Outputs[o].ResolvedItemstack.Clone();
-                madestack.StackSize = Outputs[o].VariableResolve(api.World, "Chemical Plant Variable TryCraft");
-                if (madestack.StackSize == -1) return false;
-                int slotindex = Outputs[o].SlotID != null ? Outputs[o].SlotID.Value - slotscale : o;
-                if (outputslots[slotindex].Empty) outputslots[slotindex].Itemstack = madestack.Clone();
+                if (kvpairin.Value.ConsumeQuantity != null)
+                {
+                    kvpairin.Key.TakeOut(kvpairin.Value.ConsumeQuantity.Value);
+                }
                 else
                 {
-                    outputslots[slotindex].Itemstack.StackSize += madestack.StackSize;
+                    kvpairin.Key.TakeOut(kvpairin.Value.Quantity);
                 }
-                outputslots[slotindex].MarkDirty();
+                kvpairin.Key.MarkDirty();
             }
-            input.TakeOut(Ingredients[0].Quantity);
-            input.MarkDirty();
+
+            foreach (KeyValuePair<ItemSlot, VERecipeVariableOutput> kvpair in pairedout)
+            {
+                if (kvpair.Key.Empty)
+                {
+                    kvpair.Key.Itemstack = kvpair.Value.ResolvedItemStack.Clone();
+                }
+                else
+                {
+                    kvpair.Key.Itemstack.StackSize += kvpair.Value.StackSize;
+                }
+                kvpair.Key.MarkDirty();
+            }
             return true;
         }
 
@@ -133,33 +144,114 @@ namespace VintageEngineering.RecipeSystem.Recipes
         /// <param name="ingredient">ItemSlot input ingredient</param>
         /// <param name="requireslot">Required Die Cast Code if aplicable.</param>
         /// <returns>True if valid.</returns>
-        public bool Matches(ItemSlot ingredient, ItemSlot requireslot, int l_numExtensions)
+        public bool Matches(ItemSlot[] ingredients)
         {
-            if (ingredient.Empty) return false; // no ingredient to even check, bounce
+            if (ingredients.Length == 0) return false;
 
-            if (!Ingredients[0].SatisfiesAsIngredient(ingredient.Itemstack, true)) return false;
+            List<KeyValuePair<ItemSlot, BarrelRecipeIngredient>> matched = PairInput(ingredients);
+            if (matched == null) return false;
 
-            if (Requires != null) // unused, but left in... if this recipe requires something, we need to check for it in the requires slot
+            return true;
+        }        
+
+        /// <summary>
+        /// Pairs output slots to their respective recipe Output, if slots are empty, match unmapped Outputs
+        /// </summary>
+        /// <param name="p_outputs"></param>
+        /// <returns></returns>
+        public List<KeyValuePair<ItemSlot, VERecipeVariableOutput>> PairOutputs(ItemSlot[] p_outputs)
+        {
+            if (p_outputs == null || p_outputs.Length == 0)
             {
-                if (requireslot == null || requireslot.Empty) return false;
-                if (Requires.IsWildCard)
+                return null;
+            }
+
+            List<KeyValuePair<ItemSlot, VERecipeVariableOutput>> mapped = new();
+
+            HashSet<int> matchedRecipeIndices = new();
+            HashSet<int> usedOutputSlotIndices = new();
+
+            // 1. First pass: Match already-filled output slots to recipe outputs by code
+            for (int s = 0; s < p_outputs.Length; s++)
+            {
+                ItemSlot slot = p_outputs[s];
+                if (slot.Empty)
                 {
-                    // TODO check for variants
-                    if (RequiresVariants != null)
+                    continue;
+                }
+
+                bool found = false;
+                for (int i = 0; i < Outputs.Length; i++)
+                {
+                    if (matchedRecipeIndices.Contains(i))
                     {
-                        return WildcardUtil.Match(Requires, requireslot.Itemstack.Collectible.Code, RequiresVariants);
+                        continue;
                     }
-                    return WildcardUtil.Match(Requires, requireslot.Itemstack.Collectible.Code);
+
+                    if (slot.Itemstack.Collectible.Code == Outputs[i].ResolvedItemstack.Collectible.Code)
+                    {
+                        mapped.Add(new KeyValuePair<ItemSlot, VERecipeVariableOutput>(slot, Outputs[i]));
+                        matchedRecipeIndices.Add(i);
+                        usedOutputSlotIndices.Add(s);
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found)
+                {
+                    // Filled slot that doesn't match any recipe output → invalid
+                    return null;
+                }
+            }
+
+            // 2. Second pass: Assign remaining recipe outputs to empty slots
+            int nextLiquidSlotIndex = 1; // fluids typically start at slot 1
+
+            for (int i = 0; i < Outputs.Length; i++)
+            {
+                if (matchedRecipeIndices.Contains(i))
+                {
+                    continue;
+                }
+
+                VERecipeVariableOutput recipeOut = Outputs[i];
+                ItemSlot targetSlot = null;
+
+                if (!recipeOut.ResolvedItemStack.Collectible.IsLiquid())
+                {
+                    // Solid output goes to slot 0
+                    if (p_outputs.Length > 0 && !usedOutputSlotIndices.Contains(0))
+                    {
+                        targetSlot = p_outputs[0];
+                        usedOutputSlotIndices.Add(0);
+                    }
                 }
                 else
                 {
-                    return Requires.Equals(requireslot.Itemstack.Collectible.Code);
+                    // Liquid output - find next available liquid slot (starting from 1)
+                    while (nextLiquidSlotIndex < p_outputs.Length)
+                    {
+                        if (!usedOutputSlotIndices.Contains(nextLiquidSlotIndex))
+                        {
+                            targetSlot = p_outputs[nextLiquidSlotIndex];
+                            usedOutputSlotIndices.Add(nextLiquidSlotIndex);
+                            nextLiquidSlotIndex++; // move to next possible slot
+                            break;
+                        }
+                        nextLiquidSlotIndex++;
+                    }
                 }
+
+                if (targetSlot == null || !targetSlot.Empty)
+                {
+                    return null;
+                }
+
+                mapped.Add(new KeyValuePair<ItemSlot, VERecipeVariableOutput>(targetSlot, recipeOut));
             }
-            else
-            {
-                return true;
-            }
+
+            return mapped;
         }
 
         /// <summary>
@@ -167,9 +259,9 @@ namespace VintageEngineering.RecipeSystem.Recipes
         /// </summary>
         /// <param name="inputStacks">Input Slots to check</param>
         /// <returns>Matched Pair List</returns>
-        public List<KeyValuePair<ItemSlot, CraftingRecipeIngredient>> PairInput(ItemSlot[] inputStacks)
+        public List<KeyValuePair<ItemSlot, BarrelRecipeIngredient>> PairInput(ItemSlot[] inputStacks)
         {
-            List<CraftingRecipeIngredient> ingredientList = new List<CraftingRecipeIngredient>(this.Ingredients);
+            List<BarrelRecipeIngredient> ingredientList = new List<BarrelRecipeIngredient>(this.Ingredients);
             Queue<ItemSlot> inputSlotsList = new Queue<ItemSlot>();
             foreach (ItemSlot val in inputStacks)
             {
@@ -182,17 +274,17 @@ namespace VintageEngineering.RecipeSystem.Recipes
             {
                 return null;
             }
-            List<KeyValuePair<ItemSlot, CraftingRecipeIngredient>> matched = new List<KeyValuePair<ItemSlot, CraftingRecipeIngredient>>();
+            List<KeyValuePair<ItemSlot, BarrelRecipeIngredient>> matched = new List<KeyValuePair<ItemSlot, BarrelRecipeIngredient>>();
             while (inputSlotsList.Count > 0)
             {
                 ItemSlot inputSlot = inputSlotsList.Dequeue();
                 bool found = false;
                 for (int i = 0; i < ingredientList.Count; i++)
                 {
-                    CraftingRecipeIngredient ingred = ingredientList[i];
+                    BarrelRecipeIngredient ingred = ingredientList[i];
                     if (ingred.SatisfiesAsIngredient(inputSlot.Itemstack, true))
                     {
-                        matched.Add(new KeyValuePair<ItemSlot, CraftingRecipeIngredient>(inputSlot, ingred));
+                        matched.Add(new KeyValuePair<ItemSlot, BarrelRecipeIngredient>(inputSlot, ingred));
                         found = true;
                         ingredientList.RemoveAt(i);
                         break;

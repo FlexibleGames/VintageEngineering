@@ -5,6 +5,8 @@ using System.Text;
 using VintageEngineering.API;
 using VintageEngineering.GUI;
 using VintageEngineering.Multiblock;
+using VintageEngineering.RecipeSystem;
+using VintageEngineering.RecipeSystem.Recipes;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -55,7 +57,40 @@ namespace VintageEngineering
         /// 3 is item output, 4, 5, 6 are fluid outputs
         /// </summary>
         public override InventoryBase Inventory => _inventory;
-        public ItemSlot InputSlot => _inventory[0];
+        public ItemSlot InputSlotF1 => _inventory[0];
+        public ItemSlot InputSlotF2 => _inventory[1];
+        public ItemSlot InputSlotI1 => _inventory[2];
+
+        public ItemSlot[] InputSlots
+        {
+            get
+            {
+                return new ItemSlot[]
+                {
+                    _inventory[0] as ItemSlotLiquidOnly,
+                    _inventory[1] as ItemSlotLiquidOnly,
+                    _inventory[2]
+                };
+            }
+        }
+
+        public ItemSlot[] OutputSlots
+        {
+            get
+            {
+                return new ItemSlot[]
+                {
+                    _inventory[3],
+                    _inventory[4] as ItemSlotLiquidOnly,
+                    _inventory[5] as ItemSlotLiquidOnly,
+                    _inventory[6] as ItemSlotLiquidOnly
+                };
+            }
+        }
+        public bool InputsEmpty()
+        {
+            return InputSlotF1.Empty && InputSlotF2.Empty && InputSlotI1.Empty;
+        }
         /// <summary>
         /// How full (0-100) is the Input Tank
         /// </summary>
@@ -89,7 +124,7 @@ namespace VintageEngineering
         }
 
         public override string InventoryClassName => "InvChemPlant";
-        public int[] InputLiquidContainerSlotIDs => [0, 1];
+        public int[] InputLiquidContainerSlotIDs => [0, 1]; // 2 and 3 are item input and output respectfully
         public int[] OutputLiquidContainerSlotIDs => [4, 5, 6];
         public virtual bool AllowPipeLiquidTransfer
         {
@@ -177,13 +212,54 @@ namespace VintageEngineering
             }
             return null;
         }
+        #endregion
+
+        #region recipe stuff
+
+        public RecipeChemPlant _currentRecipe;
+        public ulong _recipePowerApplied = 0;
+
+        public float RecipeProgress
+        {
+            get
+            {
+                if (_currentRecipe != null)
+                {
+                    return (_recipePowerApplied / (float)_currentRecipe.PowerPerCraft);
+                }
+                else return 0f;
+            }
+        }
 
         public bool FindMatchingRecipe()
         {
-            return true;
-        }
-        #endregion
+            if (Api == null) return false;
+            if (InputsEmpty())
+            {
+                _currentRecipe = null;
+                SetState(EnumBEState.Sleeping);
+                _recipePowerApplied = 0;
+                return false;
+            }
+            List<RecipeChemPlant> chemrecipes = Api?.ModLoader?.GetModSystem<VERecipeRegistrySystem>(true)?.ChemicalPlantRecipes;
+            if (chemrecipes == null || chemrecipes.Count == 0) return false;
 
+            foreach (RecipeChemPlant crecipe in chemrecipes)
+            {
+                if (crecipe.Enabled && crecipe.Matches(InputSlots))
+                {
+                    _currentRecipe = crecipe;
+                    SetState(EnumBEState.On);
+                    return true;
+                }
+            }
+            _currentRecipe = null;
+            _recipePowerApplied = 0;
+            SetState(EnumBEState.Sleeping);
+            return false;            
+        }
+
+        #endregion
         public BEMBChemicalPlant()
         {
             _inventory = new InventoryGeneric(7, null, null, delegate (int id, InventoryGeneric self)
@@ -251,13 +327,37 @@ namespace VintageEngineering
                 if (_updateBouncer < 2f) return;
                 _updateBouncer = 0f;
             }
-            if (IsBuilt && !InputSlot.Empty)
+            if (IsBuilt && !InputsEmpty() && _currentRecipe == null)
             {
-                //found = FindMatchingRecipe();
+                FindMatchingRecipe();
             }
-            if (IsBuilt && Electric.MachineState == EnumBEState.On)
+            if (IsBuilt && Electric.MachineState == EnumBEState.On && _currentRecipe != null)
             {
-                // Primary "in progress" crafting loop
+                ulong tickpower = ((ulong)(Electric.MaxPPS * dt));
+                if (Electric.CurrentPower < tickpower) return;
+
+                if (_recipePowerApplied < ((ulong)_currentRecipe.PowerPerCraft))
+                {
+                    _recipePowerApplied += tickpower;
+                    Electric.electricpower -= tickpower;                    
+                }
+                else
+                {
+                    // recipe is complete
+                    if (_currentRecipe.TryCraft(Api, InputSlots, OutputSlots))
+                    {
+                        Electric.electricpower -= tickpower;
+                        _recipePowerApplied = 0;
+                        FindMatchingRecipe();
+                    }
+                    else
+                    {
+                        if (_clientUpdateDelay >= 0.5f)
+                        {
+                            Api.Logger.Error($"VintEng: Chemical Plant TryCraft recipe (Code: {_currentRecipe.Code}) returned false.");
+                        }
+                    }
+                }
             }
             if (_clientUpdateDelay >= 0.5f)
             {
@@ -271,11 +371,20 @@ namespace VintageEngineering
             float powerpercent = 0f;
             if (Electric.MaxPower > 0) powerpercent = (float)(Electric.CurrentPower / (double)Electric.MaxPower);
             int percentpower = (int)(powerpercent * 100);
-            string inputfluid = _inventory[0].Empty ? Lang.Get("vinteng:gui-word-empty") : _inventory[0].Itemstack.Collectible.GetHeldItemName(_inventory[0].Itemstack);
+            string inputfluid1 = InputSlotF1.Empty ? Lang.Get("vinteng:gui-word-empty") : InputSlotF1.Itemstack.Collectible.GetHeldItemName(InputSlotF1.Itemstack);
+            string inputfluid2 = InputSlotF2.Empty ? Lang.Get("vinteng:gui-word-empty") : InputSlotF2.Itemstack.Collectible.GetHeldItemName(InputSlotF2.Itemstack);
 
             base.GetBlockInfo(forPlayer, dsc);
-            dsc.AppendLine($"{Lang.Get("vinteng:gui-word-input")}: {IconHelper.PercentToBar(PercentInputTank1, 10)} {PercentInputTank1:N0}% {inputfluid}");
+            dsc.AppendLine($"{Lang.Get("vinteng:gui-word-input")}: {IconHelper.PercentToBar(PercentInputTank1, 10)} {PercentInputTank1:N0}% {inputfluid1}");
+            dsc.AppendLine($"{Lang.Get("vinteng:gui-word-input")}: {IconHelper.PercentToBar(PercentInputTank2, 10)} {PercentInputTank2:N0}% {inputfluid2}");
             dsc.AppendLine($"{Lang.Get("vinteng:gui-word-power")}: {IconHelper.PercentToBar(percentpower, 10)} {percentpower:N0}%");
+
+            if (_currentRecipe != null)
+            {
+                dsc.AppendLine($"{Lang.Get("vinteng:gui-word-crafting")}: {Lang.Get($"vinteng:{_currentRecipe.Code}")}");
+                dsc.AppendLine($"{IconHelper.PercentToBar((int)(RecipeProgress*100), 10)} {(RecipeProgress * 100):N1}%");
+            }
+
         }
 
         public override bool OnPlayerRightClick(IPlayer byPlayer, BlockSelection blockSel)
@@ -340,16 +449,17 @@ namespace VintageEngineering
             ITreeAttribute invtree = new TreeAttribute();
             _inventory.ToTreeAttributes(invtree);
             tree["inventory"] = invtree;
-
             tree.SetString("machinestate", Electric.MachineState.ToString());
+            tree.SetLong("recipepower", ((long)_recipePowerApplied));
         }
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldForResolving)
         {
             base.FromTreeAttributes(tree, worldForResolving);
             _inventory.FromTreeAttributes(tree.GetTreeAttribute("inventory"));
             EnumBEState syncstate = Enum.Parse<EnumBEState>(tree.GetString("machinestate", "On"));
-            if (!_inventory[0].Empty || !_inventory[1].Empty || !_inventory[2].Empty) FindMatchingRecipe();
+            FindMatchingRecipe();
             if (Electric.MachineState != syncstate) SetState(syncstate);
+            _recipePowerApplied = ((ulong)tree.GetLong("recipepower"));
         }
 
         #endregion
