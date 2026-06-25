@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VintageEngineering.API;
 using VintageEngineering.Electrical;
+using VintageEngineering.GUI;
 using VintageEngineering.inventory;
 using VintageEngineering.Renderers;
 using Vintagestory.API.Client;
@@ -67,9 +69,14 @@ namespace VintageEngineering
             inventory.LateInitialize($"{InventoryClassName}-{this.Pos.X}/{this.Pos.Y}/{this.Pos.Z}", api);
             _itemRenderer?.SetContents(InputSlot.Itemstack, true);
         }
-
+        /// <summary>
+        /// Primary tick function, called 10 times a second.
+        /// </summary>
+        /// <param name="dt">Delta Time, given by base API tick engine.</param>
         public void OnSimTick(float dt)
         {
+            _clientUpdateDelay += dt;
+
             if (InputSlot.Empty) return;
 
             if (Electric.IsSleeping || Electric.MachineState == EnumBEState.Paused)
@@ -87,13 +94,21 @@ namespace VintageEngineering
             // represents the 'charge' of the item...
             bool chargable = InputSlot.Itemstack.Collectible.Attributes["chargable"].AsBool(false);
             IChargeableItem chargeableItem = InputSlot.Itemstack.Collectible as IChargeableItem;
+            
+            // an example of how to USE power in your item:            
+            /*
+            ulong curpow = chargeableItem.CurrentPower;
+            ulong tickpow = chargeableItem.RatedPower(InputSlot.Itemstack, dt, false);
+            curpow -= curpow >= tickpow ? tickpow : 0;
+            chargeableItem.SetPower(InputSlot.Itemstack, curpow);
+            */
 
             if (chargeableItem == null && !chargable) return; // nothing to do with this. It shouldn't have been allowed into the inventory
             // we have something...
-            if (chargable)
+            if (chargable && chargeableItem == null)
             {
                 // use the durability!
-                int curcharge = InputSlot.Itemstack.Attributes.GetInt("durability");
+                int curcharge = InputSlot.Itemstack.Collectible.GetRemainingDurability(InputSlot.Itemstack);
                 int maxcharge = InputSlot.Itemstack.Collectible.GetMaxDurability(InputSlot.Itemstack);
                 if (curcharge < maxcharge)
                 {
@@ -104,32 +119,25 @@ namespace VintageEngineering
                     int torestore = Math.Max(1, ((int)powertouse) / _powerperdurability);
                     curcharge += torestore;
                     if (curcharge > maxcharge) curcharge = maxcharge;
-                    InputSlot.Itemstack.Attributes.SetInt("durability", curcharge);
-                    Electric.electricpower -= powertouse;                    
-                }
-                else
-                {
-                    SetState(EnumBEState.Paused);
+                    InputSlot.Itemstack.Collectible.SetDurability(InputSlot.Itemstack, curcharge);
+                    Electric.electricpower -= powertouse;
                 }
             }
             else
             {
                 // use the interface!
-                int curcharge = ((int)chargeableItem.CurrentPower);
+                int curcharge = ((int)chargeableItem.CurrentPower(InputSlot.Itemstack));
                 int maxcharge = ((int)chargeableItem.MaxPower);
                 if (curcharge < maxcharge)
                 {
                     if (Electric.MachineState != EnumBEState.On) { SetState(EnumBEState.On); }
-                    ulong powertopush = chargeableItem.RatedPower(dt, false);
-                    ulong powertouse = Electric.RatedPower(dt, false);                    
+                    ulong powertopush = chargeableItem.RatedPower(InputSlot.Itemstack, dt, true);
+                    ulong powertouse = ((ulong)(Electric.CurrentPower * dt)); //Electric.RatedPower(dt, false);
+                    if (powertouse > Electric.CurrentPower) powertouse = Electric.CurrentPower;
                     if (powertouse > powertopush) powertouse = powertopush;
-                    ulong remaining = chargeableItem.ReceivePower(powertouse, dt, false);
+                    ulong remaining = chargeableItem.ReceivePower(InputSlot.Itemstack, powertouse, dt, false);
                     if (remaining > 0) powertouse -= remaining;
                     Electric.electricpower -= powertouse;
-                }
-                else
-                {
-                    SetState(EnumBEState.Paused);
                 }
             }
             UpdateClient(dt);
@@ -142,12 +150,25 @@ namespace VintageEngineering
         private void UpdateClient(float dt)
         {
             if (Api.Side == EnumAppSide.Client) return;
-
-            _clientUpdateDelay += dt;
+            
             if (_clientUpdateDelay > 0.5f)
             {
                 _clientUpdateDelay = 0f;
                 MarkDirty(true);
+            }
+        }
+
+        public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
+        {
+            base.GetBlockInfo(forPlayer, dsc);
+            if (!InputSlot.Empty)
+            {
+                IChargeableItem chargable = InputSlot.Itemstack.Collectible as IChargeableItem;
+                if (chargable != null)
+                {
+                    int charged = ((int)((chargable.CurrentPower(InputSlot.Itemstack) / (double)chargable.MaxPower) * 100));
+                    dsc.AppendLine($"{InputSlot.Itemstack.GetName()} : {IconHelper.PercentToBar(charged, 10)}");
+                }                
             }
         }
 
@@ -173,7 +194,7 @@ namespace VintageEngineering
         {
             bool changed = Electric.MachineState != newstate;
             Electric.MachineState = newstate;            
-            MarkDirty(changed);
+            if (changed) MarkDirty(true);
         }
 
         public override void OnBlockRemoved()
@@ -192,11 +213,12 @@ namespace VintageEngineering
             base.ToTreeAttributes(tree);
             ITreeAttribute invtree = new TreeAttribute();
             inventory.ToTreeAttributes(invtree);
-            tree["inventory"] = invtree;            
+            tree["inventory"] = invtree;
         }
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldForResolving)
         {
-            ItemStack prevStack = InputSlot.Itemstack.Clone();
+            ItemStack prevStack = null;
+            if (!InputSlot.Empty) prevStack = InputSlot.Itemstack.Clone();
 
             base.FromTreeAttributes(tree, worldForResolving);
             inventory.FromTreeAttributes(tree.GetTreeAttribute("inventory"));
@@ -204,8 +226,17 @@ namespace VintageEngineering
 
             if (Api != null && Api.Side == EnumAppSide.Client) SetState(Electric.MachineState);
 
-            bool remesh = prevStack.Collectible.Code.Path != InputSlot.Itemstack.Collectible.Code.Path;
-            _itemRenderer.SetContents(InputSlot.Itemstack, remesh);
+            bool remesh = false;
+            if (prevStack == null)
+            {
+                if (!InputSlot.Empty) remesh = true;
+            }
+            else
+            {
+                if (InputSlot.Empty) remesh = true;
+                else remesh = prevStack.Collectible.Code.Path != InputSlot.Itemstack.Collectible.Code.Path;
+            }
+            _itemRenderer?.SetContents(InputSlot.Itemstack, remesh);
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Vintagestory.API.Common;
 
 namespace VintageEngineering.Electrical
 {
@@ -20,9 +21,9 @@ namespace VintageEngineering.Electrical
         /// </summary>
         ulong MaxPower { get; }
         /// <summary>
-        /// Current power held by this Item.
+        /// Current power held by this Item. Requires stack as value is saved to the instance of the object.
         /// </summary>
-        ulong CurrentPower { get; }
+        ulong CurrentPower(ItemStack stack);
         /// <summary>
         /// Max Power Per Second rating of this Item.
         /// </summary>
@@ -37,6 +38,13 @@ namespace VintageEngineering.Electrical
         bool CanReceivePower { get; }
 
         /// <summary>
+        /// Allows the current power to be set, given an item stack.
+        /// </summary>
+        /// <param name="stack">Stack that is the item</param>
+        /// <param name="power">ULong Power value to set</param>
+        void SetPower(ItemStack stack, ulong power);
+
+        /// <summary>
         /// Power Needed/Available Rated to a items MaxPPS given the deltaTime.<br/>
         /// Used by a charger to quickly determine power for a given tick time.<br/>
         /// Should not actually alter a machines power.
@@ -44,7 +52,7 @@ namespace VintageEngineering.Electrical
         /// <param name="dt">DeltaTime (time betwen ticks in decimal seconds)</param>
         /// <param name="isInsert">True for inserting power, false for extracting.</param>
         /// <returns>Power for this deltatime</returns>
-        ulong RatedPower(float dt, bool isInsert = false);
+        ulong RatedPower(ItemStack stack, float dt, bool isInsert = false);
 
         /// <summary>
         /// Takes powerOffered and removes any power needed and returns power left over.<br/>
@@ -54,7 +62,7 @@ namespace VintageEngineering.Electrical
         /// <param name="dt">Delta Time; Time elapsed since last update.</param>
         /// <param name="simulate">[Optional] Whether to simulate function and not actually give power.</param>
         /// <returns>Power left over (0 if all power was consumed)</returns>
-        ulong ReceivePower(ulong powerOffered, float dt, bool simulate = false);
+        ulong ReceivePower(ItemStack stack, ulong powerOffered, float dt, bool simulate = false);
 
         /// <summary>
         /// Reduces powerWanted by power held in this item.<br/>
@@ -64,13 +72,13 @@ namespace VintageEngineering.Electrical
         /// <param name="dt">Delta Time; Time elapsed since last update.</param>
         /// <param name="simulate">[Optional] Whether to just simulate function and not actually take power.</param>
         /// <returns>Unfulfilled amount of powerWanted (0 if all wanted power was satisfied)</returns>
-        ulong ExtractPower(ulong powerWanted, float dt, bool simulate = false);
+        ulong ExtractPower(ItemStack stack, ulong powerWanted, float dt, bool simulate = false);
 
         /// <summary>
         /// Completely fill (or drain) power buffer.<br/>
         /// A fast way for chargers to process power for this item.<br/>
         /// </summary>
         /// <param name="drain">[Optional] Drain power to 0 if true.</param>
-        void CheatPower(bool drain = false);
+        void CheatPower(ItemStack stack, bool drain = false);
     }
 }

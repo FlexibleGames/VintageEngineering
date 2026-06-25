@@ -1,0 +1,36 @@
+[
+{
+	"code": "cracking-heavyoil",
+	"powerpercraft": 900000,
+	"attributes": {
+		"soot": 16
+	},
+	"ingredients": [
+		{ "type": "item", "code": "game:quicklime", "quantity": 1  },
+		{ "type": "item", "code": "vinteng:heavyoilportion", "litres": 5  },
+		{ "type": "item", "code": "game:waterportion", "litres": 5  }
+	],
+	"outputs": [
+		{ "type": "item", "code": "vinteng:bitumen", "stacksize": 1, "variable": 0, "slotid": 3 },
+		{ "type": "item", "code": "vinteng:dieselportion", "litres": 4, "slotid": 4 },
+		{ "type": "item", "code": "vinteng:gasolineportion", "litres": 2, "slotid": 5 },
+		{ "type": "item", "code": "vinteng:lpgportion", "litres": 3, "slotid": 6 }
+	]
+},
+{
+	"code": "cracking-lubricant",
+	"powerpercraft": 900000,
+	"attributes": {
+		"soot": 16
+	},
+	"ingredients": [
+		{ "type": "item", "code": "vinteng:lubricantportion", "litres": 3  },
+		{ "type": "item", "code": "game:waterportion", "litres": 2  }
+	],
+	"outputs": [
+		{ "type": "item", "code": "vinteng:dieselportion", "litres": 1, "slotid": 4 },
+		{ "type": "item", "code": "vinteng:gasolineportion", "litres": 2, "slotid": 5 },
+		{ "type": "item", "code": "vinteng:napthaportion", "litres": 2, "slotid": 6 }
+	]
+}
+]

@@ -5,7 +5,7 @@
 	"behaviors": [
 		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "vembpumpjack-incomplete-north" }}},
 		{"name": "VEMultiblockBeh", "properties": {
-			"highlightID": 56,
+			"highlightID": 59,
 			"blockHighlightColors": [
 				{ "w": 1, "r": 54, "g": 6, "b": 91, "a": 180 },
 				{ "w": 2, "r": 180, "g": 180, "b": 180, "a": 180 },

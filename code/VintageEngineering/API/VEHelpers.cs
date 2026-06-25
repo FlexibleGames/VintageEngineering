@@ -11,11 +11,27 @@ namespace VintageEngineering.API
     {
         public static class MBStandardColors
         {
+            // 1 fence - black
+            // 2 platform - mid gray
+            // 3 ladder - white
+            // 4 heavyeng - dark purple
+            // 5 concrete - cyan
+            // 6 lighteng - pink
+            // 8 fluid - yellow
+            // 9 wood slab - orange
+            // 10 power - lime
+            // 11 interaction - red
+            // 12 item io - green
+            public static int SteelFence => ColorUtil.ColorFromRgba(30, 30, 30, 180);
+            public static int Platform => ColorUtil.ColorFromRgba(128, 128, 128, 180);
+            public static int SteelLadder => ColorUtil.ColorFromRgba(250, 250, 250, 180);
+            public static int ReinforcedConcrete => ColorUtil.ColorFromRgba(14, 125, 123, 180);
+            public static int IronSheetMetal => ColorUtil.ColorFromRgba(10, 10, 250, 180);
             public static int HeavyEng => ColorUtil.ColorFromRgba(54, 6, 91, 180);
             public static int LightEng => ColorUtil.ColorFromRgba(153, 102, 192, 180);
             public static int FluidIO => ColorUtil.ColorFromRgba(215, 215, 0, 180);
-            public static int ItemIO => ColorUtil.ColorFromRgba(5, 215, 5, 180);
-            public static int PowerIO => ColorUtil.ColorFromRgba(37, 197, 0, 180);
+            public static int ItemIO => ColorUtil.ColorFromRgba(5, 180, 5, 180);
+            public static int PowerIO => ColorUtil.ColorFromRgba(37, 230, 0, 180);
             public static int Interaction => ColorUtil.ColorFromRgba(250, 0, 0, 180);
             public static int TreatedSlabB => ColorUtil.ColorFromRgba(81, 41, 26, 180);
         }

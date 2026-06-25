@@ -61,6 +61,11 @@ namespace VintageEngineering.RecipeSystem
         /// </summary>
         public List<RecipeDistillationTower> DistillationRecipes = new List<RecipeDistillationTower>();
 
+        /// <summary>
+        /// Giant MV machine that takes 3 inputs and can make 4 outputs
+        /// </summary>
+        public List<RecipeChemPlant> ChemicalPlantRecipes = new List<RecipeChemPlant>();
+
         private readonly Dictionary<string, List<Block>> recipeMachines = new();
 
         public override double ExecuteOrder()
@@ -98,6 +103,9 @@ namespace VintageEngineering.RecipeSystem
 
             this.DistillationRecipes = api.RegisterRecipeRegistry<RecipeRegistryGeneric<RecipeDistillationTower>>("vedistillation").Recipes;
             AddRecipesToHandbook(api, this.DistillationRecipes, "distillation", "vinteng:Distills into", "vinteng:Distills");
+
+            this.ChemicalPlantRecipes = api.RegisterRecipeRegistry<RecipeRegistryGeneric<RecipeChemPlant>>("vechemplant").Recipes;
+            AddRecipesToHandbook(api, this.ChemicalPlantRecipes, "chemplant", "vinteng:Cracks into", "vinteng:Cracking");
         }
 
         public override void AssetsLoaded(ICoreAPI api)
@@ -217,6 +225,16 @@ namespace VintageEngineering.RecipeSystem
             }
             recipeDistillationTower.RecipeID = DistillationRecipes.Count + 1;
             this.DistillationRecipes.Add(recipeDistillationTower);
+        }
+
+        public void RegisterChemicalPlantRecipe(RecipeChemPlant recipeChemPlant)
+        {
+            if (!VERecipeRegistrySystem.canRegister)
+            {
+                throw new InvalidOperationException("VintEng | RecipeRegistrySystem: Can no longer register VE recipes. Register during AssetsLoaded/AssetsFinalize and with ExecuteOrder < 99999");
+            }
+            recipeChemPlant.RecipeID = ChemicalPlantRecipes.Count + 1;
+            ChemicalPlantRecipes.Add(recipeChemPlant);
         }
 
         /// <summary>

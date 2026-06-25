@@ -69,11 +69,18 @@ namespace VintageEngineering.blockentity
             //_inventory.OnAcquireTransitionSpeed += InvLVFridge_OnAcquireTransitionSpeed;
         }
 
-        //private float InvLVFridge_OnAcquireTransitionSpeed(EnumTransitionType transType, ItemStack stack, float mulByConfig)
-        //{
-        //    mulByConfig *= _inventory.TransitionableSpeedMulByType[transType];
-        //    return mulByConfig;
-        //}
+        private float InvLVFridge_OnAcquireTransitionSpeed(EnumTransitionType transType, ItemStack stack, float mulByConfig)
+        {
+            if (this.Api == null || _inventory == null)
+            {
+                return 0f;
+            }
+            if (_inventory.TransitionableSpeedMulByType.ContainsKey(transType))
+            {
+                mulByConfig *= _inventory.TransitionableSpeedMulByType[transType];
+            }
+            return mulByConfig;
+        }
 
         public float BridgePerishRate()
         {

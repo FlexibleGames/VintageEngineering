@@ -105,6 +105,7 @@ namespace VintageEngineering.Electrical.Systems
         private long _networkID;
         private ulong _networkPPS = 0;
         private float _rebalanceBouncer = 0f;
+        private float _logBouncer = 0f;
 
         [ProtoMember(2)]
         public long NetworkID { get => _networkID; set => _networkID = value; }
@@ -149,8 +150,8 @@ namespace VintageEngineering.Electrical.Systems
         /// Dumps and rebuilds all Entity nodes based on the allNodes list, skipping nodes that are in unloaded chunks.
         /// </summary>
         /// <exception cref="NullReferenceException">Exception thrown if IElectricalBlocKEntity is null</exception>
-        public void InitializeNetwork()
-        {
+        public void InitializeNetwork(float dt)
+        {            
             if (allNodes.Count > 0)
             {
                 int unloadedNodes = 0;
@@ -165,7 +166,18 @@ namespace VintageEngineering.Electrical.Systems
 
                     IElectricalBlockEntity entity = IElectricalBlockEntity.GetAtPos(api.World.BlockAccessor, node.blockPos);
                     // entity should never be null here
-                    if (entity == null) throw new NullReferenceException("VintEng: An Electrical Entity is null when trying to initalize network.");
+                    if (entity == null) 
+                    {
+                        if (_logBouncer > 2f || _logBouncer == dt)
+                        {
+                            // lets try not to spam log files to multiple GB, still every 2 seconds...
+                            api.Logger.Error($"VintEng: An Electrical Entity at {node.blockPos.ToLocalPosition(api)} is null when trying to initalize network but Chunk is loaded.");
+                            api.BroadcastMessageToAllGroups($"VintEng: An Electrical Entity at {node.blockPos.ToLocalPosition(api)} is null when trying to initalize network but chunk is loaded.", EnumChatType.Notification);
+                            _logBouncer = 0f;
+                        }
+                        continue;
+                        //throw new NullReferenceException("VintEng: An Electrical Entity is null when trying to initalize network."); 
+                    }
                     
                     if (entity.ElectricalEntityType == EnumElectricalEntityType.PassThrough)
                     {
@@ -224,7 +236,7 @@ namespace VintageEngineering.Electrical.Systems
                             {
                                 passthrough = proxy.CoreEntity.GetBehavior<IElectricalBlockEntity>();
                             }
-                        }                                                
+                        }
                     }
                 }
             }
@@ -434,7 +446,6 @@ namespace VintageEngineering.Electrical.Systems
         {
             // The meat and 'tatos of the entire system.
             //ulong totalpowerwanted = 0;
-            if (isDirty) InitializeNetwork();
 
             ulong totalpoweringen = 0;
             ulong totalpoweroffered = 0;
@@ -452,6 +463,9 @@ namespace VintageEngineering.Electrical.Systems
             ulong networkppt = (ulong)((_networkPPS * deltaTime) + 1);
 
             _rebalanceBouncer += deltaTime;
+            _logBouncer += deltaTime;
+            if (isDirty) InitializeNetwork(deltaTime);
+            if (_logBouncer > 1000f) _logBouncer = 0f; // limit how large this value can be.
 
             if (OnExtractPower == null &&
                 OnReceivePower == null &&
@@ -464,56 +478,6 @@ namespace VintageEngineering.Electrical.Systems
                     return false; // there are zero nodes in this network, delete it.
                 }
                 return true;
-                /*
-                // if all the nodes are relays then lets skip validation
-                // until such a time as I have to keep it due to edge-case bugs
-                if (allNodes.Count == relayNodes.Count) return true;
-
-                // if all nodes are not accounted for, we need to validate
-                // it could mean some nodes are NOT loaded
-                // only networks with literally hundreds of nodes would result in noticable update lag.
-                List<WireNode> nodestoDelete = new List<WireNode>();
-
-                foreach (WireNode node in allNodes)
-                {
-                    // if the block position is invalid the block could be unloaded OR invalid
-                    // if unloaded, then we need to skip.
-                    // using a custom call that ignores neighboring chunk status.
-                    if (!VEHelpers.IsChunkLoaded(api.World, node.blockPos))
-                    {
-                        continue;
-                    }
-
-                    // check block and block entity at position
-                    Block checkblock = api.World.BlockAccessor.GetBlock(node.blockPos);
-                    BlockEntity bentity = api.World.BlockAccessor.GetBlockEntity(node.blockPos);
-                    if (checkblock.Id == 0 || bentity == null)
-                    {
-                        // a truly legit bad node, chunk is loaded yet the block or entity is bad
-                        // this can happen with server/game crashes etc.
-                        nodestoDelete.Add(node);
-                    }
-                    BlockPos origin = api.World.DefaultSpawnPosition.AsBlockPos.Copy();
-
-                    if (checkblock.Id != 0 && bentity == null)
-                    {
-                        api.Logger.Error($"VintEng: Electric Update Tick found a NULL block entity at: {node.blockPos.SubCopy(origin.X, 0, origin.Z)}. Deleted Node from network.");
-                    }
-                    if (checkblock.Id == 0 && bentity != null)
-                    {
-                        api.World.BlockAccessor.RemoveBlockEntity(node.blockPos);
-                        api.Logger.Error($"VintEng: Electric Update Tick found an invalid block at: {node.blockPos.SubCopy(origin.X, 0, origin.Z)} but the block entity wasn't null. This is bananas bad and should never happen. Deleting corrupted Block Entity.");
-                    }
-                }
-                if (nodestoDelete.Count > 0)
-                {
-                    foreach (WireNode node in nodestoDelete)
-                    {
-                        allNodes.Remove(node);
-                    }
-                    InitializeNetwork();
-                    return true;
-                } */
             }
 
             if (isSleeping)
@@ -527,10 +491,9 @@ namespace VintageEngineering.Electrical.Systems
             }
             if (OnExtractPower != null)
             {
-                foreach (Delegate del in OnExtractPower.GetInvocationList()) //IElectricalBlockEntity entity in producerNodes)
-                {
-                    //if (entity == null || !entity.IsLoaded || !entity.CanExtractPower) continue;
-                    totalpoweringen += ((ExtractPowerHandler)del).Invoke(0, deltaTime, true);  //entity.RatedPower(deltaTime, false);
+                foreach (Delegate del in OnExtractPower.GetInvocationList())
+                {                    
+                    totalpoweringen += ((ExtractPowerHandler)del).Invoke(0, deltaTime, true);
                 }
             }
             if (OnStoragePower != null)
@@ -541,35 +504,31 @@ namespace VintageEngineering.Electrical.Systems
                     _rebalanceBouncer = 0f;
                 }
 
-                foreach (Delegate del in OnStoragePower.GetInvocationList()) //IElectricalBlockEntity entity in storageNodes)
+                foreach (Delegate del in OnStoragePower.GetInvocationList())
                 {
                     // ulong power, float dt, bool simulate, bool isInsert
                     totalinstorage += ((StoragePowerHandler)del).Invoke(0, deltaTime, true, false); // how much to extract
                     totalstorageavailable += ((StoragePowerHandler)del).Invoke(0, deltaTime, true, true); // how much to insert, if available
-                    //if (entity.CanExtractPower) totalinstorage += entity.RatedPower(deltaTime, false); 
-                    //if (entity.CanReceivePower) totalstorageavailable += entity.RatedPower(deltaTime, true); 
                 }
             }
             totalpoweroffered = totalpoweringen + totalinstorage;
 
             if (OnReceivePower != null) // this actually delivers power to the machines
             {
-                foreach (Delegate del in OnReceivePower.GetInvocationList())  //IElectricalBlockEntity entity in consumerNodes)
+                foreach (Delegate del in OnReceivePower.GetInvocationList())
                 {
                     if (totalpoweroffered == 0) break; // no power available, no need to continue.
-                    //if (entity == null || !entity.IsLoaded) continue;
                     totalpoweroffered = ((ReceivePowerHandler)del).Invoke(totalpoweroffered, deltaTime, false);
-                    //totalpoweroffered = entity.ReceivePower(totalpoweroffered, deltaTime);
                 }
             }
             // totalpoweroffered will have any excess power we didn't use, it could = 0
             ulong totalpowerused = (totalpoweringen + totalinstorage) - totalpoweroffered;
 
-            if (OnReceivePower == null && OnExtractPower == null) // consumerNodes.Count == 0 && producerNodes.Count == 0)
+            if (OnReceivePower == null && OnExtractPower == null)
             {                
                 // edge case of a network ONLY having storage and/or transformer nodes
                 // tries to balance all storage within 2% of one-another
-                if (OnStoragePower != null) // storageNodes.Count > 1)
+                if (OnStoragePower != null)
                 {
                     RebalanceStorages(deltaTime);
                     return true;
@@ -577,7 +536,7 @@ namespace VintageEngineering.Electrical.Systems
                 else
                 {
                     // sleep, there is nothing to simulate
-                    isSleeping = true; // zzzzzzzzzzzz
+                    //isSleeping = true; // zzzzzzzzzzzz
                     return true;
                 }
             }
@@ -588,19 +547,17 @@ namespace VintageEngineering.Electrical.Systems
                 totalstorageused = totalpowerused - totalpoweringen;
                 if (OnExtractPower != null)
                 {
-                    foreach (Delegate del in OnExtractPower.GetInvocationList())  //IElectricalBlockEntity entity in producerNodes)
+                    foreach (Delegate del in OnExtractPower.GetInvocationList())
                     {
-                        //if (entity == null || !entity.IsLoaded) continue;
-                        totalpowerused = ((ExtractPowerHandler)del).Invoke(totalpowerused, deltaTime, false); //entity.ExtractPower(totalpowerused, deltaTime);
+                        totalpowerused = ((ExtractPowerHandler)del).Invoke(totalpowerused, deltaTime, false);
                     }
                 }
                 if (OnStoragePower != null)
                 {
-                    foreach (Delegate del in OnStoragePower.GetInvocationList()) //IElectricalBlockEntity entity in storageNodes)
+                    foreach (Delegate del in OnStoragePower.GetInvocationList())
                     {
                         if (totalpowerused == 0) break;
-                        //if (entity == null || !entity.IsLoaded) continue;
-                        totalpowerused = ((StoragePowerHandler)del).Invoke(totalpowerused, deltaTime, false, false); //entity.ExtractPower(totalpowerused, deltaTime);
+                        totalpowerused = ((StoragePowerHandler)del).Invoke(totalpowerused, deltaTime, false, false);
                     }
                 }
                 if (totalpowerused > (ulong)this.allNodes.Count) // 0 just didn't cut it due to rounding issues.
@@ -618,20 +575,18 @@ namespace VintageEngineering.Electrical.Systems
                     if (OnExtractPower != null)
                     {
                         // remove all power from generators
-                        foreach (Delegate del in OnExtractPower.GetInvocationList())  //IElectricalBlockEntity entity in producerNodes)
+                        foreach (Delegate del in OnExtractPower.GetInvocationList())
                         {
-                            //if (entity == null || !entity.IsLoaded) continue;
-                            totalpoweringen = ((ExtractPowerHandler)del).Invoke(totalpoweringen, deltaTime, false); //entity.ExtractPower(totalpoweringen, deltaTime, false);
-                            if (totalpoweringen == 0) break;                            
+                            totalpoweringen = ((ExtractPowerHandler)del).Invoke(totalpoweringen, deltaTime, false);
+                            if (totalpoweringen == 0) break;
                         }
                     }
                     if (OnStoragePower != null)
                     {
-                        foreach (Delegate del in OnStoragePower.GetInvocationList()) //IElectricalBlockEntity entity in storageNodes)
+                        foreach (Delegate del in OnStoragePower.GetInvocationList())
                         {
                             // push excess power into storage nodes
-                            //if (entity == null || !entity.IsLoaded) continue;                        
-                            totalexcesspower = ((StoragePowerHandler)del).Invoke(totalexcesspower, deltaTime, false, true); //entity.ReceivePower(totalexcesspower, deltaTime);
+                            totalexcesspower = ((StoragePowerHandler)del).Invoke(totalexcesspower, deltaTime, false, true);
                         }
                     }
                 }
@@ -642,23 +597,20 @@ namespace VintageEngineering.Electrical.Systems
                     if (totalpowerconsumed == 0) return true;
                     if (OnExtractPower != null) //producerNodes.Count > 0)
                     {
-                        foreach (Delegate del in OnExtractPower.GetInvocationList()) //IElectricalBlockEntity entity in producerNodes)
+                        foreach (Delegate del in OnExtractPower.GetInvocationList())
                         {
-                            //if (entity == null || !entity.IsLoaded) continue;
                             // remove power that we need
-                            totalpowerconsumed = ((ExtractPowerHandler)del).Invoke(totalpowerconsumed, deltaTime, false); //entity.ExtractPower(totalpowerconsumed, deltaTime);
+                            totalpowerconsumed = ((ExtractPowerHandler)del).Invoke(totalpowerconsumed, deltaTime, false);
                             if (totalpowerconsumed == 0) break;
                         }
                     }
                     if (OnStoragePower != null)
                     {
-                        foreach (Delegate del in OnStoragePower.GetInvocationList())  //IElectricalBlockEntity entity in storageNodes)
-                        {
-                            //if (entity == null || !entity.IsLoaded) continue;
+                        foreach (Delegate del in OnStoragePower.GetInvocationList())
+                        {                            
                             // add excess available power to storage
-                            totalstorageavailable = ((StoragePowerHandler)del).Invoke(totalstorageavailable, deltaTime, false, true); //entity.ReceivePower(totalstorageavailable, deltaTime, false);
+                            totalstorageavailable = ((StoragePowerHandler)del).Invoke(totalstorageavailable, deltaTime, false, true);
                             if (totalstorageavailable == 0) break;
-                            //entity.CheatPower(); // fills power buffer in storage
                         }
                     }
                     if (totalpowerconsumed != 0 && totalstorageavailable != 0)

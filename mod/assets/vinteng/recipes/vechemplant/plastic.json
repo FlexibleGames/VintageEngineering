@@ -1,0 +1,16 @@
+[
+{
+	"code": "chemplant-plasticpellet",
+	"powerpercraft": 90000,
+	"attributes": {
+		"soot": 2
+	},
+	"ingredients": [
+		{ "type": "item", "code": "vinteng:napthaportion", "litres": 1  },
+		{ "type": "item", "code": "game:charcoal", "quantity": 1  }
+	],
+	"outputs": [
+		{ "type": "item", "code": "vinteng:plasticpellet", "stacksize": 20, "variable": 2, "slotid": 3 }
+	]
+}
+]

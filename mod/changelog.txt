@@ -1,8 +1,17 @@
+v0.5.7
+- Fix recipe conflict for Steel Machine Block/MB Component, fixes #90
+- Removed the Exception thrown if a machine entity is null when a network is initialized. Prints an error on the screen and in the log every 2 seconds with the block position of the null entity.
+-- To help track down this issue, find the position, report what machine is there, break the machine and replace/rewire it. The more data I have to work with the better chance I can find why its happening.
+
+v0.5.6
+- Bug fix, Electric Networks are marked Dirty on world load and initialized when ticking starts, ensuring the world is actually loaded.
+- Added crafting process to make Sheet Metal blocks.
 v0.5.5
 - Added Distillation Tower Base and Extension, up to 6 extensions can be built on top of the base.
 - Added Fluid Generator, an MV generator, power output depends on fuel used.
 - Tested Derrick, Pumpjack, LV Pump, Fluid Generator, Distillation Tower; Fixing several issues.
 - Refactored Electric Network subsystem to use events and delegates.
+- Added liquid fuels: diesel, heavy oil, lubricant, kerosene, gasoline, naptha, and LPG
 - Fixed #80, #82, and #83
 
 v0.5.2
