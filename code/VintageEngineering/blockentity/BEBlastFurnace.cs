@@ -523,7 +523,7 @@ namespace VintageEngineering
         public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
         {            
             //base.GetBlockInfo(forPlayer, dsc); // we do NOT need power information as this machine isn't powered.
-            dsc.AppendLine($"{MachineState} with {NumActiveBlowers} Active Blowers");
+            dsc.AppendLine($"{MachineState} {Lang.Get("vinteng:gui-word-with")} {NumActiveBlowers} {Lang.Get("vinteng:gui-activeblowers")}");
             if (MachineState == EnumBEState.On)
             {
                 if (CurrentRecipe != null) dsc.AppendLine($"|{Lang.Get("vinteng:gui-word-crafting")}:{CurrentRecipe.Outputs[0].ResolvedItemstack.StackSize} {CurrentRecipe.Outputs[0].ResolvedItemstack.GetName()}");

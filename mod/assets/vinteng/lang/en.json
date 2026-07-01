@@ -202,6 +202,8 @@
 	"vinteng:gui-word-fluid": "Fluid",
 	"vinteng:gui-word-gas": "Gas",
 	"vinteng:gui-word-heat": "Heat",
+	"vinteng:gui-word-with": "with",
+	"vinteng:gui-activeblowers": "Active Blowers",
 	"vinteng:gui-machine-pps": "Power Per Second",
 	"vinteng:gui-machine-notcrafting": "Not Crafting",
 	"vinteng:gui-machine-paused": "Paused, likely out of power.",
