@@ -115,10 +115,11 @@ namespace VintageEngineering.RecipeSystem.Recipes
                 if (kvpair.Key.Empty)
                 {
                     kvpair.Key.Itemstack = kvpair.Value.ResolvedItemStack.Clone();
+                    kvpair.Key.Itemstack.StackSize = kvpair.Value.VariableResolve(api.World, "ChemPlant VariableResolve");
                 }
                 else
                 {
-                    kvpair.Key.Itemstack.StackSize += kvpair.Value.StackSize;
+                    kvpair.Key.Itemstack.StackSize += kvpair.Value.VariableResolve(api.World, "ChemPlant VariableResolve"); // kvpair.Value.StackSize;
                 }
                 kvpair.Key.MarkDirty();
             }
