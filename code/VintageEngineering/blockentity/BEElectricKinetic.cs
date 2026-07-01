@@ -210,6 +210,7 @@ namespace VintageEngineering.blockentity
             base.ToTreeAttributes(tree);
             tree.SetFloat("speed", _speedSetting);
             tree.SetFloat("resistance", _torqueSetting);
+            tree.SetString("machinestate", Electric.MachineState.ToString());
         }
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldAccessForResolve)
         {
@@ -218,6 +219,7 @@ namespace VintageEngineering.blockentity
                 base.FromTreeAttributes(tree, worldAccessForResolve);
                 _speedSetting = tree.GetFloat("speed", 0.0f);
                 _torqueSetting = tree.GetFloat("resistance", 0.0f);
+                SetState(Enum.Parse<EnumBEState>(tree.GetString("machinestate", "On")));
                 if (Api != null && Api.Side == EnumAppSide.Client) { SetState(Electric.MachineState); }
                 if (clientDialog != null)
                 {
