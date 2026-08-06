@@ -19,7 +19,7 @@ namespace VintageEngineering
         ICoreServerAPI sapi;
         private InvLVGenerator inventory;
         private GUILVGenerator clientDialog;
-                
+
         private float tempToGen = 100;
         private float prevGenTemp = 20f;
         private float genTemp = 20f;

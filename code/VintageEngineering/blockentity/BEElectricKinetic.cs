@@ -18,7 +18,7 @@ namespace VintageEngineering.blockentity
 
         public bool isGenerator { get { return Block.Code.Path.Contains("alternator"); } }
 
-        //public ElectricBEBehavior Electricity;        
+        //public ElectricBEBehavior Electricity;
 
         private ElectricKineticMotorBhv genBhv;
         private ElectricKineticAlternatorBhv consBhv;
