@@ -105,18 +105,22 @@ namespace VintageEngineering
         public ItemSlotLiquidOnly GetLiquidAutoPushIntoSlot(BlockFacing blockFacing, ItemSlot fromSlot = null)
         {
             string rotside = Block.Variant["side"];
-
             if (blockFacing == null) return _inventory[0] as ItemSlotLiquidOnly;
-
             string left = BlockFacing.FromCode(rotside).GetCCW().Code;
             string right = BlockFacing.FromCode(rotside).GetCW().Code;
             if (blockFacing.Code != left && blockFacing.Code != right) return null;
+            if (fromSlot.Empty || !fromSlot.Itemstack.Collectible.IsLiquid()) return null;
+            if (fromSlot.Itemstack.Collectible.GetType() != typeof(ItemLiquidFuel)) return null;
             return _inventory[0] as ItemSlotLiquidOnly;
         }
 
         public ItemSlotLiquidOnly GetLiquidAutoPullFromSlot(BlockFacing blockFacing)
         {
-            return null;
+            string rotside = Block.Variant["side"];
+            string left = BlockFacing.FromCode(rotside).GetCCW().Code;
+            string right = BlockFacing.FromCode(rotside).GetCW().Code;
+            if (blockFacing.Code != left && blockFacing.Code != right) return null;
+            return _inventory[0] as ItemSlotLiquidOnly;
         }
 
         private void SlotModified(int slotid)
@@ -136,12 +140,7 @@ namespace VintageEngineering
 
         public ItemSlot GetAutoPushIntoSlot(BlockFacing face, ItemSlot fromSlot)
         {
-            if (fromSlot.Empty || !fromSlot.Itemstack.Collectible.IsLiquid()) return null;
-            if (!InputSlot.Empty && InputSlot.Itemstack.Collectible != fromSlot.Itemstack.Collectible) return null;
-
-            if (fromSlot.Itemstack.Collectible.GetType() != typeof(ItemLiquidFuel)) return null;
-
-            return _inventory[0];
+            return GetLiquidAutoPushIntoSlot(face, fromSlot);
         }
 
         public bool FindMatchingRecipe()
@@ -166,7 +165,7 @@ namespace VintageEngineering
         {
             _inventory = new InventoryGeneric(1, null, null, delegate (int id, InventoryGeneric self)
             {                
-                return new ItemSlotLiquidOnly(self, 800);
+                return new ItemSlotLiquidOnly(self, 50);
             });
             _inventory.SlotModified += SlotModified;
             _inventory.OnGetAutoPushIntoSlot = GetAutoPushIntoSlot;
