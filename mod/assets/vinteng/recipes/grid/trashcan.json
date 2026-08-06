@@ -1,0 +1,18 @@
+{
+	"ingredientPattern": "S_S,S_S,SBS",
+	"ingredients": {
+		"S": {
+			"type": "block",
+			"code": "game:metalsheet-iron-down",
+			"quantity": 1
+		},
+		"B": {
+			"type": "item",
+			"code": "game:metalplate-iron",
+			"quantity": 1
+		}
+	},
+	"width": 3,
+	"height": 3,
+	"output": { "type": "block", "code": "vinteng:trashcan-north", "quantity": 1  }
+}

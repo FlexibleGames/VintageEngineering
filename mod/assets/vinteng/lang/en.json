@@ -234,6 +234,10 @@
 	"vinteng:gui-title-blastfurnace": "Blast Furnace",
 	"vinteng:gui-title-lvfridge": "LV Refrigerator",
 
+	"vinteng:trashcantitle": "Trash",
+	"vinteng:block-normal-trashcan-*": "Trash Can",
+	"vinteng:blockdesc-normal-trashcan-*": "Deletes anything placed inside it instantly, no take-backs.",
+
 	"vinteng:block-pipe-item": "Item Pipe (Depreciated)",
 	"vinteng:blockdesc-pipe-item": "Break down and rebuild all old pipe systems as soon as possible. Old pipes should drop the <a href=\"handbook://block-vinteng:pipenew-item\">new ones</a> when broken. Old pipe systems will not move anything and have been depreciated.",
 	"vinteng:block-pipe-fluid": "Fluid Pipe (Depreciated)",
