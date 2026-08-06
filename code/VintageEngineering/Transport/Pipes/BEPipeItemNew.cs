@@ -60,6 +60,12 @@ namespace VintageEngineering.Transport.Pipes
                 // now all the special vanilla block conditions, ugh, is there a better way to do this?
                 // these are all BlockEntities that have inventories that should NOT be interacted with at all using pipes.
                 BlockEntity entity = world.BlockAccessor.GetBlockEntity(targetpos);
+                string blockcode = world.BlockAccessor.GetBlock(targetpos).Code.Path;
+                if (blockcode.Contains("drawer"))
+                {
+                    if (blockcode.Contains("drawertrim")) return false;
+                    return true;
+                }
                 if (entity == null) return false;
                 if (entity is BECheese) return false;
                 if (entity is BECheeseCurdsBundle) return false;
