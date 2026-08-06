@@ -64,6 +64,7 @@ namespace VintageEngineering.API
         /// <returns></returns>
         public static bool IsChunkLoadedRadius(IWorldAccessor world, BlockPos atpos, int radius = 1)
         {
+            if (radius == 0) return IsChunkLoaded(world, atpos);
             if (IsChunkLoaded(world, atpos))
             {
                 for (int x = -radius; x <= radius; x++)
