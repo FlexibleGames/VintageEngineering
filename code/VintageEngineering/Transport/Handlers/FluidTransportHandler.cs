@@ -330,6 +330,11 @@ namespace VintageEngineering.Transport.Handlers
                 for (int x = 0; x < conarray.Length; x++)
                 {
                     if (!VEHelpers.IsChunkLoaded(world, conarray[x].Position)) continue;
+                    if (subnet != null && subnet != string.Empty && subnet.Length > 0)
+                    {
+                        string uptodate = world.BlockAccessor.GetBlockEntity<BEPipeBaseNew>(conarray[x].NodePosition).InsertNodes[conarray[x].Facing.Index].SubNet;
+                        if (!uptodate.Contains(subnet)) continue;
+                    }
                     BlockPos target = conarray[x].Position.Copy();
                     Block targetblock = world.BlockAccessor.GetBlock(target);
                     if (targetblock is BlockMultiblock mbtarget)
@@ -388,6 +393,11 @@ namespace VintageEngineering.Transport.Handlers
 
                 PipeInsertNode current = node.PushEnumerator.Current;
                 if (!VEHelpers.IsChunkLoaded(world, current.Position)) return null;
+                if (subnet != null && subnet != string.Empty && subnet.Length > 0)
+                {
+                    string uptodate = world.BlockAccessor.GetBlockEntity<BEPipeBaseNew>(current.NodePosition).InsertNodes[current.Facing.Index].SubNet;
+                    if (!uptodate.Contains(subnet)) return null;
+                }
                 BlockPos target = current.Position.Copy();
                 Block targetblock = world.BlockAccessor.GetBlock(target);
                 if (targetblock is BlockMultiblock mbtarget)
@@ -421,6 +431,11 @@ namespace VintageEngineering.Transport.Handlers
                 int randomcon = world.Rand.Next(pushcons.Count);
                 PipeInsertNode current = pushcons[randomcon];
                 if (!VEHelpers.IsChunkLoaded(world, current.Position)) return null;
+                if (subnet != null && subnet != string.Empty && subnet.Length > 0)
+                {
+                    string uptodate = world.BlockAccessor.GetBlockEntity<BEPipeBaseNew>(current.NodePosition).InsertNodes[current.Facing.Index].SubNet;
+                    if (!uptodate.Contains(subnet)) return null;
+                }
                 BlockPos target = current.Position.Copy();
                 Block targetblock = world.BlockAccessor.GetBlock(target);
                 if (targetblock is BlockMultiblock mbtarget)
@@ -431,7 +446,7 @@ namespace VintageEngineering.Transport.Handlers
                         target.Add(mbtarget.OffsetInv);
                     }
                     if (!VEHelpers.IsChunkLoaded(world, target)) return null;
-                }                
+                }
                 IVELiquidInterface ivel = world.BlockAccessor.GetBlock(target).GetInterface<IVELiquidInterface>(world, target);
                 if (ivel != null)
                 {
