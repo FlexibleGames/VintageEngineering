@@ -103,7 +103,7 @@
 		},
 		"allowHeldLiquidTransfer": true,
 		"allowPipeLiquidTransfer": true,
-		"fluidCapacityLiters": 800
+		"fluidCapacityLiters": 50
 	},
 	"shapeinventory": { "base": "block/multiblock/machine/mvfluidgenerator-core" },
 	"creativeinventory": { "general": ["*-incomplete-north"], "terrain": ["*-incomplete-north"], "mechanics": ["*-incomplete-north"], "vinteng": ["*-incomplete-north"] },

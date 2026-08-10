@@ -398,7 +398,7 @@ namespace VintageEngineering.blockentity
                     }
                 }
             }
-            if (_fluidpositions.Count >= 10000)
+            if (_fluidpositions.Count >= 10000 && _fluidtype != "crudeoil")
             { 
                 _isinfinite = true;
                 _fluidpositions.Clear();

@@ -12,7 +12,7 @@
 			{ "type": "item", "code": "game:metalplate-*", "quantity": 1, "name": "metal", "allowedVariants": ["copper", "cupronickel", "tinbronze", "bismuthbronze", "blackbronze", "silver", "gold"] }
 		],
 		"outputs": [
-			{ "type": "item", "code": "game:metalnailsandstrips-{metal}", "stacksize": 3, "variable": 1 }
+			{ "type": "item", "code": "game:metalnailsandstrips-{metal}", "stacksize": 9, "variable": 1 }
 		]
 	},
 	{
@@ -26,10 +26,10 @@
 		},
 		"powerpercraft": 500,
 		"ingredients": [
-			{ "type": "item", "code": "game:metalplate-*", "quantity": 1, "name": "metal", "allowedVariants": ["copper", "cupronickel", "tinbronze", "bismuthbronze", "blackbronze", "silver", "gold", "iron", "meteoriciron", "steel"] }
+			{ "type": "item", "code": "game:metalplate-*", "quantity": 1, "name": "metal", "allowedVariants": ["copper", "tinbronze", "bismuth", "bismuthbronze", "blackbronze", "brass", "silver", "gold", "iron", "meteoriciron", "steel", "molybdochalkos", "electrum"] }
 		],
 		"outputs": [
-			{ "type": "item", "code": "game:metalnailsandstrips-{metal}", "stacksize": 3, "variable": 1 }
+			{ "type": "item", "code": "game:metalnailsandstrips-{metal}", "stacksize": 9, "variable": 1 }
 		]
 	}
 ]

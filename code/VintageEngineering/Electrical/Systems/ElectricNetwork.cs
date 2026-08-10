@@ -631,11 +631,12 @@ namespace VintageEngineering.Electrical.Systems
 
             if (allNodes.Count <= 1) return true;
 
-            ulong totalcapacity = 0;
-            ulong totalcapacityavailable = 0;
-            ulong totalusedcapacity = 0;
+            //ulong totalcapacity = 0;
+            //ulong totalcapacityavailable = 0;
+            //ulong totalusedcapacity = 0;
+            float totalpercentfull = 0;
 
-            List<IElectricalBlockEntity> storageNodes = new();
+            Dictionary<IElectricalBlockEntity, float> storageNodes = new();
 
             foreach (WireNode node in allNodes) // find the unrated total power values of these nodes
             {
@@ -644,39 +645,44 @@ namespace VintageEngineering.Electrical.Systems
                 IElectricalBlockEntity entity = IElectricalBlockEntity.GetAtPos(api.World.BlockAccessor, node.blockPos);
                 if (entity != null)
                 {
+                    if (entity.ElectricalEntityType == EnumElectricalEntityType.Relay) continue;
                     if (entity.ElectricalEntityType == EnumElectricalEntityType.Storage ||
                         entity.ElectricalEntityType == EnumElectricalEntityType.Toggle ||
                         entity.ElectricalEntityType == EnumElectricalEntityType.Transformer)
                     {
-                        storageNodes.Add(entity);
-                        totalcapacity += entity.MaxPower;
-                        totalcapacityavailable += entity.MaxPower - entity.CurrentPower;
-                        totalusedcapacity += entity.CurrentPower;
+                        //totalcapacity += entity.MaxPower;
+                        //totalcapacityavailable += entity.MaxPower - entity.CurrentPower;
+                        //totalusedcapacity += entity.CurrentPower;
+                        float percentf = ((float)(entity.CurrentPower / (double)entity.MaxPower)) * 100;
+                        totalpercentfull += percentf;
+                        storageNodes.Add(entity, percentf);
                     }
                 }
             }
             if (storageNodes.Count == 1) return true;
             // what is the overall pressure of the entire system, used as the base-line for individual blocks
-            int targetpressure = (int)((totalusedcapacity / (double)totalcapacity) * 100);
+            float targetpressure = totalpercentfull / storageNodes.Count; //(int)((totalusedcapacity / (double)totalcapacity) * 100);
 
             List<IElectricalBlockEntity> surplusNodes = new(); // nodes to take power from
             List<IElectricalBlockEntity> deficitNodes = new(); // nodes to push power into
 
             ulong surplusPower = 0; // this IS dt rated power
 
-            foreach (IElectricalBlockEntity node in storageNodes)
+            foreach (KeyValuePair<IElectricalBlockEntity,float> node in storageNodes)
             {
-                if (node.MaxPower == 0) continue;
-                int nodepressure = (int)((node.CurrentPower / (double)node.MaxPower) * 100);
-                if (nodepressure > (targetpressure + 2))  // two percent 
+                if (node.Key.MaxPower == 0) continue;
+                float nodepressure = node.Value; //(int)((node.Key.CurrentPower / (double)node.MaxPower) * 100);
+                if (nodepressure >= (Math.Min(targetpressure + 2, 100f)))  // two percent 
                 {
-                    surplusNodes.Add(node);
-                    surplusPower += node.RatedPower(dt, false);
+                    surplusNodes.Add(node.Key);
+                    ulong tickpower = ((ulong)(node.Key.MaxPPS * dt));
+                    if (tickpower > node.Key.CurrentPower) tickpower = node.Key.CurrentPower;
+                    surplusPower += tickpower;
                     continue;
                 }
                 if (nodepressure < (targetpressure))
                 {
-                    deficitNodes.Add(node);
+                    deficitNodes.Add(node.Key);
                     continue;
                 }
             }
@@ -702,7 +708,7 @@ namespace VintageEngineering.Electrical.Systems
                 {
                     unfullfilledpower += snode.ExtractPower(powertakepernode, dt, false);
                 }
-                if (unfullfilledpower != 0) // due to rounding issues... could this be < allNodes.Count maybe?
+                if (unfullfilledpower > ((ulong)allNodes.Count)) // due to rounding issues... could this be < allNodes.Count maybe?
                 {
                     api.Logger.Error($"VintEng: Storage Only Electric Network Rebalance tick has power mismatch of {unfullfilledpower} power.");
                 }

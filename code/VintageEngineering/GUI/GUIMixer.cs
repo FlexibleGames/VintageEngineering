@@ -18,7 +18,7 @@ namespace VintageEngineering
     {
         private BEMixer bemixer;
 
-        private RecipeMixer _recipemixer;        
+        private RecipeMixer _recipemixer;
 
         private ulong _currentPower;
         private ulong _maxPower;
@@ -148,7 +148,7 @@ namespace VintageEngineering
 
                 .AddInset(outputtxtinset, 2, 0f)
                 .AddDynamicText(GetHelpText(), leftyellow, outputtextbnds, "outputText")
-                
+
                 .AddStaticText(Lang.Get("vinteng:gui-word-output"), centerwhite, outputtext, "output")
 
                 .EndChildElements()
@@ -204,7 +204,7 @@ namespace VintageEngineering
         }
 
         public void Update(float craftProgress, ulong curPower, RecipeMixer recipeMixer = null)
-        {            
+        {
             _craftProgress = craftProgress;
             _currentPower = curPower;
             _recipemixer = recipeMixer;
@@ -297,7 +297,7 @@ namespace VintageEngineering
                 }
                 if (!bemixer.HasRoomInOutput(0, null))
                 {
-                    outputhelptext = Lang.Get("vinteng:gui-machine-isfull");   // an output is full...                    
+                    outputhelptext = Lang.Get("vinteng:gui-machine-isfull");   // an output is full...
                 }
                 if (Inventory[0].Empty)
                 {

@@ -1,3 +1,17 @@
+v0.5.9
+- Fix Chemical Plant recipe output for fluids.
+- Fix for Storage-only electrical network balancing.
+- Increased Nails&Strips Metal Press output to realign with vanilla smithing plate output.
+- Add missing Blast Furnace localization strings for HUD output window.
+- Save and Load Motor/Alternator Machine State
+
+v0.5.8
+- Add Chemical Plant
+- Fix fridge once again
+- Add plastic pellets (for future crafting recipes)
+- Finish MB block color standarization for commonly used types.
+- Refactor LV Charger, introduce ItemChargable base-class for items, otherwise use IChargableItem interface for custom items.
+
 v0.5.7
 - Fix recipe conflict for Steel Machine Block/MB Component, fixes #90
 - Removed the Exception thrown if a machine entity is null when a network is initialized. Prints an error on the screen and in the log every 2 seconds with the block position of the null entity.

@@ -234,7 +234,7 @@ namespace VintageEngineering.RecipeSystem
                 throw new InvalidOperationException("VintEng | RecipeRegistrySystem: Can no longer register VE recipes. Register during AssetsLoaded/AssetsFinalize and with ExecuteOrder < 99999");
             }
             recipeChemPlant.RecipeID = ChemicalPlantRecipes.Count + 1;
-            ChemicalPlantRecipes.Add(recipeChemPlant);
+            this.ChemicalPlantRecipes.Add(recipeChemPlant);
         }
 
         /// <summary>
