@@ -1,0 +1,129 @@
+{
+	"code": "vembtemporalforge",
+	"class": "VEMBCore",
+	"entityClass": "VEBETemporalForge",
+	"behaviors": [
+		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "vembtemporalforge-incomplete-north" }}},
+		{"name": "VEMultiblockBeh", "properties": {
+			"highlightID": 61,
+			"blockHighlightColors": [
+				{ "w": 1, "r": 0, "g": 140, "b": 255, "a": 180 },
+				{ "w": 2, "r": 5, "g": 215, "b": 5, "a": 180 },
+				{ "w": 3, "r": 250, "g": 0, "b": 0, "a": 180 },
+				{ "w": 4, "r": 215, "g": 215, "b": 215, "a": 180 },
+				{ "w": 5, "r": 215, "g": 215, "b": 5, "a": 180 }
+			],
+			"blockMapping": [
+				{ "w": 1, "tocode": "vinteng:vembdummy-none" },
+				{ "w": 2, "tocode": "vinteng:vembdummy-item" },
+				{ "w": 3, "tocode": "vinteng:vembdummy-interaction" },
+				{ "w": 5, "tocode": "vinteng:vembdummy-fluid" }
+			],
+			"multiblockStructure": {
+				"blockNumbers": {
+					"brickcourse-four-running-gray": 1,
+					"vinteng:vemultiblockio-item": 2,
+					"vinteng:vemultiblockio-interaction": 3,
+					"vinteng:vembcreosoteoven-incomplete-north": 4,
+					"vinteng:vemultiblockio-fluid": 5
+				},
+				"offsets": [
+					{ "x": 0, "y": 2, "z": 0, "w": 1 },
+					{ "x": 0, "y": 2, "z": 1, "w": 1 },
+					{ "x": 0, "y": 2, "z": -1, "w": 1 },
+					{ "x": 0, "y": 3, "z": 0, "w": 2 },
+					{ "x": 0, "y": 3, "z": 1, "w": 1 },
+					{ "x": 0, "y": 3, "z": -1, "w": 1 },
+					{ "x": 0, "y": 1, "z": 0, "w": 1 },
+					{ "x": 0, "y": 1, "z": 1, "w": 3 },
+					{ "x": 0, "y": 1, "z": -1, "w": 1 },
+					{ "x": 0, "y": 0, "z": 0, "w": 4 },
+					{ "x": 0, "y": 0, "z": 1, "w": 2 },
+					{ "x": 0, "y": 0, "z": -1, "w": 5 },
+					{ "x": 1, "y": 2, "z": 0, "w": 1 },
+					{ "x": 1, "y": 2, "z": 1, "w": 1 },
+					{ "x": 1, "y": 2, "z": -1, "w": 1 },
+					{ "x": 1, "y": 3, "z": 0, "w": 1 },
+					{ "x": 1, "y": 3, "z": 1, "w": 1 },
+					{ "x": 1, "y": 3, "z": -1, "w": 1 },
+					{ "x": 1, "y": 1, "z": 0, "w": 2 },
+					{ "x": 1, "y": 1, "z": 1, "w": 1 },
+					{ "x": 1, "y": 1, "z": -1, "w": 1 },
+					{ "x": 1, "y": 0, "z": 0, "w": 1 },
+					{ "x": 1, "y": 0, "z": 1, "w": 1 },
+					{ "x": 1, "y": 0, "z": -1, "w": 1 },
+					{ "x": -1, "y": 2, "z": 0, "w": 1 },
+					{ "x": -1, "y": 2, "z": 1, "w": 1 },
+					{ "x": -1, "y": 2, "z": -1, "w": 1 },
+					{ "x": -1, "y": 3, "z": 0, "w": 1 },
+					{ "x": -1, "y": 3, "z": 1, "w": 1 },
+					{ "x": -1, "y": 3, "z": -1, "w": 1 },
+					{ "x": -1, "y": 1, "z": 0, "w": 2 },
+					{ "x": -1, "y": 1, "z": 1, "w": 1 },
+					{ "x": -1, "y": 1, "z": -1, "w": 1 },
+					{ "x": -1, "y": 0, "z": 0, "w": 1 },
+					{ "x": -1, "y": 0, "z": 1, "w": 1 },
+					{ "x": -1, "y": 0, "z": -1, "w": 1 }
+				]
+			}
+		}}
+	],
+	"variantgroups": [
+		{ "code": "state", "states": ["incomplete", "built"]},
+		{ "code":"side", "loadFromProperties": "abstract/horizontalorientation" }
+	],
+	"entityBehaviors": [
+		{
+			"name": "Electric",
+			"properties": {
+				"canExtractPower": false,
+				"canReceivePower": true,
+				"entitytype": "Consumer",
+				"maxpower": 500000,
+				"maxpps": 5000
+			}
+		}
+	],
+	"attributes": {
+		"handbook": {
+			"groupBy": ["vembtemporalforge-*"],
+			"excludeByType": {
+				"*-incomplete-north": false,
+				"*": true
+			}
+		},
+        "recipeMachineByType": {
+            "*-north": [ "tempforge" ]
+        }
+	},
+	"shapeinventory": { "base": "block/multiblock/machine/temporalforge-core" },
+	"creativeinventory": { "general": ["vembtemporalforge-incomplete-north"], "terrain": ["*-incomplete-north"], "mechanics": ["*-incomplete-north"], "vinteng": ["*-incomplete-north"] },
+	"shapeByType": {
+		"*-incomplete-north": 	{ "base": "vinteng:block/multiblock/machine/temporalforge-core", "rotateY":0 },
+		"*-incomplete-east": 	{ "base": "vinteng:block/multiblock/machine/temporalforge-core", "rotateY":270 },
+		"*-incomplete-south": 	{ "base": "vinteng:block/multiblock/machine/temporalforge-core", "rotateY":180 },
+		"*-incomplete-west": 	{ "base": "vinteng:block/multiblock/machine/temporalforge-core", "rotateY":90 },
+		"*-built-north": 	{ "base": "vinteng:block/multiblock/machine/temporalforge", "rotateY":0 },
+		"*-built-east": 	{ "base": "vinteng:block/multiblock/machine/temporalforge", "rotateY":270 },
+		"*-built-south": 	{ "base": "vinteng:block/multiblock/machine/temporalforge", "rotateY":180 },
+		"*-built-west": 	{ "base": "vinteng:block/multiblock/machine/temporalforge", "rotateY":90 }
+	},
+	"blockmaterial": "Metal",
+	"textures": {},
+	"sidesolid": {
+		"all": false, "down": true
+	},
+	"sideopaque": {
+		"all": false
+	},
+	"lightAbsorption": 1,
+	"maxStackSize": 8,
+	"replaceable": 600,
+	"resistance": 1.5,
+	"collisionSelectionBoxes": [
+		{ "x1": 0, "y1": 0, "z1": 0, "x2": 1, "y2": 1, "z2": 1 }
+	],
+	"guiTransform": {
+		"rotation": { "x": -22.6, "y": -149, "z": 0 }
+	}
+}

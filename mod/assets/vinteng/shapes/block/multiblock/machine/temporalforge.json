@@ -9,36 +9,22 @@
 	"textureSizes": {
 	},
 	"textures": {
-		"castiron": "C:/_Programming/Vintage/VintageEngineering/mod/assets/vinteng/textures/block/castiron",
-		"industrialglass-plain": "C:/_Programming/Vintage/VintageEngineering/mod/assets/vinteng/textures/block/industrialglass-plain",
-		"detail1": "C:/_Programming/Vintage/VintageEngineering/mod/assets/vinteng/textures/block/multiblocks/detail1",
-		"gunmetal-gray": "C:/_Programming/Vintage/VintageEngineering/mod/assets/vinteng/textures/block/multiblocks/gunmetal-gray",
-		"item_wood_in": "C:/_Programming/Vintage/VintageEngineering/mod/assets/vinteng/textures/block/multiblocks/item_wood_in",
-		"item_wood_out": "C:/_Programming/Vintage/VintageEngineering/mod/assets/vinteng/textures/block/multiblocks/item_wood_out",
-		"itemio-topbot": "C:/_Programming/Vintage/VintageEngineering/mod/assets/vinteng/textures/block/multiblocks/itemio-topbot",
-		"powerio-bot": "C:/_Programming/Vintage/VintageEngineering/mod/assets/vinteng/textures/block/multiblocks/powerio-bot",
-		"powerio-mv": "C:/_Programming/Vintage/VintageEngineering/mod/assets/vinteng/textures/block/multiblocks/powerio-mv",
-		"sheetmetal_steel": "C:/_Programming/Vintage/VintageEngineering/mod/assets/vinteng/textures/block/multiblocks/sheetmetal_steel",
-		"reference": "C:/_Programming/Vintage/VintageEngineering/mod/assets/vinteng/textures/block/reference",
-		"concrete-internal-plain": "C:/_Programming/Vintage/VintageEngineering/mod/assets/vinteng/textures/block/stone/concrete-internal-plain",
-		"concrete-reinforced-top-uncolored": "C:/_Programming/Vintage/VintageEngineering/mod/assets/vinteng/textures/block/stone/concrete-reinforced-top-uncolored",
-		"wornsteel": "C:/_Programming/Vintage/VintageEngineering/mod/assets/vinteng/textures/block/wornsteel"
+		"castiron": "vinteng:block/castiron",
+		"industrialglass-plain": "vinteng:block/industrialglass-plain",
+		"detail1": "vinteng:block/multiblocks/detail1",
+		"gunmetal-gray": "vinteng:block/multiblocks/gunmetal-gray",
+		"item_wood_in": "vinteng:block/multiblocks/item_wood_in",
+		"item_wood_out": "vinteng:block/multiblocks/item_wood_out",
+		"itemio-topbot": "vinteng:block/multiblocks/itemio-topbot",
+		"powerio-bot": "vinteng:block/multiblocks/powerio-bot",
+		"powerio-mv": "vinteng:block/multiblocks/powerio-mv",
+		"sheetmetal_steel": "vinteng:block/multiblocks/sheetmetal_steel",
+		"reference": "vinteng:block/reference",
+		"concrete-internal-plain": "vinteng:block/stone/concrete-internal-plain",
+		"concrete-reinforced-top-uncolored": "vinteng:block/stone/concrete-reinforced-top-uncolored",
+		"wornsteel": "vinteng:block/wornsteel"
 	},
 	"elements": [
-		{
-			"name": "Ref",
-			"from": [ -16.0, 48.0, -16.0 ],
-			"to": [ 0.0, 64.0, 0.0 ],
-			"renderInEditor": false,
-			"faces": {
-				"north": { "texture": "#reference", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
-				"east": { "texture": "#reference", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
-				"south": { "texture": "#reference", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
-				"west": { "texture": "#reference", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
-				"up": { "texture": "#reference", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
-				"down": { "texture": "#reference", "uv": [ 0.0, 0.0, 16.0, 16.0 ] }
-			}
-		},
 		{
 			"name": "Base1-1",
 			"from": [ -24.0, 0.0, -24.0 ],

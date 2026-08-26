@@ -1,0 +1,15 @@
+[
+	{
+		"code": "forge-temporal-steel",
+		"enabled": true,
+		"attributes": {
+		},
+		"powerpercraft": 25000,
+		"ingredients": [
+			{ "type": "item", "code": "game:ingot-steel", "quantity": 1 }
+		],
+		"outputs": [
+			{ "type": "item", "code": "vinteng:ingot-temporalsteel", "stacksize": 1 }
+		]
+	}
+]

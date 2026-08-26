@@ -1,0 +1,15 @@
+[
+	{
+		"code": "forge-temporal-gears",
+		"enabled": true,
+		"attributes": {
+		},
+		"powerpercraft": 15000,
+		"ingredients": [
+			{ "type": "item", "code": "vinteng:metalgear-steel", "quantity": 1 }
+		],
+		"outputs": [
+			{ "type": "item", "code": "game:gear-temporal", "stacksize": 1 }
+		]
+	}
+]
