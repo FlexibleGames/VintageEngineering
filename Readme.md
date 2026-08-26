@@ -49,7 +49,7 @@ git clone https://github.com/anegostudios/vsapi.git
 Immersive Engineering has had over 120 contributers, I know a project like this is just overwhelming for one person. So I will be more then welcoming of other contributions.
 
 ## Contributers
-Quentin (QPTech), Mister Andy Dandy(MAD), Rinly, DeathxxRenegade, Dallin TG, automatic_yoba_machine, Ethanol, Len Kagamine, tehtelev, ArmelClo, bluelightning32, Zolkenn
+Jayuminati, Quentin (QPTech), Mister Andy Dandy(MAD), Rinly, DeathxxRenegade, Dallin TG, automatic_yoba_machine, Ethanol, Len Kagamine, tehtelev, ArmelClo, bluelightning32, Zolkenn
 
 **What can you help with?**
 - Models
