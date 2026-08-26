@@ -66,6 +66,11 @@ namespace VintageEngineering.RecipeSystem
         /// </summary>
         public List<RecipeChemPlant> ChemicalPlantRecipes = new List<RecipeChemPlant>();
 
+        /// <summary>
+        /// MV Machine to craft items with Temporal powers
+        /// </summary>
+        public List<RecipeTemporalForge> TemporalForgeRecipes = new List<RecipeTemporalForge>();
+
         private readonly Dictionary<string, List<Block>> recipeMachines = new();
 
         public override double ExecuteOrder()
@@ -106,6 +111,9 @@ namespace VintageEngineering.RecipeSystem
 
             this.ChemicalPlantRecipes = api.RegisterRecipeRegistry<RecipeRegistryGeneric<RecipeChemPlant>>("vechemplant").Recipes;
             AddRecipesToHandbook(api, this.ChemicalPlantRecipes, "chemplant", "vinteng:Cracks into", "vinteng:Cracking");
+
+            this.TemporalForgeRecipes = api.RegisterRecipeRegistry<RecipeRegistryGeneric<RecipeTemporalForge>>("vetempforge").Recipes;
+            AddRecipesToHandbook(api, this.TemporalForgeRecipes, "tempforge", "vinteng:Destablizes into", "vinteng:Destablizing");
         }
 
         public override void AssetsLoaded(ICoreAPI api)
@@ -235,6 +243,16 @@ namespace VintageEngineering.RecipeSystem
             }
             recipeChemPlant.RecipeID = ChemicalPlantRecipes.Count + 1;
             this.ChemicalPlantRecipes.Add(recipeChemPlant);
+        }
+
+        public void RegisterTemporalForgeRecipe(RecipeTemporalForge recipeTempForge)
+        {
+            if (!VERecipeRegistrySystem.canRegister)
+            {
+                throw new InvalidOperationException("VintEng | RecipeRegistrySystem: Can no longer register VE recipes. Register during AssetsLoaded/AssetsFinalize and with ExecuteOrder < 99999");
+            }
+            recipeTempForge.RecipeID = TemporalForgeRecipes.Count + 1;
+            this.TemporalForgeRecipes.Add(recipeTempForge);
         }
 
         /// <summary>
