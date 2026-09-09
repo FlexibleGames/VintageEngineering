@@ -30,7 +30,7 @@ namespace VintageEngineering.API
             public static int HeavyEng => ColorUtil.ColorFromRgba(54, 6, 91, 180);
             public static int LightEng => ColorUtil.ColorFromRgba(153, 102, 192, 180);
             public static int FluidIO => ColorUtil.ColorFromRgba(215, 215, 0, 180);
-            public static int ItemIO => ColorUtil.ColorFromRgba(5, 180, 5, 180);
+            public static int ItemIO => ColorUtil.ColorFromRgba(5, 120, 5, 180);
             public static int PowerIO => ColorUtil.ColorFromRgba(37, 230, 0, 180);
             public static int Interaction => ColorUtil.ColorFromRgba(250, 0, 0, 180);
             public static int TreatedSlabB => ColorUtil.ColorFromRgba(81, 41, 26, 180);

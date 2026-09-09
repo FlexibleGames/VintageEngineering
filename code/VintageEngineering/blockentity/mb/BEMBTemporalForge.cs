@@ -102,7 +102,8 @@ namespace VintageEngineering
             
             if (InputSlot.Empty)
             {
-                _currentRecipe = null;                
+                _currentRecipe = null;
+                _recipePowerApplied = 0;
                 SetState(EnumBEState.Sleeping);
                 return false;
             }
@@ -204,7 +205,7 @@ namespace VintageEngineering
             // ONLY active during a storm or a rift is nearby 
             bool isStorming = _temporalSys.StormData.nowStormActive;
             float nearestRift = NearestRiftDistance(this.Pos.ToVec3d());
-            if (isStorming || nearestRift < 11f)
+            if (isStorming || nearestRift < 21f)
             {
                 if (Electric.MachineState != EnumBEState.On && _currentRecipe != null)
                 {
@@ -221,7 +222,7 @@ namespace VintageEngineering
             if (IsBuilt && Electric.MachineState == EnumBEState.On && _currentRecipe != null)
             {
                 float speed = isStorming ? _temporalSys.StormStrength : 0f;
-                speed += nearestRift < 11f ? ((11f - nearestRift) / 10f) : 0f;
+                speed += nearestRift < 21f ? ((21f - nearestRift) / 20f) : 0f;
                 speed += 0.05f;
                 // speed will be between 0.05 and 2.05
 
@@ -309,6 +310,7 @@ namespace VintageEngineering
                         if (blockSel.Face == control)
                         {
                             _inventory.DropAll(byPlayer.Entity.Pos.AsBlockPos.ToVec3d());
+                            FindMatchingRecipe();
                         }
                     }
                 }
@@ -362,7 +364,7 @@ namespace VintageEngineering
             base.FromTreeAttributes(tree, worldForResolving);
             _inventory.FromTreeAttributes(tree.GetTreeAttribute("inventory"));
             EnumBEState syncstate = Enum.Parse<EnumBEState>(tree.GetString("machinestate", "On"));
-            if (!InputSlot.Empty) FindMatchingRecipe();
+            FindMatchingRecipe();
 
             if (Electric.MachineState != syncstate) SetState(syncstate);
             _recipePowerApplied = ((ulong)tree.GetLong("recipepower"));
