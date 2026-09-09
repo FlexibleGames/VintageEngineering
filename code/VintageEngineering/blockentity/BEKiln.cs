@@ -193,10 +193,10 @@ namespace VintageEngineering
         public bool FindMatchingRecipe()
         {
             if (Api == null) return false; // we're running this WAY too soon, bounce.            
-            if (Electric.MachineState == EnumBEState.Off) // if the machine is off, bounce.
-            {
-                return false;
-            }
+            //if (Electric.MachineState == EnumBEState.Off) // if the machine is off, bounce.
+            //{
+            //    return false;
+            //}
             if (InputSlot.Empty)
             {
                 currentRecipe = null;
