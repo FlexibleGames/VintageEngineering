@@ -33,7 +33,7 @@
         "*-tinbronze": { "capacity": 16000 },
         "*-iron": { "capacity": 64000 },
         "*-steel": { "capacity": 256000 },
-        "*-temporalsteel": { "capacity": 50000 },
+        "*-temporalsteel": { "capacity": 10000 },
         "*-infsink": { "capacity": 16000 }
     },
 	"creativeinventory": { "general": ["vefluidtank-*"], "terrain": ["*"], "mechanics": ["*"], "vinteng": ["*"] },

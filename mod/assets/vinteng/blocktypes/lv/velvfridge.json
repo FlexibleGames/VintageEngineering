@@ -56,7 +56,7 @@
                 }
             }
         ],
-		"spoilrate": { "powered": 0.2, "unpowered": 2.0 }
+		"spoilrate": { "powered": 0.5, "unpowered": 5.0 }
 	},
 	"shapeinventory": { "base": "block/lv/fridge" },
 	"creativeinventory": { "general": ["velvfridge-north"], "terrain": ["*-north"], "mechanics": ["*-north"], "vinteng": ["*-north"] },

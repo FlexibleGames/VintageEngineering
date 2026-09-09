@@ -44,6 +44,8 @@
 	"vinteng:blockdesc-vebattery": "Batteries store excess power until it's needed. The LV battery stores 4000 power and is capable of moving 100 power per second (pps).",
 	"vinteng:block-vepump": "Fluid Pump",
 	"vinteng:blockdesc-vepump": "A pump for extracting fluids from the world. Has a pumping radius of 32, if a water or lava fluid body exceeds # source blocks it will treat that fluid as infinite. PPS value is used as power used per block pumped.",
+	"vinteng:block-velvsolar-*": "Solar Panel",
+	"vinteng:blockdesc-velvsolar-*": "Generates a small amount of power during daytime. Is affected by how cloudy it is, light intensity is shows in the HUD when looking at the panel, values at or higher than 0.5 will generate power.",
 
     "vinteng:block-velvek-motor-*": "Electric Motor",
 	"vinteng:gui-title-motor": "Electric Motor",
