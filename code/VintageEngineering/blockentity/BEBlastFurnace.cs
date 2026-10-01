@@ -211,11 +211,11 @@ namespace VintageEngineering
                 int output = 0;
                 if (leftside != null && leftside.Block.Variant["side"] == ccwface.Code)
                 {
-                    if (leftside.IsActive) output++;
+                    if (leftside.IsActive && leftside.IsPowered) output++;
                 }
                 if (rightside != null && rightside.Block.Variant["side"] == cwface.Code)
                 {
-                    if (rightside.IsActive) output++;
+                    if (rightside.IsActive && leftside.IsPowered) output++;
                 }
                 if (_numBlowers != output) _numBlowers = output;
                 return output;

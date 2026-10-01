@@ -44,8 +44,17 @@ namespace VintageEngineering
             {
                 sapi = api as ICoreServerAPI;
                 RegisterGameTickListener(new Action<float>(OnSimTick), 250, 0);
-                if (Electric.CurrentPower > 0) IsPowered = true;
-                if (IsActive) SetState(EnumBEState.On);
+                if (Electric.CurrentPower > 0)
+                {
+                    IsPowered = true;
+                }
+                else 
+                { 
+                    IsPowered = false;
+                    IsActive = false;
+                }
+
+                if (IsActive && IsPowered) SetState(EnumBEState.On);
                 else SetState(EnumBEState.Sleeping);
             }
             else
@@ -55,13 +64,14 @@ namespace VintageEngineering
                 {
                     Electric.AnimUtil.InitializeAnimator("veblower", null, null, new Vec3f(0, GetRotation(), 0f));
                 }                                
-            }            
+            }
         }
 
         public void OnRightClick(IPlayer byPlayer)
         {
             if (byPlayer != null)
             {
+                if (!IsPowered) return;
                 IsActive = !IsActive;
                 Api?.World.PlaySoundAt(new AssetLocation("game:sounds/block/loosestick"), byPlayer);
                 if (IsActive && IsPowered) SetState(EnumBEState.On);
@@ -70,8 +80,8 @@ namespace VintageEngineering
                 string facing = this.Block.Variant["side"]; // north,east,south,west
                 BlockFacing machinefacing = BlockFacing.FromCode(facing);
                 BEBlastFurnace furnace = Api.World.BlockAccessor.GetBlockEntity(this.Pos.AddCopy(machinefacing)) as BEBlastFurnace;
-
-                if (furnace != null) furnace.MarkDirty(true);
+                MarkDirty(true);
+                if (furnace != null) furnace.MarkDirty(true);                
             }
         }
 
@@ -181,8 +191,7 @@ namespace VintageEngineering
         {
             base.GetBlockInfo(forPlayer, dsc);            
             if (!CheckForAir())
-            {
-                dsc.AppendLine();
+            {                
                 dsc.AppendLine(Lang.Get("vinteng:gui-error-airblocked"));
             }
         }
