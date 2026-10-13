@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -13,7 +14,7 @@ namespace VintageEngineering.TemporalStorage
 {
     public class BlockEntityTemporalContainer : BlockEntityContainer
     {
-        private int _temporalFrequency;
+        private int _temporalFrequency = 0;
         public int TemporalFrequency => _temporalFrequency;
 
         private TemporalStorageMod _tempMod;
@@ -34,8 +35,42 @@ namespace VintageEngineering.TemporalStorage
 
         public override void Initialize(ICoreAPI api)
         {
-            _tempMod = api.ModLoader.GetModSystem<TemporalStorageMod>(true);            
-            base.Initialize(api);
+            this.Api = api;
+            
+            if (api.World.FrameProfiler?.Enabled == true)
+            {
+                foreach (BlockEntityBehavior val in Behaviors)
+                {
+                    val.Initialize(api, val.properties);
+                    api.World.FrameProfiler.Mark("initbehavior-", val.GetType());
+                }
+            }
+            else
+            {
+                foreach (BlockEntityBehavior val in Behaviors) val.Initialize(api, val.properties);
+            }
+            if (stackForWorldgen != null)
+            {
+                try
+                {
+                    OnBlockPlaced(stackForWorldgen);
+                }
+                catch (Exception e)
+                {
+                    api.Logger.Error(e);
+                }
+                stackForWorldgen = null;
+            }
+
+            _tempMod = api.ModLoader.GetModSystem<TemporalStorageMod>(true);
+            this.container.inventorySupplier = () => Inventory;
+            this.container.Init(Api, () => Pos, delegate { this.MarkDirty(true, null); });
+            RegisterGameTickListener(new Action<float>(OnContainerTick), 10000, 0);            
+        }
+
+        protected virtual void OnContainerTick(float dt)
+        {
+            this.container.OnTick(dt);
         }
 
         public virtual bool OnPlayerRightClick(IPlayer byPlayer, BlockSelection blockSel)
@@ -109,6 +144,16 @@ namespace VintageEngineering.TemporalStorage
                         (Api as ICoreServerAPI).Network.BroadcastBlockEntityPacket(Pos, 5001, data, [fromPlayer as IServerPlayer]);
                     }
                 }
+                if (packetid == 1006)
+                {
+                    // GUI Frequency Save button was clicked
+                    int newfreq = SerializerUtil.Deserialize<int>(data);
+                    if (_temporalFrequency != newfreq)
+                    {
+                        // clean and build the new frequency objects as needed
+                        // newfreq might already be used
+                    }
+                }
                 return;
             }
             if (!Api.World.Claims.TryAccess(fromPlayer, Pos, EnumBlockAccessFlags.Use))
@@ -170,6 +215,49 @@ namespace VintageEngineering.TemporalStorage
                 }
                 if (_invDialog != null) _invDialog.Dispose();
                 _invDialog = null;
+            }
+        }
+
+        public override void OnBlockPlaced(ItemStack byItemStack = null)
+        {
+            base.OnBlockPlaced(byItemStack);
+            // _temporalFrequency defaults to 0 on newly placed
+            // 0 freq will always exist
+            // 0 freq does not have associated users
+            _tempMod.ChestPositions[_temporalFrequency].Add(Pos.Copy());
+        }
+
+        public override void OnBlockBroken(IPlayer byPlayer = null)
+        {
+            //base.OnBlockBroken(byPlayer);
+            if (Api is ICoreServerAPI sapi)
+            {
+                if (_temporalFrequency == 0)
+                {
+                    _tempMod.ChestPositions[_temporalFrequency].Remove(Pos.Copy());
+                }
+                else
+                {
+                    if (_tempMod.ChestPositions[_temporalFrequency].Count == 1) // this is the last position for this frequency
+                    {
+                        _tempMod.ChestStorages[_temporalFrequency].DropAll(Pos.ToVec3d().Add(0.5, 0.5, 0.5), 0);
+                        _tempMod.ChestPositions.Remove(_temporalFrequency);
+                        _tempMod.ChestFrequencyUsers.Remove(_temporalFrequency); // TODO Security
+                        _tempMod.ChestStorages.Remove(_temporalFrequency);
+                    }
+                    else
+                    {
+                        _tempMod.ChestPositions[_temporalFrequency].Remove(Pos.Copy());
+                    }
+                }
+                DefaultInterpolatedStringHandler dish = new DefaultInterpolatedStringHandler(31, 3);
+                dish.AppendFormatted((byPlayer != null) ? byPlayer.PlayerName : null);
+                dish.AppendLiteral(" broke temporal container ");
+                dish.AppendFormatted<AssetLocation>(base.Block.Code);
+                dish.AppendLiteral(" at ");
+                dish.AppendFormatted<BlockPos>(Pos);
+                dish.AppendLiteral($" frequency: {_temporalFrequency}.");
+                Api.Logger.Audit(dish.ToStringAndClear());
             }
         }
 
@@ -235,7 +323,9 @@ namespace VintageEngineering.TemporalStorage
         }
 
         public override void DropContents(Vec3d atPos)
-        {            
+        {
+            if (_temporalFrequency == 0) return;
+            OnBlockBroken(null);
         }
 
         public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
@@ -246,12 +336,28 @@ namespace VintageEngineering.TemporalStorage
 
         public override void ToTreeAttributes(ITreeAttribute tree)
         {
-            base.ToTreeAttributes(tree);
+            //base.ToTreeAttributes(tree);
+            tree.SetInt("posx", this.Pos.X);
+            tree.SetInt("posy", this.Pos.InternalY);
+            tree.SetInt("posz", this.Pos.Z);
+            if (Block != null)
+            {
+                tree.SetString("blockCode", Block.Code.ToShortString());
+            }
+            foreach (BlockEntityBehavior beh in Behaviors)
+            {
+                beh.ToTreeAttributes(tree);
+            }
             tree.SetInt("tempfreq", _temporalFrequency);
         }
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldForResolving)
         {
-            base.FromTreeAttributes(tree, worldForResolving);
+            //base.FromTreeAttributes(tree, worldForResolving);            
+            this.Pos = new BlockPos(tree.GetInt("posx", 0), tree.GetInt("posy", 0), tree.GetInt("posz", 0));
+            foreach (BlockEntityBehavior beh in Behaviors)
+            {
+                beh.FromTreeAttributes(tree, worldForResolving);
+            }
             _temporalFrequency = tree.GetInt("tempfreq", 0);
         }
 
