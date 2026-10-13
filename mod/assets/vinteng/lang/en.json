@@ -205,6 +205,7 @@
 	"vinteng:gui-word-gas": "Gas",
 	"vinteng:gui-word-heat": "Heat",
 	"vinteng:gui-word-with": "with",
+	"vinteng:gui-word-frequency": "Frequency",
 	"vinteng:gui-activeblowers": "Active Blowers",
 	"vinteng:gui-machine-pps": "Power Per Second",
 	"vinteng:gui-machine-notcrafting": "Not Crafting",
@@ -535,6 +536,9 @@
 	"vinteng:tempforge-nostorm": "Crafting paused: Requires active storm or nearby Rift.",
 	"vinteng:Destablizes into": "Destablizes into",
 	"vinteng:Destablizing": "Destablizing",
+
+	"vinteng:gui-title-tempchest": "Temporal Chest",
+	"vinteng:gui-title-temptank": "Temporal Tank",
 
 	"eof": "End Of File"
 }

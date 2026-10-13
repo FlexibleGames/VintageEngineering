@@ -28,8 +28,8 @@ namespace VintageEngineering.TemporalStorage
         public Dictionary<int, InventoryGeneric> TankStorages => _temporalData._tankStorages;
         public Dictionary<int, string> ChestFrequencyUsers => _temporalData._chestFreqUsers;
         public Dictionary<int, string> TankFrequencyUsers => _temporalData._tankFreqUsers;
-        public Dictionary<int, List<Vec3i>> ChestPositions => _temporalData._chestPositions;
-        public Dictionary<int, List<Vec3i>> TankPositions => _temporalData._tankPositions;
+        public Dictionary<int, List<BlockPos>> ChestPositions => _temporalData._chestPositions;
+        public Dictionary<int, List<BlockPos>> TankPositions => _temporalData._tankPositions;
 
         public override void Start(ICoreAPI api)
         {
