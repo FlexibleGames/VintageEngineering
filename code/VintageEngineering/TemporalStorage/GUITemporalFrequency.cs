@@ -15,13 +15,13 @@ namespace VintageEngineering.TemporalStorage
         private int _frequency;
         private bool _isChest = true;
 
-        public GUITemporalFrequency(string p_dialogTitle, InventoryBase p_inventory, BlockPos p_pos, ICoreClientAPI p_capi, BlockEntityTemporalContainer p_be, bool p_isChest = true) : base(p_dialogTitle, p_pos, p_capi)
+        public GUITemporalFrequency(string p_dialogTitle, BlockPos p_pos, ICoreClientAPI p_capi, BlockEntityTemporalContainer p_be, bool p_isChest = true) : base(p_dialogTitle, p_pos, p_capi)
         {
             if (base.IsDuplicate)
             {
                 return;
             }
-            p_capi.World.Player.InventoryManager.OpenInventory(p_inventory);
+            //p_capi.World.Player.InventoryManager.OpenInventory(p_inventory);
             _betc = p_be;
             _frequency = _betc.TemporalFrequency;
             _isChest = p_isChest;

@@ -154,13 +154,13 @@ namespace VintageEngineering.TemporalStorage
             InitializeData();
         }
 
-        public void RegisterBlocks()
+        public void RegisterBlocks(ICoreAPI api)
         {
 
         }
-        public void RegisterBlockEntities()
+        public void RegisterBlockEntities(ICoreAPI api)
         {
-
+            api.RegisterBlockEntityClass("VEBETemporalChest", typeof(BlockEntityTemporalContainer));
         }
 
     }

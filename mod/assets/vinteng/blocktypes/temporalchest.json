@@ -1,0 +1,111 @@
+{
+	"code": "temporalchest",
+	"class": "BlockGenericTypedContainer",
+	"entityclass": "VEBETemporalChest",
+	"attributes": {
+		"handbook": {
+			"groupBy": ["temporalchest-*"],
+			"excludeByType": {
+				"*-north": false,
+				"*": true
+			}
+		},
+		"humanoidTraversalCost": 100,
+		"reinforcable": true,
+		"partialAttachable": true,
+		"inventoryClassName": "temporalchest",
+		"defaultType": "normal",
+		"types": ["normal"],
+		"drop": {
+			"normal": true
+		},
+		"quantitySlots": {
+			"normal": 16
+		},
+		"dialogTitleLangCode": {
+			"normal": "gui-title-tempchest"
+		},
+		"storageType": {
+			"normal": 189
+		},
+		"retrieveOnly": {
+			"normal": false
+		},
+		"shape": {
+			"normal": "block/temporalchest"
+		},
+		"openSound": { "path": "game:block/chestopen", "pitch": { "avg": 1.0, "var": 0.25 } },
+		"closeSound": { "path": "game:block/chestclose", "pitch": { "avg": 1.0, "var": 0.25 } },
+		"variantByGroup": "side",
+		"variantByGroupInventory": null,
+		"openanim": "lidopen"
+	},
+	"behaviors": [
+		{ "name": "Lockable" },
+		{ "name": "Container"},
+		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "temporalchest-north" }}}
+	],
+	"entityBehaviors": [{ "name": "Animatable" }],
+	"variantgroups": [
+		{ "code": "side", "loadFromProperties": "abstract/horizontalorientation" }
+	],
+	"creativeinventory": {  },
+	"creativeinventoryStacksByType": {
+		"*": [
+			{
+				"tabs": [ "general", "decorative" ],
+				"stacks": [
+					{ "type": "block", "code": "temporalchest-north", "attributes": { "type": "normal" } }
+				]
+			}
+		]
+	},
+	"heldTpIdleAnimation": "holdunderarm",
+	"shapeInventory": { "base": "vinteng:block/temporalchest", "rotateY": 270 },
+	"shapeByType": {
+		"*-north": { "base": "vinteng:block/temporalchest", "rotateY": 0 },
+		"*-east": { "base": "vinteng:block/temporalchest", "rotateY": 270 },
+		"*-west": { "base": "vinteng:block/temporalchest", "rotateY": 90 },
+		"*-south": { "base": "vinteng:block/temporalchest", "rotateY": 180 }
+	},
+	"textures": {
+		"bronze": { "base": "vinteng:block/bronze"},
+		"gunmetal-lightgray": { "base": "vinteng:block/multiblocks/gunmetal-lightgray"},
+		"itemio-topbot": { "base": "vinteng:block/multiblocks/itemio-topbot"},
+		"treated": { "base": "vinteng:block/multiblocks/treated"},
+		"temporalsteel": { "base": "vinteng:block/temporalsteel"}
+	},
+	"blockmaterial": "Metal",
+	"replaceable": 900,
+	"resistance": 4,
+	"lightAbsorption": 0,
+	"sideAo": { "all": false },
+	"sidesolid": {
+		"all": false
+	},
+	"sideopaque": {
+		"all": false
+	},
+	"collisionbox": {
+		"x1": 0.0625, "y1": 0, "z1": 0.0625, "x2": 0.9375, "y2": 0.8125, "z2": 0.9375
+	},
+	"selectionbox": {
+		"x1": 0.0625, "y1": 0, "z1": 0.0625, "x2": 0.9375, "y2": 0.8125, "z2": 0.9375
+	},
+	"sounds": {
+		"place": "game:block/metaldoor-place",
+		"hit": "game:block/metaldoor-place",
+		"break": "game:block/metaldoor-place",
+		"walk": "game:walk/stone*"
+	},
+	"materialDensity": 600,
+	"tpHandTransform": {
+		"translation": { "x": -0.9, "y": -0.5, "z": -0.3 },
+		"rotation": { "x": 0, "y": 90, "z": -102 },
+		"scale": 0.56
+	},
+	"guiTransform": {
+		"origin": { "x": 0.5, "y": 0.4, "z": 0.5 },
+		"scale": 1.16
+	}
+}

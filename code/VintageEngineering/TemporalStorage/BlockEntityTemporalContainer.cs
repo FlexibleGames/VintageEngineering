@@ -4,11 +4,13 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace VintageEngineering.TemporalStorage
 {
@@ -17,8 +19,13 @@ namespace VintageEngineering.TemporalStorage
         private int _temporalFrequency = 0;
         public int TemporalFrequency => _temporalFrequency;
 
+        private string _dialogTitleLangCode = "gui-title-tempchest";
+        public string DialogTitle => Lang.Get("vinteng:" + _dialogTitleLangCode);
+
         private TemporalStorageMod _tempMod;
         protected GuiDialogBlockEntity _invDialog;
+        protected GUITemporalFrequency _freqDialog;
+        protected bool _freqDialogOpened = false;
 
         public override InventoryBase Inventory => _tempMod?.ChestStorages[_temporalFrequency];
         public override string InventoryClassName => "temporalchest";
@@ -75,6 +82,44 @@ namespace VintageEngineering.TemporalStorage
 
         public virtual bool OnPlayerRightClick(IPlayer byPlayer, BlockSelection blockSel)
         {
+            if (this.Api.World is IServerWorldAccessor)
+            {
+                if (byPlayer != null && byPlayer.Entity.Controls.Sneak && !_freqDialogOpened)
+                {
+                    // player is sneaking
+                    byte[] data = SerializerUtil.Serialize<int>(_temporalFrequency);
+                    ((ICoreServerAPI)Api).Network.SendBlockEntityPacket((IServerPlayer)byPlayer, Pos, 5007, data);
+                    _freqDialogOpened = true; // only allow one player to have this open at any time
+                }
+                else
+                {
+                    // player is not sneaking
+                    if (_freqDialogOpened)
+                    {
+                        // this means they right clicked the chest while the freq dialog was opened, close the dialog.
+                        ((ICoreServerAPI)Api).Network.SendBlockEntityPacket((IServerPlayer)byPlayer, Pos, 5008, null);
+                        _freqDialogOpened = false;
+                    }
+                    else
+                    {
+                        byte[] data = BlockEntityContainerOpen.ToBytes("BlockEntityInventory", DialogTitle, 8, Inventory);
+                        ((ICoreServerAPI)Api).Network.SendBlockEntityPacket((IServerPlayer)byPlayer, Pos, 5000, data);
+                        byPlayer.InventoryManager.OpenInventory(Inventory);
+                        if (_tempMod.LidOpenEntityIDByFreqChest.ContainsKey(_temporalFrequency))
+                        {
+                            data = SerializerUtil.Serialize<OpenContainerLidPacket>(new OpenContainerLidPacket(byPlayer.Entity.EntityId, _tempMod.LidOpenEntityIDByFreqChest[_temporalFrequency].Count > 0));
+                        }
+                        else
+                        {
+                            data = SerializerUtil.Serialize<OpenContainerLidPacket>(new OpenContainerLidPacket(byPlayer.Entity.EntityId, false));
+                        }
+                        ((ICoreServerAPI)Api).Network.BroadcastBlockEntityPacket(Pos, 5001, data, new IServerPlayer[]
+                        {
+                        (IServerPlayer)byPlayer
+                        });
+                    }
+                }
+            }
             return true;
         }
 
@@ -92,6 +137,26 @@ namespace VintageEngineering.TemporalStorage
                 _invDialog.TryOpen();
                 capi.Network.SendPacketClient(Inventory.Open(byPlayer));
                 capi.Network.SendBlockEntityPacket(Pos, 1000, null);
+                return;
+            }
+            _invDialog.TryClose();
+        }
+
+        public virtual void ToggleFreqencyClientDialog(IPlayer byPlayer, CreateDialogDelegate onCreateDialog)
+        {
+            if (this._freqDialog == null)
+            {
+                ICoreClientAPI capi = Api as ICoreClientAPI;
+                _freqDialog = (GUITemporalFrequency)onCreateDialog();
+                _freqDialog.OnClosed += delegate ()
+                {
+                    _freqDialog.Dispose();
+                    _freqDialog = null;
+                    capi.Network.SendBlockEntityPacket(Pos, 1008, null);
+                };
+                _freqDialog.TryOpen();
+                //capi.Network.SendPacketClient(Inventory.Open(byPlayer));
+                capi.Network.SendBlockEntityPacket(Pos, 1007, null);
                 return;
             }
             _invDialog.TryClose();
@@ -154,6 +219,15 @@ namespace VintageEngineering.TemporalStorage
                         // newfreq might already be used
                     }
                 }
+                if (packetid == 1007) // opened freq dialog
+                {
+                    // these do nothing right now
+                }
+                if (packetid == 1008) // closed freq dialog
+                {
+                    // these do nothing right now
+                }
+
                 return;
             }
             if (!Api.World.Claims.TryAccess(fromPlayer, Pos, EnumBlockAccessFlags.Use))
@@ -195,16 +269,35 @@ namespace VintageEngineering.TemporalStorage
             if (packetid == 5001)
             {
                 OpenContainerLidPacket contPacket = SerializerUtil.Deserialize<OpenContainerLidPacket>(data);
-                if (contPacket.Opened)
+                if (contPacket != null)
                 {
-                    _tempMod.ChestInventoryOpened(_temporalFrequency, contPacket.EntityId);
-                    OpenLid();
+                    if (contPacket.Opened)
+                    {
+                        _tempMod.ChestInventoryOpened(_temporalFrequency, contPacket.EntityId);
+                        OpenLid();
+                    }
+                    else
+                    {
+                        _tempMod.ChestInventoryClosed(_temporalFrequency, contPacket.EntityId);
+                        CloseLid();
+                    }
                 }
-                else
+            }
+            if (packetid == 5007) // custom temporal frequency dialog
+            {
+                if (_freqDialog != null)
                 {
-                    _tempMod.ChestInventoryClosed(_temporalFrequency, contPacket.EntityId);
-                    CloseLid();
+                    GuiDialogBlockEntity guidialog = _freqDialog;
+                    if (guidialog != null && guidialog.IsOpened())
+                    {
+                        _freqDialog.TryClose();
+                    }
+                    if (guidialog != null) guidialog.Dispose();
+                    _freqDialog = null;
+                    return;
                 }
+                _freqDialog = new GUITemporalFrequency(DialogTitle, Pos, Api as ICoreClientAPI, this, true);
+                _freqDialog.TryOpen();
             }
             if (packetid == 1001)
             {
