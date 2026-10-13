@@ -30,14 +30,14 @@ namespace VintageEngineering.TemporalStorage
         public Dictionary<int, string> _tankFreqUsers;
         /// <summary>
         /// Temporal Chest Block Positions List indexed by frequency<br/>
-        /// List is not BlockPos but Vec3i for efficiency
+        /// List is BlockPos
         /// </summary>
-        public Dictionary<int, List<Vec3i>> _chestPositions;
+        public Dictionary<int, List<BlockPos>> _chestPositions;
         /// <summary>
         /// Temporal Tank Block Positions List indexed by frequency<br/>
-        /// List is not BlockPos but Vec3i for efficiency
+        /// List is BlockPos
         /// </summary>
-        public Dictionary<int, List<Vec3i>> _tankPositions;
+        public Dictionary<int, List<BlockPos>> _tankPositions;
 
         public TemporalStorageData()
         {
@@ -47,8 +47,8 @@ namespace VintageEngineering.TemporalStorage
             _chestFreqUsers = new Dictionary<int, string>();
             _tankFreqUsers  = new Dictionary<int, string>();
 
-            _chestPositions = new Dictionary<int, List<Vec3i>>();
-            _tankPositions  = new Dictionary<int, List<Vec3i>>();
+            _chestPositions = new Dictionary<int, List<BlockPos>>();
+            _tankPositions  = new Dictionary<int, List<BlockPos>>();
         }
 
         public void Clean()
