@@ -78,7 +78,7 @@ namespace VintageEngineering.TemporalStorage
         protected virtual void OnContainerTick(float dt)
         {
             this.container.OnTick(dt);
-        }
+        }        
 
         public virtual bool OnPlayerRightClick(IPlayer byPlayer, BlockSelection blockSel)
         {

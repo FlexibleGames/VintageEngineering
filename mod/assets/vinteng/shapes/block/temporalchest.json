@@ -9,11 +9,11 @@
 	"textureSizes": {
 	},
 	"textures": {
-		"bronze": "block/bronze",
-		"gunmetal-lightgray": "block/multiblocks/gunmetal-lightgray",
-		"itemio-topbot": "block/multiblocks/itemio-topbot",
-		"treated": "block/multiblocks/treated",
-		"temporalsteel": "block/temporalsteel"
+		"bronze": "vinteng:block/bronze",
+		"gunmetal-lightgray": "vinteng:block/multiblocks/gunmetal-lightgray",
+		"itemio-topbot": "vinteng:block/multiblocks/itemio-topbot",
+		"treated": "vinteng:block/multiblocks/treated",
+		"temporalsteel": "vinteng:block/temporalsteel"
 	},
 	"elements": [
 		{

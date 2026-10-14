@@ -539,6 +539,8 @@
 
 	"vinteng:gui-title-tempchest": "Temporal Chest",
 	"vinteng:gui-title-temptank": "Temporal Tank",
+	"vinteng:block-normal-temporalchest-*": "Temporal Chest",
+	"vinteng:blockdesc-normal-temporalchest-*": "A chest that can be tuned to frequencies shared by other Temporal Chests. Think Ender Storage without the dyes.",
 
 	"eof": "End Of File"
 }
