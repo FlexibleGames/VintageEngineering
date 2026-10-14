@@ -4,6 +4,7 @@ using System.Numerics;
 using System.Text;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.API.Util;
@@ -47,6 +48,8 @@ namespace VintageEngineering.TemporalStorage
                     .RegisterMessageType(typeof(TemporalStorageData))
                     .SetMessageHandler<TemporalStorageData>(OnStorageDataFromServer);
             }
+
+            RegisterBlockEntities(api);
         }
 
         public override void StartServerSide(ICoreServerAPI api)
@@ -62,15 +65,15 @@ namespace VintageEngineering.TemporalStorage
         private void Event_SaveGameCreated()
         {
             _temporalData = new TemporalStorageData();
-            InitializeData();
+            InitializeData(_sapi);
         }
 
-        private void InitializeData()
+        private void InitializeData(ICoreAPI api)
         {
             if (!_temporalData._chestStorages.ContainsKey(0))
             {
                 _temporalData._chestStorages.Add(0, new InventoryGeneric(12, "temporalchest-0", _sapi));
-                LidOpenEntityIDByFreqChest.Add(0, new HashSet<long>());
+                if (!LidOpenEntityIDByFreqChest.ContainsKey(0)) LidOpenEntityIDByFreqChest.Add(0, new HashSet<long>());
             }
             if (!_temporalData._tankStorages.ContainsKey(0))
             {
@@ -78,15 +81,56 @@ namespace VintageEngineering.TemporalStorage
                 {
                     return new ItemSlotLiquidOnly(self, 8000);
                 }));
-                LidOpenEntityIDByFreqTank.Add(0, new HashSet<long>());
+                if (!LidOpenEntityIDByFreqTank.ContainsKey(0)) LidOpenEntityIDByFreqTank.Add(0, new HashSet<long>());
             }
-            foreach (KeyValuePair<int, InventoryGeneric> pair in _temporalData._chestStorages)
+            if (!_temporalData._chestPositions.ContainsKey(0))
             {
-                pair.Value.ResolveBlocksOrItems();
+                _temporalData._chestPositions.Add(0, new List<BlockPos>());
             }
-            foreach (KeyValuePair<int, InventoryGeneric> pair in _temporalData._tankStorages)
+            if (!_temporalData._tankPositions.ContainsKey(0))
             {
-                pair.Value.ResolveBlocksOrItems();
+                _temporalData._tankPositions.Add(0, new List<BlockPos>());
+            }
+            if (_temporalData._chestPositions[0] == null) _temporalData._chestPositions[0] = new List<BlockPos>();
+            if (_temporalData._tankPositions[0] == null) _temporalData._tankPositions[0] = new List<BlockPos>();
+
+            foreach (KeyValuePair<int, byte[]> pair in _temporalData._chestStorageData)
+            {
+                InventoryGeneric inv;
+                if (!_temporalData._chestStorages.TryGetValue(pair.Key, out inv))
+                {
+                    inv = new InventoryGeneric(12, "temporalchest-" + pair.Key, api);
+                    _temporalData._chestStorages[pair.Key] = inv;
+                }
+
+                TreeAttribute tree = new TreeAttribute();
+                tree.FromBytes(pair.Value);
+                inv.FromTreeAttributes(tree);
+                inv.ResolveBlocksOrItems();
+
+                if (!LidOpenEntityIDByFreqChest.ContainsKey(pair.Key))
+                {
+                    LidOpenEntityIDByFreqChest[pair.Key] = new HashSet<long>();
+                }
+            }
+            foreach (KeyValuePair<int, byte[]> pair in _temporalData._tankStorageData)
+            {
+                InventoryGeneric inv;
+                if (!_temporalData._tankStorages.TryGetValue(pair.Key, out inv))
+                {
+                    inv = new InventoryGeneric(12, "temporaltank-" + pair.Key, api);
+                    _temporalData._tankStorages[pair.Key] = inv;
+                }
+
+                TreeAttribute tree = new TreeAttribute();
+                tree.FromBytes(pair.Value);
+                inv.FromTreeAttributes(tree);
+                inv.ResolveBlocksOrItems();
+
+                if (!LidOpenEntityIDByFreqTank.ContainsKey(pair.Key))
+                {
+                    LidOpenEntityIDByFreqTank[pair.Key] = new HashSet<long>();
+                }
             }
         }
 
@@ -144,14 +188,14 @@ namespace VintageEngineering.TemporalStorage
                 _sapi.Logger.Error($"VE Temporal Storage: Error laoding SaveGame data: {e.ToString()}");
                 _temporalData = new TemporalStorageData();
             }
-            InitializeData();
+            InitializeData(_sapi);
         }
 
         private void OnStorageDataFromServer(TemporalStorageData data)
         {
             _temporalData?.Clean();
             _temporalData = data;
-            InitializeData();
+            InitializeData(_capi);
         }
 
         public void RegisterBlocks(ICoreAPI api)
