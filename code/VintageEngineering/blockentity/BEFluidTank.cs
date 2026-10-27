@@ -56,7 +56,7 @@ namespace VintageEngineering.blockentity
         public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
         {
             //base.GetBlockInfo(forPlayer, dsc);
-            
+            if (Inventory == null) return;
             if (!Inventory[0].Empty) 
             {
                 WaterTightContainableProps wprops = BlockLiquidContainerBase.GetContainableProps(Inventory[0].Itemstack);

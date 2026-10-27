@@ -20,6 +20,54 @@ namespace VintageEngineering.Blocks
                 this.capacityLitresFromAttributes = (float)this.Attributes["capacity"].AsInt(1500);
             }
         }
+
+        public override ItemStack OnPickBlock(IWorldAccessor world, BlockPos pos)
+        {
+            BETemporalTank betc = world.BlockAccessor.GetBlockEntity(pos) as BETemporalTank;
+            if (betc != null)
+            {
+                return new ItemStack(this);
+            }
+            return base.OnPickBlock(world, pos);
+        }
+
+        public override void OnBlockBroken(IWorldAccessor world, BlockPos pos, IPlayer byPlayer, float dropQuantityMultiplier = 1)
+        {
+            bool preventDefault = false;
+            foreach (BlockBehavior behavior in BlockBehaviors)
+            {
+                EnumHandling handled = EnumHandling.PassThrough;
+                behavior.OnBlockBroken(world, pos, byPlayer, dropQuantityMultiplier, ref handled);
+                if (handled == EnumHandling.PreventDefault) preventDefault = true;
+                if (handled == EnumHandling.PreventSubsequent) return;
+            }
+            if (preventDefault) return;
+
+            if (world.Side == EnumAppSide.Server && (byPlayer == null || byPlayer.WorldData.CurrentGameMode != EnumGameMode.Creative))
+            {
+                // bare stack — do not call OnPickBlock, that is what attaches "contents"
+                BETemporalTank betc = world.BlockAccessor.GetBlockEntity(pos) as BETemporalTank;
+                if (betc != null)
+                {
+                    world.SpawnItemEntity(new ItemStack(this), pos, null);
+                }
+                else
+                {
+                    ItemStack[] drops = new ItemStack[]
+                    {
+                        this.OnPickBlock(world, pos)
+                    };
+                    for (int i = 0; i < drops.Length; i++)
+                    {
+                        world.SpawnItemEntity(drops[i], pos, null);
+                    }
+                }
+                world.PlaySoundAt(Sounds.GetBreakSound(byPlayer), pos, -0.5, byPlayer);
+            }
+
+            world.BlockAccessor.GetBlockEntity(pos)?.OnBlockBroken(byPlayer); // DropAll spills the liquid
+            world.BlockAccessor.SetBlock(0, pos);
+        }
   
         public override bool DoPlaceBlock(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel, ItemStack byItemStack)
         {

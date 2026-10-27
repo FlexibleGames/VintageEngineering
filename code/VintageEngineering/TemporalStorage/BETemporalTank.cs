@@ -26,8 +26,12 @@ namespace VintageEngineering.TemporalStorage
         private TemporalStorageMod _tempMod;
         public override InventoryBase Inventory {
             get 
-            { 
-                return _tempMod?.TankStorages[_temporalFrequency];
+            {
+                if (_tempMod?.TankStorages.ContainsKey(_temporalFrequency) ?? false)
+                {
+                    return _tempMod?.TankStorages[_temporalFrequency];
+                }
+                else return null;
             }
         }
         protected GUITemporalFrequency _freqDialog;
@@ -70,6 +74,14 @@ namespace VintageEngineering.TemporalStorage
                 {
                     _liquidmesh = GenFluidMesh();
                 }
+                else
+                {
+                    if (Inventory != null && !Inventory.Empty)
+                    {
+                        _liquidmesh = GenFluidMesh();
+                    }
+                }
+
             }
         }
 

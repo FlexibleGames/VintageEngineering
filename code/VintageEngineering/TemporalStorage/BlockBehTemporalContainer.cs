@@ -11,7 +11,7 @@ using Vintagestory.GameContent;
 namespace VintageEngineering.TemporalStorage
 {
     public class BlockBehTemporalContainer : BlockBehavior
-    {
+    {        
         public BlockBehTemporalContainer(Block block) : base(block)
         {
         }
