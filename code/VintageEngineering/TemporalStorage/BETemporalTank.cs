@@ -230,6 +230,46 @@ namespace VintageEngineering.TemporalStorage
             this.container.OnTick(dt);
         }
 
+        public override void OnBlockBroken(IPlayer byPlayer = null)
+        {
+            if (Api.Side == EnumAppSide.Client && _liquidmesh != null) _liquidmesh.Dispose();
+
+            if (Api.Side == EnumAppSide.Client)
+            {
+                if (_freqDialog != null && _freqDialog.IsOpened())
+                {
+                    _freqDialog.TryClose();
+                }
+                return;
+            }
+
+            if (_freqDialogOpened) _freqDialogOpened = false;
+
+            Inventory?.SlotModified -= TankSlotModified;
+
+            if (_temporalFrequency == 0)
+            {
+                _tempMod.TankPositions[0].Remove(Pos.Copy());
+                return;
+            }
+
+            if (!_tempMod.TankPositions.TryGetValue(_temporalFrequency, out List<BlockPos> positions))
+                return;
+
+            if (positions.Count <= 1)
+            {
+                _tempMod.TankStorages[_temporalFrequency].DropAll(Pos.ToVec3d().Add(0.5, 0.5, 0.5));
+                _tempMod.TankPositions.Remove(_temporalFrequency);
+                _tempMod.TankFrequencyUsers.Remove(_temporalFrequency);
+                _tempMod.TankStorages.Remove(_temporalFrequency);
+            }
+            else
+            {
+                positions.Remove(Pos.Copy());
+            }
+        }
+
+
         public override void ToTreeAttributes(ITreeAttribute tree)
         {
             tree.SetInt("posx", this.Pos.X);
