@@ -12,6 +12,7 @@ namespace VintageEngineering.TemporalStorage
     public class GUITemporalFrequency : GuiDialogBlockEntity
     {
         private BlockEntityTemporalContainer _betc;
+        private BETemporalTank _bett;
         private int _frequency;
         private bool _isChest = true;
 
@@ -24,6 +25,16 @@ namespace VintageEngineering.TemporalStorage
             //p_capi.World.Player.InventoryManager.OpenInventory(p_inventory);
             _betc = p_be;
             _frequency = _betc.TemporalFrequency;
+            _isChest = p_isChest;
+            SetupDialog();
+        }
+
+        public GUITemporalFrequency(string p_dialogTitle, BlockPos p_pos, ICoreClientAPI p_capi, BETemporalTank p_bett, bool p_isChest = false) : base(p_dialogTitle, p_pos, p_capi)
+        {
+            if (base.IsDuplicate) return;
+
+            _bett = p_bett;
+            _frequency = _bett.TemporalFrequency;
             _isChest = p_isChest;
             SetupDialog();
         }
@@ -84,25 +95,39 @@ namespace VintageEngineering.TemporalStorage
             SingleComposer.Compose(true);
         }
 
+        private void FreqChanged(int newfreq)
+        {
+            if (_frequency != newfreq)
+            {
+                _frequency = newfreq;
+                SingleComposer.GetSlider("freqslider").SetValue(_frequency);
+                SingleComposer.GetTextInput("freqinput").SetValue(_frequency);
+                //SingleComposer.ReCompose();
+            }
+        }
+
         private void OnFreqTextChanged(string newtext)
         {
-            if (int.TryParse(newtext, NumberStyles.Integer, GlobalConstants.DefaultCultureInfo, out _frequency))
+            int newfreq = -1;
+            if (int.TryParse(newtext, NumberStyles.Integer, GlobalConstants.DefaultCultureInfo, out newfreq))
             {
-                _frequency = GameMath.Clamp(_frequency, 1, 4000);
-
-                SingleComposer.GetSlider("freqslider").SetValue(_frequency);
+                if (newfreq == 0) return;
+                newfreq = GameMath.Clamp(newfreq, 1, 4000);
+                FreqChanged(newfreq);                
             }
         }
 
         private bool OnFreqSliderChanged(int newvalue)
         {
-            _frequency = newvalue;
+            FreqChanged(newvalue);
             return true;
         }
 
         private bool SaveBtnClicked()
         {
-            capi.Network.SendBlockEntityPacket(base.BlockEntityPosition, 1006, _frequency);
+            if (_frequency != 0) capi.Network.SendBlockEntityPacket(base.BlockEntityPosition, 1006, _frequency);
+            if (_betc != null) _betc.TemporalFrequency = _frequency;
+            if (_bett != null) _bett.TemporalFrequency = _frequency;
             this.TryClose();
             return true;
         }
@@ -110,6 +135,7 @@ namespace VintageEngineering.TemporalStorage
         private bool CancelBtnClicked()
         {
             this.TryClose();
+            capi.Network.SendBlockEntityPacket(base.BlockEntityPosition, 1008, null);
             return true;
         }
 

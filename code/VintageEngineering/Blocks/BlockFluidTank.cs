@@ -1,6 +1,8 @@
 using System.Reflection.Metadata.Ecma335;
+using System.Text;
 using VintageEngineering.API;
 using VintageEngineering.blockentity;
+using VintageEngineering.TemporalStorage;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
@@ -24,6 +26,15 @@ namespace VintageEngineering.Blocks
             base.DoPlaceBlock(world, byPlayer, blockSel, byItemStack);
 
             return true;
+        }
+
+        public override string GetPlacedBlockInfo(IWorldAccessor world, BlockPos pos, IPlayer forPlayer)
+        {
+            BEFluidTank beft = world.BlockAccessor.GetBlockEntity(pos) as BEFluidTank;
+            StringBuilder sb = new StringBuilder();
+            if (beft != null) beft.GetBlockInfo(forPlayer, sb);
+            if (sb.Length > 0) return sb.ToString();
+            return base.GetPlacedBlockInfo(world, pos, forPlayer);
         }
 
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)

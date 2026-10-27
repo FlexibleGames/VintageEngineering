@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
+using VintageEngineering.API;
+using VintageEngineering.blockentity;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
@@ -14,6 +16,7 @@ namespace VintageEngineering.TemporalStorage
 {
     public class TemporalStorageMod : ModSystem
     {
+        private ICoreAPI _api;
         private ICoreClientAPI _capi;
         private ICoreServerAPI _sapi;
 
@@ -35,21 +38,48 @@ namespace VintageEngineering.TemporalStorage
         public override void Start(ICoreAPI api)
         {
             base.Start(api);
+            _api = api;
             if (api.Side == EnumAppSide.Server) 
             { 
                 _sapi = api as ICoreServerAPI;
                 _serverChannel = _sapi.Network.RegisterChannel("vetemporalstorage")
-                    .RegisterMessageType(typeof(TemporalStorageData));                    
+                    .RegisterMessageType(typeof(TemporalStorageData))
+                    .RegisterMessageType(typeof(TemporalInventoryUpdate));
             }
             else 
             { 
                 _capi = api as ICoreClientAPI;
                 _clientChannel = _capi.Network.RegisterChannel("vetemporalstorage")
                     .RegisterMessageType(typeof(TemporalStorageData))
-                    .SetMessageHandler<TemporalStorageData>(OnStorageDataFromServer);
+                    .SetMessageHandler<TemporalStorageData>(OnStorageDataFromServer)
+                    .RegisterMessageType(typeof(TemporalInventoryUpdate))
+                    .SetMessageHandler<TemporalInventoryUpdate>(OnTemporalInventoryUpdate);
             }
-
+            RegisterBlockBehaviors(api);
             RegisterBlockEntities(api);
+        }
+
+        private void OnTemporalInventoryUpdate(TemporalInventoryUpdate packet)
+        {
+            TreeAttribute inv = TreeAttribute.CreateFromBytes(packet._inventoryData);
+            if (_temporalData == null) return;
+            if (packet._isChest)
+            {
+
+            }
+            else
+            {
+                if (_temporalData._tankStorages.ContainsKey(packet._frequency))
+                {
+                    _temporalData._tankStorages[packet._frequency].FromTreeAttributes(inv);
+                }
+                else
+                {
+                    _temporalData._tankStorages.Add(packet._frequency, new InventoryGeneric(_capi));
+                    _temporalData._tankStorages[packet._frequency].FromTreeAttributes(inv);
+                }
+                TankModified(packet._frequency, null);
+            }
         }
 
         public override void StartServerSide(ICoreServerAPI api)
@@ -79,7 +109,7 @@ namespace VintageEngineering.TemporalStorage
             {
                 _temporalData._tankStorages.Add(0, new InventoryGeneric(1, "temporaltank-0", _sapi, delegate (int id, InventoryGeneric self)
                 {
-                    return new ItemSlotLiquidOnly(self, 8000);
+                    return new ItemSlotLargeLiquid(self, 10000);
                 }));
                 if (!LidOpenEntityIDByFreqTank.ContainsKey(0)) LidOpenEntityIDByFreqTank.Add(0, new HashSet<long>());
             }
@@ -106,7 +136,8 @@ namespace VintageEngineering.TemporalStorage
                 TreeAttribute tree = new TreeAttribute();
                 tree.FromBytes(pair.Value);
                 inv.FromTreeAttributes(tree);
-                inv.ResolveBlocksOrItems();
+                inv.LateInitialize("temporalchest-" + pair.Key, api);
+                //inv.ResolveBlocksOrItems();
 
                 if (!LidOpenEntityIDByFreqChest.ContainsKey(pair.Key))
                 {
@@ -118,14 +149,18 @@ namespace VintageEngineering.TemporalStorage
                 InventoryGeneric inv;
                 if (!_temporalData._tankStorages.TryGetValue(pair.Key, out inv))
                 {
-                    inv = new InventoryGeneric(12, "temporaltank-" + pair.Key, api);
+                    inv = new InventoryGeneric(12, "temporaltank-" + pair.Key, api, delegate (int id, InventoryGeneric self)
+                    {
+                        return new ItemSlotLargeLiquid(self, 10000);
+                    });
                     _temporalData._tankStorages[pair.Key] = inv;
                 }
 
                 TreeAttribute tree = new TreeAttribute();
                 tree.FromBytes(pair.Value);
                 inv.FromTreeAttributes(tree);
-                inv.ResolveBlocksOrItems();
+                inv.LateInitialize("temporaltank-" + pair.Key, api);
+                //inv.ResolveBlocksOrItems();
 
                 if (!LidOpenEntityIDByFreqTank.ContainsKey(pair.Key))
                 {
@@ -134,10 +169,68 @@ namespace VintageEngineering.TemporalStorage
             }
         }
 
+        public void NewTemporalInventory(int freq, ICoreAPI api, bool isChest = true)
+        {
+            if (isChest)
+            {
+                _temporalData._chestStorages.Add(freq, new InventoryGeneric(12, "temporalchest-" + freq, api));
+                _temporalData._chestStorages[freq].LateInitialize("temporalchest-" + freq, api);
+            }
+            else
+            {
+                _temporalData._tankStorages.Add(freq, new InventoryGeneric(1, "temporaltank-" + freq, api, delegate(int id, InventoryGeneric self)
+                {
+                    return new ItemSlotLargeLiquid(self, 10000);
+                }));
+                _temporalData._tankStorages[freq].LateInitialize("temporaltank-" + freq, api);                
+            }
+            if (api is ICoreServerAPI sapi)
+            {
+                _serverChannel.SendPacket<TemporalStorageData>(_temporalData, (IServerPlayer[])_sapi.World.AllOnlinePlayers);
+            }
+        }
+
+        public void TankModified(int freq, BlockPos skipPos)
+        {
+            if (_sapi != null)
+            {
+                TemporalInventoryUpdate tankupdate = new TemporalInventoryUpdate(_temporalData._tankStorages[freq], freq, false);
+                _serverChannel.SendPacket<TemporalInventoryUpdate>(tankupdate, _sapi.World.AllOnlinePlayers as IServerPlayer[]);
+            }
+            if (_capi == null) return;
+
+            if (_temporalData._tankStorages.ContainsKey(freq))
+            {
+                if (_temporalData._tankPositions.ContainsKey(freq))
+                {
+                    List<BlockPos> tanks = _temporalData._tankPositions[freq];
+                    foreach (BlockPos tank in tanks)
+                    {
+                        if (skipPos != null && tank == skipPos) continue;
+                        BEFluidTank betank = _capi.World.BlockAccessor.GetBlockEntity<BEFluidTank>(tank);
+                        if (betank != null)
+                        {
+                            betank.RegenFluidMesh();
+                        }
+                    }
+                }                                
+            }
+        }
+
+        /// <summary>
+        /// Helps track LidOpenEntityID per freqency inventories
+        /// </summary>
+        /// <param name="freq"></param>
+        /// <param name="player"></param>
         public void ChestInventoryOpened(int freq, IPlayer player)
         {
             ChestInventoryOpened(freq, player.Entity.EntityId);
         }
+        /// <summary>
+        /// Helps track LidOpenEntityID per freqency inventories
+        /// </summary>
+        /// <param name="freq"></param>
+        /// <param name="entityId"></param>
         public void ChestInventoryOpened(int freq, long entityId)
         {
             if (!LidOpenEntityIDByFreqChest.ContainsKey(freq))
@@ -146,14 +239,26 @@ namespace VintageEngineering.TemporalStorage
             }
             LidOpenEntityIDByFreqChest[freq].Add(entityId);
         }
-
+        /// <summary>
+        /// Helps track LidOpenEntityID per freqency inventories
+        /// </summary>
+        /// <param name="freq"></param>
+        /// <param name="player"></param>
         public void ChestInventoryClosed(int freq, IPlayer player)
         {
             ChestInventoryClosed(freq, player.Entity.EntityId);
         }
+        /// <summary>
+        /// Helps track LidOpenEntityID per freqency inventories
+        /// </summary>
+        /// <param name="freq"></param>
+        /// <param name="entityId"></param>
         public void ChestInventoryClosed(int freq, long entityId)
         {
-            LidOpenEntityIDByFreqChest[freq].Remove(entityId);
+            if (LidOpenEntityIDByFreqChest.ContainsKey(freq))
+            { 
+                LidOpenEntityIDByFreqChest[freq].Remove(entityId); 
+            }
         }
 
         public void Event_PlayerNowPlaying(IServerPlayer _splayer)
@@ -202,9 +307,16 @@ namespace VintageEngineering.TemporalStorage
         {
 
         }
+
+        public void RegisterBlockBehaviors(ICoreAPI api)
+        {
+            api.RegisterBlockBehaviorClass("VETemporalContainerBeh", typeof(BlockBehTemporalContainer));
+        }
+
         public void RegisterBlockEntities(ICoreAPI api)
         {
             api.RegisterBlockEntityClass("VEBETemporalChest", typeof(BlockEntityTemporalContainer));
+            api.RegisterBlockEntityClass("VEBETemporalTank", typeof(BETemporalTank));
         }
 
     }

@@ -1,17 +1,25 @@
 {
 	"code": "vefluidtank",
 	"classByType": {
-        "*-temporalsteel": "Block",
+        "*-temporalsteel": "VEBlockFluidTank",
         "*-infsink": "Block",
         "*": "VEBlockFluidTank"
     },
 	"entityClassByType": {
-
+		"*-temporalsteel": "VEBETemporalTank",
         "*": "VEBEFluidTank"
     },
-	"behaviors": [
-        { "name": "RightClickPickup"}
-	],
+	"behaviorsByType": {
+		"*-temporalsteel":
+		[
+			{ "name": "VETemporalContainerBeh" },
+			{ "name": "RightClickPickup"}
+		],
+		"*":
+		[
+        	{ "name": "RightClickPickup"}
+		]
+	},
 	"variantgroups": [
 		{ "code":"tier", "states": ["tinbronze", "iron", "steel", "temporalsteel", "infsink"]  }
 	],
@@ -62,7 +70,7 @@
 	"lightAbsorption": 0,
 	"maxStackSize": 1,
 	"replaceable": 600,
-	"resistance": 1.5,
+	"resistance": 4.5,
 	"collisionSelectionBoxes": [
 		{ "x1": 0.125, "y1": 0, "z1": 0.125, "x2": 0.875, "y2": 1, "z2": 0.875 }
 	],

@@ -42,6 +42,7 @@
 	},
 	"behaviors": [
 		{ "name": "Lockable" },
+		{ "name": "VETemporalContainerBeh" },
 		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "temporalchest-north" }}}
 	],
 	"entityBehaviors": [{ "name": "Animatable" }],

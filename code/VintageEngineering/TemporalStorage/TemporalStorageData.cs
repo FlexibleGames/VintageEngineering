@@ -98,4 +98,26 @@ namespace VintageEngineering.TemporalStorage
             _tankPositions.Clear();
         }
     }
+
+    [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
+    public class TemporalInventoryUpdate
+    {
+        public byte[] _inventoryData;
+        public int _frequency;
+        public bool _isChest;
+
+        public TemporalInventoryUpdate(InventoryBase inv, int freq, bool ischest)
+        {
+            TreeAttribute tree = new TreeAttribute();
+            inv.ToTreeAttributes(tree);
+            _inventoryData = tree.ToBytes();
+            _frequency = freq;
+            _isChest = ischest;
+        }
+
+        public TemporalInventoryUpdate()
+        {
+            _inventoryData = new byte[0];
+        }
+    }
 }

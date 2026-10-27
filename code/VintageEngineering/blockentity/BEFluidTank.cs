@@ -12,15 +12,15 @@ namespace VintageEngineering.blockentity
 {
     public class BEFluidTank : BlockEntityLiquidContainer, IVELiquidInterface
     {
-        private int _capacityLitres;        
+        protected int _capacityLitres;        
 
-        public int CapacityLitres => _capacityLitres;
+        public virtual int CapacityLitres => _capacityLitres;
         
         public override string InventoryClassName => "vefluidtank";
         
-        private MeshData _liquidmesh;
-        
-        private BlockFluidTank _ownTankBlock;
+        public MeshData _liquidmesh;
+
+        protected BlockFluidTank _ownTankBlock;
 
         public BEFluidTank()
         {            
@@ -57,11 +57,11 @@ namespace VintageEngineering.blockentity
         {
             //base.GetBlockInfo(forPlayer, dsc);
             
-            if (!inventory[0].Empty) 
+            if (!Inventory[0].Empty) 
             {
-                WaterTightContainableProps wprops = BlockLiquidContainerBase.GetContainableProps(inventory[0].Itemstack);
+                WaterTightContainableProps wprops = BlockLiquidContainerBase.GetContainableProps(Inventory[0].Itemstack);
                 float perliter = wprops != null ? wprops.ItemsPerLitre : 100f;
-                dsc.AppendLine($"{inventory[0].Itemstack.GetName()}: {inventory[0].Itemstack.StackSize / perliter}L"); 
+                dsc.AppendLine($"{Inventory[0].Itemstack.GetName()}: {Inventory[0].Itemstack.StackSize / perliter}L"); 
             }
         }
 
@@ -81,10 +81,16 @@ namespace VintageEngineering.blockentity
             MarkDirty(true, null); // possible to markdirty only the mesh ?
         }
 
-        private MeshData GenFluidMesh()
+        public MeshData GenFluidMesh()
         {
-            MeshData mesh = _ownTankBlock?.GenMesh(this.inventory[0].Itemstack, (inventory[0] as ItemSlotLiquidOnly).CapacityLitres);
+            if (this.Inventory == null) return null;
+            MeshData mesh = _ownTankBlock?.GenMesh(this.Inventory[0].Itemstack, (Inventory[0] as ItemSlotLiquidOnly).CapacityLitres);
             return mesh;
+        }
+
+        public void RegenFluidMesh()
+        {
+            _liquidmesh = GenFluidMesh();
         }
 
         protected override ItemSlot GetAutoPushIntoSlot(BlockFacing atBlockFace, ItemSlot fromSlot)
@@ -151,7 +157,7 @@ namespace VintageEngineering.blockentity
         public override bool OnTesselation(ITerrainMeshPool mesher, ITesselatorAPI tessThreadTesselator)
         {
             base.OnTesselation(mesher, tessThreadTesselator);
-            mesher.AddMeshData(_liquidmesh, 1);
+            if (_liquidmesh != null) mesher.AddMeshData(_liquidmesh, 1);
             return false;
         }
 
