@@ -68,9 +68,14 @@ namespace VintageEngineering.inventory
 
         protected override float GetDefaultTransitionSpeedMul(EnumTransitionType transitionType)
         {
-            if (TransitionableSpeedMulByType.ContainsKey(transitionType))
+            return 1f;
+        }
+
+        public override float GetTransitionSpeedMul(EnumTransitionType transType, ItemStack stack)
+        {
+            if (TransitionableSpeedMulByType.ContainsKey(transType))
             {
-                return TransitionableSpeedMulByType[transitionType];
+                return TransitionableSpeedMulByType[transType];
             }
             else return 1f;
         }

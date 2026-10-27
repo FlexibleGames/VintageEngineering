@@ -14,9 +14,23 @@ namespace VintageEngineering.API
             _entity = l_entity;
         }
 
+        protected override float Inventory_OnAcquireTransitionSpeed(EnumTransitionType transType, ItemStack stack, float baseMul)
+        {
+            float output;
+            if (transType != EnumTransitionType.Perish)
+            {
+                return this.Inventory.GetTransitionSpeedMul(transType, stack);
+            }
+            else
+            {
+                output = ((Api != null) ? GetPerishRate() : 0f); // default to no perish, until API is initialized
+            }
+            return output;
+        }
+
         public override float GetPerishRate()
         {
-            if (_entity == null) return base.GetPerishRate();
+            if (_entity == null) return 0f;
             float rate = 0f;
             if (_entity.Electric.MachineState == EnumBEState.On)
             {
