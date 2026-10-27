@@ -263,6 +263,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
             if (checkit == null || checkit is not BlockWire) return false; // we're not even holding wire?!
 
             // after all that, finally let the CatenaryMod know we want to connect a wire.
+            
             cm.OnInteract(checkit, byPlayer.InventoryManager.ActiveHotbarSlot, byPlayer.Entity, blockSel);
             return true;
         }
