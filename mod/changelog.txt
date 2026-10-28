@@ -1,3 +1,21 @@
+v0.6.2
+- New Multiblock Machine: Temporal Forge, used for crafting Temporal Steel and Temporal Gears
+- New Feature: Temporal Storage, a chest and a tank that can be tuned to a frequency to share inventory. Think Ender Storage without the dyes.
+- Fixes for 104, 102, 101, 100, 99 and many other unreported bugs.
+- Added two blocks, Temporal Matrix, and Temporal Focuser to build the new Temporal Forge.
+- Temporal Forge:
+  - Only active during a temporal storm or if a rift is very close to it.
+  - 5000 PPS, 500,000 power storage, item input, item output.
+  - Primarily used for crafting Temporal Steel from Steel Ingots, but other recipes can be added as normal with all my machines.
+  - Can craft Temporal Gears from Steel Gears as well.
+- Temporal Storage:
+  - Temporal Chests and Tanks have a frequency you can change via Sneak-Right-Click with empty hand.
+  - Frequency is centralized and shared, all chests set to frequency 40 will all share the same inventory, likewise for tanks.
+  - Frequencies are user-encoded, so if Player A uses a freqency, only they or members of their same group can use that frequency.
+  - Obviously chests and tanks are different sets of inventories, for example: freq 40 for chests is separate from freq 40 for tanks.
+  - Freq 0 is default and owned by no one.
+  - Frequencies can range from 1 to 4000, if you run out of frequencies, re-evaluate your factory.
+
 v0.5.9
 - Fix Chemical Plant recipe output for fluids.
 - Fix for Storage-only electrical network balancing.
