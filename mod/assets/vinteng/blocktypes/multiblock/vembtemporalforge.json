@@ -14,7 +14,8 @@
 				{ "w": 6, "s": "reinforcedconcrete" },
 				{ "w": 7, "s": "interaction" },
 				{ "w": 8, "s": "steelfence" },
-				{ "w": 9, "s": "itemio" }
+				{ "w": 9, "s": "itemio" },
+				{ "w": 10, "s": "fluidio" }
 			],
 			"blockMapping": [
 				{ "w": 1, "tocode": "vinteng:vembdummy-none" },
@@ -24,7 +25,8 @@
 				{ "w": 6, "tocode": "vinteng:vembdummy-none" },
 				{ "w": 7, "tocode": "vinteng:vembdummy-interaction" },
 				{ "w": 8, "tocode": "vinteng:vembdummy-none" },
-				{ "w": 9, "tocode": "vinteng:vembdummy-item" }
+				{ "w": 9, "tocode": "vinteng:vembdummy-item" },
+				{ "w": 10, "tocode": "vinteng:vembdummy-item" }
 			],
 			"attachable": [
 				{ "w": 3, "sides": ["up"] }
@@ -34,7 +36,7 @@
 			],
 			"multiblockStructure": {
 				"blockNumbers": {
-					"vinteng:vembcomponent-heavyeng": 1,
+					"vinteng:temporalmatrix-matrix": 1,
 					"vinteng:industrialglass-plain": 2,
 					"vinteng:vemultiblockio-power": 3,
 					"vinteng:vesheetmetal-steel": 4,
@@ -42,7 +44,8 @@
 					"vinteng:concrete-reinforced-uncolored": 6,
 					"vinteng:vemultiblockio-interaction": 7,
 					"vinteng:vembcomponent-steel": 8,
-					"vinteng:vemultiblockio-item": 9
+					"vinteng:vemultiblockio-item": 9,
+					"vinteng:temporalmatrix-focus": 10
 				},
 				"offsets": [
 					{ "x": 0, "y": 2, "z": 0, "w": 1 },
@@ -51,7 +54,7 @@
 					{ "x": 0, "y": 3, "z": 0, "w": 3 },
 					{ "x": 0, "y": 3, "z": 1, "w": 4 },
 					{ "x": 0, "y": 3, "z": -1, "w": 4 },
-					{ "x": 0, "y": 1, "z": 0, "w": 1 },
+					{ "x": 0, "y": 1, "z": 0, "w": 10 },
 					{ "x": 0, "y": 1, "z": 1, "w": 2 },
 					{ "x": 0, "y": 1, "z": -1, "w": 2 },
 					{ "x": 0, "y": 0, "z": 0, "w": 5 },
