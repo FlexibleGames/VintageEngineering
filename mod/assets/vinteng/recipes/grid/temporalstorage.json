@@ -1,0 +1,24 @@
+[
+{
+	"ingredientPattern": "STS,TCT,STS",
+	"ingredients": {
+		"T": { "type": "item", "code": "vinteng:machineplate-temporalsteel", "quantity": 1 },
+		"C": { "type": "block", "code": "game:chest-east", "attributes": { "type": "normal-generic" } },
+		"S": { "type": "item", "code": "vinteng:screw-steel", "quantity": 1 }
+	},
+	"width": 3,
+	"height": 3,
+	"output": { "type": "block", "code": "vinteng:temporalchest-north", "quantity": 1 }
+},
+{
+	"ingredientPattern": "STS,TGT,STS",
+	"ingredients": {
+		"T": { "type": "item", "code": "vinteng:machineplate-temporalsteel", "quantity": 1 },
+		"G": { "type": "block", "code": "vinteng:industrialglass-plain", "quantity": 1},
+		"S": { "type": "item", "code": "vinteng:screw-steel", "quantity": 1 }
+	},
+	"width": 3,
+	"height": 3,
+	"output": { "type": "block", "code": "vinteng:vefluidtank-temporalsteel", "quantity": 1 }
+}
+]
