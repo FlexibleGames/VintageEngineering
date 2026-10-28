@@ -1,0 +1,36 @@
+{
+	"code": "temporalmatrix",
+	"class": "Block",
+	"creativeinventory": {
+		"general": [ "*" ],
+		"vinteng": [ "*" ]
+	},
+	"variantgroups": [
+		{
+			"code": "type",
+			"states": [ "matrix", "focus" ]
+		}
+	],
+	"blockmaterial": "Metal",
+	"drawtype": "json",
+	"sidesolid": { "all": true },
+	"sideopaque": { "all": true },
+	"shapeByType": {
+		"*-matrix": { "base": "vinteng:block/temporalmatrix"},
+		"*-focus": { "base": "vinteng:block/temporalfocus" }
+	},
+	"maxStackSize": 8,
+	"textures": {
+		"gunmetal-lightgray": { "base": "vinteng:block/multiblocks/gunmetal-lightgray" },
+		"temporalgear": { "base": "vinteng:block/temporalgear" },
+		"temporalsteel": { "base": "vinteng:block/temporalsteel" }
+	},
+	"resistance": 2,
+	"lightAbsorption": 1,
+	"sounds": {
+		"place": "game:block/chute",
+		"break": "game:block/anvil",
+		"hit": "game:block/anvil",
+		"walk": "game:walk/stone"
+	}
+}

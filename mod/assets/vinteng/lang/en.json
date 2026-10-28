@@ -328,7 +328,7 @@
 	"vinteng:blockdesc-vefluidtank-steel": "A simple tank for all your fluid movement needs. Keeps fluid on break. 256k L Capacity",
 
 	"vinteng:block-vefluidtank-temporalsteel": "Temporal Fluid Tank",
-	"vinteng:blockdesc-vefluidtank-temporalsteel": "A tank that is quantumly entangled with any tank that shares its channel. Channel set via GUI. 10k L Capacity",
+	"vinteng:blockdesc-vefluidtank-temporalsteel": "A tank that is quantumly entangled with any tank that shares its frequency. Frequency set via GUI with sneak-right-click with empty hand. 10k L Capacity",
 	"vinteng:block-vefluidtank-infsink": "Infinite Sink/Source",
 	"vinteng:blockdesc-vefluidtank-infsink": "A creative fluid sink or source. Right click with a full bucket to set infinite source fluid portion type.",
 	"vinteng:block-crudeoilwell": "Crude Oil Well Source",
@@ -397,8 +397,8 @@
 	"vinteng:blockdesc-vesheetmetal-iron": "Iron Sheet Metal is a tough building block, used in multiblocks.",
 	"vinteng:block-vesheetmetal-steel": "Sheet Metal (Steel)",
 	"vinteng:blockdesc-vesheetmetal-steel": "Steel Sheet Metal is a very tough building block. Used in high-tier multiblocks.",
-	"vinteng:block-vesheetmetal-tempsteel": "Sheet Metal (Temporal Steel)",
-	"vinteng:blockdesc-vesheetmetal-tempsteel": "Temporal Steel Sheet Metal has mysterious properties that require further experimentation and study.",
+	"vinteng:block-vesheetmetal-temporalsteel": "Sheet Metal (Temporal Steel)",
+	"vinteng:blockdesc-vesheetmetal-temporalsteel": "Temporal Steel Sheet Metal has mysterious properties that require further experimentation and study.",
 
 	"vinteng:gui-motor-targetspeed": "Target Speed: ",
 	"vinteng:gui-motor-targettorque": "Target Torque: ",
@@ -540,7 +540,12 @@
 	"vinteng:gui-title-tempchest": "Temporal Chest",
 	"vinteng:gui-title-temptank": "Temporal Tank",
 	"vinteng:block-normal-temporalchest-*": "Temporal Chest",
-	"vinteng:blockdesc-normal-temporalchest-*": "A chest that can be tuned to frequencies shared by other Temporal Chests. Think Ender Storage without the dyes.",
+	"vinteng:blockdesc-normal-temporalchest-*": "A chest that can be tuned to frequencies shared by other Temporal Chests. Frequency set via sneak-right-click with empty hand. Think Ender Storage without the dyes.",
+
+	"vinteng:block-temporalmatrix-matrix": "Temporal Matrix",
+	"vinteng:blockdesc-temporalmatrix-matrix": "Used to build the Temporal Forge, allows the infusion of temporal forces into material.",
+	"vinteng:block-temporalmatrix-focus": "Temporal Focuser",
+	"vinteng:blockdesc-temporalmatrix-focus": "Used to build the Temporal Forge, focuses temporal energies into the Temporal Matrix",
 
 	"eof": "End Of File"
 }
