@@ -13,7 +13,7 @@
 				"canReceivePower": true,
 				"entitytype": "Consumer",
 				"maxpower": 2000,
-				"maxpps": 20
+				"maxpps": 200
 			}
 		}
 	],
@@ -28,7 +28,7 @@
 				"*": true
 			}
 		},
-		"heatpersecond": 400,
+		"heatpersecond": 160,
 		"priority": 5,
         "wireNodes": [
             {
