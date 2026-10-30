@@ -1,4 +1,3 @@
-
 {
 	"editor": {
 		"collapsedPaths": ",Root/Cube27,Root/Cube47,Root/Cube70,Root/Cube28",
@@ -322,10 +321,10 @@
 			"to": [ 14.5, 7.5, 14.5 ],
 			"rotationOrigin": [ 1.5, 7.0, 1.5 ],
 			"faces": {
-				"north": { "texture": "#null", "uv": [ 0.0, 0.0, 13.0, 0.5 ] },
-				"east": { "texture": "#null", "uv": [ 0.0, 0.0, 13.0, 0.5 ] },
+				"north": { "texture": "#null", "uv": [ 0.0, 0.0, 13.0, 0.5 ], "enabled": false },
+				"east": { "texture": "#null", "uv": [ 0.0, 0.0, 13.0, 0.5 ], "enabled": false },
 				"south": { "texture": "#concrete-reinforced-side-uncolored", "uv": [ 0.0, 0.0, 16.0, 16.0 ], "autoUv": false },
-				"west": { "texture": "#null", "uv": [ 0.0, 0.0, 13.0, 0.5 ] },
+				"west": { "texture": "#null", "uv": [ 0.0, 0.0, 13.0, 0.5 ], "enabled": false },
 				"up": { "texture": "#concrete-reinforced-side-uncolored", "uv": [ 0.0, 0.0, 16.0, 15.0 ], "autoUv": false },
 				"down": { "texture": "#null", "uv": [ 0.0, 0.0, 13.0, 13.0 ], "enabled": false }
 			}
@@ -1578,8 +1577,8 @@
 			"name": "dooropen",
 			"code": "dooropen",
 			"quantityframes": 60,
-			"onActivityStopped": "PlayTillEnd",
-			"onAnimationEnd": "EaseOut",
+			"onActivityStopped": "Rewind",
+			"onAnimationEnd": "Hold",
 			"keyframes": [
 				{
 					"frame": 0,

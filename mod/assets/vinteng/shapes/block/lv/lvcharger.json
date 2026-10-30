@@ -46,7 +46,7 @@
 				"south": { "texture": "#bismuthbronze", "uv": [ 0.0, 0.0, 1.0, 4.0 ] },
 				"west": { "texture": "#bismuthbronze", "uv": [ 0.0, 0.0, 1.0, 4.0 ] },
 				"up": { "texture": "#bismuthbronze", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
-				"down": { "texture": "#null", "uv": [ 0.0, 1.0, 1.0, 2.0 ] }
+				"down": { "texture": "#null", "uv": [ 0.0, 1.0, 1.0, 2.0 ], "enabled": false }
 			}
 		},
 		{

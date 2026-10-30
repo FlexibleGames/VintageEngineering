@@ -64,10 +64,10 @@
 			"rotationOrigin": [ 0.0, 14.0, 0.0 ],
 			"rotationX": 43.0,
 			"faces": {
-				"north": { "texture": "#null", "uv": [ 0.0, 0.0, 15.5, 0.5 ] },
-				"east": { "texture": "#null", "uv": [ 0.0, 0.0, 20.5, 0.5 ] },
-				"south": { "texture": "#null", "uv": [ 0.0, 0.0, 15.5, 0.5 ] },
-				"west": { "texture": "#null", "uv": [ 0.0, 0.0, 20.5, 0.5 ] },
+				"north": { "texture": "#null", "uv": [ 0.0, 0.0, 15.5, 0.5 ], "enabled": false },
+				"east": { "texture": "#null", "uv": [ 0.0, 0.0, 20.5, 0.5 ], "enabled": false },
+				"south": { "texture": "#null", "uv": [ 0.0, 0.0, 15.5, 0.5 ], "enabled": false },
+				"west": { "texture": "#null", "uv": [ 0.0, 0.0, 20.5, 0.5 ], "enabled": false },
 				"up": { "texture": "#solarpanel", "uv": [ 0.0, 0.0, 15.5, 15.5 ], "autoUv": false, "windMode": [-1,-1,-1,-1] },
 				"down": { "texture": "#reinforced-steel", "uv": [ -0.5, 0.0, 16.0, 16.5 ], "autoUv": false, "windMode": [-1,-1,-1,-1], "reflectiveMode": 2 }
 			}
@@ -113,8 +113,8 @@
 				"east": { "texture": "#inmbfluid_straight", "uv": [ 0.0, 0.0, 1.0, 15.5 ], "autoUv": false },
 				"south": { "texture": "#inmbfluid_straight", "uv": [ 0.0, 0.0, 1.0, 15.5 ], "autoUv": false },
 				"west": { "texture": "#inmbfluid_straight", "uv": [ 0.0, 0.0, 1.0, 15.5 ], "autoUv": false },
-				"up": { "texture": "#null", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
-				"down": { "texture": "#null", "uv": [ 0.0, 0.0, 0.5, 1.0 ] }
+				"up": { "texture": "#null", "uv": [ 0.0, 0.0, 0.5, 1.0 ], "enabled": false },
+				"down": { "texture": "#null", "uv": [ 0.0, 0.0, 0.5, 1.0 ], "enabled": false }
 			}
 		},
 		{
