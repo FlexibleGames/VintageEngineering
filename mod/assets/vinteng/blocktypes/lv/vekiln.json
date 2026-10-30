@@ -13,7 +13,7 @@
 				"canReceivePower": true,
 				"entitytype": "Consumer",
 				"maxpower": 2000,
-				"maxpps": 200
+				"maxpps": 20
 			}
 		}
 	],
@@ -36,12 +36,12 @@
                 "wirefunction": "Power",
 				"powertier": "LV",
 				"maxconnections": 1,
-                "x1": 0.4375,
-                "y1": 0.4375,
-                "z1": 0,
-                "x2": 0.625,
-                "y2": 0.625,
-                "z2": 0.1875,
+                "x1": 0.35,
+                "y1": 0.15625,
+                "z1": -0.0125,
+                "x2": 0.1625,
+                "y2": 0.34375,
+                "z2": 0.175,
                 "rotateYByType": {
 					"*-north": 0,
 					"*-east": 270,

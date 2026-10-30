@@ -14,8 +14,8 @@
 				"canExtractPower": true,
 				"canReceivePower": true,
 				"entitytype": "Storage",
-				"maxpower": 4000,
-				"maxpps": 100
+				"maxpower": 40000,
+				"maxpps": 1000
 			}
 		}
 	],
@@ -33,12 +33,12 @@
                 "wirefunction": "Power",
 				"powertier": "LV",
 				"maxconnections": 1,
-                "x1": 0.40625,
-                "y1": 0.875,
-                "z1": 0.40625,
-                "x2": 0.59375,
-                "y2": 1,
-                "z2": 0.59375
+                "x1": 0.91875,
+                "y1": 0.80625,
+                "z1": 0.025,
+                "x2": 0.73125,
+                "y2": 0.99375,
+                "z2": 0.2125
             }
         ]
 	},

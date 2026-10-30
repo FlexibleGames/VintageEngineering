@@ -13,7 +13,7 @@
 				"canReceivePower": true,
 				"entitytype": "Consumer",
 				"maxpower": 2000,
-				"maxpps": 200
+				"maxpps": 20
 			}
 		}
 	],
@@ -28,7 +28,7 @@
 				"*": true
 			}
 		},
-		"heatpersecond": 160,
+		"heatpersecond": 400,
 		"priority": 5,
         "wireNodes": [
             {
@@ -36,12 +36,12 @@
                 "wirefunction": "Power",
 				"powertier": "LV",
 				"maxconnections": 1,
-                "x1": 0.4375,
-                "y1": 0.1875,
-                "z1": 0,
-                "x2": 0.625,
-                "y2": 0.375,
-                "z2": 0.1875,
+                "x1": 0.9375,
+                "y1": 0.5,
+                "z1": -0.0625,
+                "x2": 0.75,
+                "y2": 0.6875,
+                "z2": 0.125,
                 "rotateYByType": {
 					"*-north": 0,
 					"*-east": 270,

@@ -11,10 +11,10 @@
 	"textures": {
 		"gold": "block/gold",
 		"solarpanel": "block/lv_machinery/solarpanel",
-		"hoses": "block/multiblocks/hoses",
 		"inmbfluid_straight": "block/multiblocks/inmbfluid_straight",
 		"powerio-bot": "block/multiblocks/powerio-bot",
-		"reinforced-steel": "block/multiblocks/reinforced-steel"
+		"reinforced-steel": "block/multiblocks/reinforced-steel",
+		"hoses": "block/multiblocks/hoses"
 	},
 	"elements": [
 		{
@@ -222,7 +222,7 @@
 			"name": "Cube8",
 			"from": [ 1.5, 15.2, 0.0 ],
 			"to": [ 2.3, 16.0, 0.8 ],
-			"rotationOrigin": [ 1.5, 15.2, 0.0 ],
+			"rotationOrigin": [ 1.0, 15.2194, 0.2046 ],
 			"faces": {
 				"north": { "texture": "#gold", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
 				"east": { "texture": "#gold", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
