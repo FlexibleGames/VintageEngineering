@@ -14,6 +14,8 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
+using System.Runtime.CompilerServices;
+using Vintagestory.API.Util;
 
 namespace VintageEngineering
 {
@@ -23,6 +25,8 @@ namespace VintageEngineering
         private ICoreServerAPI sapi;
         private float updateBouncer = 0f;        
         private GUIKiln clientDialog;
+
+        private string _openAnimCode = string.Empty;
 
         public string DialogTitle
         {
@@ -41,6 +45,7 @@ namespace VintageEngineering
         public override void Initialize(ICoreAPI api)
         {
             base.Initialize(api);
+            
             if (api.Side == EnumAppSide.Server)
             {
                 sapi = api as ICoreServerAPI;
@@ -58,6 +63,10 @@ namespace VintageEngineering
                 {
                     AnimUtil.InitializeAnimator("vekiln", null, null, new Vec3f(0, Electric.GetRotation(), 0f));
                 }
+            }
+            if (base.Block.Attributes["openanimcode"].Exists)
+            {
+                _openAnimCode = base.Block.Attributes["openanimcode"].AsString(string.Empty);
             }
             inv.Pos = this.Pos;
             inv.LateInitialize($"{InventoryClassName}-{this.Pos.X}/{this.Pos.Y}/{this.Pos.Z}", api);
@@ -496,7 +505,7 @@ namespace VintageEngineering
             }
             else
             {
-                if (AnimUtil != null && AnimUtil.activeAnimationsByAnimCode.Count > 0)
+                if (AnimUtil != null && AnimUtil.activeAnimationsByAnimCode.ContainsKey(base.Block.Attributes["craftinganimcode"].AsString(string.Empty)))
                 {
                     AnimUtil.StopAnimation(base.Block.Attributes["craftinganimcode"].AsString());
                 }
@@ -558,12 +567,68 @@ namespace VintageEngineering
                 }
                 MarkDirty(true, null);
             }
+            if (packetid == 1000)
+            {
+                // opening
+                byte[] opendata = SerializerUtil.Serialize<OpenContainerLidPacket>(new OpenContainerLidPacket(player.Entity.EntityId, true));
+                sapi.Network.BroadcastBlockEntityPacket(Pos, 5001, opendata);
+            }
+            else if (packetid == 1001)
+            {
+                // closing
+                byte[] opendata = SerializerUtil.Serialize<OpenContainerLidPacket>(new OpenContainerLidPacket(player.Entity.EntityId, false));
+                sapi.Network.BroadcastBlockEntityPacket(Pos, 5001, opendata);
+            }
+        }
+
+        public void OpenAnim()
+        {
+            if (AnimUtil != null)
+            {
+                if (!AnimUtil.activeAnimationsByAnimCode.ContainsKey(_openAnimCode))
+                {
+                    AnimUtil.StartAnimation(new AnimationMetaData
+                    {
+                        Animation = _openAnimCode,
+                        Code = _openAnimCode,
+                        AnimationSpeed = 1f,
+                        EaseOutSpeed = 6f,
+                        EaseInSpeed = 4f
+                    });
+                }
+            }
+        }
+
+        public void CloseAnim()
+        {
+            if (AnimUtil != null)
+            {
+                if (AnimUtil.activeAnimationsByAnimCode.ContainsKey(_openAnimCode))
+                {
+                    AnimUtil.StopAnimation(_openAnimCode);
+                }
+            }
         }
 
         public override void OnReceivedServerPacket(int packetid, byte[] data)
         {
             base.OnReceivedServerPacket(packetid, data);
             if (clientDialog != null && clientDialog.IsOpened()) clientDialog.Update(RecipeProgress, Electric.CurrentPower, currentTemp, currentRecipe, _cproperties);
+            if (packetid == 5001)
+            {
+                OpenContainerLidPacket packet = SerializerUtil.Deserialize<OpenContainerLidPacket>(data);
+                if (packet != null)
+                {
+                    if (packet.Opened)
+                    {
+                        OpenAnim();
+                    }
+                    else
+                    {
+                        CloseAnim();
+                    }
+                }
+            }
         }
 
         public override void ToTreeAttributes(ITreeAttribute tree)

@@ -15,7 +15,8 @@
 				"maxpower": 2000,
 				"maxpps": 200
 			}
-		}
+		},
+		{ "name": "Animatable" }
 	],
 	"variantgroups": [
 		{ "code":"side", "loadFromProperties": "abstract/horizontalorientation" }
@@ -30,6 +31,7 @@
 		},
 		"heatpersecond": 80,
 		"priority": 5,
+		"openanimcode": "dooropen",
         "wireNodes": [
             {
                 "index": 0,
@@ -74,7 +76,7 @@
 	"replaceable": 600,
 	"resistance": 1.5,
 	"collisionSelectionBoxes": [
-		{ "x1": 0, "y1": 0, "z1": 0, "x2": 1, "y2": 1, "z2": 1 }
+		{ "x1": 0, "y1": 0, "z1": 0, "x2": 1, "y2": 1.75, "z2": 1 }
 	],
 	"guiTransform": {
 		"rotation": { "x": -22.6, "y": 134, "z": 0 }

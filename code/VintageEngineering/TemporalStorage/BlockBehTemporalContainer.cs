@@ -26,7 +26,7 @@ namespace VintageEngineering.TemporalStorage
             }
             else if (entity is BETemporalTank bett)
             {
-                return bett.OnPlayerRightClick(byPlayer, blockSel);
+                if (byPlayer.Entity.Controls.Sneak) bett.OnPlayerRightClick(byPlayer, blockSel);
             }
             return base.OnBlockInteractStart(world, byPlayer, blockSel, ref handling);          
         }

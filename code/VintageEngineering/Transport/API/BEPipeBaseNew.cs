@@ -278,7 +278,7 @@ namespace VintageEngineering.Transport.API
         /// <returns>True if handled without issue.</returns>
         public virtual bool OnPlayerRightClick(IWorldAccessor world, IPlayer player, BlockSelection selection)
         {
-            //if (world.Api.Side == EnumAppSide.Client) return true;
+            if (world.Api.Side == EnumAppSide.Client) return true;
             int faceindex = selection.SelectionBoxIndex;
             if (faceindex == 6)
             {
@@ -302,7 +302,7 @@ namespace VintageEngineering.Transport.API
                         insertionSides[faceindex] = false;
                         numInsertionConnections--;
                         QuickUpdatePipeGraph(Api.World, Pos, [_insertNodes[faceindex]], true);
-                        _insertNodes.Remove(faceindex);                        
+                        _insertNodes.Remove(faceindex);
                     }
                     else if (extractionSides[faceindex] && _extractionNodes[faceindex] != null)
                     {
