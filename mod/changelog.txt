@@ -1,4 +1,5 @@
 v0.6.2
+- Jay Completed the LV Machine Shape Overhaul! Be sure to re-wire all your LV machines as the wire nodes changed locations!!
 - New Multiblock Machine: Temporal Forge, used for crafting Temporal Steel and Temporal Gears
 - New Feature: Temporal Storage, a chest and a tank that can be tuned to a frequency to share inventory. Think Ender Storage without the dyes.
 - Fixes for 104, 102, 101, 100, 99 and many other unreported bugs.

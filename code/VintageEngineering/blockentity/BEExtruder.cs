@@ -430,8 +430,10 @@ namespace VintageEngineering
         public void TranslateMesh(MeshData meshData, float scale)
         {
             meshData.Scale(bottomcenter, 0.75f, 0.98f, 0.75f);
-            meshData.Rotate(blockcenter, -1.5708f, (float)(Electric.GetRotation() * (Math.PI / 180)), 0);
+            meshData.Rotate(blockcenter, -GameMath.PIHALF, 0f, 0f);
+            //meshData.Rotate(blockcenter, -1.5708f, (float)(Electric.GetRotation() * (Math.PI / 180)), 0);
             meshData.Translate(0, -0.125f, -0.1875f);
+            meshData.Rotate(blockcenter, 0f, Electric.GetRotation() * GameMath.DEG2RAD, 0f);
         }
 
         public MeshData GenMesh(ItemStack stack)

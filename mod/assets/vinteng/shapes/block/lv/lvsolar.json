@@ -11,10 +11,10 @@
 	"textures": {
 		"gold": "block/gold",
 		"solarpanel": "block/lv_machinery/solarpanel",
+		"hoses": "block/multiblocks/hoses",
 		"inmbfluid_straight": "block/multiblocks/inmbfluid_straight",
 		"powerio-bot": "block/multiblocks/powerio-bot",
-		"reinforced-steel": "block/multiblocks/reinforced-steel",
-		"hoses": "block/multiblocks/hoses"
+		"reinforced-steel": "block/multiblocks/reinforced-steel"
 	},
 	"elements": [
 		{
@@ -68,8 +68,8 @@
 				"east": { "texture": "#null", "uv": [ 0.0, 0.0, 20.5, 0.5 ], "enabled": false },
 				"south": { "texture": "#null", "uv": [ 0.0, 0.0, 15.5, 0.5 ], "enabled": false },
 				"west": { "texture": "#null", "uv": [ 0.0, 0.0, 20.5, 0.5 ], "enabled": false },
-				"up": { "texture": "#solarpanel", "uv": [ 0.0, 0.0, 15.5, 15.5 ], "autoUv": false, "windMode": [-1,-1,-1,-1] },
-				"down": { "texture": "#reinforced-steel", "uv": [ -0.5, 0.0, 16.0, 16.5 ], "autoUv": false, "windMode": [-1,-1,-1,-1], "reflectiveMode": 2 }
+				"up": { "texture": "#solarpanel", "uv": [ 0.0, 0.0, 15.5, 15.5 ], "autoUv": false, "windMode": [-1,-1,-1,-1], "reflectiveMode": 2 },
+				"down": { "texture": "#reinforced-steel", "uv": [ -0.5, 0.0, 16.0, 16.5 ], "autoUv": false, "windMode": [-1,-1,-1,-1] }
 			}
 		},
 		{

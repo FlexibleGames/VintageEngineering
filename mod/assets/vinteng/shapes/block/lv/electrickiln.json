@@ -1597,7 +1597,7 @@
 					}
 				},
 				{
-					"frame": 58,
+					"frame": 59,
 					"elements": {
 						"Door": { "rotationX": 0.0, "rotationY": -90.0, "rotationZ": 0.0 }
 					}
