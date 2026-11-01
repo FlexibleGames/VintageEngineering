@@ -185,6 +185,7 @@ namespace VintageEngineering
             if (Electric.MachineState == EnumBEState.Off) // if the machine is off, bounce.
             {
                 isHeating = false;
+                _cproperties = null;
                 return false;
             }
             if (heatingBlock)

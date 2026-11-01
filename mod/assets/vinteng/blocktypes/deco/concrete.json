@@ -24,8 +24,10 @@
 	},
 	"resistance": 1,
 	"sounds": {
-		"place": "game:block/stone",
-		"walk": "game:walk/stone"
+		"walk": "game:walk/stone",
+		"byTool": {
+			"Pickaxe": { "hit": "game:block/rock-hit-pickaxe", "break": "game:block/rock-break-pickaxe" }
+		}
 	},
 	"walkspeedmultiplier": 1.35
 }

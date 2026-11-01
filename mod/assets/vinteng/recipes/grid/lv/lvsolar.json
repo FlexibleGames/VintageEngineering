@@ -1,0 +1,13 @@
+{
+	"ingredientPattern": "XSX,RMR,XCX",
+	"ingredients": {
+		"X": { "type": "item", "code": "vinteng:screw-*", "allowedVariants": ["iron"], "quantity": 2 },
+		"M": { "type": "block", "code": "vinteng:industrialglass-plain", "quantity": 1 },
+		"R": { "type": "item", "code": "game:rod-iron", "quantity": 2 },
+		"S": { "type": "item", "code": "game:resin", "quantity": 6 },
+		"C": { "type": "item", "code": "vinteng:machineplate-iron", "quantity": 1 }
+	},
+	"width": 3,
+	"height": 3,
+	"output": { "type": "block", "code": "vinteng:velvsolar-north", "quantity": 1  }
+}

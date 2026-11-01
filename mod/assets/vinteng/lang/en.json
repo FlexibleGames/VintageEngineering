@@ -44,6 +44,8 @@
 	"vinteng:blockdesc-vebattery": "Batteries store excess power until it's needed. The LV battery stores 4000 power and is capable of moving 100 power per second (pps).",
 	"vinteng:block-vepump": "Fluid Pump",
 	"vinteng:blockdesc-vepump": "A pump for extracting fluids from the world. Has a pumping radius of 32, if a water or lava fluid body exceeds # source blocks it will treat that fluid as infinite. PPS value is used as power used per block pumped.",
+	"vinteng:block-velvsolar-*": "Solar Panel",
+	"vinteng:blockdesc-velvsolar-*": "Generates a small amount of power during daytime. Is affected by how cloudy it is, light intensity is shows in the HUD when looking at the panel, values at or higher than 0.5 will generate power.",
 
     "vinteng:block-velvek-motor-*": "Electric Motor",
 	"vinteng:gui-title-motor": "Electric Motor",
@@ -94,10 +96,10 @@
 	"vinteng:item-metalbar-iron": "Metal Bar (Iron)",
 	"vinteng:item-metalbar-steel": "Metal Bar (Steel)",
 	"vinteng:itemdesc-metalbar-*": "Metal bars are used to make wires as well as a sturdy building material in recipes. Made from heated ingots in the Extruder.",
-	"vinteng:item-ingot-temporalsteel": "Temporal Steel (WIP)",
-	"vinteng:itemdesc-ingot-temporalsteel": "Steel alloyed with temporal dust in order to make it sensitive to the ebb and flow of temporal events.",
-	"vinteng:item-ingot-chargedtemporalsteel": "Charged Temporal Steel (WIP)",
-	"vinteng:itemdesc-ingot-chargedtemporalsteel": "Temporal Steel that has been imbued with a great amount of temporal energy.",
+	"vinteng:item-ingot-temporalsteel": "Temporal Steel",
+	"vinteng:itemdesc-ingot-temporalsteel": "Steel infused with temporal instability via the Temporal Forge. Used in crafting special Temporal Displacement components.",
+	"vinteng:item-ingot-chargedtemporalsteel": "Charged Temporal Steel",
+	"vinteng:itemdesc-ingot-chargedtemporalsteel": "Temporal Steel that has been imbued with a great amount of energy.",
 
 	"vinteng:item-screw-brass": "Brass Screw",
 	"vinteng:item-screw-iron": "Iron Screw",
@@ -132,7 +134,7 @@
 	"vinteng:item-machineplate-steel": "Machine Plate (Steel)",
 	"vinteng:itemdesc-machineplate-steel": "A sturdy ingredient for crafting machines.",
 	"vinteng:item-machineplate-temporalsteel": "Machine Plate (TemporalSteel)",
-	"vinteng:itemdesc-machineplate-temporalsteel": "Steel Machine Plate with mysterious qualities.",
+	"vinteng:itemdesc-machineplate-temporalsteel": "Machine Plate with mysterious qualities. Crafted with Temporal Ingots.",
 
 	"vinteng:block-machineryblock-tinbronze": "Machine Block (TinBronze)",
 	"vinteng:blockdesc-machineryblock-tinbronze": "A basic machine block for building simple machines. Can be used to build, though an expensive material.",
@@ -141,7 +143,7 @@
 	"vinteng:block-machineryblock-steel": "Machine Block (Steel)",
 	"vinteng:blockdesc-machineryblock-steel": "A superior machine block for building excellent machines. Can be used to build, though an expensive material.",
 	"vinteng:block-machineryblock-temporalsteel": "Machine Block (TemporalSteel)",
-	"vinteng:blockdesc-machineryblock-temporalsteel": "An mysterious machine block for building unknown machines. Can be used to build, though an expensive material.",
+	"vinteng:blockdesc-machineryblock-temporalsteel": "An mysterious machine block for building special machines. Can be used to build, though an expensive material.",
 
 	"vinteng:item-stator-mv": "Stator",
 	"vinteng:itemdesc-stator-mv": "A Stator is a component in a motor. The outside bit.",
@@ -203,6 +205,7 @@
 	"vinteng:gui-word-gas": "Gas",
 	"vinteng:gui-word-heat": "Heat",
 	"vinteng:gui-word-with": "with",
+	"vinteng:gui-word-frequency": "Frequency",
 	"vinteng:gui-activeblowers": "Active Blowers",
 	"vinteng:gui-machine-pps": "Power Per Second",
 	"vinteng:gui-machine-notcrafting": "Not Crafting",
@@ -324,8 +327,8 @@
 	"vinteng:block-vefluidtank-steel": "Fluid Tank (Steel)",
 	"vinteng:blockdesc-vefluidtank-steel": "A simple tank for all your fluid movement needs. Keeps fluid on break. 256k L Capacity",
 
-	"vinteng:block-vefluidtank-temporalsteel": "Quantum Fluid Tank",
-	"vinteng:blockdesc-vefluidtank-temporalsteel": "A tank that is quantumly entangled with any tank that shares its channel. Channel set via GUI. 50k L Capacity",
+	"vinteng:block-vefluidtank-temporalsteel": "Temporal Fluid Tank",
+	"vinteng:blockdesc-vefluidtank-temporalsteel": "A tank that is quantumly entangled with any tank that shares its frequency. Frequency set via GUI with sneak-right-click with empty hand. 10k L Capacity",
 	"vinteng:block-vefluidtank-infsink": "Infinite Sink/Source",
 	"vinteng:blockdesc-vefluidtank-infsink": "A creative fluid sink or source. Right click with a full bucket to set infinite source fluid portion type.",
 	"vinteng:block-crudeoilwell": "Crude Oil Well Source",
@@ -394,8 +397,8 @@
 	"vinteng:blockdesc-vesheetmetal-iron": "Iron Sheet Metal is a tough building block, used in multiblocks.",
 	"vinteng:block-vesheetmetal-steel": "Sheet Metal (Steel)",
 	"vinteng:blockdesc-vesheetmetal-steel": "Steel Sheet Metal is a very tough building block. Used in high-tier multiblocks.",
-	"vinteng:block-vesheetmetal-tempsteel": "Sheet Metal (Temporal Steel)",
-	"vinteng:blockdesc-vesheetmetal-tempsteel": "Temporal Steel Sheet Metal has mysterious properties that require further experimentation and study.",
+	"vinteng:block-vesheetmetal-temporalsteel": "Sheet Metal (Temporal Steel)",
+	"vinteng:blockdesc-vesheetmetal-temporalsteel": "Temporal Steel Sheet Metal has mysterious properties that require further experimentation and study.",
 
 	"vinteng:gui-motor-targetspeed": "Target Speed: ",
 	"vinteng:gui-motor-targettorque": "Target Torque: ",
@@ -525,6 +528,24 @@
 	"vinteng:cracking-heavyoil": "Cracking Heavy Oil",
 	"vinteng:cracking-lubricant": "Cracking Lubricant",
 	"vinteng:chemplant-plasticpellet": "Crafting Plastic Pellets",
+
+	"vinteng:block-vembtemporalforge-incomplete-*": "Temporal Forge Core",
+	"vinteng:block-vembtemporalforge-built-*": "Temporal Forge",
+	"vinteng:blockdesc-vembtemporalforge-*": "Infuses Temporal Instability into material creating high-end crafting components. Only active during a temporal storm or if a Rift is within 10 blocks.",
+
+	"vinteng:tempforge-nostorm": "Crafting paused: Requires active storm or nearby Rift.",
+	"vinteng:Destablizes into": "Destablizes into",
+	"vinteng:Destablizing": "Destablizing",
+
+	"vinteng:gui-title-tempchest": "Temporal Chest",
+	"vinteng:gui-title-temptank": "Temporal Tank",
+	"vinteng:block-normal-temporalchest-*": "Temporal Chest",
+	"vinteng:blockdesc-normal-temporalchest-*": "A chest that can be tuned to frequencies shared by other Temporal Chests. Frequency set via sneak-right-click with empty hand. Think Ender Storage without the dyes.",
+
+	"vinteng:block-temporalmatrix-matrix": "Temporal Matrix",
+	"vinteng:blockdesc-temporalmatrix-matrix": "Used to build the Temporal Forge, allows the infusion of temporal forces into material.",
+	"vinteng:block-temporalmatrix-focus": "Temporal Focuser",
+	"vinteng:blockdesc-temporalmatrix-focus": "Used to build the Temporal Forge, focuses temporal energies into the Temporal Matrix",
 
 	"eof": "End Of File"
 }

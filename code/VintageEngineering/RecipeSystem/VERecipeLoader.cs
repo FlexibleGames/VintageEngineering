@@ -87,6 +87,11 @@ namespace VintageEngineering.RecipeSystem
                 verrs.RegisterChemicalPlantRecipe(r);
             });
 
+            this.LoadRecipes<RecipeTemporalForge>("ve temporal forge recipe", "recipes/vetempforge", delegate (RecipeTemporalForge r)
+            {
+                verrs.RegisterTemporalForgeRecipe(r);
+            });
+
             sapi.World.Logger.StoryEvent(Lang.Get("vinteng:storyevent-recipes", Array.Empty<object>()));
         }
 

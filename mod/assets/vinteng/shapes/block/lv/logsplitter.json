@@ -1,5 +1,6 @@
 {
 	"editor": {
+		"collapsedPaths": "",
 		"allAngles": false,
 		"entityTextureMode": false
 	},
@@ -8,324 +9,807 @@
 	"textureSizes": {
 	},
 	"textures": {
+		"brass2": "block/brass2",
+		"cable": "block/cable",
 		"castiron": "block/castiron",
-		"roundgauge-0": "block/gauge/roundgauge-0",
 		"gold": "block/gold",
-		"machinery": "block/lv_machinery/machinery",
-		"oak1": "block/oak1",
-		"shinyiron": "block/shinyiron"
+		"shinyiron": "block/shinyiron",
+		"wornsteel": "block/wornsteel",
+		"industrial_metal": "block/test/industrial_metal",
+		"industrial_metal_bordered": "block/test/industrial_metal_bordered"
 	},
 	"elements": [
 		{
-			"name": "base",
-			"from": [ 0.0, 0.0, 0.0 ],
-			"to": [ 16.0, 1.0, 16.0 ],
+			"name": "SW Foot",
+			"from": [ 0.0, 0.0, 14.0 ],
+			"to": [ 2.0, 1.0, 16.0 ],
+			"rotationOrigin": [ 0.0, 0.0, 14.0 ],
 			"faces": {
-				"north": { "texture": "#oak1", "uv": [ 0.0, 0.0, 16.0, 1.0 ] },
-				"east": { "texture": "#oak1", "uv": [ 0.0, 0.0, 16.0, 1.0 ] },
-				"south": { "texture": "#oak1", "uv": [ 0.0, 0.0, 16.0, 1.0 ] },
-				"west": { "texture": "#oak1", "uv": [ 0.0, 0.0, 16.0, 1.0 ] },
-				"up": { "texture": "#oak1", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
-				"down": { "texture": "#oak1", "uv": [ 0.0, 0.0, 16.0, 16.0 ] }
+				"north": { "texture": "#cable", "uv": [ 0.0, 0.0, 2.0, 1.0 ] },
+				"east": { "texture": "#cable", "uv": [ 0.0, 0.0, 2.0, 1.0 ] },
+				"south": { "texture": "#cable", "uv": [ 0.0, 0.0, 2.0, 1.0 ] },
+				"west": { "texture": "#cable", "uv": [ 0.0, 0.0, 2.0, 1.0 ] },
+				"up": { "texture": "#cable", "uv": [ 0.0, 0.0, 2.0, 2.0 ] },
+				"down": { "texture": "#cable", "uv": [ 0.0, 0.0, 2.0, 2.0 ] }
+			}
+		},
+		{
+			"name": "NW Foot",
+			"from": [ 0.0, 0.0, 0.0 ],
+			"to": [ 2.0, 1.0, 2.0 ],
+			"faces": {
+				"north": { "texture": "#cable", "uv": [ 0.0, 0.0, 2.0, 1.0 ] },
+				"east": { "texture": "#cable", "uv": [ 0.0, 0.0, 2.0, 1.0 ] },
+				"south": { "texture": "#cable", "uv": [ 0.0, 0.0, 2.0, 1.0 ] },
+				"west": { "texture": "#cable", "uv": [ 0.0, 0.0, 2.0, 1.0 ] },
+				"up": { "texture": "#cable", "uv": [ 0.0, 0.0, 2.0, 2.0 ] },
+				"down": { "texture": "#cable", "uv": [ 0.0, 0.0, 2.0, 2.0 ] }
+			}
+		},
+		{
+			"name": "NE Foot",
+			"from": [ 14.0, 0.0, 0.0 ],
+			"to": [ 16.0, 1.0, 2.0 ],
+			"rotationOrigin": [ 14.0, 0.0, 0.0 ],
+			"faces": {
+				"north": { "texture": "#cable", "uv": [ 0.0, 0.0, 2.0, 1.0 ] },
+				"east": { "texture": "#cable", "uv": [ 0.0, 0.0, 2.0, 1.0 ] },
+				"south": { "texture": "#cable", "uv": [ 0.0, 0.0, 2.0, 1.0 ] },
+				"west": { "texture": "#cable", "uv": [ 0.0, 0.0, 2.0, 1.0 ] },
+				"up": { "texture": "#cable", "uv": [ 0.0, 0.0, 2.0, 2.0 ] },
+				"down": { "texture": "#cable", "uv": [ 0.0, 0.0, 2.0, 2.0 ] }
+			}
+		},
+		{
+			"name": "SE Foot",
+			"from": [ 14.0, 0.0, 14.0 ],
+			"to": [ 16.0, 1.0, 16.0 ],
+			"rotationOrigin": [ 14.0, 0.0, 14.0 ],
+			"faces": {
+				"north": { "texture": "#cable", "uv": [ 0.0, 0.0, 2.0, 1.0 ] },
+				"east": { "texture": "#cable", "uv": [ 0.0, 0.0, 2.0, 1.0 ] },
+				"south": { "texture": "#cable", "uv": [ 0.0, 0.0, 2.0, 1.0 ] },
+				"west": { "texture": "#cable", "uv": [ 0.0, 0.0, 2.0, 1.0 ] },
+				"up": { "texture": "#cable", "uv": [ 0.0, 0.0, 2.0, 2.0 ] },
+				"down": { "texture": "#cable", "uv": [ 0.0, 0.0, 2.0, 2.0 ] }
+			}
+		},
+		{
+			"name": "NW Support Bottom",
+			"from": [ 0.0, 1.0, 0.0 ],
+			"to": [ 1.0, 16.0, 1.0 ],
+			"rotationOrigin": [ 0.0, 1.0, 0.0 ],
+			"faces": {
+				"north": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 15.0 ] },
+				"east": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 15.0 ] },
+				"south": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 15.0 ] },
+				"west": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 15.0 ] },
+				"up": { "texture": "#null", "uv": [ 0.0, 0.0, 1.0, 1.0 ], "enabled": false },
+				"down": { "texture": "#null", "uv": [ 0.0, 0.0, 1.0, 1.0 ], "enabled": false }
+			}
+		},
+		{
+			"name": "NE Support Bottom",
+			"from": [ 15.0, 1.0, 0.0 ],
+			"to": [ 16.0, 16.0, 1.0 ],
+			"rotationOrigin": [ 15.0, 1.0, 0.0 ],
+			"faces": {
+				"north": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 15.0 ] },
+				"east": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 15.0 ] },
+				"south": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 15.0 ] },
+				"west": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 15.0 ] },
+				"up": { "texture": "#null", "uv": [ 0.0, 0.0, 1.0, 1.0 ], "enabled": false },
+				"down": { "texture": "#null", "uv": [ 0.0, 0.0, 1.0, 1.0 ], "enabled": false }
+			}
+		},
+		{
+			"name": "SE Support Bottom",
+			"from": [ 15.0, 1.0, 15.0 ],
+			"to": [ 16.0, 16.0, 16.0 ],
+			"rotationOrigin": [ 15.0, 1.0, 15.0 ],
+			"faces": {
+				"north": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 15.0 ] },
+				"east": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 15.0 ] },
+				"south": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 15.0 ] },
+				"west": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 15.0 ] },
+				"up": { "texture": "#null", "uv": [ 0.0, 0.0, 1.0, 1.0 ], "enabled": false },
+				"down": { "texture": "#null", "uv": [ 0.0, 0.0, 1.0, 1.0 ], "enabled": false }
+			}
+		},
+		{
+			"name": "SW Support Bottom",
+			"from": [ 0.0, 1.0, 15.0 ],
+			"to": [ 1.0, 16.0, 16.0 ],
+			"rotationOrigin": [ 0.0, 1.0, 15.0 ],
+			"faces": {
+				"north": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 15.0 ], "rotation": 180 },
+				"east": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 15.0 ], "rotation": 180 },
+				"south": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 15.0 ], "rotation": 180 },
+				"west": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 15.0 ], "rotation": 180 },
+				"up": { "texture": "#null", "uv": [ 0.0, 0.0, 1.0, 1.0 ], "enabled": false },
+				"down": { "texture": "#null", "uv": [ 0.0, 0.0, 1.0, 1.0 ], "enabled": false }
+			}
+		},
+		{
+			"name": "NW Support Top",
+			"from": [ 0.0, 16.0, 0.0 ],
+			"to": [ 1.0, 32.0, 1.0 ],
+			"rotationOrigin": [ 0.0, 16.0, 0.0 ],
+			"faces": {
+				"north": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 12.0 ], "autoUv": false },
+				"east": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 16.0 ] },
+				"south": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 16.0 ], "rotation": 180 },
+				"west": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 16.0 ], "rotation": 180 },
+				"up": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
+				"down": { "texture": "#null", "uv": [ 0.0, 0.0, 1.0, 1.0 ], "enabled": false }
+			}
+		},
+		{
+			"name": " NESupport Top",
+			"from": [ 15.0, 16.0, 0.0 ],
+			"to": [ 16.0, 32.0, 1.0 ],
+			"rotationOrigin": [ 15.0, 16.0, 0.0 ],
+			"faces": {
+				"north": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 12.0 ], "autoUv": false },
+				"east": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 11.0 ], "autoUv": false },
+				"south": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 11.0 ], "autoUv": false },
+				"west": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 16.0 ] },
+				"up": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
+				"down": { "texture": "#null", "uv": [ 0.0, 0.0, 1.0, 1.0 ], "enabled": false }
+			}
+		},
+		{
+			"name": "SE Support Top",
+			"from": [ 15.0, 16.0, 15.0 ],
+			"to": [ 16.0, 32.0, 16.0 ],
+			"rotationOrigin": [ 15.0, 16.0, 15.0 ],
+			"faces": {
+				"north": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 16.0 ], "rotation": 180 },
+				"east": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 16.0 ], "rotation": 180 },
+				"south": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 16.0 ], "rotation": 180 },
+				"west": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 16.0 ], "rotation": 180 },
+				"up": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
+				"down": { "texture": "#null", "uv": [ 0.0, 0.0, 1.0, 1.0 ], "enabled": false }
+			}
+		},
+		{
+			"name": "SW Support Top",
+			"from": [ 0.0, 16.0, 15.0 ],
+			"to": [ 1.0, 32.0, 16.0 ],
+			"rotationOrigin": [ 0.0, 16.0, 15.0 ],
+			"faces": {
+				"north": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 16.0 ] },
+				"east": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 16.0 ] },
+				"south": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 16.0 ] },
+				"west": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 16.0 ] },
+				"up": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
+				"down": { "texture": "#null", "uv": [ 0.0, 0.0, 1.0, 1.0 ], "enabled": false }
+			}
+		},
+		{
+			"name": "W Support Cross",
+			"from": [ 0.1, 0.0, 0.0 ],
+			"to": [ 1.0, 34.8, 1.0 ],
+			"rotationOrigin": [ 0.1, 0.0, 1.0 ],
+			"rotationX": 25.5,
+			"faces": {
+				"north": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 0.5, 15.5 ], "autoUv": false },
+				"east": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 15.5 ], "autoUv": false },
+				"south": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 0.5, 15.5 ], "autoUv": false },
+				"west": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 15.5 ], "autoUv": false },
+				"up": { "texture": "#null", "uv": [ 0.0, 0.0, 0.5, 1.0 ], "enabled": false },
+				"down": { "texture": "#null", "uv": [ 0.0, 0.0, 0.5, 1.0 ], "enabled": false }
+			}
+		},
+		{
+			"name": "E Support Cross",
+			"from": [ 15.0, 0.0, 0.0 ],
+			"to": [ 15.9, 34.8, 1.0 ],
+			"rotationOrigin": [ 15.0, 0.0, 1.0 ],
+			"rotationX": 25.5,
+			"faces": {
+				"north": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 0.5, 16.5 ], "autoUv": false },
+				"east": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 15.5 ], "autoUv": false },
+				"south": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 0.5, 14.5 ], "autoUv": false },
+				"west": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 14.5 ], "autoUv": false },
+				"up": { "texture": "#null", "uv": [ 0.0, 0.0, 0.5, 1.0 ], "enabled": false },
+				"down": { "texture": "#null", "uv": [ 0.0, 0.0, 0.5, 1.0 ], "enabled": false }
+			}
+		},
+		{
+			"name": "W Top Support Beam",
+			"from": [ 0.0, 31.0, 1.0 ],
+			"to": [ 1.0, 32.0, 15.0 ],
+			"rotationOrigin": [ 0.0, 31.0, 1.0 ],
+			"faces": {
+				"north": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
+				"east": { "texture": "#null", "uv": [ 0.0, 0.0, 14.0, 1.0 ], "enabled": false },
+				"south": { "texture": "#null", "uv": [ 0.0, 0.0, 1.0, 1.0 ], "enabled": false },
+				"west": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 14.0, 1.0 ] },
+				"up": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 14.0 ] },
+				"down": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 14.0 ] }
+			}
+		},
+		{
+			"name": "E Top Support Beam",
+			"from": [ 15.0, 31.0, 1.0 ],
+			"to": [ 16.0, 32.0, 15.0 ],
+			"rotationOrigin": [ 15.0, 31.0, 1.0 ],
+			"faces": {
+				"north": { "texture": "#null", "uv": [ 0.0, 0.0, 1.0, 1.0 ], "enabled": false },
+				"east": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 14.0, 1.0 ] },
+				"south": { "texture": "#null", "uv": [ 0.0, 0.0, 1.0, 1.0 ], "enabled": false },
+				"west": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 14.0, 1.0 ] },
+				"up": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 14.0 ] },
+				"down": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 14.0 ] }
+			}
+		},
+		{
+			"name": "Top Cross Beam Support",
+			"from": [ 15.0, 31.0, 0.0 ],
+			"to": [ 16.0, 31.9, 21.25 ],
+			"rotationOrigin": [ 15.0, 31.0, 0.0 ],
+			"rotationY": -44.3,
+			"faces": {
+				"north": { "texture": "#null", "uv": [ 0.0, 0.0, 1.0, 0.5 ], "enabled": false },
+				"east": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 15.0, 0.5 ], "autoUv": false },
+				"south": { "texture": "#null", "uv": [ 0.0, 0.0, 1.0, 0.5 ], "enabled": false },
+				"west": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 14.0, 0.5 ], "autoUv": false },
+				"up": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 11.0 ], "autoUv": false },
+				"down": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 15.0 ], "autoUv": false }
+			}
+		},
+		{
+			"name": "N Support Beam",
+			"from": [ 1.0, 31.0, 0.0 ],
+			"to": [ 15.0, 32.0, 1.0 ],
+			"rotationOrigin": [ 1.0, 31.0, 0.0 ],
+			"faces": {
+				"north": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 14.0, 1.0 ] },
+				"east": { "texture": "#null", "uv": [ 0.0, 0.0, 1.0, 1.0 ], "enabled": false },
+				"south": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 14.0, 1.0 ] },
+				"west": { "texture": "#null", "uv": [ 0.0, 0.0, 1.0, 1.0 ], "enabled": false },
+				"up": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 14.0, 1.0 ] },
+				"down": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 14.0, 1.0 ] }
+			}
+		},
+		{
+			"name": "S Support Beam",
+			"from": [ 1.0, 31.0, 15.0 ],
+			"to": [ 15.0, 32.0, 16.0 ],
+			"rotationOrigin": [ 1.0, 31.0, 15.0 ],
+			"faces": {
+				"north": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 14.0, 1.0 ] },
+				"east": { "texture": "#null", "uv": [ 0.0, 0.0, 1.0, 1.0 ], "enabled": false },
+				"south": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 14.0, 1.0 ] },
+				"west": { "texture": "#null", "uv": [ 0.0, 0.0, 1.0, 1.0 ], "enabled": false },
+				"up": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 14.0, 1.0 ] },
+				"down": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 14.0, 1.0 ] }
+			}
+		},
+		{
+			"name": "Bottom Plate",
+			"from": [ 1.0, 1.0, 1.0 ],
+			"to": [ 15.0, 2.0, 15.0 ],
+			"rotationOrigin": [ 1.0, 1.0, 1.0 ],
+			"faces": {
+				"north": { "texture": "#brass2", "uv": [ 1.5, 0.0, 13.5, 1.0 ], "autoUv": false },
+				"east": { "texture": "#brass2", "uv": [ 2.0, 0.0, 14.0, 1.0 ], "autoUv": false },
+				"south": { "texture": "#brass2", "uv": [ 1.5, 0.0, 14.5, 1.0 ], "autoUv": false },
+				"west": { "texture": "#brass2", "uv": [ 1.5, 0.0, 13.5, 1.0 ], "autoUv": false },
+				"up": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 14.0, 14.0 ] },
+				"down": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 14.0, 14.0 ] }
+			}
+		},
+		{
+			"name": "Machine Strut W Bottom",
+			"from": [ 1.0, 2.0, 1.0 ],
+			"to": [ 4.0, 16.0, 5.0 ],
+			"rotationOrigin": [ 1.0, 2.0, 1.0 ],
+			"faces": {
+				"north": { "texture": "#industrial_metal_bordered", "uv": [ 0.0, 0.0, 3.0, 14.0 ] },
+				"east": { "texture": "#industrial_metal_bordered", "uv": [ 0.0, 0.0, 4.0, 14.0 ] },
+				"south": { "texture": "#industrial_metal_bordered", "uv": [ 0.0, 0.0, 3.0, 14.0 ] },
+				"west": { "texture": "#industrial_metal_bordered", "uv": [ 0.0, 0.0, 4.0, 14.0 ] },
+				"up": { "texture": "#null", "uv": [ 0.0, 0.0, 3.0, 4.0 ], "enabled": false },
+				"down": { "texture": "#null", "uv": [ 0.0, 0.0, 3.0, 4.0 ], "enabled": false }
+			}
+		},
+		{
+			"name": "Machine Strut E Bottom",
+			"from": [ 12.0, 2.0, 1.0 ],
+			"to": [ 15.0, 16.0, 5.0 ],
+			"rotationOrigin": [ 12.0, 2.0, 1.0 ],
+			"faces": {
+				"north": { "texture": "#industrial_metal_bordered", "uv": [ 0.0, 0.0, 3.0, 14.0 ] },
+				"east": { "texture": "#industrial_metal_bordered", "uv": [ 0.0, 0.0, 4.0, 14.0 ] },
+				"south": { "texture": "#industrial_metal_bordered", "uv": [ 0.0, 0.0, 3.0, 14.0 ] },
+				"west": { "texture": "#industrial_metal_bordered", "uv": [ 0.0, 0.0, 4.0, 14.0 ] },
+				"up": { "texture": "#null", "uv": [ 0.0, 0.0, 3.0, 4.0 ], "enabled": false },
+				"down": { "texture": "#null", "uv": [ 0.0, 0.0, 3.0, 4.0 ], "enabled": false }
+			}
+		},
+		{
+			"name": "Splitter Blade Plate",
+			"from": [ 5.0, 2.0, 5.0 ],
+			"to": [ 11.0, 3.0, 11.0 ],
+			"rotationOrigin": [ 5.0, 2.0, 5.0 ],
+			"faces": {
+				"north": { "texture": "#brass2", "uv": [ 4.5, 0.0, 8.5, 1.0 ], "autoUv": false },
+				"east": { "texture": "#brass2", "uv": [ 5.0, 0.0, 10.0, 1.0 ], "autoUv": false },
+				"south": { "texture": "#brass2", "uv": [ 2.5, 0.0, 7.5, 1.0 ], "autoUv": false },
+				"west": { "texture": "#brass2", "uv": [ 3.0, 0.0, 9.0, 1.0 ] },
+				"up": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 6.0, 6.0 ] },
+				"down": { "texture": "#null", "uv": [ 0.0, 0.0, 6.0, 6.0 ], "windMode": [-1,-1,-1,-1], "enabled": false }
+			}
+		},
+		{
+			"name": "NS Blade",
+			"from": [ 7.9, 3.0, 5.0 ],
+			"to": [ 8.1, 5.0, 11.0 ],
+			"rotationOrigin": [ 7.9, 3.0, 5.0 ],
+			"faces": {
+				"north": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 0.5, 2.0 ] },
+				"east": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 6.0, 2.0 ] },
+				"south": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 0.5, 2.0 ] },
+				"west": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 6.0, 2.0 ] },
+				"up": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 0.5, 6.0 ] },
+				"down": { "texture": "#null", "uv": [ 0.0, 0.0, 0.5, 6.0 ], "enabled": false }
+			}
+		},
+		{
+			"name": "WE Blade",
+			"from": [ 5.0, 3.0, 7.9 ],
+			"to": [ 11.0, 4.8, 8.1 ],
+			"rotationOrigin": [ 5.0, 3.0, 7.9 ],
+			"faces": {
+				"north": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 6.0, 1.5 ] },
+				"east": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 0.5, 1.5 ] },
+				"south": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 6.0, 1.5 ] },
+				"west": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 0.5, 1.5 ] },
+				"up": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 6.0, 0.5 ] },
+				"down": { "texture": "#null", "uv": [ 0.0, 0.0, 6.0, 0.5 ], "enabled": false }
+			}
+		},
+		{
+			"name": "Machine Body",
+			"from": [ 4.0, 16.0, 2.0 ],
+			"to": [ 12.0, 30.0, 13.0 ],
+			"rotationOrigin": [ 4.0, 16.0, 2.0 ],
+			"faces": {
+				"north": { "texture": "#industrial_metal", "uv": [ 0.0, 0.0, 8.0, 14.0 ] },
+				"east": { "texture": "#industrial_metal", "uv": [ 0.0, 0.0, 11.0, 14.0 ] },
+				"south": { "texture": "#industrial_metal", "uv": [ 0.0, 0.0, 8.0, 14.0 ] },
+				"west": { "texture": "#industrial_metal", "uv": [ 0.0, 0.0, 11.0, 14.0 ] },
+				"up": { "texture": "#industrial_metal", "uv": [ 0.0, 0.0, 8.0, 11.0 ] },
+				"down": { "texture": "#industrial_metal", "uv": [ 0.0, 0.0, 8.0, 11.0 ] }
+			}
+		},
+		{
+			"name": "Machine Body Plate",
+			"from": [ 4.5, 15.0, 3.0 ],
+			"to": [ 11.5, 16.0, 12.0 ],
+			"rotationOrigin": [ 4.5, 15.0, 3.0 ],
+			"faces": {
+				"north": { "texture": "#brass2", "uv": [ 3.0, 0.0, 10.0, 1.0 ] },
+				"east": { "texture": "#brass2", "uv": [ 3.0, 0.0, 12.0, 1.0 ] },
+				"south": { "texture": "#brass2", "uv": [ 3.0, 0.0, 10.0, 1.0 ] },
+				"west": { "texture": "#brass2", "uv": [ 2.5, 0.0, 11.5, 1.0 ] },
+				"up": { "texture": "#null", "uv": [ 0.0, 0.0, 7.0, 9.0 ], "enabled": false },
+				"down": { "texture": "#brass2", "uv": [ 0.0, 0.0, 16.0, 16.0 ], "autoUv": false }
+			}
+		},
+		{
+			"name": "Splitter Bar Retainer",
+			"from": [ 6.9, 14.5, 5.7 ],
+			"to": [ 9.15, 15.0, 10.2 ],
+			"rotationOrigin": [ 6.9, 14.5, 5.7 ],
+			"faces": {
+				"north": { "texture": "#castiron", "uv": [ 0.0, 0.0, 2.0, 0.5 ] },
+				"east": { "texture": "#castiron", "uv": [ 0.0, 0.0, 4.5, 0.5 ] },
+				"south": { "texture": "#castiron", "uv": [ 0.0, 0.0, 2.0, 0.5 ] },
+				"west": { "texture": "#castiron", "uv": [ 0.0, 0.0, 4.5, 0.5 ] },
+				"up": { "texture": "#null", "uv": [ 0.0, 0.0, 2.0, 4.5 ], "enabled": false },
+				"down": { "texture": "#castiron", "uv": [ 0.0, 0.0, 2.0, 4.5 ] }
+			}
+		},
+		{
+			"name": "Splitter Bar",
+			"from": [ 7.5, 13.6, 7.5 ],
+			"to": [ 8.5, 23.6, 8.5 ],
+			"rotationOrigin": [ 7.5, 13.6, 7.5 ],
+			"faces": {
+				"north": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 1.0, 10.0 ] },
+				"east": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 1.0, 10.0 ] },
+				"south": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 1.0, 10.0 ] },
+				"west": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 1.0, 10.0 ] },
+				"up": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 1.0, 1.0 ], "enabled": false },
+				"down": { "texture": "#null", "uv": [ 0.0, 0.0, 1.0, 1.0 ], "enabled": false }
 			},
 			"children": [
 				{
-					"name": "railmount",
-					"from": [ 3.0, 1.0, 7.0 ],
-					"to": [ 5.0, 3.0, 8.0 ],
-					"rotationOrigin": [ 3.0, 1.0, 7.0 ],
+					"name": "Splitter E Edge",
+					"from": [ 1.0, -2.0, 0.0 ],
+					"to": [ 1.25, 0.0, 1.0 ],
+					"rotationOrigin": [ 1.0, 0.0, 0.0 ],
+					"rotationZ": -14.0,
 					"faces": {
-						"north": { "texture": "#castiron", "uv": [ 0.0, 0.0, 2.0, 2.0 ] },
-						"east": { "texture": "#castiron", "uv": [ 1.0, 0.0, 2.0, 2.0 ] },
-						"south": { "texture": "#castiron", "uv": [ 0.0, 0.0, 2.0, 2.0 ] },
-						"west": { "texture": "#castiron", "uv": [ 0.0, 0.0, 1.0, 2.0 ] },
-						"up": { "texture": "#castiron", "uv": [ 0.0, 0.0, 2.0, 1.0 ] },
-						"down": { "texture": "#castiron", "uv": [ 0.0, 0.0, 2.0, 1.0 ] }
-					},
-					"children": [
-						{
-							"name": "railmount10",
-							"from": [ 5.0, 0.0, 0.0 ],
-							"to": [ 7.0, 2.0, 1.0 ],
-							"rotationOrigin": [ 5.0, 0.0, 0.0 ],
-							"faces": {
-								"north": { "texture": "#castiron", "uv": [ 0.0, 0.0, 2.0, 2.0 ] },
-								"east": { "texture": "#castiron", "uv": [ 1.0, 0.0, 2.0, 2.0 ] },
-								"south": { "texture": "#castiron", "uv": [ 0.0, 0.0, 2.0, 2.0 ] },
-								"west": { "texture": "#castiron", "uv": [ 0.0, 0.0, 1.0, 2.0 ] },
-								"up": { "texture": "#castiron", "uv": [ 0.0, 0.0, 2.0, 1.0 ] },
-								"down": { "texture": "#castiron", "uv": [ 0.0, 0.0, 2.0, 1.0 ] }
-							}
-						},
-						{
-							"name": "railmount11",
-							"from": [ 5.0, 0.0, 6.0 ],
-							"to": [ 7.0, 2.0, 7.0 ],
-							"rotationOrigin": [ 5.0, 0.0, 6.0 ],
-							"faces": {
-								"north": { "texture": "#castiron", "uv": [ 0.0, 0.0, 2.0, 2.0 ] },
-								"east": { "texture": "#castiron", "uv": [ 1.0, 0.0, 2.0, 2.0 ] },
-								"south": { "texture": "#castiron", "uv": [ 0.0, 0.0, 2.0, 2.0 ] },
-								"west": { "texture": "#castiron", "uv": [ 0.0, 0.0, 1.0, 2.0 ] },
-								"up": { "texture": "#castiron", "uv": [ 0.0, 0.0, 2.0, 1.0 ] },
-								"down": { "texture": "#castiron", "uv": [ 0.0, 0.0, 2.0, 1.0 ] }
-							}
-						},
-						{
-							"name": "railmount12",
-							"from": [ 0.0, 0.0, 6.0 ],
-							"to": [ 2.0, 2.0, 7.0 ],
-							"rotationOrigin": [ 0.0, 0.0, 6.0 ],
-							"faces": {
-								"north": { "texture": "#castiron", "uv": [ 0.0, 0.0, 2.0, 2.0 ] },
-								"east": { "texture": "#castiron", "uv": [ 1.0, 0.0, 2.0, 2.0 ] },
-								"south": { "texture": "#castiron", "uv": [ 0.0, 0.0, 2.0, 2.0 ] },
-								"west": { "texture": "#castiron", "uv": [ 0.0, 0.0, 1.0, 2.0 ] },
-								"up": { "texture": "#castiron", "uv": [ 0.0, 0.0, 2.0, 1.0 ] },
-								"down": { "texture": "#castiron", "uv": [ 0.0, 0.0, 2.0, 1.0 ] }
-							}
-						},
-						{
-							"name": "rail5",
-							"from": [ -3.0, 1.0, 5.0 ],
-							"to": [ 13.0, 3.0, 6.0 ],
-							"rotationOrigin": [ -3.0, 1.0, 5.0 ],
-							"faces": {
-								"north": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 16.0, 2.0 ] },
-								"east": { "texture": "#shinyiron", "uv": [ 1.0, 0.0, 2.0, 2.0 ] },
-								"south": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 16.0, 2.0 ] },
-								"west": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 1.0, 2.0 ] },
-								"up": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 16.0, 1.0 ] },
-								"down": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 16.0, 1.0 ] }
-							}
-						},
-						{
-							"name": "rail",
-							"from": [ -3.0, 1.0, 1.0 ],
-							"to": [ 13.0, 3.0, 2.0 ],
-							"rotationOrigin": [ -3.0, 1.0, 1.0 ],
-							"faces": {
-								"north": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 16.0, 2.0 ] },
-								"east": { "texture": "#shinyiron", "uv": [ 1.0, 0.0, 2.0, 2.0 ] },
-								"south": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 16.0, 2.0 ] },
-								"west": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 1.0, 2.0 ] },
-								"up": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 16.0, 1.0 ] },
-								"down": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 16.0, 1.0 ] }
-							}
-						},
-						{
-							"name": "Wedge",
-							"from": [ 11.0, 3.0, 3.0 ],
-							"to": [ 14.0, 6.0, 3.5 ],
-							"rotationOrigin": [ 11.0, 3.0, 4.0 ],
-							"rotationY": 45.0,
-							"faces": {
-								"north": { "texture": "#castiron", "uv": [ 0.0, 0.0, 3.0, 3.0 ] },
-								"east": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 3.0 ] },
-								"south": { "texture": "#castiron", "uv": [ 0.0, 0.0, 3.0, 3.0 ] },
-								"west": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 3.0 ] },
-								"up": { "texture": "#castiron", "uv": [ 0.0, 0.0, 3.0, 0.5 ] },
-								"down": { "texture": "#castiron", "uv": [ 0.0, 0.0, 3.0, 0.5 ] }
-							},
-							"children": [
-								{
-									"name": "Wedge4",
-									"from": [ -7.0E-4, 0.0, 0.0048 ],
-									"to": [ 2.9993, 3.0, 0.5048 ],
-									"rotationOrigin": [ 0.0, 0.0, 0.0 ],
-									"rotationY": -89.98,
-									"faces": {
-										"north": { "texture": "#castiron", "uv": [ 0.0, 0.0, 3.0, 3.0 ] },
-										"east": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 3.0 ] },
-										"south": { "texture": "#castiron", "uv": [ 0.0, 0.0, 3.0, 3.0 ] },
-										"west": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 3.0 ] },
-										"up": { "texture": "#castiron", "uv": [ 0.0, 0.0, 3.0, 0.5 ] },
-										"down": { "texture": "#castiron", "uv": [ 0.0, 0.0, 3.0, 0.5 ] }
-									}
-								}
-							]
-						},
-						{
-							"name": "Ram",
-							"from": [ -3.0, 2.0, 3.0 ],
-							"to": [ -2.0, 5.0, 4.0 ],
-							"rotationOrigin": [ -3.0, 2.0, 3.0 ],
-							"faces": {
-								"north": { "texture": "#castiron", "uv": [ 0.0, 0.0, 1.0, 3.0 ] },
-								"east": { "texture": "#castiron", "uv": [ 0.0, 0.0, 1.0, 3.0 ] },
-								"south": { "texture": "#castiron", "uv": [ 0.0, 0.0, 1.0, 3.0 ] },
-								"west": { "texture": "#castiron", "uv": [ 0.0, 0.0, 1.0, 3.0 ] },
-								"up": { "texture": "#castiron", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
-								"down": { "texture": "#castiron", "uv": [ 0.0, 0.0, 1.0, 1.0 ] }
-							},
-							"children": [
-								{
-									"name": "Press",
-									"from": [ 0.0, -1.0, -1.0 ],
-									"to": [ 3.0, 0.0, 2.0 ],
-									"rotationOrigin": [ 0.0, -1.0, -1.0 ],
-									"faces": {
-										"north": { "texture": "#castiron", "uv": [ 0.0, 0.0, 3.0, 1.0 ] },
-										"east": { "texture": "#castiron", "uv": [ 0.0, 0.0, 3.0, 1.0 ] },
-										"south": { "texture": "#castiron", "uv": [ 0.0, 0.0, 3.0, 1.0 ] },
-										"west": { "texture": "#castiron", "uv": [ 0.0, 0.0, 3.0, 1.0 ] },
-										"up": { "texture": "#castiron", "uv": [ 0.0, 0.0, 3.0, 3.0 ] },
-										"down": { "texture": "#castiron", "uv": [ 0.0, 0.0, 3.0, 3.0 ] }
-									}
-								},
-								{
-									"name": "Push Plate",
-									"from": [ 1.0, 1.0, -3.0 ],
-									"to": [ 2.0, 6.0, 4.0 ],
-									"rotationOrigin": [ 1.0, 1.0, -3.0 ],
-									"faces": {
-										"north": { "texture": "#castiron", "uv": [ 0.0, 0.0, 1.0, 5.0 ] },
-										"east": { "texture": "#castiron", "uv": [ 0.0, 0.0, 7.0, 5.0 ] },
-										"south": { "texture": "#castiron", "uv": [ 0.0, 0.0, 1.0, 5.0 ] },
-										"west": { "texture": "#castiron", "uv": [ 0.0, 0.0, 7.0, 5.0 ] },
-										"up": { "texture": "#castiron", "uv": [ 0.0, 0.0, 1.0, 7.0 ] },
-										"down": { "texture": "#castiron", "uv": [ 0.0, 0.0, 1.0, 7.0 ] }
-									}
-								}
-							]
-						},
-						{
-							"name": "railmount19",
-							"from": [ 10.75, 0.0, 3.0 ],
-							"to": [ 12.75, 6.0, 4.0 ],
-							"rotationOrigin": [ 11.0, 0.0, 3.0 ],
-							"faces": {
-								"north": { "texture": "#castiron", "uv": [ 0.0, 0.0, 2.0, 7.0 ] },
-								"east": { "texture": "#castiron", "uv": [ 1.0, 0.0, 2.0, 7.0 ] },
-								"south": { "texture": "#castiron", "uv": [ 0.0, 0.0, 2.0, 7.0 ] },
-								"west": { "texture": "#castiron", "uv": [ 0.0, 0.0, 1.0, 7.0 ] },
-								"up": { "texture": "#castiron", "uv": [ 0.0, 0.0, 2.0, 1.0 ] },
-								"down": { "texture": "#castiron", "uv": [ 0.0, 0.0, 2.0, 1.0 ] }
-							}
-						}
-					]
+						"north": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 0.5, 2.0 ] },
+						"east": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 1.0, 2.0 ] },
+						"south": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 0.5, 2.0 ] },
+						"west": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 1.0, 2.0 ] },
+						"up": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
+						"down": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 0.5, 1.0 ] }
+					}
 				},
 				{
-					"name": "Motor",
-					"from": [ 0.0, 1.0, 0.0 ],
-					"to": [ 3.0, 6.0, 5.0 ],
-					"rotationOrigin": [ 0.0, 1.0, 0.0 ],
+					"name": "Splitter W Edge",
+					"from": [ -0.25, -2.0, 0.0 ],
+					"to": [ 0.0, 0.0, 1.0 ],
+					"rotationOrigin": [ 0.0, 0.0, 0.0 ],
+					"rotationZ": 14.0,
 					"faces": {
-						"north": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 3.0, 5.0 ] },
-						"east": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 5.0, 5.0 ] },
-						"south": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 3.0, 5.0 ] },
-						"west": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 5.0, 5.0 ] },
-						"up": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 3.0, 5.0 ] },
-						"down": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 3.0, 5.0 ] }
-					},
-					"children": [
-						{
-							"name": "Cube14",
-							"from": [ 3.0, 0.0, 0.0 ],
-							"to": [ 8.0, 4.0, 5.0 ],
-							"rotationOrigin": [ 3.0, 0.0, 0.0 ],
-							"faces": {
-								"north": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 5.0, 4.0 ] },
-								"east": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 5.0, 4.0 ] },
-								"south": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 5.0, 4.0 ] },
-								"west": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 5.0, 4.0 ] },
-								"up": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 5.0, 5.0 ] },
-								"down": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 5.0, 5.0 ] }
-							}
-						},
-						{
-							"name": "Cube15",
-							"from": [ 8.0, 0.0, 0.0 ],
-							"to": [ 11.0, 5.0, 5.0 ],
-							"rotationOrigin": [ 8.0, 0.0, 0.0 ],
-							"faces": {
-								"north": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 3.0, 5.0 ] },
-								"east": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 5.0, 5.0 ] },
-								"south": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 3.0, 5.0 ] },
-								"west": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 5.0, 5.0 ] },
-								"up": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 3.0, 5.0 ] },
-								"down": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 3.0, 5.0 ] }
-							}
-						},
-						{
-							"name": "GaugeBoard",
-							"from": [ 1.0, 7.0, 0.0 ],
-							"to": [ 11.0, 15.0, 3.0 ],
-							"rotationOrigin": [ 1.0, 7.0, 0.0 ],
-							"faces": {
-								"north": { "texture": "#machinery", "uv": [ 4.5, 4.0, 14.5, 12.0 ] },
-								"east": { "texture": "#machinery", "uv": [ 3.5, 3.0, 6.5, 11.0 ] },
-								"south": { "texture": "#machinery", "uv": [ 4.5, 5.0, 14.5, 13.0 ] },
-								"west": { "texture": "#machinery", "uv": [ 5.0, 5.0, 8.0, 13.0 ] },
-								"up": { "texture": "#machinery", "uv": [ 3.5, 5.5, 13.5, 8.5 ] },
-								"down": { "texture": "#machinery", "uv": [ 4.5, 6.0, 14.5, 9.0 ] }
-							}
-						},
-						{
-							"name": "Cube17",
-							"from": [ 11.0, 0.0, 0.0 ],
-							"to": [ 12.0, 10.0, 1.0 ],
-							"rotationOrigin": [ 11.0, 0.0, 0.0 ],
-							"faces": {
-								"north": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 1.0, 10.0 ] },
-								"east": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 1.0, 10.0 ] },
-								"south": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 1.0, 10.0 ] },
-								"west": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 1.0, 10.0 ] },
-								"up": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
-								"down": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 1.0, 1.0 ] }
-							}
-						},
-						{
-							"name": "Cube18",
-							"from": [ 11.0, 0.0, 2.0 ],
-							"to": [ 12.0, 10.0, 3.0 ],
-							"rotationOrigin": [ 11.0, 0.0, 2.0 ],
-							"faces": {
-								"north": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 1.0, 10.0 ] },
-								"east": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 1.0, 10.0 ] },
-								"south": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 1.0, 10.0 ] },
-								"west": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 1.0, 10.0 ] },
-								"up": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
-								"down": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 1.0, 1.0 ] }
-							}
-						}
-					]
-				}
-			],
-			"attachmentpoints": [
+						"north": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 0.5, 2.0 ] },
+						"east": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 1.0, 2.0 ] },
+						"south": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 0.5, 2.0 ] },
+						"west": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 1.0, 2.0 ] },
+						"up": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
+						"down": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 0.5, 1.0 ] }
+					}
+				},
 				{
-					"code": "PowerGauge",
-					"posX": "5.0","posY": "12.0","posZ": "3.0",
-					"rotationX": "90.0","rotationY": "0.0","rotationZ": "0.0"
+					"name": "Splitter Upper Fill",
+					"from": [ 0.0, -1.0, 0.1 ],
+					"to": [ 1.0, 0.0, 0.9 ],
+					"rotationOrigin": [ 0.0, -1.0, 0.1 ],
+					"faces": {
+						"north": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
+						"east": { "texture": "#null", "uv": [ 0.0, 0.0, 0.5, 1.0 ], "enabled": false },
+						"south": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
+						"west": { "texture": "#null", "uv": [ 0.0, 0.0, 0.5, 1.0 ], "enabled": false },
+						"up": { "texture": "#null", "uv": [ 0.0, 0.0, 1.0, 0.5 ], "enabled": false },
+						"down": { "texture": "#null", "uv": [ 0.0, 0.0, 1.0, 0.5 ], "enabled": false }
+					}
+				},
+				{
+					"name": "Splitter Lower Fill",
+					"from": [ 0.2, -1.6, 0.1 ],
+					"to": [ 0.8, -1.0, 0.9 ],
+					"rotationOrigin": [ 0.2, -1.6, 0.1 ],
+					"faces": {
+						"north": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+						"east": { "texture": "#null", "uv": [ 0.0, 0.0, 0.5, 0.5 ], "enabled": false },
+						"south": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+						"west": { "texture": "#null", "uv": [ 0.0, 0.0, 0.5, 0.5 ], "enabled": false },
+						"up": { "texture": "#null", "uv": [ 0.0, 0.0, 0.5, 0.5 ], "enabled": false },
+						"down": { "texture": "#null", "uv": [ 0.0, 0.0, 0.5, 0.5 ], "enabled": false }
+					}
+				},
+				{
+					"name": "Splitter Bottom Fill",
+					"from": [ 0.3, -2.0, 0.1 ],
+					"to": [ 0.7, -1.6, 0.9 ],
+					"rotationOrigin": [ 0.55, -1.75, 0.1 ],
+					"faces": {
+						"north": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+						"east": { "texture": "#null", "uv": [ 0.0, 0.0, 0.5, 0.5 ], "enabled": false },
+						"south": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+						"west": { "texture": "#null", "uv": [ 0.0, 0.0, 0.5, 0.5 ], "enabled": false },
+						"up": { "texture": "#null", "uv": [ 0.0, 0.0, 0.5, 0.5 ], "enabled": false },
+						"down": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] }
+					}
+				},
+				{
+					"name": "Splitter Bit",
+					"from": [ 0.4, -2.2, -0.05 ],
+					"to": [ 0.7, -1.9, 1.05 ],
+					"rotationOrigin": [ 0.65, -1.95, 0.0 ],
+					"rotationZ": -45.0,
+					"faces": {
+						"north": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+						"east": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 1.0, 0.5 ] },
+						"south": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+						"west": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 1.0, 0.5 ] },
+						"up": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
+						"down": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 0.5, 1.0 ] }
+					}
 				}
 			]
 		},
 		{
-			"name": "PowerGaugePoint",
-			"from": [ 4.0, 10.0, 3.0 ],
-			"to": [ 8.0, 14.0, 3.1 ],
-			"rotationOrigin": [ 4.0, 10.0, 3.0 ],
-			"faces": {
-				"north": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 4.0, 4.0 ] },
-				"east": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 0.5, 4.0 ] },
-				"south": { "texture": "#roundgauge-0", "uv": [ 0.0, 0.0, 16.0, 16.0 ], "autoUv": false },
-				"west": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 0.5, 4.0 ] },
-				"up": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 4.0, 0.5 ] },
-				"down": { "texture": "#shinyiron", "uv": [ 0.0, 0.0, 4.0, 0.5 ] }
-			}
-		},
-		{
-			"name": "WireConnection",
-			"from": [ 11.0, 14.0, 1.0 ],
-			"to": [ 12.0, 15.0, 2.0 ],
-			"rotationOrigin": [ 11.0, 14.0, 1.0 ],
+			"name": "Connector",
+			"from": [ 4.2, 7.5, 2.5 ],
+			"to": [ 5.2, 8.5, 3.5 ],
+			"rotationOrigin": [ 4.2, 7.5, 2.5 ],
 			"faces": {
 				"north": { "texture": "#gold", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
 				"east": { "texture": "#gold", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
 				"south": { "texture": "#gold", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
-				"west": { "texture": "#gold", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
+				"west": { "texture": "#null", "uv": [ 0.0, 0.0, 1.0, 1.0 ], "enabled": false },
 				"up": { "texture": "#gold", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
 				"down": { "texture": "#gold", "uv": [ 0.0, 0.0, 1.0, 1.0 ] }
+			}
+		},
+		{
+			"name": "Connector Detail",
+			"from": [ 4.0, 7.0, 2.0 ],
+			"to": [ 4.2, 9.0, 4.0 ],
+			"rotationOrigin": [ 4.0, 7.0, 2.0 ],
+			"faces": {
+				"north": { "texture": "#cable", "uv": [ 0.0, 0.0, 0.5, 2.0 ] },
+				"east": { "texture": "#cable", "uv": [ 0.0, 0.0, 2.0, 2.0 ] },
+				"south": { "texture": "#cable", "uv": [ 0.0, 0.0, 0.5, 2.0 ] },
+				"west": { "texture": "#null", "uv": [ 0.0, 0.0, 2.0, 2.0 ], "enabled": false },
+				"up": { "texture": "#cable", "uv": [ 0.0, 0.0, 0.5, 2.0 ] },
+				"down": { "texture": "#cable", "uv": [ 0.0, 0.0, 0.5, 2.0 ] }
+			}
+		},
+		{
+			"name": "Wire",
+			"from": [ 4.0, 9.0, 2.9 ],
+			"to": [ 4.2, 16.0, 3.1 ],
+			"rotationOrigin": [ 4.0, 9.0, 2.9 ],
+			"faces": {
+				"north": { "texture": "#cable", "uv": [ 0.0, 0.0, 0.5, 7.0 ] },
+				"east": { "texture": "#cable", "uv": [ 0.0, 0.0, 0.5, 7.0 ] },
+				"south": { "texture": "#cable", "uv": [ 0.0, 0.0, 0.5, 7.0 ] },
+				"west": { "texture": "#null", "uv": [ 0.0, 0.0, 0.5, 7.0 ], "enabled": false },
+				"up": { "texture": "#null", "uv": [ 0.0, 0.0, 0.5, 0.5 ], "enabled": false },
+				"down": { "texture": "#null", "uv": [ 0.0, 0.0, 0.5, 0.5 ], "enabled": false }
+			}
+		},
+		{
+			"name": "Bolt SW Main",
+			"from": [ 1.1, 2.0, 14.3 ],
+			"to": [ 1.7, 2.2, 14.9 ],
+			"rotationOrigin": [ 1.1, 2.0, 14.3 ],
+			"faces": {
+				"north": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"east": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"south": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"west": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"up": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"down": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] }
+			}
+		},
+		{
+			"name": "Bolt SE Main",
+			"from": [ 14.3, 2.0, 14.3 ],
+			"to": [ 14.9, 2.2, 14.9 ],
+			"rotationOrigin": [ 14.3, 2.0, 14.3 ],
+			"faces": {
+				"north": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"east": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"south": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"west": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"up": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"down": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] }
+			}
+		},
+		{
+			"name": "Bolt Blade Plate SW",
+			"from": [ 5.1, 3.0, 10.3 ],
+			"to": [ 5.7, 3.2, 10.9 ],
+			"rotationOrigin": [ 5.1, 3.0, 10.3 ],
+			"faces": {
+				"north": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"east": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"south": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"west": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"up": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"down": { "texture": "#null", "uv": [ 0.0, 0.0, 0.5, 0.5 ], "enabled": false }
+			}
+		},
+		{
+			"name": "Bolt Blade Plate SE",
+			"from": [ 10.3, 3.0, 10.3 ],
+			"to": [ 10.9, 3.2, 10.9 ],
+			"rotationOrigin": [ 10.3, 3.0, 10.3 ],
+			"faces": {
+				"north": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"east": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"south": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"west": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"up": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"down": { "texture": "#null", "uv": [ 0.0, 0.0, 0.5, 0.5 ], "enabled": false }
+			}
+		},
+		{
+			"name": "Bolt Blade Plate NE",
+			"from": [ 10.3, 3.0, 5.1 ],
+			"to": [ 10.9, 3.2, 5.7 ],
+			"rotationOrigin": [ 10.3, 3.0, 5.1 ],
+			"faces": {
+				"north": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"east": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"south": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"west": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"up": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"down": { "texture": "#null", "uv": [ 0.0, 0.0, 0.5, 0.5 ], "enabled": false }
+			}
+		},
+		{
+			"name": "Bolt Blade Plate NW",
+			"from": [ 5.1, 3.0, 5.1 ],
+			"to": [ 5.7, 3.2, 5.7 ],
+			"rotationOrigin": [ 5.1, 3.0, 5.1 ],
+			"faces": {
+				"north": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"east": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"south": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"west": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"up": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"down": { "texture": "#null", "uv": [ 0.0, 0.0, 0.5, 0.5 ], "enabled": false }
+			}
+		},
+		{
+			"name": "Machine Body Bolt W Lower",
+			"from": [ 4.1, 16.1, 13.0 ],
+			"to": [ 4.7, 16.7, 13.2 ],
+			"rotationOrigin": [ 4.1, 16.1, 13.0 ],
+			"faces": {
+				"north": { "texture": "#null", "uv": [ 0.0, 0.0, 0.5, 0.5 ], "enabled": false },
+				"east": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"south": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"west": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"up": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"down": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] }
+			}
+		},
+		{
+			"name": "Machine Body Bolt E Lower",
+			"from": [ 11.3, 16.1, 13.0 ],
+			"to": [ 11.9, 16.7, 13.2 ],
+			"rotationOrigin": [ 11.3, 16.1, 13.0 ],
+			"faces": {
+				"north": { "texture": "#null", "uv": [ 0.0, 0.0, 0.5, 0.5 ], "enabled": false },
+				"east": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"south": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"west": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"up": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"down": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] }
+			}
+		},
+		{
+			"name": "Machine Body Bolt E Upper",
+			"from": [ 11.3, 29.3, 13.0 ],
+			"to": [ 11.9, 29.9, 13.2 ],
+			"rotationOrigin": [ 11.3, 29.3, 13.0 ],
+			"faces": {
+				"north": { "texture": "#null", "uv": [ 0.0, 0.0, 0.5, 0.5 ], "enabled": false },
+				"east": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"south": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"west": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"up": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"down": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] }
+			}
+		},
+		{
+			"name": "Machine Body Bolt W Upper",
+			"from": [ 4.1, 29.3, 13.0 ],
+			"to": [ 4.7, 29.9, 13.2 ],
+			"rotationOrigin": [ 4.1, 29.3, 13.0 ],
+			"faces": {
+				"north": { "texture": "#null", "uv": [ 0.0, 0.0, 0.5, 0.5 ], "enabled": false },
+				"east": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"south": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"west": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"up": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+				"down": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 0.5 ] }
+			}
+		},
+		{
+			"name": "Retainer Bolt W Lower",
+			"from": [ 0.4, 19.0, 2.5 ],
+			"to": [ 1.0, 20.3, 3.8 ],
+			"rotationOrigin": [ 0.4, 19.0, 2.5 ],
+			"faces": {
+				"north": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
+				"east": { "texture": "#null", "uv": [ 0.0, 0.0, 1.0, 1.0 ], "enabled": false },
+				"south": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
+				"west": { "texture": "#castiron", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
+				"up": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
+				"down": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 1.0 ] }
+			}
+		},
+		{
+			"name": "Retainer Bolt W Upper",
+			"from": [ 0.4, 26.0, 2.5 ],
+			"to": [ 1.0, 27.3, 3.8 ],
+			"rotationOrigin": [ 0.4, 26.0, 2.5 ],
+			"faces": {
+				"north": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
+				"east": { "texture": "#null", "uv": [ 0.0, 0.0, 1.0, 1.0 ], "enabled": false },
+				"south": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
+				"west": { "texture": "#castiron", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
+				"up": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
+				"down": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 1.0 ] }
+			}
+		},
+		{
+			"name": "Retainer Bolt E Upper",
+			"from": [ 15.0, 26.0, 2.5 ],
+			"to": [ 15.6, 27.3, 3.8 ],
+			"rotationOrigin": [ 15.0, 26.0, 2.5 ],
+			"faces": {
+				"north": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
+				"east": { "texture": "#castiron", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
+				"south": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
+				"west": { "texture": "#null", "uv": [ 0.0, 0.0, 1.0, 1.0 ], "enabled": false },
+				"up": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
+				"down": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 1.0 ] }
+			}
+		},
+		{
+			"name": "Retainer Bolt E Lower",
+			"from": [ 15.0, 19.0, 2.5 ],
+			"to": [ 15.6, 20.3, 3.8 ],
+			"rotationOrigin": [ 15.0, 19.0, 2.5 ],
+			"faces": {
+				"north": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
+				"east": { "texture": "#castiron", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
+				"south": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
+				"west": { "texture": "#null", "uv": [ 0.0, 0.0, 1.0, 1.0 ], "enabled": false },
+				"up": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 1.0 ] },
+				"down": { "texture": "#castiron", "uv": [ 0.0, 0.0, 0.5, 1.0 ] }
+			}
+		},
+		{
+			"name": "N Support Strut 1",
+			"from": [ 15.0, 0.0, 0.1 ],
+			"to": [ 16.0, 34.0, 0.6 ],
+			"rotationOrigin": [ 15.0, 0.0, 0.1 ],
+			"rotationZ": 25.5,
+			"faces": {
+				"north": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 16.0 ], "autoUv": false },
+				"east": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 0.5, 14.0 ], "autoUv": false },
+				"south": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 16.0 ], "autoUv": false },
+				"west": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 0.5, 15.0 ], "autoUv": false },
+				"up": { "texture": "#null", "uv": [ 0.0, 0.0, 1.0, 0.5 ], "enabled": false },
+				"down": { "texture": "#null", "uv": [ 0.0, 0.0, 1.0, 0.5 ], "enabled": false }
+			}
+		},
+		{
+			"name": "N Support Strut 2",
+			"from": [ 0.0, 0.0, 0.5 ],
+			"to": [ 1.0, 34.0, 1.0 ],
+			"rotationOrigin": [ 1.0, 0.0, 0.5 ],
+			"rotationZ": -25.5,
+			"faces": {
+				"north": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 16.0 ], "autoUv": false },
+				"east": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 0.5, 16.0 ], "autoUv": false },
+				"south": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 1.0, 15.0 ], "autoUv": false },
+				"west": { "texture": "#wornsteel", "uv": [ 0.0, 0.0, 0.5, 14.0 ], "autoUv": false },
+				"up": { "texture": "#null", "uv": [ 0.0, 0.0, 1.0, 0.5 ], "enabled": false },
+				"down": { "texture": "#null", "uv": [ 0.0, 0.0, 1.0, 0.5 ], "enabled": false }
+			}
+		},
+		{
+			"name": "Machine Strut E Upper",
+			"from": [ 12.0, 16.0, 1.0 ],
+			"to": [ 15.0, 31.0, 5.0 ],
+			"rotationOrigin": [ 12.0, 16.0, 1.0 ],
+			"faces": {
+				"north": { "texture": "#industrial_metal_bordered", "uv": [ 0.0, 0.0, 3.0, 15.0 ] },
+				"east": { "texture": "#industrial_metal_bordered", "uv": [ 0.0, 0.0, 4.0, 15.0 ] },
+				"south": { "texture": "#industrial_metal_bordered", "uv": [ 0.0, 0.0, 3.0, 15.0 ] },
+				"west": { "texture": "#industrial_metal_bordered", "uv": [ 0.0, 0.0, 4.0, 15.0 ] },
+				"up": { "texture": "#industrial_metal_bordered", "uv": [ 0.0, 0.0, 3.0, 4.0 ] },
+				"down": { "texture": "#null", "uv": [ 0.0, 0.0, 3.0, 4.0 ], "enabled": false }
+			}
+		},
+		{
+			"name": "Machine Strut W Upper",
+			"from": [ 1.0, 16.0, 1.0 ],
+			"to": [ 4.0, 31.0, 5.0 ],
+			"rotationOrigin": [ 1.0, 16.0, 1.0 ],
+			"faces": {
+				"north": { "texture": "#industrial_metal_bordered", "uv": [ 0.0, 0.0, 3.0, 15.0 ] },
+				"east": { "texture": "#industrial_metal_bordered", "uv": [ 0.0, 0.0, 4.0, 15.0 ] },
+				"south": { "texture": "#industrial_metal_bordered", "uv": [ 0.0, 0.0, 3.0, 15.0 ] },
+				"west": { "texture": "#industrial_metal_bordered", "uv": [ 0.0, 0.0, 4.0, 15.0 ] },
+				"up": { "texture": "#industrial_metal_bordered", "uv": [ 0.0, 0.0, 3.0, 4.0 ] },
+				"down": { "texture": "#null", "uv": [ 0.0, 0.0, 3.0, 4.0 ], "enabled": false }
 			}
 		}
 	],
@@ -333,20 +817,26 @@
 		{
 			"name": "craft",
 			"code": "craft",
-			"quantityframes": 120,
-			"onActivityStopped": "Rewind",
-			"onAnimationEnd": "Stop",
+			"quantityframes": 30,
+			"onActivityStopped": "EaseOut",
+			"onAnimationEnd": "EaseOut",
 			"keyframes": [
 				{
 					"frame": 0,
 					"elements": {
-						"Ram": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0 }
+						"Splitter Bar": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0 }
 					}
 				},
 				{
-					"frame": 105,
+					"frame": 15,
 					"elements": {
-						"Ram": { "offsetX": 11.0, "offsetY": 0.0, "offsetZ": 0.0 }
+						"Splitter Bar": { "offsetX": 0.0, "offsetY": -6.0, "offsetZ": 0.0 }
+					}
+				},
+				{
+					"frame": 29,
+					"elements": {
+						"Splitter Bar": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0 }
 					}
 				}
 			]

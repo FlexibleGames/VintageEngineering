@@ -17,5 +17,15 @@
 	"width": 3,
 	"height": 3,
 	"output": { "type": "block", "code": "vinteng:vesheetmetal-steel", "quantity": 2  }
+},
+{
+	"ingredientPattern": "S_S,MMM,S_S",
+	"ingredients": {
+		"S": { "type": "item", "code": "vinteng:screw-steel", "quantity": 1 },
+		"M": { "type": "item", "code": "vinteng:machineplate-temporalsteel", "quantity": 1 }
+	},
+	"width": 3,
+	"height": 3,
+	"output": { "type": "block", "code": "vinteng:vesheetmetal-temporalsteel", "quantity": 8  }
 }
 ]

@@ -1,0 +1,24 @@
+[
+{
+	"ingredientPattern": "STS,TJT,STS",
+	"ingredients": {
+		"T": { "type": "item", "code": "vinteng:machineplate-temporalsteel", "quantity": 1 },
+		"J": { "type": "item", "code": "game:returndeath-returndeath1", "quantity": 1},
+		"S": { "type": "item", "code": "vinteng:screw-steel", "quantity": 1 }
+	},
+	"width": 3,
+	"height": 3,
+	"output": { "type": "block", "code": "vinteng:temporalmatrix-matrix", "quantity": 1 }
+},
+{
+	"ingredientPattern": "STS,TJT,STS",
+	"ingredients": {
+		"T": { "type": "item", "code": "vinteng:machineplate-temporalsteel", "quantity": 1 },
+		"J": { "type": "item", "code": "game:returndeath-returndeath2", "quantity": 1},
+		"S": { "type": "item", "code": "vinteng:screw-steel", "quantity": 1 }
+	},
+	"width": 3,
+	"height": 3,
+	"output": { "type": "block", "code": "vinteng:temporalmatrix-focus", "quantity": 1 }
+}
+]

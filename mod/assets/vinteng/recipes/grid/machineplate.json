@@ -28,5 +28,15 @@
         "width": 3,
         "height": 3,
         "output": { "type": "item", "code": "vinteng:machineplate-steel", "quantity": 1  }
+    },
+    {
+        "ingredientPattern": "SBS,B_B,SBS",
+        "ingredients": {
+            "B": { "type": "item", "code": "vinteng:ingot-temporalsteel", "quantity": 1 },
+            "S": { "type": "item", "code": "vinteng:screw-steel", "quantity": 1 }
+        },
+        "width": 3,
+        "height": 3,
+        "output": { "type": "item", "code": "vinteng:machineplate-temporalsteel", "quantity": 2  }
     }
 ]

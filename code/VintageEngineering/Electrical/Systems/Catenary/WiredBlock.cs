@@ -94,7 +94,24 @@ namespace VintageEngineering.Electrical.Systems.Catenary
                 }
             }
             boxes.AddRange(base.GetSelectionBoxes(blockAccessor, pos));
+            if (this.HasBehavior<BlockBehaviorHorizontalOrientable>(true) && boxes.Count > 0)
+            {
+                int yrot = GetRotation();
+                for (int i = 0; i < boxes.Count; i++)
+                {
+                    boxes[i] = boxes[i].RotatedCopy(0, (float)yrot, 0, new Vec3d(0.5, 0.5, 0.5));
+                }
+            }
             return boxes.ToArray();
+        }
+
+        public int GetRotation()
+        {
+            string side = this.Variant["side"];
+            // The BlockFacing horiztonal index goes counter-clockwise from east. That needs to be converted so that
+            // it goes counter-clockwise from north instead.
+            int adjustedIndex = ((BlockFacing.FromCode(side)?.HorizontalAngleIndex ?? 1) + 3) & 3;
+            return adjustedIndex * 90;
         }
 
         /// <summary>
@@ -263,6 +280,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
             if (checkit == null || checkit is not BlockWire) return false; // we're not even holding wire?!
 
             // after all that, finally let the CatenaryMod know we want to connect a wire.
+            
             cm.OnInteract(checkit, byPlayer.InventoryManager.ActiveHotbarSlot, byPlayer.Entity, blockSel);
             return true;
         }

@@ -1,6 +1,8 @@
 using System.Reflection.Metadata.Ecma335;
+using System.Text;
 using VintageEngineering.API;
 using VintageEngineering.blockentity;
+using VintageEngineering.TemporalStorage;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
@@ -10,7 +12,6 @@ namespace VintageEngineering.Blocks
 {
     public class BlockFluidTank: BlockLiquidContainerBase
     {
-
         public override void OnLoaded(ICoreAPI api)
         {
             base.OnLoaded(api);
@@ -19,12 +20,69 @@ namespace VintageEngineering.Blocks
                 this.capacityLitresFromAttributes = (float)this.Attributes["capacity"].AsInt(1500);
             }
         }
+
+        public override ItemStack OnPickBlock(IWorldAccessor world, BlockPos pos)
+        {
+            BETemporalTank betc = world.BlockAccessor.GetBlockEntity(pos) as BETemporalTank;
+            if (betc != null)
+            {
+                return new ItemStack(this);
+            }
+            return base.OnPickBlock(world, pos);
+        }
+
+        public override void OnBlockBroken(IWorldAccessor world, BlockPos pos, IPlayer byPlayer, float dropQuantityMultiplier = 1)
+        {
+            bool preventDefault = false;
+            foreach (BlockBehavior behavior in BlockBehaviors)
+            {
+                EnumHandling handled = EnumHandling.PassThrough;
+                behavior.OnBlockBroken(world, pos, byPlayer, dropQuantityMultiplier, ref handled);
+                if (handled == EnumHandling.PreventDefault) preventDefault = true;
+                if (handled == EnumHandling.PreventSubsequent) return;
+            }
+            if (preventDefault) return;
+
+            if (world.Side == EnumAppSide.Server && (byPlayer == null || byPlayer.WorldData.CurrentGameMode != EnumGameMode.Creative))
+            {
+                // bare stack — do not call OnPickBlock, that is what attaches "contents"
+                BETemporalTank betc = world.BlockAccessor.GetBlockEntity(pos) as BETemporalTank;
+                if (betc != null)
+                {
+                    world.SpawnItemEntity(new ItemStack(this), pos, null);
+                }
+                else
+                {
+                    ItemStack[] drops = new ItemStack[]
+                    {
+                        this.OnPickBlock(world, pos)
+                    };
+                    for (int i = 0; i < drops.Length; i++)
+                    {
+                        world.SpawnItemEntity(drops[i], pos, null);
+                    }
+                }
+                world.PlaySoundAt(Sounds.GetBreakSound(byPlayer), pos, -0.5, byPlayer);
+            }
+
+            world.BlockAccessor.GetBlockEntity(pos)?.OnBlockBroken(byPlayer); // DropAll spills the liquid
+            world.BlockAccessor.SetBlock(0, pos);
+        }
   
         public override bool DoPlaceBlock(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel, ItemStack byItemStack)
         {
             base.DoPlaceBlock(world, byPlayer, blockSel, byItemStack);
 
             return true;
+        }
+
+        public override string GetPlacedBlockInfo(IWorldAccessor world, BlockPos pos, IPlayer forPlayer)
+        {
+            BEFluidTank beft = world.BlockAccessor.GetBlockEntity(pos) as BEFluidTank;
+            StringBuilder sb = new StringBuilder();
+            if (beft != null) beft.GetBlockInfo(forPlayer, sb);
+            if (sb.Length > 0) return sb.ToString();
+            return base.GetPlacedBlockInfo(world, pos, forPlayer);
         }
 
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)

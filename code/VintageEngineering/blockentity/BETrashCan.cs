@@ -63,7 +63,7 @@ namespace VintageEngineering
             _inventory = new InventoryGeneric(1, null, null, null);
             _inventory.BaseWeight = 1f;
             _inventory.OnGetAutoPullFromSlot = new GetAutoPullFromSlotDelegate(GetAutoPullFromSlot);
-            _inventory.OnGetAutoPushIntoSlot = new GetAutoPushIntoSlotDelegate(GetAutoPushIntoSlot);
+            _inventory.OnGetAutoPushIntoSlot = new GetAutoPushIntoSlotDelegate(GetAutoPushIntoSlot);            
             this.container.Reset();            
             _inventory.OnInventoryOpened += OnInvOpened;
             _inventory.OnInventoryClosed += OnInvClosed;            
@@ -175,6 +175,7 @@ namespace VintageEngineering
 
         public ItemSlot GetAutoPushIntoSlot(BlockFacing atFace, ItemSlot fromSlot)
         {
+            TrashItem(0);
             return _inventory[0];
         }
 

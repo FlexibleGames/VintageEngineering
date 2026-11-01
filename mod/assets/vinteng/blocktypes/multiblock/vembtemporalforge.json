@@ -1,0 +1,177 @@
+{
+	"code": "vembtemporalforge",
+	"class": "VEMBCore",
+	"entityClass": "VEBETemporalForge",
+	"behaviors": [
+		{"name": "HorizontalOrientable", "properties": { "drop": { "type":"block", "code": "vembtemporalforge-incomplete-north" }}},
+		{"name": "VEMultiblockBeh", "properties": {
+			"highlightID": 61,
+			"blockHighlightColors": [
+				{ "w": 1, "s": "heavyeng" },
+				{ "w": 2, "r": 0, "g": 140, "b": 255, "a": 180 },
+				{ "w": 3, "s": "powerio" },
+				{ "w": 4, "s": "ironsheetmetal" },
+				{ "w": 6, "s": "reinforcedconcrete" },
+				{ "w": 7, "s": "interaction" },
+				{ "w": 8, "s": "steelfence" },
+				{ "w": 9, "s": "itemio" },
+				{ "w": 10, "s": "fluidio" }
+			],
+			"blockMapping": [
+				{ "w": 1, "tocode": "vinteng:vembdummy-none" },
+				{ "w": 2, "tocode": "vinteng:vembdummy-none" },
+				{ "w": 3, "tocode": "vinteng:vembdummy-power" },
+				{ "w": 4, "tocode": "vinteng:vembdummy-none" },
+				{ "w": 6, "tocode": "vinteng:vembdummy-none" },
+				{ "w": 7, "tocode": "vinteng:vembdummy-interaction" },
+				{ "w": 8, "tocode": "vinteng:vembdummy-none" },
+				{ "w": 9, "tocode": "vinteng:vembdummy-item" },
+				{ "w": 10, "tocode": "vinteng:vembdummy-item" }
+			],
+			"attachable": [
+				{ "w": 3, "sides": ["up"] }
+			],
+			"attributes": [
+				{ "w": 3, "attributes": { "wirefunction": "Power", "powertier": "MV" } }
+			],
+			"multiblockStructure": {
+				"blockNumbers": {
+					"vinteng:temporalmatrix-matrix": 1,
+					"vinteng:industrialglass-plain": 2,
+					"vinteng:vemultiblockio-power": 3,
+					"vinteng:vesheetmetal-steel": 4,
+					"vinteng:vembtemporalforge-incomplete-north": 5,
+					"vinteng:concrete-reinforced-uncolored": 6,
+					"vinteng:vemultiblockio-interaction": 7,
+					"vinteng:vembcomponent-steel": 8,
+					"vinteng:vemultiblockio-item": 9,
+					"vinteng:temporalmatrix-focus": 10
+				},
+				"offsets": [
+					{ "x": 0, "y": 2, "z": 0, "w": 1 },
+					{ "x": 0, "y": 2, "z": 1, "w": 2 },
+					{ "x": 0, "y": 2, "z": -1, "w": 2 },
+					{ "x": 0, "y": 3, "z": 0, "w": 3 },
+					{ "x": 0, "y": 3, "z": 1, "w": 4 },
+					{ "x": 0, "y": 3, "z": -1, "w": 4 },
+					{ "x": 0, "y": 1, "z": 0, "w": 10 },
+					{ "x": 0, "y": 1, "z": 1, "w": 2 },
+					{ "x": 0, "y": 1, "z": -1, "w": 2 },
+					{ "x": 0, "y": 0, "z": 0, "w": 5 },
+					{ "x": 0, "y": 0, "z": 1, "w": 6 },
+					{ "x": 0, "y": 0, "z": -1, "w": 6 },
+					{ "x": 0, "y": 0, "z": 2, "w": 7 },
+					{ "x": 0, "y": 0, "z": -2, "w": 6 },
+					{ "x": 1, "y": 2, "z": 0, "w": 2 },
+					{ "x": 1, "y": 2, "z": 1, "w": 2 },
+					{ "x": 1, "y": 2, "z": -1, "w": 2 },
+					{ "x": 1, "y": 3, "z": 0, "w": 4 },
+					{ "x": 1, "y": 3, "z": 1, "w": 4 },
+					{ "x": 1, "y": 3, "z": -1, "w": 4 },
+					{ "x": 1, "y": 1, "z": 0, "w": 2 },
+					{ "x": 1, "y": 1, "z": 1, "w": 2 },
+					{ "x": 1, "y": 1, "z": -1, "w": 2 },
+					{ "x": 1, "y": 0, "z": 0, "w": 6 },
+					{ "x": 1, "y": 0, "z": 1, "w": 6 },
+					{ "x": 1, "y": 0, "z": -1, "w": 6 },
+					{ "x": 1, "y": 0, "z": 2, "w": 6 },
+					{ "x": 1, "y": 0, "z": -2, "w": 6 },
+					{ "x": -1, "y": 2, "z": 0, "w": 2 },
+					{ "x": -1, "y": 2, "z": 1, "w": 2 },
+					{ "x": -1, "y": 2, "z": -1, "w": 2 },
+					{ "x": -1, "y": 3, "z": 0, "w": 4 },
+					{ "x": -1, "y": 3, "z": 1, "w": 4 },
+					{ "x": -1, "y": 3, "z": -1, "w": 4 },
+					{ "x": -1, "y": 1, "z": 0, "w": 2 },
+					{ "x": -1, "y": 1, "z": 1, "w": 2 },
+					{ "x": -1, "y": 1, "z": -1, "w": 2 },
+					{ "x": -1, "y": 0, "z": 0, "w": 6 },
+					{ "x": -1, "y": 0, "z": 1, "w": 6 },
+					{ "x": -1, "y": 0, "z": -1, "w": 6 },
+					{ "x": -1, "y": 0, "z": 2, "w": 6 },
+					{ "x": -1, "y": 0, "z": -2, "w": 6 },
+					{ "x": 2, "y": 2, "z": 2, "w": 8 },
+					{ "x": 2, "y": 2, "z": -2, "w": 8 },
+					{ "x": 2, "y": 3, "z": 2, "w": 8 },
+					{ "x": 2, "y": 3, "z": -2, "w": 8 },
+					{ "x": 2, "y": 1, "z": 2, "w": 8 },
+					{ "x": 2, "y": 1, "z": -2, "w": 8 },
+					{ "x": 2, "y": 0, "z": 0, "w": 9 },
+					{ "x": 2, "y": 0, "z": 1, "w": 6 },
+					{ "x": 2, "y": 0, "z": -1, "w": 6 },
+					{ "x": 2, "y": 0, "z": 2, "w": 6 },
+					{ "x": 2, "y": 0, "z": -2, "w": 6 },
+					{ "x": -2, "y": 2, "z": 2, "w": 8 },
+					{ "x": -2, "y": 2, "z": -2, "w": 8 },
+					{ "x": -2, "y": 3, "z": 2, "w": 8 },
+					{ "x": -2, "y": 3, "z": -2, "w": 8 },
+					{ "x": -2, "y": 1, "z": 2, "w": 8 },
+					{ "x": -2, "y": 1, "z": -2, "w": 8 },
+					{ "x": -2, "y": 0, "z": 0, "w": 9 },
+					{ "x": -2, "y": 0, "z": 1, "w": 6 },
+					{ "x": -2, "y": 0, "z": -1, "w": 6 },
+					{ "x": -2, "y": 0, "z": 2, "w": 6 },
+					{ "x": -2, "y": 0, "z": -2, "w": 6 }
+				]
+			}
+		}}
+	],
+	"variantgroups": [
+		{ "code": "state", "states": ["incomplete", "built"]},
+		{ "code":"side", "loadFromProperties": "abstract/horizontalorientation" }
+	],
+	"entityBehaviors": [
+		{
+			"name": "Electric",
+			"properties": {
+				"canExtractPower": false,
+				"canReceivePower": true,
+				"entitytype": "Consumer",
+				"maxpower": 500000,
+				"maxpps": 5000
+			}
+		}
+	],
+	"attributes": {
+		"handbook": {
+			"groupBy": ["vembtemporalforge-*"],
+			"excludeByType": {
+				"*-incomplete-north": false,
+				"*": true
+			}
+		},
+        "recipeMachineByType": {
+            "*-north": [ "tempforge" ]
+        }
+	},
+	"shapeinventory": { "base": "block/multiblock/machine/temporalforge-core" },
+	"creativeinventory": { "general": ["vembtemporalforge-incomplete-north"], "terrain": ["*-incomplete-north"], "mechanics": ["*-incomplete-north"], "vinteng": ["*-incomplete-north"] },
+	"shapeByType": {
+		"*-incomplete-north": 	{ "base": "vinteng:block/multiblock/machine/temporalforge-core", "rotateY":0 },
+		"*-incomplete-east": 	{ "base": "vinteng:block/multiblock/machine/temporalforge-core", "rotateY":270 },
+		"*-incomplete-south": 	{ "base": "vinteng:block/multiblock/machine/temporalforge-core", "rotateY":180 },
+		"*-incomplete-west": 	{ "base": "vinteng:block/multiblock/machine/temporalforge-core", "rotateY":90 },
+		"*-built-north": 	{ "base": "vinteng:block/multiblock/machine/temporalforge", "rotateY":0 },
+		"*-built-east": 	{ "base": "vinteng:block/multiblock/machine/temporalforge", "rotateY":270 },
+		"*-built-south": 	{ "base": "vinteng:block/multiblock/machine/temporalforge", "rotateY":180 },
+		"*-built-west": 	{ "base": "vinteng:block/multiblock/machine/temporalforge", "rotateY":90 }
+	},
+	"blockmaterial": "Metal",
+	"textures": {},
+	"sidesolid": {
+		"all": false, "down": true
+	},
+	"sideopaque": {
+		"all": false
+	},
+	"lightAbsorption": 1,
+	"maxStackSize": 8,
+	"replaceable": 600,
+	"resistance": 1.5,
+	"collisionSelectionBoxes": [
+		{ "x1": 0, "y1": 0, "z1": 0, "x2": 1, "y2": 1, "z2": 1 }
+	],
+	"guiTransform": {
+		"rotation": { "x": -22.6, "y": -149, "z": 0 }
+	}
+}

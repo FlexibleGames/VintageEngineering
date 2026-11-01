@@ -89,10 +89,10 @@
 		"x1": 0.125, "y1": 0, "z1": 0.125, "x2": 0.875, "y2": 1, "z2": 0.875
 	},
 	"sounds": {
-		"place": "block/metaldoor-place",
-		"hit": "block/metaldoor-place",
-		"break": "block/metaldoor-place",
-		"walk": "walk/stone*"
+		"place": "game:block/metaldoor-place",
+		"hit": "game:block/metaldoor-place",
+		"break": "game:block/metaldoor-place",
+		"walk": "game:walk/stone*"
 	},
 	"materialDensity": 600,
 	"tpHandTransform": {

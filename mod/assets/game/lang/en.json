@@ -57,6 +57,7 @@
 	"gui-catenary-invalidblock": "Not a wire connectable block.",
 	"gui-catenary-needwire": "You need {0} wires to connect these points.",
 	"gui-catenary-badstart": "Starting Block became invalid.",
+	"gui-catenary-badend": "Target Block became invalid.",
 	"gui-catenary-wireinvalid": "Cannot attach this wire to this machine.",
 	"gui-catenary-connecttoself": "Cannot connect a machine to itself.",
 	"gui-catenary-wiretooshort": "Wire is too short.",

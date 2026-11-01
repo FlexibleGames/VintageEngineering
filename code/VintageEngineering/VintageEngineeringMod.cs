@@ -223,6 +223,7 @@ namespace VintageEngineering
             api.RegisterBlockEntityClass("VEBEBlastFurnace", typeof(BEBlastFurnace));
             api.RegisterBlockEntityClass("VEBEBlower", typeof(BEBlower));
             api.RegisterBlockEntityClass("VEBELVFridge", typeof(BELVFridge));
+            api.RegisterBlockEntityClass("VEBELVSolar", typeof(BELVSolarPanel));
 
             // Depreciated
             api.RegisterBlockEntityClass("VEBEItemPipe", typeof(BEPipeItem));
@@ -249,6 +250,7 @@ namespace VintageEngineering
             api.RegisterBlockEntityClass("VEBEDistillationExt", typeof(BEMBDistillationExt));
             api.RegisterBlockEntityClass("VEBEFluidGenerator", typeof(BEMBFluidGenerator));
             api.RegisterBlockEntityClass("VEBEChemicalPlant", typeof(BEMBChemicalPlant));
+            api.RegisterBlockEntityClass("VEBETemporalForge", typeof(BEMBTemporalForge));
         }
 
         public void RegisterBlockEntityBehaviors(ICoreAPI api)

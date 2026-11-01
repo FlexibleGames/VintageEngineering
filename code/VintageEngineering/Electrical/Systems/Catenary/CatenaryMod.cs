@@ -198,7 +198,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
             api.Event.LeaveWorld += () =>
             {
                 WireRenderer?.Dispose();
-            };
+            };            
         }
 
         public override void StartServerSide(ICoreServerAPI api)
@@ -209,6 +209,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
             api.Event.GameWorldSave += Event_GameWorldSave;
             api.Event.SaveGameLoaded += Event_SaveGameLoaded;
             sapi.Event.PlayerNowPlaying += Event_PlayerNowPlaying;
+            sapi.Event.PlayerDisconnect += Event_PlayerDisconnect;
             SetupCommands();
         }
 
@@ -342,6 +343,11 @@ namespace VintageEngineering.Electrical.Systems.Catenary
         }
         #endregion
 
+        private void Event_PlayerDisconnect(IServerPlayer byPlayer)
+        {
+            this.workspaceByPlayer.Remove(byPlayer.PlayerUID);
+        }
+
         private void Event_PlayerNowPlaying(IServerPlayer byPlayer)
         {
             serverChannel.SendPacket<CatenaryData>(data, byPlayer);
@@ -458,7 +464,7 @@ namespace VintageEngineering.Electrical.Systems.Catenary
 
             if (wiredBlock == null)
             {
-                // check this early on to save time                
+                // check this early on to save time 
                 IServerPlayer splayer = api.World.PlayerByUid((byEntity as EntityPlayer).PlayerUID) as IServerPlayer;
                 if (api.Side == EnumAppSide.Server) sapi.SendIngameError(splayer as IServerPlayer, "invalid", Lang.Get("gui-catenary-invalidblock"));
                 return; // don't even try to connect if these are not wire enabled blocks
@@ -496,10 +502,20 @@ namespace VintageEngineering.Electrical.Systems.Catenary
                 }                
                 return;
             }
+            // Revalidate the start position, fixes #104
+            IWireAnchor wirestart = api.World.BlockAccessor.GetBlock(ws.startPos) as IWireAnchor;
+            if (wirestart == null)
+            {
+                // something happened to the starting position, clear
+                if (capi != null) capi.TriggerIngameError(this, "error", Lang.Get("gui-catenary-badstart"));
+                CancelPlace(block as BlockWire, byEntity);
+                return;
+            }
             // We are currently connected to a start position
             if (wiredBlock == null)
             {
-                if (capi != null) capi.TriggerIngameError(this, "error", Lang.Get("gui-catenary-badstart"));
+                // bad ending/target position
+                if (capi != null) capi.TriggerIngameError(this, "error", Lang.Get("gui-catenary-badend"));
                 CancelPlace(block as BlockWire, byEntity);
                 return;
             }

@@ -138,8 +138,8 @@ namespace VintageEngineering.Blocks
             if (_oilBlock == null || _oilBlock.Id == 0) return false;
             int surfacey = access.GetTerrainMapheightAt(pos); // surface
             if (Math.Abs(surfacey - TerraGenConfig.seaLevel) > 40) return false;
-            BlockPos watercheck1 = new BlockPos(pos.X, surfacey + 1, pos.Z, BlockLayersAccess.Fluid);
-            Block waterblock1 = access.GetBlock(watercheck1);
+            BlockPos watercheck1 = new BlockPos(pos.X, surfacey + 1, pos.Z);//, BlockLayersAccess.Fluid);
+            Block waterblock1 = access.GetBlock(watercheck1, BlockLayersAccess.Fluid); // Suggested fix from #102
             if (waterblock1.Id != 0 && waterblock1.IsLiquid() && waterblock1.LiquidCode.Contains("water")) return false;
 
             foreach (BlockFacing bface in BlockFacing.HORIZONTALS)

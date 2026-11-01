@@ -71,12 +71,13 @@
   },
   "combustiblePropsByType": {
     "ingot-temporalsteel": {
-      "meltingPoint": 1400,
+      "meltingPoint": 1600,
       "meltingDuration": 30,
       "smeltedRatio": 1,
       "smeltedStack": {
         "type": "item",
-        "code": "ingot-temporalsteel"
+        "code": "game:ingot-steel",
+        "stacksize": 1
       }
     },
     "ingot-chargedtemporalsteel": {
@@ -85,7 +86,8 @@
       "smeltedRatio": 1,
       "smeltedStack": {
         "type": "item",
-        "code": "ingot-temporalsteel"
+        "code": "game:ingot-steel",
+        "stacksize": 1
       }
     }
   },

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using VintageEngineering.Electrical;
 using VintageEngineering.inventory;
+using VintageEngineering.API;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -14,7 +15,7 @@ using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 using Vintagestory.API.Datastructures;
 
-namespace VintageEngineering.blockentity
+namespace VintageEngineering
 {
     public class BELVFridge : ElectricContainerBE
     {
@@ -33,8 +34,9 @@ namespace VintageEngineering.blockentity
         }
 
         public BELVFridge()
-        {                              
+        {
             _inventory = new InvLVFridge();
+            this.container = new VEFridgeContainer(() => this._inventory, "inventory", this);
         }
 
         public override string InventoryClassName => "InvLVFridge";

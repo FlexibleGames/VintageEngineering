@@ -313,10 +313,10 @@ namespace VintageEngineering
         /// <returns>True if recipe found that matches ingredient and mold.</returns>
         public bool FindMatchingRecipe()
         {
-            if (Electric.MachineState == EnumBEState.Off) // if the machine is off, bounce.
-            {
-                return false;
-            }
+            //if (Electric.MachineState == EnumBEState.Off) // if the machine is off, bounce.
+            //{
+            //    return false;
+            //}
             if (InputSlot.Empty)
             {
                 currentPressRecipe = null;
